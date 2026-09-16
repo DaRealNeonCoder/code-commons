@@ -86,7 +86,7 @@ export default function Home() {
             <span className="font-mono text-sm text-zinc-400">04</span>
             <h2 className="mt-2 font-semibold">Create your own</h2>
             <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-              Build your own lessons and share what you&apos;ve learned with others.
+              Build your own lessons or puzzles and share what you&apos;ve learned with others.
             </p>
           </div>
         </div>
