@@ -7,15 +7,15 @@ export default function Home() {
       <section className="bg-zinc-950 px-6 py-20 sm:py-28">
         <div className="mx-auto grid max-w-5xl gap-12 lg:grid-cols-2 lg:items-center">
           <div>
-            <p className="font-mono text-sm text-teal-400"># interactive coding, right in your browser</p>
+            <p className="font-mono text-sm text-teal-400"># free interactive coding, right in your browser</p>
             <h1 className="mt-4 font-mono text-4xl font-medium leading-tight text-white sm:text-5xl">
-              build real things,
+              learn real code,
               <br />
               one line at a time.
             </h1>
             <p className="mt-5 max-w-md text-zinc-400">
-              Work through short Python lessons, then put what you&apos;ve learned to the
-              test with hands-on puzzles. No installs, no setup.
+              Work through short lessons, then put what you&apos;ve learned to the
+              test with hands-on puzzles. No installs, no setup - always 100% free.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -56,8 +56,8 @@ export default function Home() {
       </section>
 
       {/* How it works */}
-      <section className="mx-auto max-w-4xl px-6 py-16">
-        <div className="grid gap-8 sm:grid-cols-3">
+      <section className="mx-auto max-w-5xl px-6 py-16">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <span className="font-mono text-sm text-zinc-400">01</span>
             <h2 className="mt-2 font-semibold">Pick a track</h2>
@@ -65,6 +65,7 @@ export default function Home() {
               Start with Python. More languages are on the way.
             </p>
           </div>
+
           <div>
             <span className="font-mono text-sm text-zinc-400">02</span>
             <h2 className="mt-2 font-semibold">Learn by doing</h2>
@@ -72,11 +73,20 @@ export default function Home() {
               Every lesson has a real editor. Write code, run it, see the output.
             </p>
           </div>
+
           <div>
             <span className="font-mono text-sm text-zinc-400">03</span>
             <h2 className="mt-2 font-semibold">Put it to the test</h2>
             <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
               Head to Puzzles and solve challenges across a few categories.
+            </p>
+          </div>
+
+          <div>
+            <span className="font-mono text-sm text-zinc-400">04</span>
+            <h2 className="mt-2 font-semibold">Create your own</h2>
+            <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+              Build your own lessons and share what you&apos;ve learned with others.
             </p>
           </div>
         </div>
