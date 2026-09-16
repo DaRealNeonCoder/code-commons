@@ -1,13 +1,13 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getCategoryById, puzzlesByCategory } from "@/lib/puzzles";
+import { getCategoryById, getPuzzlesForCategory } from "@/lib/puzzles";
 
 export default async function PuzzleCategoryPage({ params }) {
   const { category: categoryId } = await params;
   const category = getCategoryById(categoryId);
   if (!category) notFound();
 
-  const puzzles = puzzlesByCategory[categoryId] || [];
+  const puzzles = getPuzzlesForCategory(categoryId);
 
   return (
     <div className="w-full h-full overflow-y-auto px-6 py-12">

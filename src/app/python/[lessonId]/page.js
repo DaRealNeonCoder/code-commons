@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
+import { MDXRemote } from "next-mdx-remote/rsc";
 import { getLessonById } from "@/lib/pythonLessons";
+import { mdxComponents, mdxOptions } from "@/lib/mdx-components";
 import CodeWorkspace from "@/components/CodeWorkspace";
 
 export default async function LessonPage({ params }) {
@@ -19,25 +21,21 @@ export default async function LessonPage({ params }) {
   }
 
   const description = (
-    <>
+    <article>
       <h1 className="text-2xl font-semibold mb-4">Python: {lesson.title}</h1>
-      {lesson.description.map((paragraph, i) => (
-        <p key={i} className="mb-4">
-          {paragraph}
-        </p>
-      ))}
-      <pre className="bg-black text-white rounded p-3 text-sm">
-        <code>{lesson.starterCode}</code>
-      </pre>
-      <p className="mt-4">Edit the code on the right, then click Run.</p>
-    </>
+      <MDXRemote source={lesson.content} components={mdxComponents} options={{ mdxOptions }} />
+    </article>
   );
 
   return (
     <CodeWorkspace
+      // Resets the editor's internal state when navigating between lessons
+      // that share this same route template.
+      key={lesson.id}
       accent="amber"
-      fileName="main.py"
+      fileBaseName="main"
       starterCode={lesson.starterCode}
+      lockedLanguage={lesson.lockedLanguage}
       description={description}
       backHref="/python"
       backLabel="all lessons"

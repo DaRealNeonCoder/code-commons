@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { pythonLessons } from "@/lib/pythonLessons";
+import { getAllLessons } from "@/lib/pythonLessons";
 
 export default function PythonLessonsPage() {
+  const pythonLessons = getAllLessons();
+
   return (
     <div className="w-full h-full overflow-y-auto px-6 py-12">
       <div className="mx-auto max-w-2xl">

@@ -1,45 +1,58 @@
-// lib/pythonLessons.js
-//
-// Central list of Python lessons. Only "hello-world" is fully built out —
-// the rest are placeholders so you can see how the lesson list looks once
-// there's more than one entry. Flip `available: true` and add
-// `starterCode` / `description` once a lesson is ready.
+import fs from "node:fs";
+import path from "node:path";
+import matter from "gray-matter";
 
-export const pythonLessons = [
-  {
-    id: "hello-world",
-    order: 1,
-    title: "Hello, World!",
-    summary: "Print your very first line of Python.",
-    available: true,
-    starterCode: `print("Hello, World!")`,
-    description: [
-      "Python is a simple, readable language. To print text to the screen, use the built-in print() function.",
-    ],
-  },
-  {
-    id: "variables-and-types",
-    order: 2,
-    title: "Variables & Types",
-    summary: "Store data in variables and meet the core types.",
-    available: false,
-  },
-  {
-    id: "conditionals",
-    order: 3,
-    title: "Conditionals",
-    summary: "Make decisions in your code with if / elif / else.",
-    available: false,
-  },
-  {
-    id: "loops",
-    order: 4,
-    title: "Loops",
-    summary: "Repeat work with for and while loops.",
-    available: false,
-  },
-];
+const LESSONS_DIR = path.join(process.cwd(), "src/lessons");
+
+// Recursively collects every .mdx file under `dir`, at any depth — this is
+// what lets you organize lessons into subfolders (e.g. src/lessons/unit-1/,
+// src/lessons/unit-2/basics/...) instead of one flat folder.
+function walkMdxFiles(dir) {
+  if (!fs.existsSync(dir)) return [];
+
+  let results = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results = results.concat(walkMdxFiles(fullPath));
+    } else if (entry.isFile() && entry.name.endsWith(".mdx")) {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
+
+function readLessonFile(fullPath) {
+  // The id is just the filename (no folders) — so a lesson's URL
+  // (/python/<id>) stays the same no matter how deep you nest the file.
+  const id = path.basename(fullPath, ".mdx");
+  const raw = fs.readFileSync(fullPath, "utf8");
+  const { data, content } = matter(raw);
+  return { id, content, ...data };
+}
+
+export function getAllLessons() {
+  const lessons = walkMdxFiles(LESSONS_DIR).map(readLessonFile);
+
+  // Because the id ignores folder structure, two files with the same name
+  // in different folders would collide. Keep the first one found and warn
+  // instead of silently overwriting or crashing.
+  const seen = new Map();
+  for (const lesson of lessons) {
+    if (seen.has(lesson.id)) {
+      console.warn(
+        `[pythonLessons] Duplicate lesson id "${lesson.id}" found in more than one folder — ignoring the extra copy. Rename one of the files.`
+      );
+      continue;
+    }
+    seen.set(lesson.id, lesson);
+  }
+
+  return [...seen.values()].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+}
 
 export function getLessonById(id) {
-  return pythonLessons.find((lesson) => lesson.id === id) || null;
+  const match = walkMdxFiles(LESSONS_DIR).find((fullPath) => path.basename(fullPath, ".mdx") === id);
+  if (!match) return null;
+  return readLessonFile(match);
 }

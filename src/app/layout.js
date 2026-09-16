@@ -1,4 +1,5 @@
 import "./globals.css";
+import "katex/dist/katex.min.css";
 import Navbar from "@/components/Navbar";
 
 export const metadata = {

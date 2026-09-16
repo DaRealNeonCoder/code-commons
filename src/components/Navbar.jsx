@@ -27,6 +27,7 @@ export default function Navbar() {
 
   const isPython = pathname.startsWith("/python");
   const isPuzzles = pathname.startsWith("/puzzles");
+  const isCreate = pathname.startsWith("/create");
 
   return (
     <header className="flex items-center justify-between bg-zinc-950 px-6 py-3.5 border-b border-zinc-800">
@@ -75,6 +76,15 @@ export default function Navbar() {
           }`}
         >
           puzzles
+        </Link>
+
+        <Link
+          href="/create"
+          className={`transition-colors ${
+            isCreate ? "text-violet-400" : "text-zinc-400 hover:text-white"
+          }`}
+        >
+          create
         </Link>
       </nav>
     </header>

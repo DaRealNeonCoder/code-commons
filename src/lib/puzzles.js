@@ -1,9 +1,11 @@
-// lib/puzzles.js
-//
-// Puzzle categories and the puzzles inside each one. Only
-// algorithms/fibonacci is fully built out. The rest are placeholders —
-// flip `available: true` and add `starterCode` / `prompt` when ready.
+import fs from "node:fs";
+import path from "node:path";
+import matter from "gray-matter";
 
+const PUZZLES_DIR = path.join(process.cwd(), "src/puzzles");
+
+// Categories are just a short, hand-maintained list — they're groupings, not
+// content, so they don't need their own files the way lessons/puzzles do.
 export const puzzleCategories = [
   {
     id: "algorithms",
@@ -25,44 +27,28 @@ export const puzzleCategories = [
   },
 ];
 
-export const puzzlesByCategory = {
-  algorithms: [
-    {
-      id: "fibonacci",
-      title: "Fibonacci Sequence",
-      difficulty: "Easy",
-      available: true,
-      prompt: [
-        "Write a function fibonacci(n) that returns the nth number in the Fibonacci sequence (0-indexed, with fibonacci(0) == 0 and fibonacci(1) == 1).",
-        "The starter code calls fibonacci(10) and prints the result — a correct solution prints 55.",
-      ],
-      starterCode: `def fibonacci(n):
-    # TODO: return the nth Fibonacci number
-    pass
-
-print(fibonacci(10))
-`,
-    },
-    {
-      id: "two-sum",
-      title: "Two Sum",
-      difficulty: "Easy",
-      available: false,
-    },
-    {
-      id: "binary-search",
-      title: "Binary Search",
-      difficulty: "Medium",
-      available: false,
-    },
-  ],
-};
-
 export function getCategoryById(id) {
   return puzzleCategories.find((category) => category.id === id) || null;
 }
 
+function readPuzzleFile(categoryId, fileName) {
+  const id = fileName.replace(/\.mdx$/, "");
+  const raw = fs.readFileSync(path.join(PUZZLES_DIR, categoryId, fileName), "utf8");
+  const { data, content } = matter(raw);
+  return { id, content, ...data };
+}
+
+export function getPuzzlesForCategory(categoryId) {
+  const dir = path.join(PUZZLES_DIR, categoryId);
+  if (!fs.existsSync(dir)) return [];
+  return fs
+    .readdirSync(dir)
+    .filter((file) => file.endsWith(".mdx"))
+    .map((file) => readPuzzleFile(categoryId, file));
+}
+
 export function getPuzzle(categoryId, puzzleId) {
-  const list = puzzlesByCategory[categoryId] || [];
-  return list.find((puzzle) => puzzle.id === puzzleId) || null;
+  const fullPath = path.join(PUZZLES_DIR, categoryId, `${puzzleId}.mdx`);
+  if (!fs.existsSync(fullPath)) return null;
+  return readPuzzleFile(categoryId, `${puzzleId}.mdx`);
 }

@@ -12,16 +12,9 @@ async function getPythonVersion() {
   return cachedPythonVersion;
 }
 
-export async function POST(request) {
-  const body = await request.json().catch(() => null);
-
-  if (!body?.code || typeof body.code !== "string") {
-    return Response.json({ error: "Missing code" }, { status: 400 });
-  }
-  if (body.code.length > 20_000) {
-    return Response.json({ error: "Code too long" }, { status: 400 });
-  }
-
+// The original, working implementation — unchanged behavior, just moved
+// into its own function so it can sit next to the other languages below.
+async function runPython(code) {
   let version;
   try {
     version = await getPythonVersion();
@@ -36,7 +29,7 @@ export async function POST(request) {
     body: JSON.stringify({
       language: "python",
       version,
-      files: [{ content: body.code }],
+      files: [{ content: code }],
       run_timeout: 3000,
     }),
   });
@@ -53,4 +46,50 @@ export async function POST(request) {
     stderr: data.run?.stderr ?? "",
     exitCode: data.run?.code ?? null,
   });
+}
+
+// STUB — not wired up yet, on purpose. Piston (the same service already
+// running for Python) also supports "cpp" as a language, so the fastest
+// path is probably to copy runPython() above, swap the `language`/version
+// lookup for "cpp", and you're done. Left as a stub until you're ready.
+async function runCpp(_code) {
+  return Response.json({
+    stdout: "",
+    stderr: "",
+    error: "C++ execution isn't configured yet.",
+  });
+}
+
+// STUB — same idea as runCpp(). Piston supports "rust" as a language too.
+async function runRust(_code) {
+  return Response.json({
+    stdout: "",
+    stderr: "",
+    error: "Rust execution isn't configured yet.",
+  });
+}
+
+const RUNNERS = {
+  python: runPython,
+  cpp: runCpp,
+  rust: runRust,
+};
+
+export async function POST(request) {
+  const body = await request.json().catch(() => null);
+
+  if (!body?.code || typeof body.code !== "string") {
+    return Response.json({ error: "Missing code" }, { status: 400 });
+  }
+  if (body.code.length > 20_000) {
+    return Response.json({ error: "Code too long" }, { status: 400 });
+  }
+
+  const language = body.language || "python";
+  const runner = RUNNERS[language];
+  if (!runner) {
+    return Response.json({ error: `Unsupported language: ${language}` }, { status: 400 });
+  }
+
+  return runner(body.code);
 }
