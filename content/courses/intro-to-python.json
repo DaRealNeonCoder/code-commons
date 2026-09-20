@@ -1,0 +1,5 @@
+{
+  "title": "Intro to Python",
+  "summary": "Start from zero and learn the basics of Python, one short lesson at a time.",
+  "lessons": ["hello-world", "variables-and-types", "conditionals", "loops"]
+}

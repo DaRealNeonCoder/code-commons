@@ -2,11 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 
-const PUZZLES_DIR = path.join(process.cwd(), "content/puzzles");
+const LESSONS_DIR = path.join(process.cwd(), "content/lessons");
 
-function readPuzzleFile(fileName) {
+function readLessonFile(fileName) {
   const id = fileName.replace(/\.mdx$/, "");
-  const raw = fs.readFileSync(path.join(PUZZLES_DIR, fileName), "utf8");
+  const raw = fs.readFileSync(path.join(LESSONS_DIR, fileName), "utf8");
   const { data, content } = matter(raw);
   return {
     id,
@@ -20,16 +20,16 @@ function readPuzzleFile(fileName) {
   };
 }
 
-export function getAllPuzzles() {
+export function getAllLessons() {
   return fs
-    .readdirSync(PUZZLES_DIR)
+    .readdirSync(LESSONS_DIR)
     .filter((file) => file.endsWith(".mdx"))
-    .map(readPuzzleFile)
+    .map(readLessonFile)
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 }
 
-export function getPuzzleById(id) {
-  const fullPath = path.join(PUZZLES_DIR, `${id}.mdx`);
+export function getLessonById(id) {
+  const fullPath = path.join(LESSONS_DIR, `${id}.mdx`);
   if (!fs.existsSync(fullPath)) return null;
-  return readPuzzleFile(`${id}.mdx`);
+  return readLessonFile(`${id}.mdx`);
 }

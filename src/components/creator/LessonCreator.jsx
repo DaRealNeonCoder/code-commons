@@ -26,7 +26,11 @@ function newBlock(overrides = {}) {
   };
 }
 
-export default function LessonCreator() {
+function toggle(list, value) {
+  return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
+}
+
+export default function LessonCreator({ taxonomy, groupedTopics, groupedTags }) {
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [starterCode, setStarterCode] = useState('print("Hello, World!")\n');
@@ -34,6 +38,13 @@ export default function LessonCreator() {
     newBlock({ size: "title", bold: true }),
     newBlock({ size: "normal" }),
   ]);
+
+  const [areas, setAreas] = useState([]);
+  const [topics, setTopics] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [languages, setLanguages] = useState([]);
+  const [difficulty, setDifficulty] = useState("");
+
   const [status, setStatus] = useState(null); // null | "saving" | { ok } | { error }
 
   const markdown = useMemo(() => blocksToMarkdown(blocks), [blocks]);
@@ -67,7 +78,17 @@ export default function LessonCreator() {
       const res = await fetch("/api/lessons", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, summary, starterCode, content: markdown }),
+        body: JSON.stringify({
+          title,
+          summary,
+          starterCode,
+          content: markdown,
+          areas,
+          topics,
+          tags,
+          languages,
+          difficulty,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Something went wrong.");
@@ -76,6 +97,8 @@ export default function LessonCreator() {
       setStatus({ error: err.message });
     }
   }
+
+  const canSave = title.trim() && difficulty && status !== "saving";
 
   return (
     <div className="w-full h-full overflow-y-auto px-6 py-12">
@@ -108,7 +131,7 @@ export default function LessonCreator() {
             id="lesson-summary"
             value={summary}
             onChange={(e) => setSummary(e.target.value)}
-            placeholder="One line shown in the lesson list"
+            placeholder="One line shown in search results"
             className="mt-1 mb-4 w-full rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
           />
 
@@ -122,6 +145,122 @@ export default function LessonCreator() {
             rows={4}
             className="mt-1 w-full rounded border border-zinc-300 bg-zinc-950 px-3 py-2 font-mono text-sm text-green-400 dark:border-zinc-700"
           />
+        </section>
+
+        {/* Taxonomy — fixed vocabulary only, nothing freeform */}
+        <section className="mt-6 rounded-md border border-zinc-200 p-5 dark:border-zinc-800">
+          <h2 className="mb-1 font-mono text-sm text-zinc-500">categorize this lesson</h2>
+          <p className="mb-4 text-xs text-zinc-500">
+            These options are set by the site — you can't type a new one in here.
+          </p>
+
+          <div className="grid gap-6 sm:grid-cols-2">
+            <div>
+              <p className="mb-2 text-sm font-medium">
+                Difficulty <span className="text-red-500">*</span>
+              </p>
+              <select
+                value={difficulty}
+                onChange={(e) => setDifficulty(e.target.value)}
+                className="w-full rounded border border-zinc-300 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+              >
+                <option value="">Select difficulty...</option>
+                {taxonomy.difficulties.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <p className="mb-2 text-sm font-medium">Language(s)</p>
+              <div className="flex flex-wrap gap-3">
+                {taxonomy.languages.map((lang) => (
+                  <label key={lang.id} className="flex items-center gap-1.5 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={languages.includes(lang.id)}
+                      onChange={() => setLanguages((prev) => toggle(prev, lang.id))}
+                      className="accent-violet-600"
+                    />
+                    {lang.label}
+                  </label>
+                ))}
+              </div>
+              <p className="mt-1 text-xs text-zinc-500">Leave unchecked if the lesson is language-independent.</p>
+            </div>
+
+            <div>
+              <p className="mb-2 text-sm font-medium">Area(s)</p>
+              <div className="flex flex-col gap-1">
+                {taxonomy.areas.map((area) => (
+                  <label key={area.id} className="flex items-center gap-1.5 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={areas.includes(area.id)}
+                      onChange={() => setAreas((prev) => toggle(prev, area.id))}
+                      className="accent-violet-600"
+                    />
+                    {area.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="mb-2 text-sm font-medium">Topic(s)</p>
+              <div className="max-h-48 overflow-y-auto pr-1">
+                {groupedTopics.map(({ area, topics: areaTopics }) =>
+                  areaTopics.length === 0 ? null : (
+                    <div key={area.id} className="mb-2">
+                      <p className="mb-1 text-xs font-medium text-zinc-400">{area.label}</p>
+                      {areaTopics.map((topic) => (
+                        <label key={topic.id} className="flex items-center gap-1.5 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={topics.includes(topic.id)}
+                            onChange={() => setTopics((prev) => toggle(prev, topic.id))}
+                            className="accent-violet-600"
+                          />
+                          {topic.label}
+                        </label>
+                      ))}
+                    </div>
+                  )
+                )}
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
+              <p className="mb-2 text-sm font-medium">Tag(s) / Concept(s)</p>
+              <div className="max-h-48 overflow-y-auto pr-1">
+                {groupedTags.map(({ topic, tags: topicTags }) =>
+                  topicTags.length === 0 ? null : (
+                    <div key={topic.id} className="mb-2">
+                      <p className="mb-1 text-xs font-medium text-zinc-400">{topic.label}</p>
+                      <div className="flex flex-wrap gap-x-4 gap-y-1">
+                        {topicTags.map((tag) => (
+                          <label key={tag.id} className="flex items-center gap-1.5 text-sm">
+                            <input
+                              type="checkbox"
+                              checked={tags.includes(tag.id)}
+                              onChange={() => setTags((prev) => toggle(prev, tag.id))}
+                              className="accent-violet-600"
+                            />
+                            {tag.label}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+              <p className="mt-1 text-xs text-zinc-500">
+                A concept can appear under more than one topic — that's expected.
+              </p>
+            </div>
+          </div>
         </section>
 
         {/* Content blocks */}
@@ -224,16 +363,20 @@ export default function LessonCreator() {
           <button
             type="button"
             onClick={handleSave}
-            disabled={status === "saving" || !title.trim()}
+            disabled={!canSave}
             className="rounded-md bg-violet-600 px-5 py-2.5 font-mono text-sm font-medium text-white transition-colors hover:bg-violet-700 disabled:opacity-50"
           >
             {status === "saving" ? "saving..." : "$ save lesson"}
           </button>
 
+          {!difficulty && title.trim() && (
+            <p className="text-sm text-zinc-500">Pick a difficulty to enable saving.</p>
+          )}
+
           {status?.ok && (
             <p className="text-sm text-teal-600 dark:text-teal-400">
               Saved.{" "}
-              <Link href={`/python/${status.ok}`} className="underline">
+              <Link href={`/lessons/${status.ok}`} className="underline">
                 View it
               </Link>
               .
