@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import AuthControl from "@/components/AuthControl";
 
 const LANGUAGES = [
   { id: "python", label: "python", href: "/python", available: true },
@@ -86,6 +87,10 @@ export default function Navbar() {
         >
           create
         </Link>
+
+        <div className="border-l border-zinc-800 pl-6">
+          <AuthControl />
+        </div>
       </nav>
     </header>
   );

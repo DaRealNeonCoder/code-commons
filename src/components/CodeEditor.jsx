@@ -1,8 +1,10 @@
 "use client";
 
+
 import Editor from "@monaco-editor/react";
 
 export default function CodeEditor({ code, onChange }) {
+console.log("code is", typeof code, code);
   return (
     <Editor
       height="100%"

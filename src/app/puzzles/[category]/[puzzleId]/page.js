@@ -8,6 +8,12 @@ export default async function PuzzlePage({ params }) {
   const { category: categoryId, puzzleId } = await params;
   const category = getCategoryById(categoryId);
   const puzzle = getPuzzle(categoryId, puzzleId);
+console.log(
+  "starterCode:",
+  typeof puzzle.starterCode,
+  puzzle.starterCode?.constructor?.name,
+  puzzle.starterCode
+);
   if (!category || !puzzle) notFound();
 
   if (!puzzle.available) {
@@ -31,19 +37,14 @@ export default async function PuzzlePage({ params }) {
 
   return (
     <CodeWorkspace
-      // Resets the editor's internal state when navigating between puzzles
-      // that share this same route template.
-      key={puzzle.id}
       accent="teal"
-      fileBaseName={puzzle.id.replace(/-/g, "_")}
+      fileName={`${puzzle.id.replace(/-/g, "_")}.py`}
       starterCode={puzzle.starterCode}
-      // No lockedLanguage here on purpose — puzzles are language-agnostic
-      // by default. Set `lockedLanguage` in a puzzle's frontmatter if a
-      // specific puzzle should ever pin one language instead.
-      lockedLanguage={puzzle.lockedLanguage}
       description={description}
       backHref={`/puzzles/${categoryId}`}
       backLabel={category.title.toLowerCase()}
+      itemType="puzzle"
+      itemId={puzzle.id}
     />
   );
 }

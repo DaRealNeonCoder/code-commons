@@ -29,16 +29,14 @@ export default async function LessonPage({ params }) {
 
   return (
     <CodeWorkspace
-      // Resets the editor's internal state when navigating between lessons
-      // that share this same route template.
-      key={lesson.id}
       accent="amber"
-      fileBaseName="main"
+      fileName="main.py"
       starterCode={lesson.starterCode}
-      lockedLanguage={lesson.lockedLanguage}
       description={description}
       backHref="/python"
       backLabel="all lessons"
+      itemType="lesson"
+      itemId={lesson.id}
     />
   );
 }

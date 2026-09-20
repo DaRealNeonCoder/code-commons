@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import CodeEditor from "@/components/CodeEditor";
+import CompletionToggle from "@/components/CompletionToggle";
 
 const ACCENTS = {
   amber: { dot: "bg-amber-400", link: "text-amber-600 dark:text-amber-400 hover:underline" },
@@ -32,6 +33,9 @@ function languageInfo(id) {
 // about one specific language — this hides the picker entirely and always
 // uses that language, ignoring the others.
 //
+// Pass `itemType` + `itemId` (e.g. "puzzle" + puzzle.id) to show the
+// completion toggle under the description.
+//
 // IMPORTANT: give this component a `key` (e.g. key={lesson.id}) wherever
 // it's rendered from a dynamic route, so switching between two lessons/
 // puzzles fully resets its state instead of reusing the previous instance.
@@ -43,6 +47,8 @@ export default function CodeWorkspace({
   backLabel,
   accent = "amber",
   lockedLanguage,
+  itemType,
+  itemId,
 }) {
   const initialLanguage = lockedLanguage || Object.keys(starterCode)[0] || "python";
   const [language, setLanguage] = useState(initialLanguage);
@@ -88,6 +94,10 @@ export default function CodeWorkspace({
           </Link>
         )}
         {description}
+
+        {itemType && itemId && (
+          <CompletionToggle itemType={itemType} itemId={itemId} accent={accent} />
+        )}
       </div>
 
       {/* Right: toolbar + editor + output */}

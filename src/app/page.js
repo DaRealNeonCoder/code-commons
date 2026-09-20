@@ -1,3 +1,18 @@
+/*
+        TODO LIST
+
+- Search system.
+- Page orgainization.
+- Course integration.
+- Create system for puzzles.
+- Actual puzzles with actual testing.
+- Comment system?
+- UI Overhaul
+- Actual progress stats in profile. 
+
+ */
+
+
 import Link from "next/link";
 
 export default function Home() {
