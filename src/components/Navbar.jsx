@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import AuthControl from "@/components/AuthControl";
 
 export default function Navbar() {
   const pathname = usePathname();
 
   const isLessons = pathname.startsWith("/lessons") || pathname.startsWith("/courses");
   const isPuzzles = pathname.startsWith("/puzzles");
+  const isShaders = pathname.startsWith("/shaders");
   const isCreate = pathname.startsWith("/create");
 
   return (
@@ -32,11 +34,22 @@ export default function Navbar() {
         </Link>
 
         <Link
+          href="/shaders"
+          className={`transition-colors ${isShaders ? "text-fuchsia-400" : "text-zinc-400 hover:text-white"}`}
+        >
+          shaders
+        </Link>
+
+        <Link
           href="/create"
           className={`transition-colors ${isCreate ? "text-violet-400" : "text-zinc-400 hover:text-white"}`}
         >
           create
         </Link>
+
+        <div className="border-l border-zinc-800 pl-6">
+          <AuthControl />
+        </div>
       </nav>
     </header>
   );
