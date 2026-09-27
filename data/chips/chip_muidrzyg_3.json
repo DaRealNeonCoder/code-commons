@@ -1,0 +1,43 @@
+{
+  "id": "chip_muidrzyg_3",
+  "name": "My Chipdodod",
+  "color": "#8b5cf6",
+  "numInputs": 1,
+  "numOutputs": 1,
+  "gates": [
+    {
+      "id": "g_muidrzyg_1",
+      "type": "NAND",
+      "inputs": [
+        {
+          "kind": "external",
+          "index": 0
+        },
+        {
+          "kind": "external",
+          "index": 0
+        }
+      ]
+    },
+    {
+      "id": "g_muidrzyg_2",
+      "type": "NAND",
+      "inputs": [
+        {
+          "kind": "gate",
+          "gateId": "g_muidrzyg_1"
+        },
+        {
+          "kind": "gate",
+          "gateId": "g_muidrzyg_1"
+        }
+      ]
+    }
+  ],
+  "outputSources": [
+    {
+      "kind": "gate",
+      "gateId": "g_muidrzyg_2"
+    }
+  ]
+}

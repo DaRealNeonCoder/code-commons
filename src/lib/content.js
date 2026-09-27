@@ -1,8 +1,17 @@
 import MiniSearch from "minisearch";
 import { getAllLessons } from "./lessons";
 import { getAllPuzzles } from "./puzzles";
+import { getAllShaders } from "./shaders/shaders";
+import { getAllCircuits } from "./circuits/circuits";
 import { loadTaxonomy, expandTaxonomy, labelFor } from "./taxonomy";
 import { getCourseForLesson } from "./courses";
+
+const HREF_PREFIX = {
+  lesson: "/lessons",
+  puzzle: "/puzzles",
+  shader: "/shaders",
+  circuit: "/circuits",
+};
 
 function toContentItem(raw, type, taxonomy) {
   const areas = raw.areas || [];
@@ -18,9 +27,11 @@ function toContentItem(raw, type, taxonomy) {
     topics,
     tags,
     languages,
-    href: type === "lesson" ? `/lessons/${raw.id}` : `/puzzles/${raw.id}`,
+    href: `${HREF_PREFIX[type]}/${raw.id}`,
     effectiveAreas,
     effectiveTopics,
+    // Only lessons belong to a course right now — shaders/circuits have no
+    // equivalent grouping yet, so this just stays null for them.
     course: type === "lesson" ? getCourseForLesson(raw.id) : null,
     // Label text (not ids) gets indexed for free-text search, so searching
     // "algorithms" matches even content that only carries a narrower tag.
@@ -43,7 +54,9 @@ export function getAllContent() {
   const taxonomy = loadTaxonomy();
   const lessons = getAllLessons().map((lesson) => toContentItem(lesson, "lesson", taxonomy));
   const puzzles = getAllPuzzles().map((puzzle) => toContentItem(puzzle, "puzzle", taxonomy));
-  return [...lessons, ...puzzles];
+  const shaders = getAllShaders().map((shader) => toContentItem(shader, "shader", taxonomy));
+  const circuits = getAllCircuits().map((circuit) => toContentItem(circuit, "circuit", taxonomy));
+  return [...lessons, ...puzzles, ...shaders, ...circuits];
 }
 
 function matchesFilters(item, filters) {
@@ -84,8 +97,8 @@ export function searchContent({
     return items.filter((item) => matchesFilters(item, filters));
   }
 
-  // Lessons and puzzles are separate id namespaces, so a composite key
-  // avoids collisions if a lesson and a puzzle ever share a slug.
+  // Lessons/puzzles/shaders/circuits are separate id namespaces, so a
+  // composite key avoids collisions if two types ever share a slug.
   const keyOf = (item) => `${item.type}:${item.id}`;
   const byKey = new Map(items.map((item) => [keyOf(item), item]));
 

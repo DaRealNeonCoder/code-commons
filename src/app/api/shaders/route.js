@@ -2,25 +2,27 @@ import fs from "node:fs";
 import path from "node:path";
 
 const SHADERS_DIR = path.join(process.cwd(), "content/shaders");
+const SHADER_PATH = path.join(SHADERS_DIR, "shader.json");
 const MAX_CODE_LENGTH = 20_000;
 
-function generateId() {
-  const stamp = Date.now().toString(36);
-  const random = Math.random().toString(36).slice(2, 8);
-  return `shader-${stamp}${random}`;
-}
+// Deliberately basic: one shared shader slot, no ids, no listing, no
+// per-user ownership. Save/load just means "write/read this one file" —
+// multiple saved shaders can come later.
 
-function uniqueId() {
-  let id = generateId();
-  while (fs.existsSync(path.join(SHADERS_DIR, `${id}.json`))) {
-    id = generateId();
+export async function GET() {
+  if (!fs.existsSync(SHADER_PATH)) {
+    return Response.json({ code: null });
   }
-  return id;
+  try {
+    const record = JSON.parse(fs.readFileSync(SHADER_PATH, "utf8"));
+    return Response.json({ code: record.code ?? null, updatedAt: record.updatedAt ?? null });
+  } catch {
+    // A corrupted or unreadable file shouldn't break the page — just act
+    // as if nothing has been saved yet.
+    return Response.json({ code: null });
+  }
 }
 
-// Deliberately basic, per the current scope: anonymous save, no listing,
-// no loading, no per-user ownership. Browsing/loading saved shaders is a
-// separate feature for later, same as the original request described.
 export async function POST(request) {
   const body = await request.json().catch(() => null);
 
@@ -33,22 +35,8 @@ export async function POST(request) {
 
   fs.mkdirSync(SHADERS_DIR, { recursive: true });
 
-  const id = uniqueId();
-  const fullPath = path.join(SHADERS_DIR, `${id}.json`);
+  const record = { code: body.code, updatedAt: new Date().toISOString() };
+  fs.writeFileSync(SHADER_PATH, JSON.stringify(record, null, 2), "utf8");
 
-  // Defense in depth: id is generated server-side above, never taken from
-  // user input, but double-check the resolved path stays inside SHADERS_DIR.
-  if (!fullPath.startsWith(SHADERS_DIR + path.sep)) {
-    return Response.json({ error: "Could not save shader." }, { status: 400 });
-  }
-
-  const record = {
-    id,
-    code: body.code,
-    createdAt: new Date().toISOString(),
-  };
-
-  fs.writeFileSync(fullPath, JSON.stringify(record, null, 2), "utf8");
-
-  return Response.json({ id });
+  return Response.json({ updatedAt: record.updatedAt });
 }

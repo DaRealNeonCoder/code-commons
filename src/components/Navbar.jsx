@@ -7,8 +7,7 @@ import AuthControl from "@/components/AuthControl";
 export default function Navbar() {
   const pathname = usePathname();
 
-  const isLessons = pathname.startsWith("/lessons") || pathname.startsWith("/courses");
-  const isPuzzles = pathname.startsWith("/puzzles");
+  const isBrowse = pathname.startsWith("/browse");
   const isShaders = pathname.startsWith("/shaders");
   const isCircuits = pathname.startsWith("/circuits");
   const isCreate = pathname.startsWith("/create");
@@ -21,36 +20,45 @@ export default function Navbar() {
 
       <nav className="flex items-center gap-6 font-mono text-sm">
         <Link
-          href="/lessons"
-          className={`transition-colors ${isLessons ? "text-amber-400" : "text-zinc-400 hover:text-white"}`}
+          href="/browse"
+          className={`transition-colors ${
+            isBrowse
+              ? "text-amber-400"
+              : "text-zinc-400 hover:text-white"
+          }`}
         >
-          lessons
-        </Link>
-
-        <Link
-          href="/puzzles"
-          className={`transition-colors ${isPuzzles ? "text-teal-400" : "text-zinc-400 hover:text-white"}`}
-        >
-          puzzles
+          browse
         </Link>
 
         <Link
           href="/shaders"
-          className={`transition-colors ${isShaders ? "text-fuchsia-400" : "text-zinc-400 hover:text-white"}`}
+          className={`transition-colors ${
+            isShaders
+              ? "text-fuchsia-400"
+              : "text-zinc-400 hover:text-white"
+          }`}
         >
           shaders
         </Link>
 
         <Link
           href="/circuits"
-          className={`transition-colors ${isCircuits ? "text-sky-400" : "text-zinc-400 hover:text-white"}`}
+          className={`transition-colors ${
+            isCircuits
+              ? "text-sky-400"
+              : "text-zinc-400 hover:text-white"
+          }`}
         >
           circuits
         </Link>
 
         <Link
           href="/create"
-          className={`transition-colors ${isCreate ? "text-violet-400" : "text-zinc-400 hover:text-white"}`}
+          className={`transition-colors ${
+            isCreate
+              ? "text-violet-400"
+              : "text-zinc-400 hover:text-white"
+          }`}
         >
           create
         </Link>

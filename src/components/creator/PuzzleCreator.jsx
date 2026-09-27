@@ -6,16 +6,16 @@ import TextBlockEditor, { newTextBlock } from "@/components/creator/TextBlockEdi
 import { blocksToMarkdown } from "@/lib/blocksToMarkdown";
 import FilterFields from "@/components/filters/FilterFields";
 
-export default function LessonCreator() {
-  const [title, setTitle] = useState("");
-  const [summary, setSummary] = useState("");
-  const [starterCode, setStarterCode] = useState('print("Hello, World!")\n');
-  const [blocks, setBlocks] = useState([
-    newTextBlock({ size: "title", bold: true }),
-    newTextBlock({ size: "normal" }),
-  ]);
-  const [status, setStatus] = useState(null); // null | "saving" | { ok } | { error }
+const fieldClass = "mt-1 w-full rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950";
 
+export default function PuzzleCreator() {
+  const [title, setTitle] = useState("");
+  const [starterCode, setStarterCode] = useState("");
+  const [blocks, setBlocks] = useState([newTextBlock({ size: "title", bold: true })]);
+  const [status, setStatus] = useState(null);
+
+  // Replaces the old hardcoded CATEGORIES/DIFFICULTIES dropdowns — these now
+  // come from the same taxonomy the search bar filters against.
   const [areas, setAreas] = useState([]);
   const [topics, setTopics] = useState([]);
   const [tags, setTags] = useState([]);
@@ -27,12 +27,11 @@ export default function LessonCreator() {
   async function handleSave() {
     setStatus("saving");
     try {
-      const res = await fetch("/api/lessons", {
+      const res = await fetch("/api/puzzles", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title,
-          summary,
           difficulty,
           areas,
           topics,
@@ -44,7 +43,7 @@ export default function LessonCreator() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Something went wrong.");
-      setStatus({ ok: data.id });
+      setStatus({ ok: data });
     } catch (err) {
       setStatus({ error: err.message });
     }
@@ -56,35 +55,22 @@ export default function LessonCreator() {
         <Link href="/create" className="font-mono text-sm text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
           ← /create
         </Link>
-        <p className="mt-3 font-mono text-sm text-amber-600 dark:text-amber-400">/create/lesson</p>
-        <h1 className="mt-1 text-2xl font-semibold">Create a lesson</h1>
-        <p className="mt-1 text-zinc-600 dark:text-zinc-400">
-          Build a lesson from text blocks — no Markdown syntax required.
-        </p>
+        <p className="mt-3 font-mono text-sm text-teal-600 dark:text-teal-400">/create/puzzle</p>
+        <h1 className="mt-1 text-2xl font-semibold">Create a puzzle</h1>
+        <p className="mt-1 text-zinc-600 dark:text-zinc-400">Same block editor as lessons, plus difficulty and topic filters.</p>
 
         <section className="mt-8 rounded-md border border-zinc-200 p-5 dark:border-zinc-800">
-          <h2 className="mb-4 font-mono text-sm text-zinc-500">lesson details</h2>
+          <h2 className="mb-4 font-mono text-sm text-zinc-500">puzzle details</h2>
 
-          <label className="block text-sm font-medium" htmlFor="lesson-title">
+          <label className="block text-sm font-medium" htmlFor="puzzle-title">
             Title
           </label>
           <input
-            id="lesson-title"
+            id="puzzle-title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g. Variables & Types"
-            className="mt-1 mb-4 w-full rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
-          />
-
-          <label className="block text-sm font-medium" htmlFor="lesson-summary">
-            Summary
-          </label>
-          <input
-            id="lesson-summary"
-            value={summary}
-            onChange={(e) => setSummary(e.target.value)}
-            placeholder="One line shown in the lesson list"
-            className="mt-1 mb-4 w-full rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+            placeholder="e.g. Two Sum"
+            className={`mb-4 ${fieldClass}`}
           />
 
           <div className="mb-4">
@@ -103,19 +89,20 @@ export default function LessonCreator() {
             />
           </div>
 
-          <label className="block text-sm font-medium" htmlFor="lesson-starter">
+          <label className="block text-sm font-medium" htmlFor="puzzle-starter">
             Starter code
           </label>
           <textarea
-            id="lesson-starter"
+            id="puzzle-starter"
             value={starterCode}
             onChange={(e) => setStarterCode(e.target.value)}
             rows={4}
-            className="mt-1 w-full rounded border border-zinc-300 bg-zinc-950 px-3 py-2 font-mono text-sm text-green-400 dark:border-zinc-700"
+            placeholder={"def solution():\n    pass\n"}
+            className={`${fieldClass} bg-zinc-950 font-mono text-green-400`}
           />
         </section>
 
-        <TextBlockEditor blocks={blocks} onChange={setBlocks} accent="amber" />
+        <TextBlockEditor blocks={blocks} onChange={setBlocks} accent="teal" />
 
         <details className="mt-6 rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
           <summary className="cursor-pointer select-none font-mono text-sm text-zinc-500">
@@ -131,15 +118,15 @@ export default function LessonCreator() {
             type="button"
             onClick={handleSave}
             disabled={status === "saving" || !title.trim() || !difficulty}
-            className="rounded-md bg-amber-500 px-5 py-2.5 font-mono text-sm font-medium text-zinc-950 transition-colors hover:bg-amber-400 disabled:opacity-50"
+            className="rounded-md bg-teal-600 px-5 py-2.5 font-mono text-sm font-medium text-white transition-colors hover:bg-teal-700 disabled:opacity-50"
           >
-            {status === "saving" ? "saving..." : "$ save lesson"}
+            {status === "saving" ? "saving..." : "$ save puzzle"}
           </button>
 
           {status?.ok && (
             <p className="text-sm text-teal-600 dark:text-teal-400">
               Saved.{" "}
-              <Link href={`/python/${status.ok}`} className="underline">
+              <Link href={`/puzzles/${status.ok.id}`} className="underline">
                 View it
               </Link>
               .

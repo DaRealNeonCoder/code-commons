@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { labelFor } from "@/lib/taxonomy";
 
-const TYPE_LABEL = { lesson: "Lesson", puzzle: "Puzzle" };
+const TYPE_LABEL = { lesson: "Lesson", puzzle: "Puzzle", shader: "Shader", circuit: "Circuit" };
 const TYPE_ACCENT = {
   lesson: "text-amber-600 dark:text-amber-400",
   puzzle: "text-teal-600 dark:text-teal-400",
+  shader: "text-fuchsia-600 dark:text-fuchsia-400",
+  circuit: "text-violet-600 dark:text-violet-400",
 };
 
 export default function ResultCard({ item, taxonomy }) {

@@ -1,15 +1,21 @@
 /*
         TODO LIST
 
-- Search system.
-- Page orgainization.
-- Course integration.
-- Create system for puzzles.
+- Create system for circuits 
+- Create system for shaders 
+- Create system for Puzzles 
 - Actual puzzles with actual testing.
 - Comment system?
 - UI Overhaul
 - Actual progress stats in profile. 
+- shader lessonify
+- digital logic lessonify 
 
+
+interesting stuff:
+-cloudflare r2.
+-run python client side for now (pyiode or whatever).
+-vercel sandbox
  */
 
 

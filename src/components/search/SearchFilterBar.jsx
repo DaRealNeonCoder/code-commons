@@ -2,203 +2,207 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import FilterFields from "@/components/filters/FilterFields";
+import { MultiSelectDropdown } from "@/components/filters/FilterPrimitives";
 
 function parseList(value) {
   return value ? value.split(",").filter(Boolean) : [];
 }
 
 function toggle(list, value) {
-  return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
+  return list.includes(value)
+    ? list.filter((v) => v !== value)
+    : [...list, value];
 }
 
-export default function SearchFilterBar({ taxonomy, groupedTopics, groupedTags, showTypeFilter = true }) {
+const TYPE_OPTIONS = [
+  { id: "lesson", label: "Lessons" },
+  { id: "puzzle", label: "Puzzles" },
+  { id: "shader", label: "Shaders" },
+  { id: "circuit", label: "Circuits" },
+];
+
+export default function SearchFilterBar({ taxonomy, showTypeFilter = true }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [, startTransition] = useTransition();
 
-  const currentQuery = searchParams.get("q") || "";
-  const [queryInput, setQueryInput] = useState(currentQuery);
+  const currentSearchParams = searchParams.toString();
 
-  const types = parseList(searchParams.get("type"));
-  const areas = parseList(searchParams.get("area"));
-  const topics = parseList(searchParams.get("topic"));
-  const tags = parseList(searchParams.get("tag"));
-  const language = searchParams.get("language") || "";
-  const difficulty = searchParams.get("difficulty") || "";
+  const [queryInput, setQueryInput] = useState(
+    () => searchParams.get("q") || ""
+  );
 
-  function pushParams(updates) {
+  const [types, setTypes] = useState(() => parseList(searchParams.get("type")));
+  const [areas, setAreas] = useState(() => parseList(searchParams.get("area")));
+  const [topics, setTopics] = useState(() => parseList(searchParams.get("topic")));
+  const [tags, setTags] = useState(() => parseList(searchParams.get("tag")));
+  const [language, setLanguage] = useState(
+    () => searchParams.get("language") || ""
+  );
+  const [difficulty, setDifficulty] = useState(
+    () => searchParams.get("difficulty") || ""
+  );
+
+  const [filtersOpen, setFiltersOpen] = useState(
+    () =>
+      types.length > 0 ||
+      areas.length > 0 ||
+      topics.length > 0 ||
+      tags.length > 0 ||
+      Boolean(language) ||
+      Boolean(difficulty)
+  );
+
+  // Keep local state in sync when the URL changes after a search.
+  useEffect(() => {
+    setQueryInput(searchParams.get("q") || "");
+    setTypes(parseList(searchParams.get("type")));
+    setAreas(parseList(searchParams.get("area")));
+    setTopics(parseList(searchParams.get("topic")));
+    setTags(parseList(searchParams.get("tag")));
+    setLanguage(searchParams.get("language") || "");
+    setDifficulty(searchParams.get("difficulty") || "");
+  }, [currentSearchParams, searchParams]);
+
+  function submitSearch() {
     const params = new URLSearchParams(searchParams.toString());
+
+    const updates = {
+      q: queryInput,
+      type: types,
+      area: areas,
+      topic: topics,
+      tag: tags,
+      language,
+      difficulty,
+    };
+
     for (const [key, value] of Object.entries(updates)) {
-      const isEmpty = value == null || value === "" || (Array.isArray(value) && value.length === 0);
+      const isEmpty =
+        value == null ||
+        value === "" ||
+        (Array.isArray(value) && value.length === 0);
+
       if (isEmpty) {
         params.delete(key);
       } else {
         params.set(key, Array.isArray(value) ? value.join(",") : value);
       }
     }
+
     startTransition(() => {
-      router.push(params.toString() ? `${pathname}?${params.toString()}` : pathname);
+      router.push(
+        params.toString() ? `${pathname}?${params.toString()}` : pathname
+      );
     });
   }
 
-  // Debounce the text query so we're not navigating on every keystroke.
-  useEffect(() => {
-    const handle = setTimeout(() => {
-      if (queryInput !== currentQuery) {
-        pushParams({ q: queryInput });
-      }
-    }, 300);
-    return () => clearTimeout(handle);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryInput]);
-
-  const hasActiveFilters =
-    queryInput || types.length || areas.length || topics.length || tags.length || language || difficulty;
+  const activeFilterCount =
+    types.length +
+    areas.length +
+    topics.length +
+    tags.length +
+    (language ? 1 : 0) +
+    (difficulty ? 1 : 0);
 
   function clearAll() {
     setQueryInput("");
-    router.push(pathname);
+    setTypes([]);
+    setAreas([]);
+    setTopics([]);
+    setTags([]);
+    setLanguage("");
+    setDifficulty("");
   }
 
+  // Cascade: Type -> Area -> Topic -> Tag
+  const showAreas = types.length > 0;
+
   return (
-    <div className="mt-6 space-y-4">
-      <input
-        value={queryInput}
-        onChange={(e) => setQueryInput(e.target.value)}
-        placeholder="Search lessons and puzzles..."
-        className="w-full rounded-md border border-zinc-300 px-4 py-2.5 text-sm dark:border-zinc-700 dark:bg-zinc-950"
-      />
+    <div className="mt-6 space-y-3">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          submitSearch();
+        }}
+        className="flex gap-2"
+      >
+        <input
+          value={queryInput}
+          onChange={(e) => setQueryInput(e.target.value)}
+          placeholder="Search lessons, puzzles, shaders, and circuits..."
+          className="w-full rounded-md border border-zinc-300 px-4 py-2.5 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+        />
 
-      <div className="flex flex-wrap gap-4">
-        {showTypeFilter && (
-          <FilterGroup label="Type" defaultOpen>
-            <CheckboxRow
-              label="Lessons"
-              checked={types.includes("lesson")}
-              onChange={() => pushParams({ type: toggle(types, "lesson") })}
-            />
-            <CheckboxRow
-              label="Puzzles"
-              checked={types.includes("puzzle")}
-              onChange={() => pushParams({ type: toggle(types, "puzzle") })}
-            />
-          </FilterGroup>
-        )}
-
-        <FilterGroup label="Area" defaultOpen>
-          {taxonomy.areas.map((area) => (
-            <CheckboxRow
-              key={area.id}
-              label={area.label}
-              checked={areas.includes(area.id)}
-              onChange={() => pushParams({ area: toggle(areas, area.id) })}
-            />
-          ))}
-        </FilterGroup>
-
-        <FilterGroup label="Topic">
-          {groupedTopics.map(({ area, topics: areaTopics }) =>
-            areaTopics.length === 0 ? null : (
-              <div key={area.id} className="mb-2">
-                <p className="mb-1 text-xs font-medium text-zinc-400">{area.label}</p>
-                {areaTopics.map((topic) => (
-                  <CheckboxRow
-                    key={topic.id}
-                    label={topic.label}
-                    checked={topics.includes(topic.id)}
-                    onChange={() => pushParams({ topic: toggle(topics, topic.id) })}
-                  />
-                ))}
-              </div>
-            )
-          )}
-        </FilterGroup>
-
-        <FilterGroup label="Tag / Concept">
-          {groupedTags.map(({ topic, tags: topicTags }) =>
-            topicTags.length === 0 ? null : (
-              <div key={topic.id} className="mb-2">
-                <p className="mb-1 text-xs font-medium text-zinc-400">{topic.label}</p>
-                {topicTags.map((tag) => (
-                  <CheckboxRow
-                    key={tag.id}
-                    label={tag.label}
-                    checked={tags.includes(tag.id)}
-                    onChange={() => pushParams({ tag: toggle(tags, tag.id) })}
-                  />
-                ))}
-              </div>
-            )
-          )}
-        </FilterGroup>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-zinc-500" htmlFor="language-filter">
-            Language
-          </label>
-          <select
-            id="language-filter"
-            value={language}
-            onChange={(e) => pushParams({ language: e.target.value })}
-            className="rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-700 dark:bg-zinc-950"
-          >
-            <option value="">Any language</option>
-            {taxonomy.languages.map((lang) => (
-              <option key={lang.id} value={lang.id}>
-                {lang.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-zinc-500" htmlFor="difficulty-filter">
-            Difficulty
-          </label>
-          <select
-            id="difficulty-filter"
-            value={difficulty}
-            onChange={(e) => pushParams({ difficulty: e.target.value })}
-            className="rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm dark:border-zinc-700 dark:bg-zinc-950"
-          >
-            <option value="">Any difficulty</option>
-            {taxonomy.difficulties.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {hasActiveFilters && (
         <button
-          type="button"
-          onClick={clearAll}
-          className="font-mono text-xs text-zinc-500 underline hover:text-zinc-700 dark:hover:text-zinc-300"
+          type="submit"
+          className="rounded-md border border-zinc-300 px-4 py-2.5 text-sm hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900"
         >
-          clear all filters
+          Search
         </button>
-      )}
+      </form>
+
+      <details
+        open={filtersOpen}
+        onToggle={(e) => setFiltersOpen(e.currentTarget.open)}
+        className="rounded-md border border-zinc-200 dark:border-zinc-800"
+      >
+        <summary className="flex cursor-pointer select-none items-center justify-between px-4 py-2.5 font-mono text-sm text-zinc-600 dark:text-zinc-400">
+          <span>
+            filters
+            {activeFilterCount > 0 && (
+              <span className="ml-1 text-teal-600 dark:text-teal-400">
+                ({activeFilterCount})
+              </span>
+            )}
+          </span>
+
+          {(activeFilterCount > 0 || queryInput) && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                clearAll();
+              }}
+              className="font-mono text-xs text-zinc-400 underline hover:text-zinc-600 dark:hover:text-zinc-200"
+            >
+              clear all
+            </button>
+          )}
+        </summary>
+
+        <div className="border-t border-zinc-200 px-4 py-4 dark:border-zinc-800">
+          <FilterFields
+            taxonomy={taxonomy}
+            showAreas={showAreas}
+            typeSlot={
+              showTypeFilter && (
+                <MultiSelectDropdown
+                  label="Type"
+                  groups={[{ options: TYPE_OPTIONS }]}
+                  selected={types}
+                  onToggle={(id) => setTypes(toggle(types, id))}
+                  searchable={false}
+                />
+              )
+            }
+            areas={areas}
+            onAreasChange={setAreas}
+            topics={topics}
+            onTopicsChange={setTopics}
+            tags={tags}
+            onTagsChange={setTags}
+            languageMode="single"
+            language={language}
+            onLanguageChange={setLanguage}
+            difficulty={difficulty}
+            onDifficultyChange={setDifficulty}
+          />
+        </div>
+      </details>
     </div>
-  );
-}
-
-function FilterGroup({ label, children, defaultOpen = false }) {
-  return (
-    <details className="min-w-[10rem] rounded-md border border-zinc-200 px-3 py-2 dark:border-zinc-800" open={defaultOpen}>
-      <summary className="cursor-pointer select-none font-mono text-xs text-zinc-500">{label}</summary>
-      <div className="mt-2 max-h-56 overflow-y-auto pr-1">{children}</div>
-    </details>
-  );
-}
-
-function CheckboxRow({ label, checked, onChange }) {
-  return (
-    <label className="flex items-center gap-2 py-0.5 text-sm">
-      <input type="checkbox" checked={checked} onChange={onChange} className="accent-teal-600" />
-      {label}
-    </label>
   );
 }
