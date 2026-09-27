@@ -41,12 +41,14 @@ export default async function LessonPage({ params }) {
 
   return (
     <CodeWorkspace
+      key={lesson.id}
       accent="amber"
       fileName="main.py"
       starterCode={lesson.starterCode}
       description={description}
       backHref="/lessons"
       backLabel="all lessons"
+      aiContext={lesson.content}
     />
   );
 }

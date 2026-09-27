@@ -39,3 +39,26 @@ export default async function PuzzlePage({ params }) {
     />
   );
 }
+
+
+src/
+  lib/
+    puzzles.js                       (REPLACE — categories now auto-unlock)
+  components/
+    creator/
+      TextBlockEditor.jsx            (NEW — extracted shared block editor)
+      LessonCreator.jsx              (REPLACE — now uses TextBlockEditor)
+      PuzzleCreator.jsx              (NEW)
+      ShaderCreator.jsx              (NEW)
+  app/
+    create/
+      page.js                        (REPLACE — now a type picker)
+      lesson/page.js                 (NEW — moved from the old /create/page.js)
+      puzzle/page.js                 (NEW)
+      shader/page.js                 (NEW)
+      circuit/page.js                (NEW — placeholder, see part 3 below)
+    puzzles/
+      page.js                        (REPLACE — small change, see below)
+    api/
+      puzzles/route.js               (NEW — saves content/puzzles/<category>/)
+      shader-lessons/route.js        (NEW — saves content/shaders/)
