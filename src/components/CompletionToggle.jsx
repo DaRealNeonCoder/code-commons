@@ -46,6 +46,19 @@ export default function CompletionToggle({ itemType, itemId, accent = "amber" })
     };
   }, [userId, isPending, itemType, itemId]);
 
+  // Other components (e.g. CodeWorkspace auto-marking a passed puzzle) announce
+  // progress changes here so the button stays in sync without a reload.
+  useEffect(() => {
+    function handleChange(event) {
+      const d = event.detail;
+      if (d?.itemType === itemType && d?.itemId === itemId) {
+        setCompleted(Boolean(d.completed));
+      }
+    }
+    window.addEventListener("progress-changed", handleChange);
+    return () => window.removeEventListener("progress-changed", handleChange);
+  }, [itemType, itemId]);
+
   async function toggle() {
     if (!userId || saving) return;
     const next = !completed;

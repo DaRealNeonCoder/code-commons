@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { getPuzzleById } from "@/lib/puzzles";
+import { getPuzzleById, getClientTestInfo } from "@/lib/puzzles";
 import { mdxComponents, mdxOptions } from "@/lib/mdx-components";
 import CodeWorkspace from "@/components/CodeWorkspace";
 
@@ -20,6 +20,9 @@ export default async function PuzzlePage({ params }) {
     );
   }
 
+  // Only visible cases and a hidden-case count cross to the client.
+  const { checkable, sampleTests, hiddenTestCount } = getClientTestInfo(puzzle);
+
   const description = (
     <article>
       <p className="font-mono text-sm text-teal-600 dark:text-teal-400"># {puzzle.difficulty}</p>
@@ -31,34 +34,16 @@ export default async function PuzzlePage({ params }) {
   return (
     <CodeWorkspace
       accent="teal"
-      fileName={`${puzzle.id.replace(/-/g, "_")}.py`}
+      fileBaseName={`${puzzle.id.replace(/-/g, "_")}`}
       starterCode={puzzle.starterCode}
       description={description}
       backHref="/puzzles"
       backLabel="all puzzles"
+      itemType="puzzle"
+      itemId={puzzle.id}
+      checkPuzzleId={checkable ? puzzle.id : undefined}
+      sampleTests={sampleTests}
+      hiddenTestCount={hiddenTestCount}
     />
   );
 }
-
-
-src/
-  lib/
-    puzzles.js                       (REPLACE — categories now auto-unlock)
-  components/
-    creator/
-      TextBlockEditor.jsx            (NEW — extracted shared block editor)
-      LessonCreator.jsx              (REPLACE — now uses TextBlockEditor)
-      PuzzleCreator.jsx              (NEW)
-      ShaderCreator.jsx              (NEW)
-  app/
-    create/
-      page.js                        (REPLACE — now a type picker)
-      lesson/page.js                 (NEW — moved from the old /create/page.js)
-      puzzle/page.js                 (NEW)
-      shader/page.js                 (NEW)
-      circuit/page.js                (NEW — placeholder, see part 3 below)
-    puzzles/
-      page.js                        (REPLACE — small change, see below)
-    api/
-      puzzles/route.js               (NEW — saves content/puzzles/<category>/)
-      shader-lessons/route.js        (NEW — saves content/shaders/)

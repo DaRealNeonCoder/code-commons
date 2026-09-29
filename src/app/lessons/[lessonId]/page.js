@@ -39,11 +39,11 @@ export default async function LessonPage({ params }) {
     </article>
   );
 
-  return (
+    return (
     <CodeWorkspace
       key={lesson.id}
       accent="amber"
-      fileName="main.py"
+      fileBaseName="main"//replace with lesson id?
       starterCode={lesson.starterCode}
       description={description}
       backHref="/lessons"

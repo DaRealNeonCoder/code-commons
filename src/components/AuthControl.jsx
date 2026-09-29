@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { authClient, useSession } from "@/lib/auth-client";
 
 export default function AuthControl() {
@@ -72,6 +73,13 @@ export default function AuthControl() {
       </button>
       {open && (
         <div className="absolute right-0 z-10 mt-3 w-40 rounded-md border border-zinc-800 bg-zinc-950 py-1 shadow-xl">
+          <Link
+            href="/profile"
+            onClick={() => setOpen(false)}
+            className="block w-full px-3 py-2 text-left font-mono text-sm text-zinc-100 hover:bg-zinc-900"
+          >
+            profile
+          </Link>
           <button
             type="button"
             onClick={() => authClient.signOut()}

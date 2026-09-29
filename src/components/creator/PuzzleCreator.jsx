@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import TextBlockEditor, { newTextBlock } from "@/components/creator/TextBlockEditor";
+import TestCaseEditor from "@/components/creator/TestCaseEditor";
 import { blocksToMarkdown } from "@/lib/blocksToMarkdown";
 import FilterFields from "@/components/filters/FilterFields";
 
@@ -12,6 +13,7 @@ export default function PuzzleCreator() {
   const [title, setTitle] = useState("");
   const [starterCode, setStarterCode] = useState("");
   const [blocks, setBlocks] = useState([newTextBlock({ size: "title", bold: true })]);
+  const [testCases, setTestCases] = useState([]);
   const [status, setStatus] = useState(null);
 
   // Replaces the old hardcoded CATEGORIES/DIFFICULTIES dropdowns — these now
@@ -23,6 +25,7 @@ export default function PuzzleCreator() {
   const [difficulty, setDifficulty] = useState("");
 
   const markdown = useMemo(() => blocksToMarkdown(blocks), [blocks]);
+  const hasIncompleteTest = testCases.some((t) => !t.expected.trim());
 
   async function handleSave() {
     setStatus("saving");
@@ -39,6 +42,8 @@ export default function PuzzleCreator() {
           languages,
           starterCode,
           content: markdown,
+          // Drop the client-only row key.
+          testCases: testCases.map(({ input, expected, hidden }) => ({ input, expected, hidden })),
         }),
       });
       const data = await res.json();
@@ -57,7 +62,9 @@ export default function PuzzleCreator() {
         </Link>
         <p className="mt-3 font-mono text-sm text-teal-600 dark:text-teal-400">/create/puzzle</p>
         <h1 className="mt-1 text-2xl font-semibold">Create a puzzle</h1>
-        <p className="mt-1 text-zinc-600 dark:text-zinc-400">Same block editor as lessons, plus difficulty and topic filters.</p>
+        <p className="mt-1 text-zinc-600 dark:text-zinc-400">
+          Same block editor as lessons, plus difficulty, topic filters and test cases.
+        </p>
 
         <section className="mt-8 rounded-md border border-zinc-200 p-5 dark:border-zinc-800">
           <h2 className="mb-4 font-mono text-sm text-zinc-500">puzzle details</h2>
@@ -92,17 +99,22 @@ export default function PuzzleCreator() {
           <label className="block text-sm font-medium" htmlFor="puzzle-starter">
             Starter code
           </label>
+          <p className="text-xs text-zinc-500">
+            Tests feed stdin, so include the input-reading scaffold and let the learner fill in the function.
+          </p>
           <textarea
             id="puzzle-starter"
             value={starterCode}
             onChange={(e) => setStarterCode(e.target.value)}
-            rows={4}
-            placeholder={"def solution():\n    pass\n"}
+            rows={6}
+            placeholder={"def solution(n):\n    pass\n\nn = int(input())\nprint(solution(n))\n"}
             className={`${fieldClass} bg-zinc-950 font-mono text-green-400`}
           />
         </section>
 
         <TextBlockEditor blocks={blocks} onChange={setBlocks} accent="teal" />
+
+        <TestCaseEditor testCases={testCases} onChange={setTestCases} />
 
         <details className="mt-6 rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
           <summary className="cursor-pointer select-none font-mono text-sm text-zinc-500">
@@ -117,12 +129,17 @@ export default function PuzzleCreator() {
           <button
             type="button"
             onClick={handleSave}
-            disabled={status === "saving" || !title.trim() || !difficulty}
+            disabled={status === "saving" || !title.trim() || !difficulty || hasIncompleteTest}
             className="rounded-md bg-teal-600 px-5 py-2.5 font-mono text-sm font-medium text-white transition-colors hover:bg-teal-700 disabled:opacity-50"
           >
             {status === "saving" ? "saving..." : "$ save puzzle"}
           </button>
 
+          {hasIncompleteTest && (
+            <p className="text-sm text-amber-600 dark:text-amber-400">
+              Every test case needs an expected output (or remove it).
+            </p>
+          )}
           {status?.ok && (
             <p className="text-sm text-teal-600 dark:text-teal-400">
               Saved.{" "}
