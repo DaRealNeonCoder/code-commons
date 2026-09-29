@@ -1,7 +1,6 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { markComplete, unmarkComplete, isComplete } from "@/lib/progress";
-
+import { setCompleted, isCompleted } from "@/lib/progress";
 const VALID_TYPES = ["lesson", "puzzle"];
 
 async function getCurrentSession() {
@@ -12,7 +11,7 @@ async function getCurrentSession() {
     // treat it as "not signed in" instead of crashing the route — a
     // response that fails to be valid JSON is what turns into a client
     // crash, not a normal error response.
-    console.error("auth.api.getSession failed:", err); // <-- check your terminal for this
+    console.error("auth.api.getSession failed:", err);
     return null;
   }
 }
@@ -32,9 +31,9 @@ export async function GET(request) {
       return Response.json({ completed: false });
     }
 
-    return Response.json({ completed: isComplete(session.user.id, itemType, itemId) });
+    return Response.json({ completed: isCompleted(session.user.id, itemType, itemId) });
   } catch (err) {
-    console.error("GET /api/progress failed:", err); // <-- check your terminal for this
+    console.error("GET /api/progress failed:", err);
     return Response.json({ error: "Something went wrong." }, { status: 500 });
   }
 }
@@ -55,15 +54,11 @@ export async function POST(request) {
       return Response.json({ error: "Invalid itemType or itemId." }, { status: 400 });
     }
 
-    if (completed) {
-      markComplete(session.user.id, itemType, itemId);
-    } else {
-      unmarkComplete(session.user.id, itemType, itemId);
-    }
+    setCompleted(session.user.id, itemType, itemId, Boolean(completed));
 
     return Response.json({ completed: Boolean(completed) });
   } catch (err) {
-    console.error("POST /api/progress failed:", err); // <-- check your terminal for this
+    console.error("POST /api/progress failed:", err);
     return Response.json({ error: "Something went wrong." }, { status: 500 });
   }
 }
