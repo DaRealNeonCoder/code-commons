@@ -3,6 +3,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import { getAllLessons } from "@/lib/lessons";
 import { loadTaxonomy, isValidSelection } from "@/lib/taxonomy";
+import { normalizePuzzleIds, findMissingPuzzleIds } from "@/lib/lessonPuzzles";
 
 const LESSONS_DIR = path.join(process.cwd(), "content/lessons");
 
@@ -60,6 +61,17 @@ export async function POST(request) {
     return Response.json({ error: "One or more areas/topics/tags/language/difficulty is not recognized." }, { status: 400 });
   }
 
+  // Lessons reference existing puzzles by ID instead of copying them. Every ID
+  // must be a safe slug that points at a real puzzle file.
+  const puzzles = normalizePuzzleIds(body.puzzles);
+  const missing = findMissingPuzzleIds(puzzles);
+  if (missing.length > 0) {
+    return Response.json(
+      { error: `No puzzle found with ID: ${missing.join(", ")}.` },
+      { status: 400 },
+    );
+  }
+
   fs.mkdirSync(LESSONS_DIR, { recursive: true });
 
   const slug = uniqueSlug(slugify(body.title));
@@ -79,7 +91,7 @@ export async function POST(request) {
     order: nextOrder,
     summary: typeof body.summary === "string" ? body.summary : "",
     available: true,
-    starterCode: typeof body.starterCode === "string" ? body.starterCode : "",
+    puzzles,
     areas: selection.areas,
     topics: selection.topics,
     tags: selection.tags,

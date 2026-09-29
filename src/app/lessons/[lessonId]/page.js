@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getLessonById } from "@/lib/lessons";
 import { getCourseForLesson } from "@/lib/courses";
+import { getLinkedPuzzles } from "@/lib/lessonPuzzles";
 import { mdxComponents, mdxOptions } from "@/lib/mdx-components";
-import CodeWorkspace from "@/components/CodeWorkspace";
+import NextPuzzleLinks from "@/components/NextPuzzleLinks";
 
 export default async function LessonPage({ params }) {
   const { lessonId } = await params;
@@ -24,31 +25,39 @@ export default async function LessonPage({ params }) {
     );
   }
 
-  const description = (
-    <article>
-      {course && (
-        <Link
-          href={`/courses/${course.id}`}
-          className="mb-3 inline-block font-mono text-xs text-amber-600 hover:underline dark:text-amber-400"
-        >
-          part of {course.title}
-        </Link>
-      )}
-      <h1 className="text-2xl font-semibold mb-4">Python: {lesson.title}</h1>
-      <MDXRemote source={lesson.content} components={mdxComponents} options={{ mdxOptions }} />
-    </article>
-  );
+  // The lesson's `puzzles` array is the chain: lesson -> puzzles[0] -> puzzles[1] -> ...
+  // This page links to the first ready puzzle; each puzzle page finds its own
+  // next step from the same array.
+  const firstPuzzle = getLinkedPuzzles(lesson.puzzles).find((x) => x.available);
 
-    return (
-    <CodeWorkspace
-      key={lesson.id}
-      accent="amber"
-      fileBaseName="main"//replace with lesson id?
-      starterCode={lesson.starterCode}
-      description={description}
-      backHref="/lessons"
-      backLabel="all lessons"
-      aiContext={lesson.content}
-    />
+  return (
+    <div className="w-full h-full overflow-y-auto px-6 py-12">
+      <div className="mx-auto max-w-3xl">
+        <Link href="/lessons" className="font-mono text-sm text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+          ← all lessons
+        </Link>
+
+        <article className="mt-4">
+          {course && (
+            <Link
+              href={`/courses/${course.id}`}
+              className="mb-3 inline-block font-mono text-xs text-amber-600 hover:underline dark:text-amber-400"
+            >
+              part of {course.title}
+            </Link>
+          )}
+          <h1 className="text-2xl font-semibold mb-4">Python: {lesson.title}</h1>
+          <MDXRemote source={lesson.content} components={mdxComponents} options={{ mdxOptions }} />
+        </article>
+
+        <NextPuzzleLinks
+          puzzle={firstPuzzle}
+          lessonId={lesson.id}
+          heading="Ready to practice?"
+          buttonLabel="$ next: start the puzzle"
+          accent="amber"
+        />
+      </div>
+    </div>
   );
 }

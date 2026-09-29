@@ -9,7 +9,7 @@ import FilterFields from "@/components/filters/FilterFields";
 export default function LessonCreator() {
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
-  const [starterCode, setStarterCode] = useState('print("Hello, World!")\n');
+  const [puzzleIds, setPuzzleIds] = useState([""]);
   const [blocks, setBlocks] = useState([
     newTextBlock({ size: "title", bold: true }),
     newTextBlock({ size: "normal" }),
@@ -23,6 +23,17 @@ export default function LessonCreator() {
   const [difficulty, setDifficulty] = useState("");
 
   const markdown = useMemo(() => blocksToMarkdown(blocks), [blocks]);
+
+  function updatePuzzleId(index, value) {
+    setPuzzleIds((ids) => ids.map((id, i) => (i === index ? value : id)));
+  }
+
+  function removePuzzleId(index) {
+    setPuzzleIds((ids) => {
+      const next = ids.filter((_, i) => i !== index);
+      return next.length ? next : [""];
+    });
+  }
 
   async function handleSave() {
     setStatus("saving");
@@ -38,7 +49,9 @@ export default function LessonCreator() {
           topics,
           tags,
           languages,
-          starterCode,
+          // Blank rows are dropped here; the server trims, de-duplicates and
+          // checks that every ID matches an existing puzzle.
+          puzzles: puzzleIds.map((id) => id.trim()).filter(Boolean),
           content: markdown,
         }),
       });
@@ -59,7 +72,7 @@ export default function LessonCreator() {
         <p className="mt-3 font-mono text-sm text-amber-600 dark:text-amber-400">/create/lesson</p>
         <h1 className="mt-1 text-2xl font-semibold">Create a lesson</h1>
         <p className="mt-1 text-zinc-600 dark:text-zinc-400">
-          Build a lesson from text blocks — no Markdown syntax required.
+          Write a lesson from text blocks — no Markdown syntax required. Link existing puzzles for readers to practice.
         </p>
 
         <section className="mt-8 rounded-md border border-zinc-200 p-5 dark:border-zinc-800">
@@ -87,32 +100,60 @@ export default function LessonCreator() {
             className="mt-1 mb-4 w-full rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
           />
 
-          <div className="mb-4">
-            <FilterFields
-              areas={areas}
-              onAreasChange={setAreas}
-              topics={topics}
-              onTopicsChange={setTopics}
-              tags={tags}
-              onTagsChange={setTags}
-              languageMode="multi"
-              languages={languages}
-              onLanguagesChange={setLanguages}
-              difficulty={difficulty}
-              onDifficultyChange={setDifficulty}
-            />
-          </div>
-
-          <label className="block text-sm font-medium" htmlFor="lesson-starter">
-            Starter code
-          </label>
-          <textarea
-            id="lesson-starter"
-            value={starterCode}
-            onChange={(e) => setStarterCode(e.target.value)}
-            rows={4}
-            className="mt-1 w-full rounded border border-zinc-300 bg-zinc-950 px-3 py-2 font-mono text-sm text-green-400 dark:border-zinc-700"
+          <FilterFields
+            areas={areas}
+            onAreasChange={setAreas}
+            topics={topics}
+            onTopicsChange={setTopics}
+            tags={tags}
+            onTagsChange={setTags}
+            languageMode="multi"
+            languages={languages}
+            onLanguagesChange={setLanguages}
+            difficulty={difficulty}
+            onDifficultyChange={setDifficulty}
           />
+        </section>
+
+        <section className="mt-6 rounded-md border border-zinc-200 p-5 dark:border-zinc-800">
+          <h2 className="font-mono text-sm text-zinc-500">linked puzzles</h2>
+          <p className="mt-1 mb-4 text-sm text-zinc-600 dark:text-zinc-400">
+            Paste the ID of an existing puzzle (its filename in <code className="font-mono">content/puzzles</code>,
+            without <code className="font-mono">.mdx</code>). The lesson links to the puzzle rather than copying it.
+            Order matters: readers go from the lesson to the first puzzle, then on to each one in turn.
+          </p>
+
+          <ul className="space-y-2">
+            {puzzleIds.map((id, index) => (
+              <li key={index} className="flex items-center gap-2">
+                <input
+                  value={id}
+                  onChange={(e) => updatePuzzleId(index, e.target.value)}
+                  placeholder="e.g. fibonacci-sum"
+                  aria-label={`Puzzle ID ${index + 1}`}
+                  autoComplete="off"
+                  spellCheck={false}
+                  className="w-full rounded border border-zinc-300 px-3 py-2 font-mono text-sm dark:border-zinc-700 dark:bg-zinc-950"
+                />
+                <button
+                  type="button"
+                  onClick={() => removePuzzleId(index)}
+                  aria-label={`Remove puzzle ID ${index + 1}`}
+                  className="rounded border border-zinc-300 px-3 py-2 font-mono text-sm text-zinc-500 hover:text-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 dark:border-zinc-700 dark:hover:text-zinc-200"
+                >
+                  remove
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          <button
+            type="button"
+            onClick={() => setPuzzleIds((ids) => [...ids, ""])}
+            className="mt-3 font-mono text-sm text-amber-600 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 dark:text-amber-400"
+          >
+            + add puzzle
+          </button>
         </section>
 
         <TextBlockEditor blocks={blocks} onChange={setBlocks} accent="amber" />

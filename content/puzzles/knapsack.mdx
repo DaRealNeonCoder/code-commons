@@ -1,0 +1,102 @@
+---
+title: "Knapsack"
+order: 9
+available: true
+areas: []
+topics: ["dynamic-programming"]
+tags: ["knapsack"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def knapsack(capacity, items):
+      # items is a list of (weight, value) tuples
+      # TODO: return the maximum total value that fits within capacity
+      pass
+
+  n, capacity = map(int, input().split())
+  items = []
+  for _ in range(n):
+      weight, value = map(int, input().split())
+      items.append((weight, value))
+  print(knapsack(capacity, items))
+testCases:
+  - input: "0 100"
+    expected: "0"
+    hidden: true
+  - input: "1 10\n100 1"
+    expected: "0"
+    hidden: true
+  - input: "5 10\n2 5\n2 5\n2 5\n2 5\n10 21"
+    expected: "21"
+    hidden: true
+  - input: "5 10\n2 20\n2 20\n2 20\n2 20\n10 50"
+    expected: "80"
+    hidden: true
+  - input: "4 10\n5 10\n4 40\n6 30\n4 50"
+    expected: "90"
+    hidden: true
+  - input: "8 104\n25 350\n35 400\n45 450\n5 20\n25 70\n3 8\n2 5\n2 5"
+    expected: "900"
+    hidden: true
+  - input: "15 750\n70 135\n73 139\n77 149\n80 150\n82 156\n87 163\n90 173\n94 184\n98 192\n106 201\n110 210\n113 214\n115 221\n118 229\n120 240"
+    expected: "1458"
+    hidden: true
+  - input: "3 50\n10 60\n20 100\n30 120"
+    expected: "220"
+    hidden: true
+  - input: "3 10\n6 30\n5 20\n5 20"
+    expected: "40"
+    hidden: true
+  - input: "1 0\n1 10"
+    expected: "0"
+    hidden: true
+  - input: "14 60\n5 73\n25 9\n9 16\n16 58\n16 84\n13 27\n4 63\n1 50\n14 78\n25 1\n23 58\n9 30\n19 14\n11 4"
+    expected: "406"
+    hidden: true
+  - input: "18 100\n4 12\n6 47\n11 95\n20 33\n39 28\n39 5\n38 88\n11 56\n26 103\n33 48\n35 120\n29 65\n18 116\n3 112\n2 47\n30 120\n21 117\n25 55"
+    expected: "693"
+    hidden: true
+---
+
+Lhakpa is a [Sherpa][sherpa] mountain guide and porter.
+After months of careful planning, the expedition Lhakpa works for is about to leave.
+She will be paid the value she carried to the base camp.
+
+In front of her are many items, each with a value and weight.
+Lhakpa would gladly take all of the items, but her knapsack can only hold so much weight.
+
+[sherpa]: https://en.wikipedia.org/wiki/Sherpa_people#Mountaineering
+
+Your task is to determine which items to take so that the total value of her selection is maximized, taking into account the knapsack's carrying capacity.
+
+Items will be represented as a list of items.
+Each item will have a weight and value.
+All values given will be strictly positive.
+Lhakpa can take only one of each item.
+
+For example:
+
+```text
+Items: [
+  { "weight": 5, "value": 10 },
+  { "weight": 4, "value": 40 },
+  { "weight": 6, "value": 30 },
+  { "weight": 4, "value": 50 }
+]
+
+Knapsack Maximum Weight: 10
+```
+
+For the above, the first item has weight 5 and value 10, the second item has weight 4 and value 40, and so on.
+In this example, Lhakpa should take the second and fourth item to maximize her value, which, in this case, is 90.
+She cannot get more than 90 as her knapsack has a weight limit of 10.
+
+## Input
+
+The first line contains two integers: the number of items `n` and the knapsack's maximum weight `W`. Each of the next `n` lines contains one item's `weight` and `value`.
+
+## Output
+
+Print the maximum total value you can carry without exceeding weight `W`. Each item can be taken at most once.
+
+*Adapted from the [Knapsack](https://github.com/exercism/problem-specifications/tree/main/exercises/knapsack) exercise on Exercism (MIT License). Original source: Wikipedia (https://en.wikipedia.org/wiki/Knapsack_problem).*
