@@ -1,4 +1,4 @@
-import { getCourseById, getCourseForLesson } from "@/lib/courses";
+import { getCourseById, getCoursesForLesson } from "@/lib/courses";
 import { getLessonById } from "@/lib/lessons";
 import { getLinkedPuzzles, LESSON_ID_PATTERN } from "@/lib/lessonPuzzles";
 
@@ -35,15 +35,23 @@ export function getNextLessonInOutline(outline, lessonId) {
 // Everything a lesson/puzzle page needs to behave as part of a course, or null
 // when the lesson isn't in a course (or, for puzzles, when the puzzle isn't in
 // that lesson's chain).
-export function getCourseContext(lessonId, puzzleId = null) {
+//
+// A lesson can be in several courses. `courseId` (from ?course=) says which one
+// the reader is following. It is only compared against the courses that really
+// contain the lesson, so a stale or made-up value is ignored and we fall back to
+// the first course that has it.
+export function getCourseContext(lessonId, puzzleId = null, courseId = null) {
   if (typeof lessonId !== "string" || !LESSON_ID_PATTERN.test(lessonId)) return null;
   const lesson = getLessonById(lessonId);
   if (!lesson) return null;
 
   if (puzzleId && !getLinkedPuzzles(lesson.puzzles).some((p) => p.id === puzzleId)) return null;
 
-  const course = getCourseForLesson(lessonId);
-  if (!course) return null;
+  const candidates = getCoursesForLesson(lessonId);
+  if (candidates.length === 0) return null;
+  const course =
+    (typeof courseId === "string" && candidates.find((c) => c.id === courseId)) || candidates[0];
+
   const outline = getCourseOutline(course.id);
   if (!outline) return null;
 

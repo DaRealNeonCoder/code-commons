@@ -127,13 +127,13 @@ export default function Home() {
       {/* Divider + How it works */}
       <section className="mx-auto max-w-5xl px-6">
 
-        {/* Divider ABOVE the three things */}
-        <div className="border-t border-zinc-800" />
+        {/* Space before the divider */}
+        <div className="mt-48 border-t border-zinc-800" />
 
         {/* Three things — hidden until scrolled into view */}
         <div
           ref={howItWorksRef}
-          className={`pt-32 pb-16 grid gap-8 sm:grid-cols-3 transition-all duration-700 ease-out ${
+          className={`pt-6 pb-16 grid gap-8 sm:grid-cols-3 transition-all duration-700 ease-out ${
             howItWorksVisible
               ? "opacity-100 translate-y-0"
               : "opacity-0 translate-y-8"

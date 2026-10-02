@@ -46,6 +46,15 @@ export const PROJECT_TYPES = [
     hoverBorder: "hover:border-emerald-400",
     badge: "border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
   },
+  {
+    id: "course",
+    label: "Course",
+    path: "06_course/",
+    description: "Link lessons together, in order, into a course.",
+    accent: "text-rose-600 dark:text-rose-400",
+    hoverBorder: "hover:border-rose-400",
+    badge: "border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-400",
+  },
 ];
 
 export const TYPE_IDS = PROJECT_TYPES.map((t) => t.id);

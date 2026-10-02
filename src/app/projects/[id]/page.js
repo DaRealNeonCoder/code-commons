@@ -1,5 +1,3 @@
-// PUT AT: app/projects/[id]/page.js (NEW file; create the folders app/projects/[id]/ if they don't exist)
-
 import Link from "next/link";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
@@ -8,6 +6,7 @@ import { auth } from "@/lib/auth";
 import { getProject } from "@/lib/creatorProjects";
 import { mdxComponents, mdxOptions } from "@/lib/mdx-components";
 import CodeWorkspace from "@/components/CodeWorkspace";
+import RatedShell from "@/components/rating/RatedShell";
 
 const LANGUAGE_IDS = ["python", "cpp", "rust"];
 
@@ -50,15 +49,17 @@ export default async function CodingProjectPage({ params }) {
   );
 
   return (
-    <CodeWorkspace
-      accent="emerald"
-      fileBaseName="main"
-      starterCode={{ [language]: starterCode }}
-      lockedLanguage={language}
-      description={description}
-      backHref={isOwner ? "/create" : undefined}
-      backLabel="your projects"
-      layoutToggle
-    />
+    <RatedShell itemType="project" itemId={project.id}>
+      <CodeWorkspace
+        accent="emerald"
+        fileBaseName="main"
+        starterCode={{ [language]: starterCode }}
+        lockedLanguage={language}
+        description={description}
+        backHref={isOwner ? "/create" : undefined}
+        backLabel="your projects"
+        layoutToggle
+      />
+    </RatedShell>
   );
 }

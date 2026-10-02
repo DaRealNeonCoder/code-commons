@@ -3,9 +3,10 @@ import { getAllLessons } from "./lessons";
 import { getAllPuzzles } from "./puzzles";
 import { getAllShaders } from "./shaders/shaders";
 import { getAllCircuits } from "./circuits/circuits";
+import { getAllProjects } from "./codingProjects";
 import { loadTaxonomy, expandTaxonomy, labelFor } from "./taxonomy";
-import { getCourseForLesson } from "./courses";
-import { getAllCourses } from "./courses"; // alongside the existing getCourseForLesson import
+import { getCourseForLesson, getAllCourses } from "./courses";
+import { getRatingTotals, wilsonScore } from "./ratings";
 
 const HREF_PREFIX = {
   course: "/courses",
@@ -13,7 +14,14 @@ const HREF_PREFIX = {
   puzzle: "/puzzles",
   shader: "/shaders",
   circuit: "/circuits",
+  project: "/projects",
 };
+
+// How much a perfect rating can lift a result, relative to a perfect text
+// match (1.0). 0.25 means rating can reorder close matches but a clearly
+// better text match still wins.
+const RATING_WEIGHT = 0.25;
+
 function toContentItem(raw, type, taxonomy) {
   const areas = raw.areas || [];
   const topics = raw.topics || [];
@@ -64,7 +72,8 @@ export function getAllContent() {
   const puzzles = getAllPuzzles().map((puzzle) => toContentItem(puzzle, "puzzle", taxonomy));
   const shaders = getAllShaders().map((shader) => toContentItem(shader, "shader", taxonomy));
   const circuits = getAllCircuits().map((circuit) => toContentItem(circuit, "circuit", taxonomy));
-  return [...courses, ...lessons, ...puzzles, ...shaders, ...circuits];
+  const projects = getAllProjects().map((project) => toContentItem(project, "project", taxonomy));
+  return [...courses, ...lessons, ...puzzles, ...shaders, ...circuits, ...projects];
 }
 
 function matchesFilters(item, filters) {
@@ -97,9 +106,31 @@ function courseToRaw(course, lessonsById) {
     ...course,
   };
 }
+
+// Adds { likes, dislikes, score } to an item. score is the Wilson lower
+// bound (0..1), so a handful of likes can't outrank a well-established item.
+function withRating(item, totals) {
+  const { likes = 0, dislikes = 0 } = totals.get(`${item.type}:${item.id}`) ?? {};
+  return { ...item, rating: { likes, dislikes, score: wilsonScore(likes, dislikes) } };
+}
+
+// Best rated first; ties fall back to net likes, then title so order is stable.
+function compareByRating(a, b) {
+  return (
+    b.rating.score - a.rating.score ||
+    b.rating.likes - b.rating.dislikes - (a.rating.likes - a.rating.dislikes) ||
+    (a.title || "").localeCompare(b.title || "")
+  );
+}
+
 // types/areas/topics/tags/languages/difficulty are all arrays: values
 // within one axis are OR'd together, axes are AND'd together. An empty
 // array for an axis means "no filter on that axis."
+//
+// Ordering:
+//   no query            -> by rating
+//   sort: "relevance"   -> text relevance, boosted by rating (default)
+//   sort: "rating"      -> matches ordered purely by rating
 export function searchContent({
   query,
   types = [],
@@ -108,16 +139,18 @@ export function searchContent({
   tags = [],
   languages = [],
   difficulty = [],
+  sort = "relevance",
 } = {}) {
-  const items = getAllContent();
+  const totals = getRatingTotals();
+  const items = getAllContent().map((item) => withRating(item, totals));
   const filters = { types, areas, topics, tags, languages, difficulty };
   const trimmedQuery = (query || "").trim();
 
   if (!trimmedQuery) {
-    return items.filter((item) => matchesFilters(item, filters));
+    return items.filter((item) => matchesFilters(item, filters)).sort(compareByRating);
   }
 
-  // Lessons/puzzles/shaders/circuits are separate id namespaces, so a
+  // Lessons/puzzles/shaders/circuits/projects are separate id namespaces, so a
   // composite key avoids collisions if two types ever share a slug.
   const keyOf = (item) => `${item.type}:${item.id}`;
   const byKey = new Map(items.map((item) => [keyOf(item), item]));
@@ -138,7 +171,22 @@ export function searchContent({
     }))
   );
 
-  return index
-    .search(trimmedQuery, { filter: (result) => matchesFilters(byKey.get(result.id), filters) })
-    .map((result) => byKey.get(result.id));
+  const hits = index.search(trimmedQuery, {
+    filter: (result) => matchesFilters(byKey.get(result.id), filters),
+  });
+
+  if (sort === "rating") {
+    return hits.map((hit) => byKey.get(hit.id)).sort(compareByRating);
+  }
+
+  // MiniSearch scores are unbounded floats, so normalize against the best hit
+  // before mixing in the rating; otherwise the boost would be meaningless.
+  const topScore = hits[0]?.score || 1;
+  return hits
+    .map((hit) => {
+      const item = byKey.get(hit.id);
+      return { item, rank: hit.score / topScore + RATING_WEIGHT * item.rating.score };
+    })
+    .sort((a, b) => b.rank - a.rank)
+    .map(({ item }) => item);
 }

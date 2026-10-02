@@ -1,0 +1,17 @@
+{
+  "id": "chip_murf77s1_4",
+  "name": "My Chip",
+  "color": "#8b5cf6",
+  "numInputs": 1,
+  "numOutputs": 1,
+  "gates": [],
+  "outputSources": [
+    {
+      "kind": "const",
+      "value": false
+    }
+  ],
+  "visibility": "public",
+  "ownerId": "youxrXgxknsZCAOXNQxHgEUjbPNNo3d4",
+  "ownerName": "Wonky Studios"
+}

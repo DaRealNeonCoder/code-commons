@@ -98,3 +98,21 @@ export function deleteProject(id, userId) {
     .run(id, userId);
   return result.changes > 0;
 }
+
+// Every project of one type, across all users. Used to build the public search index.
+export function listProjectsByType(type) {
+  return db
+    .prepare(
+      `SELECT id, user_id, title, data
+       FROM creator_projects
+       WHERE type = ?
+       ORDER BY updated_at DESC`
+    )
+    .all(type)
+    .map((row) => ({
+      id: row.id,
+      userId: row.user_id,
+      title: row.title,
+      data: parseData(row.data),
+    }));
+}

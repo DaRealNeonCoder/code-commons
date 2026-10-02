@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import LogicSimulator from "@/components/circuits/LogicSimulator";
 import MdxBody from "@/components/mdx/MdxBody";
+import RatedShell from "@/components/rating/RatedShell";
 import { getCircuitById } from "@/lib/circuits/circuits";
 
 export async function generateMetadata({ params }) {
@@ -34,12 +35,14 @@ export default async function CircuitDetailPage({ params }) {
 
   return (
     <main className="flex min-h-[calc(100vh-56px)] flex-1 flex-col bg-zinc-950">
-      <LogicSimulator
-        lessonTitle={circuit.title}
-        lessonContent={<MdxBody source={circuit.content} />}
-        initialCircuit={initialCircuit}
-        showProjectIO={false}
-      />
+      <RatedShell itemType="circuit" itemId={circuit.id} variant="dark">
+        <LogicSimulator
+          lessonTitle={circuit.title}
+          lessonContent={<MdxBody source={circuit.content} />}
+          initialCircuit={initialCircuit}
+          showProjectIO={false}
+        />
+      </RatedShell>
     </main>
   );
 }

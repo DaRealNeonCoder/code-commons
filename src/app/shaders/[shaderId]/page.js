@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import ShaderPlayground from "@/components/shaders/ShaderPlayground";
 import MdxBody from "@/components/mdx/MdxBody";
+import RatedShell from "@/components/rating/RatedShell";
 import { getShaderById } from "@/lib/shaders/shaders";
 
 export async function generateMetadata({ params }) {
@@ -26,10 +27,12 @@ export default async function ShaderDetailPage({ params }) {
   }
 
   return (
-    <ShaderPlayground
-      lessonTitle={shader.title}
-      lessonContent={<MdxBody source={shader.content} />}
-      initialCode={shader.starterCode}
-    />
+    <RatedShell itemType="shader" itemId={shader.id} variant="dark">
+      <ShaderPlayground
+        lessonTitle={shader.title}
+        lessonContent={<MdxBody source={shader.content} />}
+        initialCode={shader.starterCode}
+      />
+    </RatedShell>
   );
 }

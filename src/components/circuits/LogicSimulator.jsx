@@ -1,5 +1,5 @@
 "use client";
-
+import { CreateChipModal, ImportChipModal } from "@/components/circuits/ChipModals";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import {
   canConnect,
@@ -489,23 +489,32 @@ export default function LogicSimulator({
 
   // Compiles the chip locally (so it's usable immediately) and also saves it
   // server-side so it shows up in "Import Chip" for other projects/sessions.
-  async function handleCreateChip(name, color) {
-    pushHistory();
-    const chip = compileCircuitToChip(components, connections, chips, name, color);
-    setChips((prev) => ({ ...prev, [chip.id]: chip }));
-    setModalOpen(false);
-    try {
-      const res = await fetch("/api/chips", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(chip),
-      });
-      if (!res.ok) throw new Error();
-      showToast("success", `"${chip.name}" saved — importable from other projects`);
-    } catch {
-      showToast("error", `"${chip.name}" was created, but saving it to the server failed`);
+  async function handleCreateChip(name, color, isPublic) {
+  pushHistory();
+  const chip = compileCircuitToChip(components, connections, chips, name, color);
+  setChips((prev) => ({ ...prev, [chip.id]: chip }));
+  setModalOpen(false);
+  try {
+    const res = await fetch("/api/chips", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...chip, visibility: isPublic ? "public" : "private" }),
+    });
+    if (res.status === 401) {
+      showToast("error", `"${chip.name}" was created, but sign in to save it to the server`);
+      return;
     }
+    if (!res.ok) throw new Error();
+    showToast(
+      "success",
+      isPublic
+        ? `"${chip.name}" saved: public, anyone can import it`
+        : `"${chip.name}" saved: private, only you can import it`
+    );
+  } catch {
+    showToast("error", `"${chip.name}" was created, but saving it to the server failed`);
   }
+}
 
   function handleImportChip(chip) {
     pushHistory();
@@ -857,127 +866,6 @@ function PaletteSwatch({ label, className, style, onDragStart }) {
       style={style}
     >
       {label}
-    </div>
-  );
-}
-
-function CreateChipModal({ onCancel, onConfirm }) {
-  const [name, setName] = useState("My Chip");
-  const [color, setColor] = useState(PRESET_COLORS[0]);
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onCancel();
-      }}
-    >
-      <div className="w-80 rounded-lg border border-zinc-800 bg-zinc-900 p-5 font-mono text-sm text-zinc-200 shadow-xl">
-        <h2 className="mb-4 text-sm font-semibold text-white">Create Chip</h2>
-        <label className="mb-1 block text-xs text-zinc-500">Name</label>
-        <input
-          autoFocus
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="mb-4 w-full rounded-md border border-zinc-700 bg-zinc-950 px-2 py-1.5 text-sm text-white outline-none focus:border-violet-500"
-        />
-        <label className="mb-2 block text-xs text-zinc-500">Color</label>
-        <div className="mb-5 flex flex-wrap gap-2">
-          {PRESET_COLORS.map((c) => (
-            <button
-              key={c}
-              onClick={() => setColor(c)}
-              className={`h-7 w-7 rounded-full transition-transform ${color === c ? "scale-110 ring-2 ring-white" : ""}`}
-              style={{ backgroundColor: c }}
-            />
-          ))}
-        </div>
-        <div className="flex justify-end gap-2">
-          <button onClick={onCancel} className="rounded-md px-3 py-1.5 text-xs text-zinc-400 hover:text-white">
-            Cancel
-          </button>
-          <button
-            onClick={() => onConfirm(name.trim() || "Chip", color)}
-            className="rounded-md bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-violet-500"
-          >
-            Create
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ImportChipModal({ onClose, onImport, alreadyImportedIds }) {
-  const [chips, setChips] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch("/api/chips")
-      .then((res) => res.json())
-      .then((data) => {
-        if (cancelled) return;
-        if (data.ok) setChips(data.chips);
-        else setError("Couldn't load chips");
-      })
-      .catch(() => {
-        if (!cancelled) setError("Couldn't load chips");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div className="flex max-h-[70vh] w-96 flex-col rounded-lg border border-zinc-800 bg-zinc-900 p-5 font-mono text-sm text-zinc-200 shadow-xl">
-        <h2 className="mb-1 text-sm font-semibold text-white">Import Chip</h2>
-        <p className="mb-3 text-[11px] text-zinc-500">Browsing every chip saved on the server. Search is coming soon.</p>
-        <input
-          disabled
-          placeholder="search coming soon…"
-          className="mb-3 w-full cursor-not-allowed rounded-md border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-500 outline-none placeholder:text-zinc-600"
-        />
-        <div className="flex-1 space-y-1 overflow-y-auto">
-          {loading && <p className="px-1 text-xs text-zinc-500">Loading chips…</p>}
-          {error && <p className="px-1 text-xs text-red-400">{error}</p>}
-          {!loading && !error && chips.length === 0 && (
-            <p className="px-1 text-xs text-zinc-500">No chips have been saved yet — create one first.</p>
-          )}
-          {chips.map((chip) => {
-            const alreadyImported = alreadyImportedIds.has(chip.id);
-            return (
-              <button
-                key={chip.id}
-                onClick={() => onImport(chip)}
-                disabled={alreadyImported}
-                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                <span className="h-4 w-4 shrink-0 rounded" style={{ backgroundColor: chip.color }} />
-                <span className="flex-1 truncate">{chip.name}</span>
-                <span className="shrink-0 text-[10px] text-zinc-500">
-                  {chip.numInputs}&rarr;{chip.numOutputs}
-                </span>
-                {alreadyImported && <span className="shrink-0 text-[10px] text-zinc-600">added</span>}
-              </button>
-            );
-          })}
-        </div>
-        <div className="mt-4 flex justify-end">
-          <button onClick={onClose} className="rounded-md px-3 py-1.5 text-xs text-zinc-400 hover:text-white">
-            Close
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

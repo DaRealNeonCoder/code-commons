@@ -8,8 +8,6 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const isBrowse = pathname.startsWith("/browse");
-  const isShaders = pathname.startsWith("/shaders");
-  const isCircuits = pathname.startsWith("/circuits");
   const isCreate = pathname.startsWith("/create");
 
   return (
@@ -28,28 +26,6 @@ export default function Navbar() {
           }`}
         >
           browse
-        </Link>
-
-        <Link
-          href="/shaders"
-          className={`transition-colors ${
-            isShaders
-              ? "text-fuchsia-400"
-              : "text-zinc-400 hover:text-white"
-          }`}
-        >
-          shaders
-        </Link>
-
-        <Link
-          href="/circuits"
-          className={`transition-colors ${
-            isCircuits
-              ? "text-sky-400"
-              : "text-zinc-400 hover:text-white"
-          }`}
-        >
-          circuits
         </Link>
 
         <Link

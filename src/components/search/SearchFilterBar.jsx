@@ -20,6 +20,7 @@ const TYPE_OPTIONS = [
   { id: "puzzle", label: "Puzzles" },
   { id: "shader", label: "Shaders" },
   { id: "circuit", label: "Circuits" },
+  { id: "project", label: "Projects" },
 ];
 
 export default function SearchFilterBar({ taxonomy, showTypeFilter = true }) {
@@ -132,7 +133,7 @@ export default function SearchFilterBar({ taxonomy, showTypeFilter = true }) {
         <input
           value={queryInput}
           onChange={(e) => setQueryInput(e.target.value)}
-          placeholder="Search lessons, puzzles, shaders, and circuits..."
+          placeholder="Search lessons, puzzles, shaders, circuits, and projects..."
           className="w-full rounded-md border border-zinc-300 px-4 py-2.5 text-sm dark:border-zinc-700 dark:bg-zinc-950"
         />
 

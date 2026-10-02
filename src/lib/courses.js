@@ -24,14 +24,18 @@ export function getCourseById(id) {
   return readCourseFile(`${id}.json`);
 }
 
-// Reverse lookup: does this lesson belong to a course? Used to show a
-// "part of <course>" backlink without lessons needing to declare their own
-// course membership (avoids two sources of truth for the same fact).
+// Reverse lookup: every course that contains this lesson. Lessons don't declare
+// their own course membership (avoids two sources of truth for the same fact),
+// and one lesson can be in several courses.
+export function getCoursesForLesson(lessonId) {
+  return getAllCourses()
+    .filter((course) => course.lessons.includes(lessonId))
+    .map((course) => ({ id: course.id, title: course.title }));
+}
+
+// The first course containing this lesson, or null. This is the default for
+// links that don't say which course the reader came from (search results,
+// direct URLs). Course-aware links pass ?course= and use getCoursesForLesson.
 export function getCourseForLesson(lessonId) {
-  for (const course of getAllCourses()) {
-    if (course.lessons.includes(lessonId)) {
-      return { id: course.id, title: course.title };
-    }
-  }
-  return null;
+  return getCoursesForLesson(lessonId)[0] ?? null;
 }

@@ -10,6 +10,7 @@ import CodeWorkspace from "@/components/CodeWorkspace";
 import NextPuzzleLinks from "@/components/NextPuzzleLinks";
 import NextLessonLink from "@/components/NextLessonLink";
 import CourseShell from "@/components/CourseShell";
+import RatedShell from "@/components/rating/RatedShell";
 
 export default async function PuzzlePage({ params, searchParams }) {
   const { puzzleId } = await params;
@@ -31,11 +32,14 @@ export default async function PuzzlePage({ params, searchParams }) {
   const { checkable, sampleTests, hiddenTestCount } = getClientTestInfo(puzzle);
 
   const lessonId = typeof query?.lesson === "string" ? query.lesson : null;
+  const requestedCourseId = typeof query?.course === "string" ? query.course : null;
   const nextPuzzle = lessonId ? getNextPuzzleInChain(lessonId, puzzle.id) : null;
 
   // Non-null only when the lesson is in a course AND this puzzle is really in
   // its chain. No next puzzle means end of chain, so the next step is the next lesson.
-  const ctx = lessonId ? getCourseContext(lessonId, puzzle.id) : null;
+  // ?course= picks which course when the lesson is in several; it's ignored
+  // unless that course really contains the lesson.
+  const ctx = lessonId ? getCourseContext(lessonId, puzzle.id, requestedCourseId) : null;
   const userId = ctx ? await getCurrentUserId() : null;
   const progress = ctx ? await getCourseProgress(userId, ctx.outline) : null;
 
@@ -45,26 +49,29 @@ export default async function PuzzlePage({ params, searchParams }) {
       <h1 className="mt-1 text-2xl font-semibold mb-4">{puzzle.title}</h1>
       <MDXRemote source={puzzle.content} components={mdxComponents} options={{ mdxOptions }} />
 
-      <NextPuzzleLinks puzzle={nextPuzzle} lessonId={lessonId} />
+      {/* Pass only the validated course ID, never the raw query value. */}
+      <NextPuzzleLinks puzzle={nextPuzzle} lessonId={lessonId} courseId={ctx?.outline.id} />
       {ctx && !nextPuzzle && <NextLessonLink course={ctx.outline} nextLesson={ctx.nextLesson} />}
     </article>
   );
 
   return (
     <CourseShell outline={ctx?.outline} progress={progress} lessonId={lessonId} puzzleId={puzzle.id}>
-      <CodeWorkspace
-        accent="teal"
-        fileBaseName={`${puzzle.id.replace(/-/g, "_")}`}
-        starterCode={puzzle.starterCode}
-        description={description}
-        backHref="/puzzles"
-        backLabel="all puzzles"
-        itemType="puzzle"
-        itemId={puzzle.id}
-        checkPuzzleId={checkable ? puzzle.id : undefined}
-        sampleTests={sampleTests}
-        hiddenTestCount={hiddenTestCount}
-      />
+      <RatedShell itemType="puzzle" itemId={puzzle.id}>
+        <CodeWorkspace
+          accent="teal"
+          fileBaseName={`${puzzle.id.replace(/-/g, "_")}`}
+          starterCode={puzzle.starterCode}
+          description={description}
+          backHref="/puzzles"
+          backLabel="all puzzles"
+          itemType="puzzle"
+          itemId={puzzle.id}
+          checkPuzzleId={checkable ? puzzle.id : undefined}
+          sampleTests={sampleTests}
+          hiddenTestCount={hiddenTestCount}
+        />
+      </RatedShell>
     </CourseShell>
   );
 }
