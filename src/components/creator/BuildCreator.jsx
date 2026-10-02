@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import TextBlockEditor, { newTextBlock } from "@/components/creator/TextBlockEditor";
-import TestCaseEditor, { newTestCase } from "@/components/creator/TestCaseEditor";
 import { blocksToMarkdown } from "@/lib/blocksToMarkdown";
 import FilterFields from "@/components/filters/FilterFields";
 import useProjectAutosave from "@/components/creator/useProjectAutosave";
@@ -11,30 +10,41 @@ import ProjectBar from "@/components/creator/ProjectBar";
 
 const fieldClass = "mt-1 w-full rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950";
 
-export default function PuzzleCreator({ project }) {
+// Same languages CodeWorkspace can run.
+const STARTER_LANGUAGES = [
+  { id: "python", label: "Python", placeholder: 'print("Hello from my build!")\n' },
+  {
+    id: "cpp",
+    label: "C++",
+    placeholder: '#include <iostream>\n\nint main() {\n    std::cout << "Hello from my build!\\n";\n}\n',
+  },
+  { id: "rust", label: "Rust", placeholder: 'fn main() {\n    println!("Hello from my build!");\n}\n' },
+];
+
+// Accepts a plain string (treated as Python) or { python, cpp, rust }.
+function normalizeStarter(value) {
+  if (typeof value === "string") return { python: value };
+  const out = {};
+  if (value && typeof value === "object") {
+    for (const { id } of STARTER_LANGUAGES) {
+      if (typeof value[id] === "string") out[id] = value[id];
+    }
+  }
+  return out;
+}
+
+export default function BuildCreator({ project }) {
   const saved = project.data ?? {};
 
   const [title, setTitle] = useState(project.title ?? "");
-  const [starterCode, setStarterCode] = useState(saved.starterCode ?? "");
+  const [starterCode, setStarterCode] = useState(() => normalizeStarter(saved.starterCode));
+  const [starterLang, setStarterLang] = useState("python");
   const [blocks, setBlocks] = useState(
     Array.isArray(saved.blocks) ? saved.blocks : [newTextBlock({ size: "title", bold: true })]
   );
-  // Saved cases have no `key` (it's client-only), so give them stable ones. These are
-  // deterministic rather than from the module counter, because the ids rendered from
-  // them (`${key}-input`) must match between server render and hydration.
-  const [testCases, setTestCases] = useState(
-    Array.isArray(saved.testCases)
-      ? saved.testCases.map((t, i) =>
-          newTestCase({
-            key: `tc-saved-${i}`,
-            input: t.input ?? "",
-            expected: t.expected ?? "",
-            hidden: Boolean(t.hidden),
-          })
-        )
-      : []
-  );
   const [status, setStatus] = useState(null);
+  // Id of the public page once saved. Stored with the project so the link survives a reload.
+  const [publishedId, setPublishedId] = useState(saved.publishedId ?? null);
 
   // These come from the same taxonomy the search bar filters against.
   const [areas, setAreas] = useState(saved.areas ?? []);
@@ -44,24 +54,23 @@ export default function PuzzleCreator({ project }) {
   const [difficulty, setDifficulty] = useState(saved.difficulty ?? "");
 
   const markdown = useMemo(() => blocksToMarkdown(blocks), [blocks]);
-  const hasIncompleteTest = testCases.some((t) => !t.expected.trim());
-  // Drop the client-only row key.
-  const cleanTestCases = testCases.map(({ input, expected, hidden }) => ({ input, expected, hidden }));
+  const activeLanguage = STARTER_LANGUAGES.find((l) => l.id === starterLang) ?? STARTER_LANGUAGES[0];
 
   const saveState = useProjectAutosave({
     projectId: project.id,
     enabled: project.canEdit,
     title,
-    data: { starterCode, blocks, testCases: cleanTestCases, areas, topics, tags, languages, difficulty },
+    data: { starterCode, blocks, areas, topics, tags, languages, difficulty, publishedId },
   });
 
   async function handleSave() {
     setStatus("saving");
     try {
-      const res = await fetch("/api/puzzles", {
+      const res = await fetch("/api/builds", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          projectId: project.id,
           title,
           difficulty,
           areas,
@@ -70,12 +79,12 @@ export default function PuzzleCreator({ project }) {
           languages,
           starterCode,
           content: markdown,
-          testCases: cleanTestCases,
         }),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Something went wrong.");
-      setStatus({ ok: data });
+      setPublishedId(data.id);
+      setStatus({ ok: true });
     } catch (err) {
       setStatus({ error: err.message });
     }
@@ -88,28 +97,28 @@ export default function PuzzleCreator({ project }) {
           ← /create
         </Link>
         <ProjectBar
-          label="/create/puzzle"
-          accentClass="text-teal-600 dark:text-teal-400"
+          label="/create/build"
+          accentClass="text-indigo-600 dark:text-indigo-400"
           saveState={saveState}
           canEdit={project.canEdit}
         />
-        <h1 className="mt-1 text-2xl font-semibold">Create a puzzle</h1>
+        <h1 className="mt-1 text-2xl font-semibold">Create a build</h1>
         <p className="mt-1 text-zinc-600 dark:text-zinc-400">
-          Same block editor as lessons, plus difficulty, topic filters and test cases.
+          Show off something you made. Write about it on the left; visitors can run and tweak your code on the right.
         </p>
 
         <fieldset disabled={!project.canEdit} className="m-0 min-w-0 border-0 p-0">
           <section className="mt-8 rounded-md border border-zinc-200 p-5 dark:border-zinc-800">
-            <h2 className="mb-4 font-mono text-sm text-zinc-500">puzzle details</h2>
+            <h2 className="mb-4 font-mono text-sm text-zinc-500">build details</h2>
 
-            <label className="block text-sm font-medium" htmlFor="puzzle-title">
+            <label className="block text-sm font-medium" htmlFor="build-title">
               Title
             </label>
             <input
-              id="puzzle-title"
+              id="build-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Two Sum"
+              placeholder="e.g. Snake in 60 lines"
               className={`mb-4 ${fieldClass}`}
             />
 
@@ -129,25 +138,48 @@ export default function PuzzleCreator({ project }) {
               />
             </div>
 
-            <label className="block text-sm font-medium" htmlFor="puzzle-starter">
-              Starter code
+            <label className="block text-sm font-medium" htmlFor="build-starter">
+              Code
             </label>
             <p className="text-xs text-zinc-500">
-              Tests feed stdin, so include the input-reading scaffold and let the learner fill in the function.
+              Visitors start from this code. They can edit and run it, but their changes are never saved. If you fill in
+              only one language, the editor is locked to it.
             </p>
+            <div role="tablist" aria-label="Code language" className="mt-2 flex gap-1">
+              {STARTER_LANGUAGES.map((lang) => {
+                const active = lang.id === starterLang;
+                const hasCode = Boolean(starterCode[lang.id]?.trim());
+                return (
+                  <button
+                    key={lang.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => setStarterLang(lang.id)}
+                    className={`rounded border px-3 py-1 font-mono text-xs transition-colors ${
+                      active
+                        ? "border-indigo-500 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+                        : "border-zinc-300 text-zinc-500 hover:text-zinc-900 dark:border-zinc-700 dark:hover:text-zinc-100"
+                    }`}
+                  >
+                    {lang.label}
+                    {hasCode ? " •" : ""}
+                  </button>
+                );
+              })}
+            </div>
             <textarea
-              id="puzzle-starter"
-              value={starterCode}
-              onChange={(e) => setStarterCode(e.target.value)}
-              rows={6}
-              placeholder={"def solution(n):\n    pass\n\nn = int(input())\nprint(solution(n))\n"}
+              id="build-starter"
+              value={starterCode[starterLang] ?? ""}
+              onChange={(e) => setStarterCode((prev) => ({ ...prev, [starterLang]: e.target.value }))}
+              rows={10}
+              spellCheck={false}
+              placeholder={activeLanguage.placeholder}
               className={`${fieldClass} bg-zinc-950 font-mono text-green-400`}
             />
           </section>
 
           <TextBlockEditor blocks={blocks} onChange={setBlocks} accent="teal" />
-
-          <TestCaseEditor testCases={testCases} onChange={setTestCases} />
 
           <details className="mt-6 rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
             <summary className="cursor-pointer select-none font-mono text-sm text-zinc-500">
@@ -162,21 +194,16 @@ export default function PuzzleCreator({ project }) {
             <button
               type="button"
               onClick={handleSave}
-              disabled={status === "saving" || !title.trim() || !difficulty || hasIncompleteTest}
-              className="rounded-md bg-teal-600 px-5 py-2.5 font-mono text-sm font-medium text-white transition-colors hover:bg-teal-700 disabled:opacity-50"
+              disabled={status === "saving" || !title.trim() || !difficulty}
+              className="rounded-md bg-indigo-600 px-5 py-2.5 font-mono text-sm font-medium text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
             >
-              {status === "saving" ? "saving..." : "$ save puzzle"}
+              {status === "saving" ? "saving..." : "$ save build"}
             </button>
 
-            {hasIncompleteTest && (
-              <p className="text-sm text-amber-600 dark:text-amber-400">
-                Every test case needs an expected output (or remove it).
-              </p>
-            )}
-            {status?.ok && (
-              <p className="text-sm text-teal-600 dark:text-teal-400">
-                Saved.{" "}
-                <Link href={`/puzzles/${status.ok.id}`} className="underline">
+            {publishedId && status !== "saving" && !status?.error && (
+              <p className="text-sm text-indigo-600 dark:text-indigo-400">
+                {status?.ok ? "Saved. " : "Published. "}
+                <Link href={`/builds/${publishedId}`} className="underline">
                   View it
                 </Link>
                 .

@@ -5,14 +5,15 @@ import { getAllShaders } from "./shaders/shaders";
 import { getAllCircuits } from "./circuits/circuits";
 import { loadTaxonomy, expandTaxonomy, labelFor } from "./taxonomy";
 import { getCourseForLesson } from "./courses";
+import { getAllCourses } from "./courses"; // alongside the existing getCourseForLesson import
 
 const HREF_PREFIX = {
+  course: "/courses",
   lesson: "/lessons",
   puzzle: "/puzzles",
   shader: "/shaders",
   circuit: "/circuits",
 };
-
 function toContentItem(raw, type, taxonomy) {
   const areas = raw.areas || [];
   const topics = raw.topics || [];
@@ -50,13 +51,20 @@ function toContentItem(raw, type, taxonomy) {
 // /create is searchable immediately with no cache to invalidate. If the
 // library grows into the thousands, the next step would be a build-time
 // index rather than a redesign of this API.
+
 export function getAllContent() {
   const taxonomy = loadTaxonomy();
-  const lessons = getAllLessons().map((lesson) => toContentItem(lesson, "lesson", taxonomy));
+  const rawLessons = getAllLessons();
+  const lessonsById = new Map(rawLessons.map((l) => [l.id, l]));
+
+  const courses = getAllCourses().map((course) =>
+    toContentItem(courseToRaw(course, lessonsById), "course", taxonomy)
+  );
+  const lessons = rawLessons.map((lesson) => toContentItem(lesson, "lesson", taxonomy));
   const puzzles = getAllPuzzles().map((puzzle) => toContentItem(puzzle, "puzzle", taxonomy));
   const shaders = getAllShaders().map((shader) => toContentItem(shader, "shader", taxonomy));
   const circuits = getAllCircuits().map((circuit) => toContentItem(circuit, "circuit", taxonomy));
-  return [...lessons, ...puzzles, ...shaders, ...circuits];
+  return [...courses, ...lessons, ...puzzles, ...shaders, ...circuits];
 }
 
 function matchesFilters(item, filters) {
@@ -76,7 +84,19 @@ function matchesFilters(item, filters) {
 
   return true;
 }
-
+function courseToRaw(course, lessonsById) {
+  const own = course.lessons.map((id) => lessonsById.get(id)).filter(Boolean);
+  const union = (key) => [...new Set(own.flatMap((l) => l[key] || []))];
+  return {
+    available: true,
+    difficulty: own[0]?.difficulty ?? "beginner",
+    areas: union("areas"),
+    topics: union("topics"),
+    tags: union("tags"),
+    languages: union("languages"),
+    ...course,
+  };
+}
 // types/areas/topics/tags/languages/difficulty are all arrays: values
 // within one axis are OR'd together, axes are AND'd together. An empty
 // array for an axis means "no filter on that axis."

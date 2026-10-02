@@ -21,7 +21,7 @@ export default function SearchPage({ searchParams }) {
   // two content types.
   const types = searchParams?.type
     ? parseList(searchParams.type)
-    : ["lesson", "puzzle", "shader", "circuit"];
+    : ["course", "lesson", "puzzle", "shader", "circuit"];
   const areas = parseList(searchParams?.area);
   const topics = parseList(searchParams?.topic);
   const tags = parseList(searchParams?.tag);

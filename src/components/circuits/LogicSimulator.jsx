@@ -9,6 +9,7 @@ import {
   genId,
   getPortCounts,
 } from "@/lib/circuits/engine";
+import SplitLayout, { CompactShell } from "@/components/circuits/SplitLayout";
 
 const PRESET_COLORS = ["#8b5cf6", "#0ea5e9", "#14b8a6", "#f97316", "#ec4899", "#84cc16", "#ef4444", "#64748b"];
 const PROJECT_SLOT = "project"; // single stub save-slot; a real project picker comes later
@@ -55,6 +56,8 @@ function wirePath(x1, y1, x2, y2) {
  *   its container instead of the full-page `100vh` layout. Use this when
  *   embedding the editor as one section of a bigger page, e.g. a lesson
  *   creator. Also controls the *default* for `showProjectIO` (see below).
+ *   In the full-page (non-compact) layout, <SplitLayout> provides a
+ *   Lesson / Split / Circuit switcher and a draggable divider.
  * @param {boolean} [showProjectIO] - Shows/hides the Export/Import buttons,
  *   which read and write the single global `/api/projects` scratch slot.
  *   Defaults to `!compact`, preserving old behavior at existing call sites.
@@ -572,21 +575,15 @@ export default function LogicSimulator({
     return null;
   }
 
-  return (
-    <div className={`flex ${compact ? "h-full" : "h-[calc(100vh-56px)] min-h-[600px] lg:flex-row"} flex-col bg-zinc-950`}>
-      {/* Lesson pane — always visible in full-page mode (no collapse), left
-          of the editor on wide screens and stacked above it on narrow ones.
-          Hidden entirely in `compact` mode: the host page (e.g. the circuit
-          lesson creator) renders its own title/description fields instead. */}
-      {!compact && (
-        <div className="max-h-64 shrink-0 overflow-y-auto border-b border-zinc-800 bg-zinc-950 px-6 py-6 lg:h-auto lg:max-h-none lg:w-[420px] lg:border-b-0 lg:border-r">
-          <h2 className="mb-4 text-lg font-semibold text-white">{lessonTitle}</h2>
-          <div className="space-y-4 text-sm leading-relaxed text-zinc-300">
-            {lessonContent ?? <p className="text-zinc-500">No lesson content yet.</p>}
-          </div>
-        </div>
-      )}
+  // Full-page mode wraps the editor in <SplitLayout> (Lesson / Split /
+  // Circuit switcher + lesson pane). `compact` renders the editor alone: the
+  // host page (e.g. the circuit lesson creator) supplies its own title and
+  // description fields. The editor stays mounted across layout switches, so
+  // undo history, selection and pan/zoom survive.
+  const Shell = compact ? CompactShell : SplitLayout;
 
+  return (
+    <Shell title={lessonTitle} lessonContent={lessonContent}>
       {/* Editor — component palette + simulation canvas. */}
       <div className="flex min-h-0 flex-1 flex-col">
         {/* component palette */}
@@ -847,7 +844,7 @@ export default function LogicSimulator({
       {importChipOpen && (
         <ImportChipModal onClose={() => setImportChipOpen(false)} onImport={handleImportChip} alreadyImportedIds={chipIds} />
       )}
-    </div>
+    </Shell>
   );
 }
 

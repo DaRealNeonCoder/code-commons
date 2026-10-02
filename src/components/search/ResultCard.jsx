@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { labelFor } from "@/lib/taxonomy";
 
-const TYPE_LABEL = { lesson: "Lesson", puzzle: "Puzzle", shader: "Shader", circuit: "Circuit" };
+const TYPE_LABEL = { course: "Course", lesson: "Lesson", puzzle: "Puzzle", shader: "Shader", circuit: "Circuit" };
 const TYPE_ACCENT = {
+  course: "text-sky-600 dark:text-sky-400",
   lesson: "text-amber-600 dark:text-amber-400",
   puzzle: "text-teal-600 dark:text-teal-400",
   shader: "text-fuchsia-600 dark:text-fuchsia-400",
@@ -57,10 +58,16 @@ export default function ResultCard({ item, taxonomy }) {
       href={item.href}
       className="flex flex-col gap-1 rounded-md border border-zinc-200 px-4 py-3.5 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900"
     >
+    {item.type === "course" && (
+    <span className="text-zinc-400">
+        · {item.lessons.length} lesson{item.lessons.length === 1 ? "" : "s"}
+    </span>
+    )}
       {meta}
       <p className="font-medium text-zinc-900 dark:text-zinc-100">{item.title}</p>
       {item.summary && <p className="text-sm text-zinc-600 dark:text-zinc-400">{item.summary}</p>}
       {chips}
     </Link>
+
   );
 }

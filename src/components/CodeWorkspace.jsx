@@ -1,5 +1,4 @@
 "use client";
-
 import { useRef, useState } from "react";
 import Link from "next/link";
 import CodeEditor from "@/components/CodeEditor";
@@ -12,12 +11,19 @@ import { outputsMatch, withTrailingNewline, clip } from "@/lib/compareOutput";
 const ACCENTS = {
   amber: { dot: "bg-amber-400", link: "text-amber-600 dark:text-amber-400 hover:underline" },
   teal: { dot: "bg-teal-400", link: "text-teal-600 dark:text-teal-400 hover:underline" },
+  emerald: { dot: "bg-emerald-400", link: "text-emerald-600 dark:text-emerald-400 hover:underline" },
 };
 
 const LANGUAGES = [
   { id: "python", label: "Python", ext: "py" },
   { id: "cpp", label: "C++", ext: "cpp" },
   { id: "rust", label: "Rust", ext: "rs" },
+];
+
+const LAYOUTS = [
+  { id: "description", label: "Description" },
+  { id: "split", label: "Split" },
+  { id: "editor", label: "Editor" },
 ];
 
 const EMPTY_STARTER = {
@@ -87,6 +93,10 @@ export default function CodeWorkspace({
   checkPuzzleId,
   sampleTests = [],
   hiddenTestCount = 0,
+  // Opt-in layout switcher (description / split / editor). Off by default so
+  // lessons and puzzles look exactly as before.
+  layoutToggle = false,
+  defaultLayout = "split",
 }) {
   // Accept either a plain string (Python only) or { python, cpp, rust }.
   const starters = typeof starterCode === "string" ? { python: starterCode } : starterCode || {};
@@ -107,6 +117,7 @@ export default function CodeWorkspace({
   const [stdin, setStdin] = useState(sampleTests[0]?.input ?? "");
   const [results, setResults] = useState(null);
   const [isChecking, setIsChecking] = useState(false);
+  const [layout, setLayout] = useState(defaultLayout);
   const runtimeWarm = useRef(false);
 
   const colors = ACCENTS[accent] || ACCENTS.amber;
@@ -114,6 +125,13 @@ export default function CodeWorkspace({
   const current = languageInfo(language);
   const busy = isRunning || isChecking;
   const totalTests = sampleTests.length + hiddenTestCount;
+
+  // Without layoutToggle this is always "split", which is the original behavior.
+  const activeLayout = layoutToggle ? layout : "split";
+  const showDescription = activeLayout !== "editor";
+  const showEditor = activeLayout !== "description";
+  const descriptionWidth = activeLayout === "description" ? "w-full" : "w-1/2";
+  const editorWidth = activeLayout === "editor" ? "w-full" : "w-1/2";
 
   // Browser execution only exists for Python; everything else goes to the server.
   const canRunInBrowser = language === "python";
@@ -136,16 +154,21 @@ export default function CodeWorkspace({
   // manual "Mark as complete" button, so the profile page picks it up.
   async function markSolved() {
     if (!userId || !itemType || !itemId) return;
+
     try {
       const res = await fetch("/api/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ itemType, itemId, completed: true }),
       });
+
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
       // Tell CompletionToggle so its button flips without a reload.
       window.dispatchEvent(
-        new CustomEvent("progress-changed", { detail: { itemType, itemId, completed: true } })
+        new CustomEvent("progress-changed", {
+          detail: { itemType, itemId, completed: true },
+        })
       );
     } catch (err) {
       console.error("Could not record solve:", err);
@@ -161,18 +184,36 @@ export default function CodeWorkspace({
     const res = await fetch("/api/execute", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, language, stdin: checkPuzzleId ? stdin : undefined }),
+      body: JSON.stringify({
+        code,
+        language,
+        stdin: checkPuzzleId ? stdin : undefined,
+      }),
     });
+
     const data = await res.json();
-    setOutput(data.error ? `Error: ${data.error}` : data.stdout || data.stderr || "(no output)");
+    setOutput(
+      data.error
+        ? `Error: ${data.error}`
+        : data.stdout || data.stderr || "(no output)"
+    );
   }
 
   async function runInPyodide() {
-    if (!runtimeWarm.current) setOutput("Loading Python runtime (first run only)...");
+    if (!runtimeWarm.current) {
+      setOutput("Loading Python runtime (first run only)...");
+    }
+
     const source = checkPuzzleId ? withStdin(code, stdin) : code;
     const result = await runPythonInBrowser(source);
+
     runtimeWarm.current = true;
-    const text = [result.stdout, result.stderr, result.error].filter(Boolean).join("\n").trimEnd();
+
+    const text = [result.stdout, result.stderr, result.error]
+      .filter(Boolean)
+      .join("\n")
+      .trimEnd();
+
     setOutput(text || "(no output)");
   }
 
@@ -180,6 +221,7 @@ export default function CodeWorkspace({
     setIsRunning(true);
     setResults(null);
     setOutput("Running...");
+
     try {
       if (useBrowser) {
         await runInPyodide();
@@ -187,7 +229,11 @@ export default function CodeWorkspace({
         await runOnServer();
       }
     } catch (err) {
-      setOutput(useBrowser ? `Error: ${err.message}` : `Network error: ${err.message}`);
+      setOutput(
+        useBrowser
+          ? `Error: ${err.message}`
+          : `Network error: ${err.message}`
+      );
     } finally {
       setIsRunning(false);
     }
@@ -195,21 +241,26 @@ export default function CodeWorkspace({
 
   // Server mode: hidden tests stay on the server; only pass/fail comes back.
   async function checkOnServer() {
-    const res = await fetch(`/api/puzzles/${encodeURIComponent(checkPuzzleId)}/check`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, language }),
-    });
+    const res = await fetch(
+      `/api/puzzles/${encodeURIComponent(checkPuzzleId)}/check`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, language }),
+      }
+    );
 
     // Read as text first so an HTML error page (404, redirect, crash) gives a
     // useful message instead of "Unexpected token '<'".
     const raw = await res.text();
     let data = null;
+
     try {
       data = JSON.parse(raw);
     } catch {
       // not JSON, handled below
     }
+
     if (!data) {
       setOutput(
         `Error: the check route returned a non-JSON response (HTTP ${res.status}) from ${res.url}.\n` +
@@ -219,10 +270,12 @@ export default function CodeWorkspace({
       );
       return;
     }
+
     if (!res.ok || data.error) {
       setOutput(`Error: ${data.error || "Could not check your solution."}`);
       return;
     }
+
     showResults(data);
   }
 
@@ -235,51 +288,82 @@ export default function CodeWorkspace({
 
     const testsRes = await fetch(testsUrl);
     const testsPayload = await readJson(testsRes);
+
     if (!testsRes.ok || !Array.isArray(testsPayload?.tests)) {
-      setOutput(`Error: ${testsPayload?.error || `could not load the tests (HTTP ${testsRes.status}).`}`);
+      setOutput(
+        `Error: ${
+          testsPayload?.error ||
+          `could not load the tests (HTTP ${testsRes.status}).`
+        }`
+      );
       return;
     }
+
     const tests = testsPayload.tests;
 
     const runs = [];
+
     for (let i = 0; i < tests.length; i++) {
       setOutput(
         `Running test ${i + 1}/${tests.length}...` +
-          (runtimeWarm.current ? "" : "\n(Loading Python runtime, first run only)")
+          (runtimeWarm.current
+            ? ""
+            : "\n(Loading Python runtime, first run only)")
       );
 
       let stdout = "";
       let stderr = "";
       let failure;
+
       try {
-        const run = await runPythonInBrowser(withStdin(code, tests[i].input), { timeoutMs: 5000 });
+        const run = await runPythonInBrowser(
+          withStdin(code, tests[i].input),
+          { timeoutMs: 5000 }
+        );
+
         runtimeWarm.current = true;
         stdout = run.stdout ?? "";
         stderr = [run.stderr, run.error].filter(Boolean).join("\n");
+
         if (run.error) failure = "crash";
       } catch (err) {
         // pyodideClient rejects on timeout or worker crash, and resets the worker.
         failure = "timeout";
         stderr = err.message;
       }
+
       runs.push({ stdout, stderr, failure });
     }
 
     setOutput("Checking results...");
+
     const judgeRes = await fetch(testsUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ outputs: runs.map(({ stdout, failure }) => ({ stdout, failure })) }),
+      body: JSON.stringify({
+        outputs: runs.map(({ stdout, failure }) => ({
+          stdout,
+          failure,
+        })),
+      }),
     });
+
     const judged = await readJson(judgeRes);
+
     if (!judgeRes.ok || !Array.isArray(judged?.results)) {
-      setOutput(`Error: ${judged?.error || `could not check your results (HTTP ${judgeRes.status}).`}`);
+      setOutput(
+        `Error: ${
+          judged?.error ||
+          `could not check your results (HTTP ${judgeRes.status}).`
+        }`
+      );
       return;
     }
 
     // Visible failures get input/expected/actual from data the page already had.
     const results = judged.results.map((r, i) => {
       if (r.hidden || r.status === "pass") return r;
+
       return {
         ...r,
         input: tests[i].input,
@@ -288,13 +372,19 @@ export default function CodeWorkspace({
         stderr: clip(runs[i].stderr),
       };
     });
-    showResults({ passed: judged.passed, total: judged.total, results });
+
+    showResults({
+      passed: judged.passed,
+      total: judged.total,
+      results,
+    });
   }
 
   const handleSubmit = async () => {
     setIsChecking(true);
     setResults(null);
     setOutput("Checking...");
+
     try {
       if (useBrowser) {
         await checkInBrowser();
@@ -302,134 +392,208 @@ export default function CodeWorkspace({
         await checkOnServer();
       }
     } catch (err) {
-      setOutput(useBrowser ? `Error: ${err.message}` : `Network error: ${err.message}`);
+      setOutput(
+        useBrowser
+          ? `Error: ${err.message}`
+          : `Network error: ${err.message}`
+      );
     } finally {
       setIsChecking(false);
     }
   };
 
   return (
-    <div className="flex flex-1 min-h-0 w-full">
-      {/* Left: lesson / puzzle prompt */}
-      <div className="w-1/2 overflow-y-auto p-8 bg-zinc-50 dark:bg-zinc-900">
-        {backHref && (
-          <Link href={backHref} className={`mb-6 inline-block font-mono text-sm ${colors.link}`}>
-            ← {backLabel}
-          </Link>
-        )}
-        {description}
+    <div className="flex flex-1 min-h-0 w-full flex-col">
+      {/* Layout switcher (only when layoutToggle is on) */}
+      {layoutToggle && (
+        <div className="flex items-center justify-end gap-2 border-b border-zinc-800 bg-zinc-950 px-4 py-1.5">
+          <span className="font-mono text-xs text-zinc-500">layout</span>
 
-        {itemType && itemId && (
-          <CompletionToggle itemType={itemType} itemId={itemId} accent={accent} />
-        )}
-      </div>
-
-      {/* Right: toolbar + editor + output */}
-      <div className="w-1/2 flex flex-col min-h-0">
-        <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-950 px-4 py-2">
-          <span className="flex items-center gap-2 font-mono text-sm text-zinc-100">
-            <span className={`h-2 w-2 rounded-full ${colors.dot}`} />
-            {fileBaseName}.{current.ext}
-          </span>
-
-          <div className="flex items-center gap-2">
-            {showLanguagePicker && (
-              <select
-                value={language}
-                onChange={(e) => handleLanguageChange(e.target.value)}
-                className="rounded border border-zinc-700 bg-zinc-900 px-2 py-1 font-mono text-xs text-zinc-100"
-              >
-                {LANGUAGES.map((lang) => (
-                  <option key={lang.id} value={lang.id}>
-                    {lang.label}
-                  </option>
-                ))}
-              </select>
-            )}
-            <button
-              type="button"
-              onClick={handleToggleBrowserMode}
-              disabled={!canRunInBrowser || busy}
-              aria-pressed={useBrowser}
-              title={
-                canRunInBrowser
-                  ? "Run Python in your browser (Pyodide) instead of on the server"
-                  : "Browser execution is only available for Python"
-              }
-              className={`rounded border px-2 py-1 font-mono text-xs transition-colors disabled:opacity-40 ${
-                useBrowser
-                  ? "border-green-500 bg-green-500/15 text-green-400"
-                  : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:text-zinc-100"
-              }`}
-            >
-              ⚡ Browser
-            </button>
-            <button
-              onClick={handleRun}
-              disabled={busy}
-              className="rounded bg-green-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
-            >
-              {isRunning ? "Running..." : "Run ▶"}
-            </button>
-            {checkPuzzleId && (
+          <div
+            role="group"
+            aria-label="Layout"
+            className="flex overflow-hidden rounded border border-zinc-700"
+          >
+            {LAYOUTS.map((l) => (
               <button
+                key={l.id}
                 type="button"
-                onClick={handleSubmit}
-                disabled={busy}
-                title={`Check your solution against all ${totalTests} tests ${useBrowser ? "in your browser" : "on the server"}`}
-                className="rounded bg-teal-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-teal-700 disabled:opacity-50"
+                onClick={() => setLayout(l.id)}
+                aria-pressed={layout === l.id}
+                className={`px-2.5 py-1 font-mono text-xs transition-colors ${
+                  layout === l.id
+                    ? "bg-zinc-700 text-zinc-100"
+                    : "bg-zinc-900 text-zinc-400 hover:text-zinc-100"
+                }`}
               >
-                {isChecking ? "Checking..." : "Submit ✓"}
+                {l.label}
               </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-1 min-h-0 w-full">
+        {/* Left: lesson / puzzle prompt */}
+        <div
+          className={`${
+            showDescription ? descriptionWidth : "hidden"
+          } overflow-y-auto p-8 bg-zinc-50 dark:bg-zinc-900`}
+        >
+          <div
+            className={
+              activeLayout === "description" ? "mx-auto max-w-3xl" : ""
+            }
+          >
+            {backHref && (
+              <Link
+                href={backHref}
+                className={`mb-6 inline-block font-mono text-sm ${colors.link}`}
+              >
+                ← {backLabel}
+              </Link>
+            )}
+
+            {description}
+
+            {itemType && itemId && (
+              <CompletionToggle
+                itemType={itemType}
+                itemId={itemId}
+                accent={accent}
+              />
             )}
           </div>
         </div>
-        <div className="flex-1 min-h-0">
-          <CodeEditor code={code} onChange={setCode} language={current.id} />
-        </div>
 
-        {checkPuzzleId && (
-          <details className="border-t border-zinc-800 bg-zinc-950 px-4 py-2 text-xs text-zinc-400">
-            <summary className="cursor-pointer select-none font-mono">
-              input for Run (stdin) - Submit checks {totalTests} tests
-              {hiddenTestCount > 0 ? `, ${hiddenTestCount} hidden` : ""}
-            </summary>
-            <textarea
-              value={stdin}
-              onChange={(e) => setStdin(e.target.value)}
-              rows={3}
-              spellCheck={false}
-              className="mt-2 w-full rounded border border-zinc-700 bg-zinc-900 p-2 font-mono text-xs text-zinc-100"
-            />
-            {sampleTests.length > 1 && (
-              <div className="mt-1 flex flex-wrap gap-2">
-                {sampleTests.map((t, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => setStdin(t.input)}
-                    className="rounded border border-zinc-700 px-2 py-0.5 font-mono hover:text-zinc-100"
+        {/* Right: toolbar + editor + output. All state lives in this component,
+            so unmounting it in "description" mode loses nothing but undo history. */}
+        {showEditor && (
+          <div className={`${editorWidth} flex flex-col min-h-0`}>
+            <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-950 px-4 py-2">
+              <span className="flex items-center gap-2 font-mono text-sm text-zinc-100">
+                <span className={`h-2 w-2 rounded-full ${colors.dot}`} />
+                {fileBaseName}.{current.ext}
+              </span>
+
+              <div className="flex items-center gap-2">
+                {showLanguagePicker && (
+                  <select
+                    value={language}
+                    onChange={(e) => handleLanguageChange(e.target.value)}
+                    className="rounded border border-zinc-700 bg-zinc-900 px-2 py-1 font-mono text-xs text-zinc-100"
                   >
-                    load sample {i + 1}
+                    {LANGUAGES.map((lang) => (
+                      <option key={lang.id} value={lang.id}>
+                        {lang.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
+
+                <button
+                  type="button"
+                  onClick={handleToggleBrowserMode}
+                  disabled={!canRunInBrowser || busy}
+                  aria-pressed={useBrowser}
+                  title={
+                    canRunInBrowser
+                      ? "Run Python in your browser (Pyodide) instead of on the server"
+                      : "Browser execution is only available for Python"
+                  }
+                  className={`rounded border px-2 py-1 font-mono text-xs transition-colors disabled:opacity-40 ${
+                    useBrowser
+                      ? "border-green-500 bg-green-500/15 text-green-400"
+                      : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:text-zinc-100"
+                  }`}
+                >
+                  ⚡ Browser
+                </button>
+
+                <button
+                  onClick={handleRun}
+                  disabled={busy}
+                  className="rounded bg-green-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                >
+                  {isRunning ? "Running..." : "Run ▶"}
+                </button>
+
+                {checkPuzzleId && (
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={busy}
+                    title={`Check your solution against all ${totalTests} tests ${
+                      useBrowser ? "in your browser" : "on the server"
+                    }`}
+                    className="rounded bg-teal-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-teal-700 disabled:opacity-50"
+                  >
+                    {isChecking ? "Checking..." : "Submit ✓"}
                   </button>
-                ))}
+                )}
               </div>
+            </div>
+
+            <div className="flex-1 min-h-0">
+              <CodeEditor
+                code={code}
+                onChange={setCode}
+                language={current.id}
+              />
+            </div>
+
+            {checkPuzzleId && (
+              <details className="border-t border-zinc-800 bg-zinc-950 px-4 py-2 text-xs text-zinc-400">
+                <summary className="cursor-pointer select-none font-mono">
+                  input for Run (stdin) - Submit checks {totalTests} tests
+                  {hiddenTestCount > 0
+                    ? `, ${hiddenTestCount} hidden`
+                    : ""}
+                </summary>
+
+                <textarea
+                  value={stdin}
+                  onChange={(e) => setStdin(e.target.value)}
+                  rows={3}
+                  spellCheck={false}
+                  className="mt-2 w-full rounded border border-zinc-700 bg-zinc-900 p-2 font-mono text-xs text-zinc-100"
+                />
+
+                {sampleTests.length > 1 && (
+                  <div className="mt-1 flex flex-wrap gap-2">
+                    {sampleTests.map((t, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setStdin(t.input)}
+                        className="rounded border border-zinc-700 px-2 py-0.5 font-mono hover:text-zinc-100"
+                      >
+                        load sample {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </details>
             )}
-          </details>
+
+            <div
+              className={`${
+                checkPuzzleId ? "h-48" : "h-32"
+              } overflow-y-auto whitespace-pre-wrap border-t border-zinc-800 bg-black p-4 font-mono text-sm text-green-400`}
+            >
+              {results ? <TestResults data={results} /> : output}
+            </div>
+          </div>
         )}
 
-        <div
-          className={`${
-            checkPuzzleId ? "h-48" : "h-32"
-          } overflow-y-auto whitespace-pre-wrap border-t border-zinc-800 bg-black p-4 font-mono text-sm text-green-400`}
-        >
-          {results ? <TestResults data={results} /> : output}
-        </div>
+        {aiContext && (
+          <AITutor
+            lessonContent={aiContext}
+            code={code}
+            language={current.id}
+          />
+        )}
       </div>
-
-      {aiContext && (
-        <AITutor lessonContent={aiContext} code={code} language={current.id} />
-      )}
     </div>
   );
 }

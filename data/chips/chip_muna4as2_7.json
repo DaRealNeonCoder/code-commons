@@ -1,0 +1,29 @@
+{
+  "id": "chip_muna4as2_7",
+  "name": "My Chip 2",
+  "color": "#8b5cf6",
+  "numInputs": 1,
+  "numOutputs": 1,
+  "gates": [
+    {
+      "id": "g_muna4as2_6",
+      "type": "NAND",
+      "inputs": [
+        {
+          "kind": "external",
+          "index": 0
+        },
+        {
+          "kind": "const",
+          "value": false
+        }
+      ]
+    }
+  ],
+  "outputSources": [
+    {
+      "kind": "gate",
+      "gateId": "g_muna4as2_6"
+    }
+  ]
+}
