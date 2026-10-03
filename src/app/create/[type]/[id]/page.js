@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { getProject } from "@/lib/creatorProjects";
 import { getAllCourses } from "@/lib/courses";
 import { getAllLessons } from "@/lib/lessons";
+import { getAllPuzzles } from "@/lib/puzzles";
 import LessonCreator from "@/components/creator/LessonCreator";
 import PuzzleCreator from "@/components/creator/PuzzleCreator";
 import ShaderCreator from "@/components/creator/ShaderCreator";
@@ -53,6 +54,32 @@ function getCourseEditorProps(projectId) {
   return { lessons, publishedId: published?.id ?? null };
 }
 
+// Everything the lesson editor needs: every puzzle (anyone's, any puzzle can be
+// linked), plus the lesson this project was already published as, if any.
+//
+// Only display fields are sent to the browser. getAllPuzzles() already strips
+// test cases; we also drop the puzzle body, which the picker doesn't need.
+function getLessonEditorProps(projectId) {
+  const published = getAllLessons().find((l) => l.projectId === projectId) ?? null;
+
+  const puzzles = getAllPuzzles().map((puzzle) => ({
+    id: puzzle.id,
+    title: puzzle.title || puzzle.id,
+    summary: puzzle.summary || "",
+    difficulty: puzzle.difficulty || "",
+    // Matches the puzzle page, which treats a missing `available` as coming soon.
+    available: Boolean(puzzle.available),
+  }));
+
+  return { puzzles, publishedId: published?.id ?? null };
+}
+
+function getExtraProps(type, projectId) {
+  if (type === "course") return getCourseEditorProps(projectId);
+  if (type === "lesson") return getLessonEditorProps(projectId);
+  return {};
+}
+
 export default async function ProjectEditorPage({ params }) {
   const { type, id } = await params;
 
@@ -65,7 +92,7 @@ export default async function ProjectEditorPage({ params }) {
   const canEdit = session?.user?.id === project.userId;
 
   const Editor = EDITORS[type];
-  const extraProps = type === "course" ? getCourseEditorProps(project.id) : {};
+  const extraProps = getExtraProps(type, project.id);
 
   return (
     <Editor

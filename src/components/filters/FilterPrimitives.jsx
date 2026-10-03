@@ -243,8 +243,11 @@ export function CheckboxRow({ label, checked, onChange }) {
         type="checkbox"
         checked={checked}
         onChange={onChange}
-        className="accent-teal-600"
-      />
+        className="appearance-none w-4 h-4 rounded-sm border border-zinc-400 bg-zinc-300
+                    checked:bg-teal-600 checked:border-teal-600
+                    dark:bg-zinc-700 dark:border-zinc-600
+                    dark:checked:bg-teal-600"
+        />
       {label}
     </label>
   );

@@ -11,7 +11,6 @@ import {
 } from "@/lib/circuits/engine";
 import SplitLayout, { CompactShell } from "@/components/circuits/SplitLayout";
 
-const PRESET_COLORS = ["#8b5cf6", "#0ea5e9", "#14b8a6", "#f97316", "#ec4899", "#84cc16", "#ef4444", "#64748b"];
 const PROJECT_SLOT = "project"; // single stub save-slot; a real project picker comes later
 const MIN_SCALE = 0.25;
 const MAX_SCALE = 2.5;

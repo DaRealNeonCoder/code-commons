@@ -9,8 +9,8 @@ import {
   groupTopicsByArea,
   groupTagsByTopic,
 } from "@/lib/taxonomy";
-import SearchFilterBar from "./SearchFilterBar";
-import ResultCard from "./ResultCard";
+import SearchFilterBar from "@/components/search/SearchFilterBar";
+import ResultCard from "@/components/search/ResultCard";
 
 // Results shown at first, and how many more each "show more" adds.
 const PAGE_SIZE = 12;
