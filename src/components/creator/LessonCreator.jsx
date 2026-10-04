@@ -86,21 +86,17 @@ export default function LessonCreator({ project, puzzles = [], publishedId: init
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          // The server checks that this project is a lesson owned by the signed-in
-          // user, and uses it to update the existing lesson instead of duplicating it.
-          projectId: project.id,
-          title,
-          summary,
-          difficulty,
-          areas,
-          topics,
-          tags,
-          languages,
-          // The server trims, de-duplicates and checks that every ID matches
-          // an existing puzzle.
-          puzzles: puzzleIds,
-          content: markdown,
-        }),
+            projectId: project.id,
+            title,
+            summary,
+            difficulty,
+            areas,
+            topics,
+            tags,
+            languages,
+            puzzles: puzzleIds,
+            blocks,            // <- send the blocks, not `content: markdown`
+            }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Something went wrong.");
@@ -320,7 +316,7 @@ export default function LessonCreator({ project, puzzles = [], publishedId: init
             {status?.ok ? (
               <p className="text-sm text-teal-600 dark:text-teal-400">
                 Saved.{" "}
-                <Link href={`/python/${status.ok}`} className="underline">
+                <Link href={`/lessons/${status.ok}`} className="underline">
                   View it
                 </Link>
                 .
@@ -330,7 +326,7 @@ export default function LessonCreator({ project, puzzles = [], publishedId: init
               status === null && (
                 <p className="text-sm text-zinc-500">
                   Saved.{" "}
-                  <Link href={`/python/${publishedId}`} className="underline">
+                  <Link href={`/lessons/${publishedId}`} className="underline">
                     View it
                   </Link>
                   . Edits go live when you update the lesson.

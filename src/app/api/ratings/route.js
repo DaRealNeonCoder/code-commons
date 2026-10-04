@@ -19,7 +19,7 @@ export async function GET(request) {
     return Response.json({ error: "A valid itemType and itemId are required." }, { status: 400 });
   }
 
-  return Response.json(getRatingSummary(itemType, itemId, userId));
+  return Response.json(await getRatingSummary(itemType, itemId, userId));
 }
 
 // value: 1 = like, -1 = dislike, 0 = remove vote.
@@ -35,5 +35,5 @@ export async function POST(request) {
     );
   }
 
-  return Response.json(setVote(userId, body.itemType, body.itemId, body.value));
+  return Response.json(await setVote(userId, body.itemType, body.itemId, body.value));
 }

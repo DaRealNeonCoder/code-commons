@@ -26,8 +26,11 @@ function truncate(text) {
 }
 
 // Same shape as getAllPuzzles(): returns raw items that content.js wraps with toContentItem.
-export function getAllProjects() {
-  return listProjectsByType("project").flatMap((project) => {
+// (async now: projects live in the database)
+export async function getAllProjects() {
+  const projects = await listProjectsByType("project");
+
+  return projects.flatMap((project) => {
     const { data } = project;
     const title = project.title.trim();
     const language = LANGUAGE_IDS.includes(data.language) ? data.language : "python";

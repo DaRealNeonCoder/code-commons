@@ -1,9 +1,9 @@
 import { getPuzzleById } from "@/lib/puzzles";
-import { getLessonById } from "@/lib/lessons";
+import { getLesson } from "@/lib/lessonStore";
 
-// IDs are filenames in content/lessons and content/puzzles, so restrict them
-// to safe slug characters before they ever reach the filesystem (blocks "../"
-// tricks, including from URL query params).
+// IDs are filenames in content/lessons and content/puzzles (or DB slugs), so
+// restrict them to safe slug characters before they ever reach the filesystem
+// (blocks "../" tricks, including from URL query params).
 const SLUG_PATTERN = /^[a-z0-9][a-z0-9_-]*$/i;
 export const PUZZLE_ID_PATTERN = SLUG_PATTERN;
 export const LESSON_ID_PATTERN = SLUG_PATTERN;
@@ -46,16 +46,17 @@ export function getLinkedPuzzles(ids) {
     }));
 }
 
-// The puzzle that follows `puzzleId` in `lessonId`'s chain, or null.
+// The puzzle that follows `puzzleId` in `lessonId`'s chain, or null. (async: the
+// lesson may live in the database)
 //
 // Puzzles carry no chain data of their own. The lesson's `puzzles` array is the
 // only source of truth: lesson -> puzzles[0] -> puzzles[1] -> ... The lesson ID
 // arrives from the URL (?lesson=...), so it's validated, and the puzzle must
 // actually be in that lesson's chain or we return null. Standalone puzzles and
 // the last puzzle in a chain therefore get no next step.
-export function getNextPuzzleInChain(lessonId, puzzleId) {
+export async function getNextPuzzleInChain(lessonId, puzzleId) {
   if (typeof lessonId !== "string" || !LESSON_ID_PATTERN.test(lessonId)) return null;
-  const lesson = getLessonById(lessonId);
+  const lesson = await getLesson(lessonId);
   if (!lesson) return null;
 
   const chain = getLinkedPuzzles(lesson.puzzles);

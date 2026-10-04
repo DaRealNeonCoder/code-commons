@@ -19,7 +19,7 @@ export async function GET(request) {
     return Response.json({ error: "itemType and itemId are required." }, { status: 400 });
   }
 
-  return Response.json({ completed: isCompleted(userId, itemType, itemId) });
+  return Response.json({ completed: await isCompleted(userId, itemType, itemId) });
 }
 
 export async function POST(request) {
@@ -34,6 +34,6 @@ export async function POST(request) {
     );
   }
 
-  setCompleted(userId, body.itemType, body.itemId, body.completed);
+  await setCompleted(userId, body.itemType, body.itemId, body.completed);
   return Response.json({ completed: body.completed });
 }

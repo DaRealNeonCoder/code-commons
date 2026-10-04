@@ -14,6 +14,6 @@ export async function POST(request) {
     return Response.json({ error: "Unknown project type." }, { status: 400 });
   }
 
-  const id = createProject(user.id, body.type);
+  const id = await createProject(user.id, body.type);
   return Response.json({ id });
 }

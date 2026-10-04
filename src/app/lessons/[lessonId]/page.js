@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { getLessonById } from "@/lib/lessons";
+import { getLesson } from "@/lib/lessonStore";  
 import { getCourseContext } from "@/lib/courseNav";
 import { getLinkedPuzzles } from "@/lib/lessonPuzzles";
 import { getCurrentUserId } from "@/lib/session";
@@ -16,7 +16,7 @@ import RatedShell from "@/components/rating/RatedShell";
 export default async function LessonPage({ params, searchParams }) {
   const { lessonId } = await params;
   const query = await searchParams;
-  const lesson = getLessonById(lessonId);
+  const lesson = await getLesson(lessonId);        // async now, so await it
   if (!lesson) notFound();
 
   if (!lesson.available) {

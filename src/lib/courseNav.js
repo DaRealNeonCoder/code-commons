@@ -1,14 +1,17 @@
 import { getCourseById, getCoursesForLesson } from "@/lib/courses";
-import { getLessonById } from "@/lib/lessons";
+import { getLesson, getLessonsByIds } from "@/lib/lessonStore";
 import { getLinkedPuzzles, LESSON_ID_PATTERN } from "@/lib/lessonPuzzles";
 
 // Display-only snapshot of a course: lessons in order, each with its puzzle chain.
-export function getCourseOutline(courseId) {
+// (async: lessons may live in the database; they're fetched in one query)
+export async function getCourseOutline(courseId) {
   const course = getCourseById(courseId);
   if (!course) return null;
 
+  const byId = await getLessonsByIds(course.lessons);
+
   const lessons = course.lessons
-    .map((lessonId) => getLessonById(lessonId))
+    .map((lessonId) => byId.get(lessonId))
     .filter(Boolean)
     .map((lesson) => ({
       id: lesson.id,
@@ -40,9 +43,9 @@ export function getNextLessonInOutline(outline, lessonId) {
 // the reader is following. It is only compared against the courses that really
 // contain the lesson, so a stale or made-up value is ignored and we fall back to
 // the first course that has it.
-export function getCourseContext(lessonId, puzzleId = null, courseId = null) {
+export async function getCourseContext(lessonId, puzzleId = null, courseId = null) {
   if (typeof lessonId !== "string" || !LESSON_ID_PATTERN.test(lessonId)) return null;
-  const lesson = getLessonById(lessonId);
+  const lesson = await getLesson(lessonId);
   if (!lesson) return null;
 
   if (puzzleId && !getLinkedPuzzles(lesson.puzzles).some((p) => p.id === puzzleId)) return null;
@@ -52,7 +55,7 @@ export function getCourseContext(lessonId, puzzleId = null, courseId = null) {
   const course =
     (typeof courseId === "string" && candidates.find((c) => c.id === courseId)) || candidates[0];
 
-  const outline = getCourseOutline(course.id);
+  const outline = await getCourseOutline(course.id);
   if (!outline) return null;
 
   return { outline, nextLesson: getNextLessonInOutline(outline, lessonId) };

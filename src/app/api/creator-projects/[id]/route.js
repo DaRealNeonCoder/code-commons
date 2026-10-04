@@ -22,17 +22,22 @@ export async function PUT(request, { params }) {
     return Response.json({ error: "Invalid project data." }, { status: 400 });
   }
 
-  const dataJson = JSON.stringify(body.data);
-  if (dataJson.length > MAX_DATA_CHARS) {
+  if (JSON.stringify(body.data).length > MAX_DATA_CHARS) {
     return Response.json({ error: "Project is too large to save." }, { status: 413 });
   }
 
-  // The WHERE clause includes user_id, so you can only ever write to your own projects.
-  const ok = updateProject(id, user.id, { title: body.title, dataJson });
-  if (!ok) {
-    return Response.json({ error: "Project not found." }, { status: 404 });
+  try {
+    // The WHERE clause includes user_id, so you can only ever write to your own projects.
+    const ok = await updateProject(id, user.id, { title: body.title, data: body.data });
+    if (!ok) {
+      return Response.json({ error: "Project not found." }, { status: 404 });
+    }
+    return Response.json({ ok: true });
+  } catch (err) {
+    // e.g. Postgres rejects a NUL character inside jsonb text.
+    console.error("PUT /api/creator-projects failed:", err);
+    return Response.json({ error: "Couldn't save the project." }, { status: 500 });
   }
-  return Response.json({ ok: true });
 }
 
 // DELETE /api/creator-projects/:id
@@ -43,7 +48,7 @@ export async function DELETE(request, { params }) {
   }
 
   const { id } = await params;
-  if (!deleteProject(id, user.id)) {
+  if (!(await deleteProject(id, user.id))) {
     return Response.json({ error: "Project not found." }, { status: 404 });
   }
   return Response.json({ ok: true });

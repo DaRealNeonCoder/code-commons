@@ -35,7 +35,7 @@ export default async function CreateDashboardPage() {
   const user = session?.user;
   if (!user) redirect("/");
 
-  const projects = listProjects(user.id).filter((p) => getType(p.type));
+  const projects = (await listProjects(user.id)).filter((p) => getType(p.type));
 
   return (
     <div className="w-full h-full overflow-y-auto px-6 py-12">

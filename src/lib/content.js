@@ -1,5 +1,5 @@
 import MiniSearch from "minisearch";
-import { getAllLessons } from "./lessons";
+import { getLessons } from "./lessonStore";
 import { getAllPuzzles } from "./puzzles";
 import { getAllShaders } from "./shaders/shaders";
 import { getAllCircuits } from "./circuits/circuits";
@@ -52,17 +52,16 @@ function toContentItem(raw, type, taxonomy) {
   };
 }
 
-// Re-reads content from disk on every call, same as the rest of this
-// project's content loaders — intentionally uncached. At this project's
-// scale (dozens to low hundreds of items) re-parsing on each request is
-// well within a normal response budget, and it means a lesson saved via
-// /create is searchable immediately with no cache to invalidate. If the
-// library grows into the thousands, the next step would be a build-time
-// index rather than a redesign of this API.
+// Re-reads content on every call (files from disk, user lessons and projects
+// from the database), intentionally uncached. At this project's scale (dozens
+// to low hundreds of items) that is well within a normal response budget, and
+// it means a lesson saved via /create is searchable immediately with no cache
+// to invalidate. If the library grows into the thousands, the next step would
+// be a cached/indexed search rather than a redesign of this API.
 
-export function getAllContent() {
+export async function getAllContent() {
   const taxonomy = loadTaxonomy();
-  const rawLessons = getAllLessons();
+  const [rawLessons, rawProjects] = await Promise.all([getLessons(), getAllProjects()]);
   const lessonsById = new Map(rawLessons.map((l) => [l.id, l]));
 
   const courses = getAllCourses().map((course) =>
@@ -72,7 +71,7 @@ export function getAllContent() {
   const puzzles = getAllPuzzles().map((puzzle) => toContentItem(puzzle, "puzzle", taxonomy));
   const shaders = getAllShaders().map((shader) => toContentItem(shader, "shader", taxonomy));
   const circuits = getAllCircuits().map((circuit) => toContentItem(circuit, "circuit", taxonomy));
-  const projects = getAllProjects().map((project) => toContentItem(project, "project", taxonomy));
+  const projects = rawProjects.map((project) => toContentItem(project, "project", taxonomy));
   return [...courses, ...lessons, ...puzzles, ...shaders, ...circuits, ...projects];
 }
 
@@ -131,7 +130,9 @@ function compareByRating(a, b) {
 //   no query            -> by rating
 //   sort: "relevance"   -> text relevance, boosted by rating (default)
 //   sort: "rating"      -> matches ordered purely by rating
-export function searchContent({
+//
+// async: await it.
+export async function searchContent({
   query,
   types = [],
   areas = [],
@@ -141,8 +142,8 @@ export function searchContent({
   difficulty = [],
   sort = "relevance",
 } = {}) {
-  const totals = getRatingTotals();
-  const items = getAllContent().map((item) => withRating(item, totals));
+  const [totals, content] = await Promise.all([getRatingTotals(), getAllContent()]);
+  const items = content.map((item) => withRating(item, totals));
   const filters = { types, areas, topics, tags, languages, difficulty };
   const trimmedQuery = (query || "").trim();
 

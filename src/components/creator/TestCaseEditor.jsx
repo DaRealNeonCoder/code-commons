@@ -2,8 +2,6 @@
 
 let nextKey = 0;
 
-// Rows carry a client-only `key` so React can track them while editing.
-// Strip it before saving (PuzzleCreator does this).
 export function newTestCase(overrides = {}) {
   nextKey += 1;
   return { key: `tc-${nextKey}`, input: "", expected: "", hidden: false, ...overrides };

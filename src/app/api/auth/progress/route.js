@@ -31,7 +31,7 @@ export async function GET(request) {
       return Response.json({ completed: false });
     }
 
-    return Response.json({ completed: isCompleted(session.user.id, itemType, itemId) });
+    return Response.json({ completed: await isCompleted(session.user.id, itemType, itemId) });
   } catch (err) {
     console.error("GET /api/progress failed:", err);
     return Response.json({ error: "Something went wrong." }, { status: 500 });
@@ -54,7 +54,7 @@ export async function POST(request) {
       return Response.json({ error: "Invalid itemType or itemId." }, { status: 400 });
     }
 
-    setCompleted(session.user.id, itemType, itemId, Boolean(completed));
+    await setCompleted(session.user.id, itemType, itemId, Boolean(completed));
 
     return Response.json({ completed: Boolean(completed) });
   } catch (err) {

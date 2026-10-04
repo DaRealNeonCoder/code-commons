@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getProject } from "@/lib/creatorProjects";
 import { getAllCourses } from "@/lib/courses";
-import { getAllLessons } from "@/lib/lessons";
+import { getLessons, getLessonByProjectId } from "@/lib/lessonStore";
 import { getAllPuzzles } from "@/lib/puzzles";
 import LessonCreator from "@/components/creator/LessonCreator";
 import PuzzleCreator from "@/components/creator/PuzzleCreator";
@@ -22,8 +22,9 @@ const EDITORS = {
 };
 
 // Everything the course editor needs from the published content: every lesson
-// (anyone's), plus the course this project was already published as, if any.
-function getCourseEditorProps(projectId) {
+// (anyone's, official or user-made), plus the course this project was already
+// published as, if any.
+async function getCourseEditorProps(projectId) {
   const courses = getAllCourses();
 
   // A lesson can be in several courses; remember which ones have each lesson.
@@ -37,19 +38,18 @@ function getCourseEditorProps(projectId) {
 
   const published = courses.find((c) => c.projectId === projectId) ?? null;
 
-  const lessons = [...getAllLessons()]
-    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-    .map((lesson) => {
-      const others = (coursesOfLesson.get(lesson.id) ?? []).filter((c) => c.id !== published?.id);
-      return {
-        id: lesson.id,
-        title: lesson.title || lesson.id,
-        summary: lesson.summary || "",
-        available: Boolean(lesson.available),
-        // Titles of *other* courses that also contain this lesson (informational).
-        alsoIn: others.map((c) => c.title),
-      };
-    });
+  // getLessons() already returns official lessons (by order) then user lessons.
+  const lessons = (await getLessons()).map((lesson) => {
+    const others = (coursesOfLesson.get(lesson.id) ?? []).filter((c) => c.id !== published?.id);
+    return {
+      id: lesson.id,
+      title: lesson.title || lesson.id,
+      summary: lesson.summary || "",
+      available: Boolean(lesson.available),
+      // Titles of *other* courses that also contain this lesson (informational).
+      alsoIn: others.map((c) => c.title),
+    };
+  });
 
   return { lessons, publishedId: published?.id ?? null };
 }
@@ -59,8 +59,8 @@ function getCourseEditorProps(projectId) {
 //
 // Only display fields are sent to the browser. getAllPuzzles() already strips
 // test cases; we also drop the puzzle body, which the picker doesn't need.
-function getLessonEditorProps(projectId) {
-  const published = getAllLessons().find((l) => l.projectId === projectId) ?? null;
+async function getLessonEditorProps(projectId) {
+  const published = await getLessonByProjectId(projectId);
 
   const puzzles = getAllPuzzles().map((puzzle) => ({
     id: puzzle.id,
@@ -74,7 +74,7 @@ function getLessonEditorProps(projectId) {
   return { puzzles, publishedId: published?.id ?? null };
 }
 
-function getExtraProps(type, projectId) {
+async function getExtraProps(type, projectId) {
   if (type === "course") return getCourseEditorProps(projectId);
   if (type === "lesson") return getLessonEditorProps(projectId);
   return {};
@@ -83,7 +83,7 @@ function getExtraProps(type, projectId) {
 export default async function ProjectEditorPage({ params }) {
   const { type, id } = await params;
 
-  const project = getProject(id);
+  const project = await getProject(id);
   if (!project || project.type !== type || !EDITORS[type]) notFound();
 
   // WIP projects are public for now: anyone with the link can open one, but only the
@@ -92,7 +92,7 @@ export default async function ProjectEditorPage({ params }) {
   const canEdit = session?.user?.id === project.userId;
 
   const Editor = EDITORS[type];
-  const extraProps = getExtraProps(type, project.id);
+  const extraProps = await getExtraProps(type, project.id);
 
   return (
     <Editor
