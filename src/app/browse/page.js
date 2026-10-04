@@ -71,22 +71,22 @@ export default async function SearchPage({ searchParams }) {
 
   const activeTab = typeParam.length === 0 ? "all" : typeParam.length === 1 ? typeParam[0] : null;
 
-  const results = searchContent({
-    query,
-    types,
-    areas,
-    topics,
-    tags,
-    languages: language ? [language] : [],
-    difficulty: difficulty ? [difficulty] : [],
-    sort,
-  });
+  const results = await searchContent({
+  query,
+  types,
+  areas,
+  topics,
+  tags,
+  languages: language ? [language] : [],
+  difficulty: difficulty ? [difficulty] : [],
+  sort,
+});
 
   const visible = results.slice(0, limit);
   const hasMore = results.length > visible.length;
 
   const userId = await getCurrentUserId();
-  const userVotes = getUserVotes(userId);
+  const userVotes = await getUserVotes(userId);
 
   return (
     <div className="w-full h-full overflow-y-auto px-6 py-12">

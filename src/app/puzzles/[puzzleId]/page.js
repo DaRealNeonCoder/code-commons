@@ -15,7 +15,7 @@ import RatedShell from "@/components/rating/RatedShell";
 export default async function PuzzlePage({ params, searchParams }) {
   const { puzzleId } = await params;
   const query = await searchParams;
-  const puzzle = getPuzzleById(puzzleId);
+  const puzzle = await getPuzzleById(puzzleId);
   if (!puzzle) notFound();
 
   if (!puzzle.available) {
@@ -33,13 +33,13 @@ export default async function PuzzlePage({ params, searchParams }) {
 
   const lessonId = typeof query?.lesson === "string" ? query.lesson : null;
   const requestedCourseId = typeof query?.course === "string" ? query.course : null;
-  const nextPuzzle = lessonId ? getNextPuzzleInChain(lessonId, puzzle.id) : null;
+  const nextPuzzle = lessonId ? await getNextPuzzleInChain(lessonId, puzzle.id) : null;
 
   // Non-null only when the lesson is in a course AND this puzzle is really in
   // its chain. No next puzzle means end of chain, so the next step is the next lesson.
   // ?course= picks which course when the lesson is in several; it's ignored
   // unless that course really contains the lesson.
-  const ctx = lessonId ? getCourseContext(lessonId, puzzle.id, requestedCourseId) : null;
+  const ctx = lessonId ? await getCourseContext(lessonId, puzzle.id, requestedCourseId) : null;
   const userId = ctx ? await getCurrentUserId() : null;
   const progress = ctx ? await getCourseProgress(userId, ctx.outline) : null;
 

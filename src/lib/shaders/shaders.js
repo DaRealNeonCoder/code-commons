@@ -1,14 +1,13 @@
-import path from "node:path";
-import { createMdxCollection } from "@/lib/content/mdxCollection";
+import { cache } from "react";
+import { shaderStore } from "@/lib/db/stores";
 
-const SHADERS_DIR = path.join(process.cwd(), "content/shaders");
+const SLUG = /^[a-z0-9][a-z0-9_-]*$/i;
 
-const { getAll, getById } = createMdxCollection(SHADERS_DIR, { starterCode: "" });
-
-export function getAllShaders() {
-  return getAll();
+export async function getAllShaders() {
+  return shaderStore.list({ onlyAvailable: false });
 }
 
-export function getShaderById(id) {
-  return getById(id);
-}
+export const getShaderById = cache(async (id) => {
+  if (typeof id !== "string" || !SLUG.test(id)) return null;
+  return shaderStore.getBySlug(id);
+});

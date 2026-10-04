@@ -1,16 +1,14 @@
-import path from "node:path";
-import { createMdxCollection } from "@/lib/content/mdxCollection";
+import { cache } from "react";
+import { circuitStore } from "@/lib/db/stores";
 
-const CIRCUITS_DIR = path.join(process.cwd(), "content/circuits");
+const SLUG = /^[a-z0-9][a-z0-9_-]*$/i;
 
-const EMPTY_CIRCUIT = JSON.stringify({ components: [], connections: [], chips: {} });
-
-const { getAll, getById } = createMdxCollection(CIRCUITS_DIR, { starterCircuit: EMPTY_CIRCUIT });
-
-export function getAllCircuits() {
-  return getAll();
+export async function getAllCircuits() {
+  return circuitStore.list({ onlyAvailable: false });
 }
 
-export function getCircuitById(id) {
-  return getById(id);
-}
+// `starterCircuit` is a real object now (jsonb). Validate it with parseCircuit before use.
+export const getCircuitById = cache(async (id) => {
+  if (typeof id !== "string" || !SLUG.test(id)) return null;
+  return circuitStore.getBySlug(id);
+});

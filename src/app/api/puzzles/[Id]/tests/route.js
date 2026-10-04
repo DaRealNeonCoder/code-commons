@@ -14,7 +14,7 @@ async function loadCheckablePuzzle(params) {
   if (typeof id !== "string" || !/^[\w-]+$/.test(id)) {
     return { errorResponse: Response.json({ error: "Invalid puzzle id." }, { status: 400 }) };
   }
-  const puzzle = getPuzzleById(id);
+  const puzzle = await getPuzzleById(id);
   if (!puzzle || !puzzle.available || puzzle.testCases.length === 0) {
     return { errorResponse: Response.json({ error: "This puzzle has no tests to check." }, { status: 404 }) };
   }

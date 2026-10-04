@@ -6,13 +6,13 @@ import { getShaderById } from "@/lib/shaders/shaders";
 
 export async function generateMetadata({ params }) {
   const { shaderId } = await params;
-  const shader = getShaderById(shaderId);
+  const shader = await getShaderById(shaderId)
   return { title: shader ? `${shader.title} — codeloop` : "Shader — codeloop" };
 }
 
 export default async function ShaderDetailPage({ params }) {
   const { shaderId } = await params;
-  const shader = getShaderById(shaderId);
+  const shader = await getShaderById(shaderId)
   if (!shader) notFound();
 
   if (!shader.available) {

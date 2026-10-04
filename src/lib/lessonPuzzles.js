@@ -1,9 +1,6 @@
-import { getPuzzleById } from "@/lib/puzzles";
+import { getPuzzlesByIds } from "@/lib/puzzles";
 import { getLesson } from "@/lib/lessonStore";
 
-// IDs are filenames in content/lessons and content/puzzles (or DB slugs), so
-// restrict them to safe slug characters before they ever reach the filesystem
-// (blocks "../" tricks, including from URL query params).
 const SLUG_PATTERN = /^[a-z0-9][a-z0-9_-]*$/i;
 export const PUZZLE_ID_PATTERN = SLUG_PATTERN;
 export const LESSON_ID_PATTERN = SLUG_PATTERN;
@@ -23,46 +20,46 @@ export function normalizePuzzleIds(value) {
   return ids;
 }
 
-// Returns the IDs that are malformed or don't match an existing puzzle.
-export function findMissingPuzzleIds(ids) {
-  return ids.filter((id) => !PUZZLE_ID_PATTERN.test(id) || !getPuzzleById(id));
+// The IDs that are malformed or don't match an existing puzzle.
+export async function findMissingPuzzleIds(ids) {
+  const found = await getPuzzlesByIds(ids.filter((id) => PUZZLE_ID_PATTERN.test(id)));
+  return ids.filter((id) => !found.has(id));
 }
 
-// Resolves a lesson's `puzzles` array into an ordered chain of display info.
-// IDs that no longer match a puzzle are skipped so a deleted puzzle can't break
-// the lesson. Only display fields are returned, never test cases.
-export function getLinkedPuzzles(ids) {
+// Sync half: turns a lesson's `puzzles` ids into display info, given a
+// Map(id -> puzzle) that was already loaded. Missing ids are skipped.
+export function resolveLinkedPuzzles(ids, puzzlesById) {
   return normalizePuzzleIds(ids)
     .filter((id) => PUZZLE_ID_PATTERN.test(id))
-    .map((id) => getPuzzleById(id))
+    .map((id) => puzzlesById.get(id))
     .filter(Boolean)
     .map((puzzle) => ({
       id: puzzle.id,
       title: puzzle.title || puzzle.id,
       summary: puzzle.summary || "",
       difficulty: puzzle.difficulty,
-      // Matches the puzzle page, which treats a missing `available` as coming soon.
       available: Boolean(puzzle.available),
     }));
 }
 
-// The puzzle that follows `puzzleId` in `lessonId`'s chain, or null. (async: the
-// lesson may live in the database)
-//
-// Puzzles carry no chain data of their own. The lesson's `puzzles` array is the
-// only source of truth: lesson -> puzzles[0] -> puzzles[1] -> ... The lesson ID
-// arrives from the URL (?lesson=...), so it's validated, and the puzzle must
-// actually be in that lesson's chain or we return null. Standalone puzzles and
-// the last puzzle in a chain therefore get no next step.
+// Resolves a lesson's `puzzles` array into an ordered chain of display info (one
+// query). Only display fields are returned, never test cases.
+export async function getLinkedPuzzles(ids) {
+  const clean = normalizePuzzleIds(ids).filter((id) => PUZZLE_ID_PATTERN.test(id));
+  if (clean.length === 0) return [];
+  return resolveLinkedPuzzles(clean, await getPuzzlesByIds(clean));
+}
+
+// The puzzle that follows `puzzleId` in `lessonId`'s chain, or null. The lesson's
+// `puzzles` array is the only source of truth, and the puzzle must really be in it.
 export async function getNextPuzzleInChain(lessonId, puzzleId) {
   if (typeof lessonId !== "string" || !LESSON_ID_PATTERN.test(lessonId)) return null;
   const lesson = await getLesson(lessonId);
   if (!lesson) return null;
 
-  const chain = getLinkedPuzzles(lesson.puzzles);
+  const chain = await getLinkedPuzzles(lesson.puzzles);
   const index = chain.findIndex((p) => p.id === puzzleId);
   if (index === -1) return null;
 
-  // Skip any later puzzles that aren't published yet.
   return chain.slice(index + 1).find((p) => p.available) ?? null;
 }

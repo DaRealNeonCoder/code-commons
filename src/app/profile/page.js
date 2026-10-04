@@ -20,10 +20,10 @@ export default async function ProfilePage() {
   if (!user) redirect("/");
 
   const taxonomy = loadTaxonomy();
-  const completedIds = new Set(getCompletedIds(user.id, "puzzle"));
+  const completedIds = new Set(await getCompletedIds(user.id, "puzzle"));
 
   // "Coming soon" puzzles aren't playable, so they don't count toward the total.
-  const puzzles = getAllPuzzles().filter((p) => p.available);
+  const puzzles = (await getAllPuzzles()).filter((p) => p.available);
   const solved = puzzles.filter((p) => completedIds.has(p.id));
   const pct = puzzles.length ? Math.round((solved.length / puzzles.length) * 100) : 0;
 
@@ -71,15 +71,19 @@ export default async function ProfilePage() {
   // course puzzles. "Completed" uses the same rule as the ✓ on the course page.
   const courseRows = (
     await Promise.all(
-      getAllCourses().map(async (course) => {
-        const outline = getCourseOutline(course.id);
+      (await getAllCourses()).map(async (course) => {
+        const outline = await getCourseOutline(course.id);
         if (!outline) return null;
 
         const raw = await getCourseProgress(user.id, outline);
-        const progress = { puzzles: new Set(raw.puzzles), lessons: new Set(raw.lessons) };
+        const progress = {
+          puzzles: new Set(raw.puzzles),
+          lessons: new Set(raw.lessons),
+        };
 
         const lessons = outline.lessons.filter((l) => l.available);
-        const availableIdsFor = (l) => l.puzzles.filter((p) => p.available).map((p) => p.id);
+        const availableIdsFor = (l) =>
+          l.puzzles.filter((p) => p.available).map((p) => p.id);
         const totalPuzzles = new Set(lessons.flatMap(availableIdsFor)).size;
         const solvedPuzzles = progress.puzzles.size;
 
@@ -92,7 +96,9 @@ export default async function ProfilePage() {
           started: solvedPuzzles > 0 || progress.lessons.size > 0,
           complete:
             lessons.length > 0 &&
-            lessons.every((l) => isLessonComplete(progress, l.id, availableIdsFor(l))),
+            lessons.every((l) =>
+              isLessonComplete(progress, l.id, availableIdsFor(l))
+            ),
         };
       })
     )
@@ -162,7 +168,9 @@ export default async function ProfilePage() {
             orderedAreaIds.map((areaId) => {
               const list = groups.get(areaId);
               const areaLabel =
-                areaId === OTHER_AREA ? "Other" : labelFor(taxonomy.areas, areaId);
+                areaId === OTHER_AREA
+                  ? "Other"
+                  : labelFor(taxonomy.areas, areaId);
 
               return (
                 <details

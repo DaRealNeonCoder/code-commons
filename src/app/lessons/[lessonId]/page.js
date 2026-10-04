@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { getLesson } from "@/lib/lessonStore";  
+import { getLesson } from "@/lib/lessonStore";
 import { getCourseContext } from "@/lib/courseNav";
 import { getLinkedPuzzles } from "@/lib/lessonPuzzles";
 import { getCurrentUserId } from "@/lib/session";
@@ -16,7 +16,7 @@ import RatedShell from "@/components/rating/RatedShell";
 export default async function LessonPage({ params, searchParams }) {
   const { lessonId } = await params;
   const query = await searchParams;
-  const lesson = await getLesson(lessonId);        // async now, so await it
+  const lesson = await getLesson(lessonId);
   if (!lesson) notFound();
 
   if (!lesson.available) {
@@ -33,13 +33,13 @@ export default async function LessonPage({ params, searchParams }) {
   // The lesson may be in several courses; ?course= says which one the reader
   // came from. getCourseContext ignores it unless that course has this lesson.
   const requestedCourseId = typeof query?.course === "string" ? query.course : null;
-  const ctx = getCourseContext(lesson.id, null, requestedCourseId);
+  const ctx = await getCourseContext(lesson.id, null, requestedCourseId);
   const course = ctx?.outline ?? null;
 
   const userId = course ? await getCurrentUserId() : null;
   const progress = course ? await getCourseProgress(userId, course) : null;
 
-  const firstPuzzle = getLinkedPuzzles(lesson.puzzles).find((x) => x.available);
+  const firstPuzzle = (await getLinkedPuzzles(lesson.puzzles)).find((x) => x.available);
 
   return (
     <CourseShell outline={course} progress={progress} lessonId={lesson.id}>

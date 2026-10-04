@@ -13,7 +13,7 @@ async function handleCheck(request, { params }) {
     return Response.json({ error: "Invalid puzzle id." }, { status: 400 });
   }
 
-  const puzzle = getPuzzleById(id);
+  const puzzle = await getPuzzleById(id);
   if (!puzzle) {
     console.warn(`[puzzle check] no file found for id "${id}" in ${process.cwd()}/content/puzzles`);
     return Response.json({ error: `Puzzle "${id}" was not found.` }, { status: 404 });

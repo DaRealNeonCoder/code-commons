@@ -1,11 +1,9 @@
-import fs from "node:fs";
-import path from "node:path";
-import matter from "gray-matter";
+import { cache } from "react";
+import { puzzleStore } from "./db/stores";
 
-const PUZZLES_DIR = path.join(process.cwd(), "content/puzzles");
+const SLUG = /^[a-z0-9][a-z0-9_-]*$/i;
 
-// Frontmatter shape: testCases: [{ input: "10", expected: "55", hidden: false }]
-// Hand-written YAML like `expected: 55` parses as a number, so coerce to strings.
+// jsonb comes back as whatever was stored, so coerce to the strict shape.
 function normalizeTestCases(value) {
   if (!Array.isArray(value)) return [];
   return value
@@ -17,40 +15,28 @@ function normalizeTestCases(value) {
     }));
 }
 
-function readPuzzleFile(fileName) {
-  const id = fileName.replace(/\.mdx$/, "");
-  const raw = fs.readFileSync(path.join(PUZZLES_DIR, fileName), "utf8");
-  const { data, content } = matter(raw);
-  return {
-    id,
-    content,
-    areas: [],
-    topics: [],
-    tags: [],
-    languages: [],
-    difficulty: "beginner",
-    ...data,
-    testCases: normalizeTestCases(data.testCases),
-  };
-}
-
-// The list view never needs test data, so strip it here. That way a listing
-// page can't accidentally pass hidden test answers to a client component.
-export function getAllPuzzles() {
-  return fs
-    .readdirSync(PUZZLES_DIR)
-    .filter((file) => file.endsWith(".mdx"))
-    .map(readPuzzleFile)
-    .map(({ testCases, ...puzzle }) => ({ ...puzzle, hasTests: testCases.length > 0 }))
-    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+// The list view never needs test data (the store doesn't even select it), so a
+// listing page can't accidentally pass hidden answers to a client component.
+export async function getAllPuzzles() {
+  const rows = await puzzleStore.list({ onlyAvailable: false });
+  return rows.map(({ testCount, ...puzzle }) => ({ ...puzzle, hasTests: testCount > 0 }));
 }
 
 // Full puzzle including ALL test cases. Server-only: use it in the check
 // route, and use getClientTestInfo() before handing anything to the browser.
-export function getPuzzleById(id) {
-  const fullPath = path.join(PUZZLES_DIR, `${id}.mdx`);
-  if (!fs.existsSync(fullPath)) return null;
-  return readPuzzleFile(`${id}.mdx`);
+// Cached per request, so the page and its metadata cost one lookup.
+export const getPuzzleById = cache(async (id) => {
+  if (typeof id !== "string" || !SLUG.test(id)) return null;
+  const row = await puzzleStore.getBySlug(id);
+  if (!row) return null;
+  return { ...row, testCases: normalizeTestCases(row.testCases) };
+});
+
+// Display-only puzzles for many ids in one query -> Map(id -> puzzle).
+export async function getPuzzlesByIds(ids) {
+  const valid = [...new Set(ids.filter((id) => typeof id === "string" && SLUG.test(id)))];
+  const rows = await puzzleStore.getBySlugs(valid);
+  return new Map(rows.map(({ testCount, ownerId, ...p }) => [p.id, { ...p, hasTests: testCount > 0 }]));
 }
 
 // The only test data that is safe to send to the browser: visible cases

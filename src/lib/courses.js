@@ -1,41 +1,30 @@
-import fs from "node:fs";
-import path from "node:path";
+import { cache } from "react";
+import { getCourseBySlug, listCourses, listCoursesWithLesson } from "./db/courses";
 
-const COURSES_DIR = path.join(process.cwd(), "content/courses");
+const SLUG = /^[a-z0-9][a-z0-9_-]*$/i;
 
-function readCourseFile(fileName) {
-  const id = fileName.replace(/\.json$/, "");
-  const raw = fs.readFileSync(path.join(COURSES_DIR, fileName), "utf8");
-  const data = JSON.parse(raw);
-  return { id, lessons: [], ...data };
+// ownerId never leaves the lib layer.
+const publicCourse = ({ ownerId, ...course }) => course;
+
+export async function getAllCourses() {
+  return (await listCourses()).map(publicCourse);
 }
 
-export function getAllCourses() {
-  if (!fs.existsSync(COURSES_DIR)) return [];
-  return fs
-    .readdirSync(COURSES_DIR)
-    .filter((file) => file.endsWith(".json"))
-    .map(readCourseFile);
-}
-
-export function getCourseById(id) {
-  const fullPath = path.join(COURSES_DIR, `${id}.json`);
-  if (!fs.existsSync(fullPath)) return null;
-  return readCourseFile(`${id}.json`);
-}
+export const getCourseById = cache(async (id) => {
+  if (typeof id !== "string" || !SLUG.test(id)) return null;
+  const course = await getCourseBySlug(id);
+  return course ? publicCourse(course) : null;
+});
 
 // Reverse lookup: every course that contains this lesson. Lessons don't declare
-// their own course membership (avoids two sources of truth for the same fact),
-// and one lesson can be in several courses.
-export function getCoursesForLesson(lessonId) {
-  return getAllCourses()
-    .filter((course) => course.lessons.includes(lessonId))
-    .map((course) => ({ id: course.id, title: course.title }));
+// their own course membership, and one lesson can be in several courses.
+export async function getCoursesForLesson(lessonId) {
+  if (typeof lessonId !== "string" || !SLUG.test(lessonId)) return [];
+  const rows = await listCoursesWithLesson(lessonId);
+  return rows.map((course) => ({ id: course.id, title: course.title }));
 }
 
-// The first course containing this lesson, or null. This is the default for
-// links that don't say which course the reader came from (search results,
-// direct URLs). Course-aware links pass ?course= and use getCoursesForLesson.
-export function getCourseForLesson(lessonId) {
-  return getCoursesForLesson(lessonId)[0] ?? null;
+// The first course containing this lesson, or null.
+export async function getCourseForLesson(lessonId) {
+  return (await getCoursesForLesson(lessonId))[0] ?? null;
 }

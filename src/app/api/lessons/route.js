@@ -83,7 +83,7 @@ export async function POST(request) {
   // must be a safe slug that points at a real puzzle file. Any puzzle is
   // allowed; ownership is enforced on the lesson, not on the puzzle.
   const puzzles = normalizePuzzleIds(body.puzzles);
-  const missing = findMissingPuzzleIds(puzzles);
+  const missing = await findMissingPuzzleIds(puzzles);
   if (missing.length > 0) {
     return Response.json({ error: `No puzzle found with ID: ${missing.join(", ")}.` }, { status: 400 });
   }

@@ -22,46 +22,29 @@ const emptyTextArray = sql`'{}'::text[]`;
 
 // ---------- lessons ----------
 
-// User-created lessons. Mirrors the frontmatter of content/lessons/*.mdx:
-//   title, summary, available, projectId, puzzles, areas, topics, tags,
-//   languages, difficulty  (+ the MDX body)
-// `order` is nullable: only imported official lessons set it. User lessons leave
-// it null and sort by createdAt (manual ordering races under concurrent users).
+// User-created lessons. Mirrors the frontmatter of content/lessons/*.mdx.
+// `order` is nullable: only imported official lessons set it.
 export const lessons = pgTable(
   "lessons",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-
-    // URL slug. Unique across all user lessons; the helpers also keep it from
-    // colliding with official (file-based) lesson slugs.
     slug: text("slug").notNull().unique(),
-
-    // No foreign key on purpose: imported official lessons are owned by the
-    // string "system", which isn't a row in the user table.
+    // No foreign key on purpose: imported official lessons are owned by "system".
     ownerId: text("owner_id").notNull(),
-
     // The creator project this lesson was published from. Unique, so
     // re-publishing the same project updates the same lesson.
     projectId: text("project_id").unique(),
-
     title: text("title").notNull(),
     summary: text("summary").notNull().default(""),
-    // MDX source WITHOUT the frontmatter block (frontmatter lives in the columns
-    // around it). Only ever fill this from your server-side assembler/importer.
     body: text("body").notNull(),
     difficulty: text("difficulty").notNull(),
     available: boolean("available").notNull().default(true),
-    order: integer("sort_order"), // null for user lessons
-
-    // Ordered list of puzzle ids this lesson links to.
+    order: integer("sort_order"),
     puzzles: text("puzzles").array().notNull().default(emptyTextArray),
-
-    // Taxonomy selections (validated against your taxonomy in git).
     areas: text("areas").array().notNull().default(emptyTextArray),
     topics: text("topics").array().notNull().default(emptyTextArray),
     tags: text("tags").array().notNull().default(emptyTextArray),
     languages: text("languages").array().notNull().default(emptyTextArray),
-
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -69,7 +52,6 @@ export const lessons = pgTable(
     index("lessons_owner_idx").on(t.ownerId),
     index("lessons_created_idx").on(t.createdAt),
     index("lessons_difficulty_idx").on(t.difficulty),
-    // GIN indexes make "contains" filters on the arrays fast.
     index("lessons_areas_idx").using("gin", t.areas),
     index("lessons_topics_idx").using("gin", t.topics),
     index("lessons_tags_idx").using("gin", t.tags),
@@ -77,12 +59,123 @@ export const lessons = pgTable(
   ]
 );
 
+// ---------- puzzles / shaders / circuits / builds ----------
+// All four share the lesson-style description columns (title, summary, markdown
+// body, taxonomy) and add their own payload columns.
+
+const contentColumns = () => ({
+  id: uuid("id").primaryKey().defaultRandom(),
+  slug: text("slug").notNull().unique(),
+  ownerId: text("owner_id").notNull(), // "system" for imported official content
+  projectId: text("project_id").unique(), // creator project it was published from
+  title: text("title").notNull(),
+  summary: text("summary").notNull().default(""),
+  body: text("body").notNull().default(""), // MDX without frontmatter
+  difficulty: text("difficulty").notNull(),
+  available: boolean("available").notNull().default(true),
+  order: integer("sort_order"),
+  areas: text("areas").array().notNull().default(emptyTextArray),
+  topics: text("topics").array().notNull().default(emptyTextArray),
+  tags: text("tags").array().notNull().default(emptyTextArray),
+  languages: text("languages").array().notNull().default(emptyTextArray),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+const contentIndexes = (name, t) => [
+  index(`${name}_owner_idx`).on(t.ownerId),
+  index(`${name}_created_idx`).on(t.createdAt),
+  index(`${name}_difficulty_idx`).on(t.difficulty),
+  index(`${name}_areas_idx`).using("gin", t.areas),
+  index(`${name}_topics_idx`).using("gin", t.topics),
+  index(`${name}_tags_idx`).using("gin", t.tags),
+  index(`${name}_languages_idx`).using("gin", t.languages),
+];
+
+export const puzzles = pgTable(
+  "puzzles",
+  {
+    ...contentColumns(),
+    starterCode: text("starter_code").notNull().default(""),
+    // [{ input, expected, hidden }]. SERVER ONLY: never select this for client props.
+    testCases: jsonb("test_cases").notNull().default(sql`'[]'::jsonb`),
+  },
+  (t) => contentIndexes("puzzles", t)
+);
+
+export const shaders = pgTable(
+  "shaders",
+  { ...contentColumns(), starterCode: text("starter_code").notNull().default("") },
+  (t) => contentIndexes("shaders", t)
+);
+
+export const circuits = pgTable(
+  "circuits",
+  {
+    ...contentColumns(),
+    // { components, connections, chips }
+    starterCircuit: jsonb("starter_circuit").notNull().default(sql`'{}'::jsonb`),
+  },
+  (t) => contentIndexes("circuits", t)
+);
+
+// "Coding projects". Table is named builds; the creator type id and the
+// /projects URLs are unchanged for now.
+export const builds = pgTable(
+  "builds",
+  {
+    ...contentColumns(),
+    // { python?: string, cpp?: string, rust?: string }
+    starterCode: jsonb("starter_code").notNull().default(sql`'{}'::jsonb`),
+  },
+  (t) => contentIndexes("builds", t)
+);
+
+// ---------- courses ----------
+
+export const courses = pgTable(
+  "courses",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    slug: text("slug").notNull().unique(),
+    ownerId: text("owner_id").notNull(),
+    projectId: text("project_id").unique(),
+    title: text("title").notNull(),
+    summary: text("summary").notNull().default(""),
+    // Ordered lesson slugs. A course points at lessons, it never copies them.
+    lessonIds: text("lesson_ids").array().notNull().default(emptyTextArray),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("courses_owner_idx").on(t.ownerId),
+    index("courses_lessons_idx").using("gin", t.lessonIds),
+  ]
+);
+
+// ---------- circuit chips ----------
+
+export const chips = pgTable(
+  "chips",
+  {
+    id: text("id").primaryKey(), // the client-generated chip id
+    ownerId: text("owner_id").notNull(),
+    ownerName: text("owner_name").notNull().default(""),
+    visibility: text("visibility").notNull().default("private"), // public | private
+    name: text("name").notNull(),
+    data: jsonb("data").notNull(), // the compiled chip (gates, outputSources, ...)
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("chips_owner_idx").on(t.ownerId), index("chips_visibility_idx").on(t.visibility)]
+);
+
 // ---------- creator projects (drafts) ----------
 
 export const creatorProjects = pgTable(
   "creator_projects",
   {
-    id: text("id").primaryKey(), // randomUUID(), generated in lib/creatorProjects.js
+    id: text("id").primaryKey(),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
@@ -136,8 +229,6 @@ export const progress = pgTable(
 
 // ---------- media ----------
 
-// Metadata for uploaded images. The file itself lives in object storage
-// (Vercel Blob); lessons just reference the URL.
 export const media = pgTable(
   "media",
   {

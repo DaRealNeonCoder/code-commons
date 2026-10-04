@@ -9,8 +9,8 @@ import RatedShell from "@/components/rating/RatedShell";
 
 export default async function CoursePage({ params }) {
   const { courseId } = await params;
-  const course = getCourseById(courseId);
-  const outline = getCourseOutline(courseId);
+  const course = await getCourseById(courseId);
+  const outline = await getCourseOutline(courseId);
   if (!course || !outline) notFound();
 
   const userId = await getCurrentUserId();

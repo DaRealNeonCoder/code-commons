@@ -3,16 +3,17 @@ import LogicSimulator from "@/components/circuits/LogicSimulator";
 import MdxBody from "@/components/mdx/MdxBody";
 import RatedShell from "@/components/rating/RatedShell";
 import { getCircuitById } from "@/lib/circuits/circuits";
+import { parseCircuit, EMPTY_CIRCUIT } from "@/lib/circuits/circuitData";
 
 export async function generateMetadata({ params }) {
   const { circuitId } = await params;
-  const circuit = getCircuitById(circuitId);
+  const circuit = await getCircuitById(circuitId);
   return { title: circuit ? `${circuit.title} — codeloop` : "Circuit — codeloop" };
 }
 
 export default async function CircuitDetailPage({ params }) {
   const { circuitId } = await params;
-  const circuit = getCircuitById(circuitId);
+  const circuit = await getCircuitById(circuitId);
   if (!circuit) notFound();
 
   if (!circuit.available) {
@@ -26,12 +27,8 @@ export default async function CircuitDetailPage({ params }) {
     );
   }
 
-  let initialCircuit;
-  try {
-    initialCircuit = JSON.parse(circuit.starterCircuit);
-  } catch {
-    initialCircuit = { components: [], connections: [], chips: {} };
-  }
+  // starterCircuit is jsonb now (an object), but it's still validated before use.
+  const initialCircuit = parseCircuit(circuit.starterCircuit) ?? EMPTY_CIRCUIT;
 
   return (
     <main className="flex min-h-[calc(100vh-56px)] flex-1 flex-col bg-zinc-950">

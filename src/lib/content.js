@@ -5,7 +5,7 @@ import { getAllShaders } from "./shaders/shaders";
 import { getAllCircuits } from "./circuits/circuits";
 import { getAllProjects } from "./codingProjects";
 import { loadTaxonomy, expandTaxonomy, labelFor } from "./taxonomy";
-import { getCourseForLesson, getAllCourses } from "./courses";
+import { getAllCourses } from "./courses";
 import { getRatingTotals, wilsonScore } from "./ratings";
 
 const HREF_PREFIX = {
@@ -18,11 +18,11 @@ const HREF_PREFIX = {
 };
 
 // How much a perfect rating can lift a result, relative to a perfect text
-// match (1.0). 0.25 means rating can reorder close matches but a clearly
-// better text match still wins.
+// match (1.0).
 const RATING_WEIGHT = 0.25;
 
-function toContentItem(raw, type, taxonomy) {
+// `course` is the first course containing a lesson (lessons only), or null.
+function toContentItem(raw, type, taxonomy, course = null) {
   const areas = raw.areas || [];
   const topics = raw.topics || [];
   const tags = raw.tags || [];
@@ -39,11 +39,7 @@ function toContentItem(raw, type, taxonomy) {
     href: `${HREF_PREFIX[type]}/${raw.id}`,
     effectiveAreas,
     effectiveTopics,
-    // Only lessons belong to a course right now — shaders/circuits have no
-    // equivalent grouping yet, so this just stays null for them.
-    course: type === "lesson" ? getCourseForLesson(raw.id) : null,
-    // Label text (not ids) gets indexed for free-text search, so searching
-    // "algorithms" matches even content that only carries a narrower tag.
+    course,
     _searchText: {
       areaLabels: effectiveAreas.map((id) => labelFor(taxonomy.areas, id)).join(" "),
       topicLabels: effectiveTopics.map((id) => labelFor(taxonomy.topics, id)).join(" "),
@@ -52,26 +48,36 @@ function toContentItem(raw, type, taxonomy) {
   };
 }
 
-// Re-reads content on every call (files from disk, user lessons and projects
-// from the database), intentionally uncached. At this project's scale (dozens
-// to low hundreds of items) that is well within a normal response budget, and
-// it means a lesson saved via /create is searchable immediately with no cache
-// to invalidate. If the library grows into the thousands, the next step would
-// be a cached/indexed search rather than a redesign of this API.
-
+// Everything now comes from the database (lessons also still merge in the
+// official .mdx files). Intentionally uncached: one cheap list query per type,
+// so anything published via /create is searchable immediately.
 export async function getAllContent() {
   const taxonomy = loadTaxonomy();
-  const [rawLessons, rawProjects] = await Promise.all([getLessons(), getAllProjects()]);
+  const [rawLessons, rawPuzzles, rawShaders, rawCircuits, rawProjects, rawCourses] = await Promise.all([
+    getLessons(),
+    getAllPuzzles(),
+    getAllShaders(),
+    getAllCircuits(),
+    getAllProjects(),
+    getAllCourses(),
+  ]);
+
   const lessonsById = new Map(rawLessons.map((l) => [l.id, l]));
 
-  const courses = getAllCourses().map((course) =>
-    toContentItem(courseToRaw(course, lessonsById), "course", taxonomy)
-  );
-  const lessons = rawLessons.map((lesson) => toContentItem(lesson, "lesson", taxonomy));
-  const puzzles = getAllPuzzles().map((puzzle) => toContentItem(puzzle, "puzzle", taxonomy));
-  const shaders = getAllShaders().map((shader) => toContentItem(shader, "shader", taxonomy));
-  const circuits = getAllCircuits().map((circuit) => toContentItem(circuit, "circuit", taxonomy));
-  const projects = rawProjects.map((project) => toContentItem(project, "project", taxonomy));
+  // One pass instead of a query per lesson. Courses arrive oldest first.
+  const firstCourseOf = new Map();
+  for (const course of rawCourses) {
+    for (const lessonId of course.lessons) {
+      if (!firstCourseOf.has(lessonId)) firstCourseOf.set(lessonId, { id: course.id, title: course.title });
+    }
+  }
+
+  const courses = rawCourses.map((course) => toContentItem(courseToRaw(course, lessonsById), "course", taxonomy));
+  const lessons = rawLessons.map((l) => toContentItem(l, "lesson", taxonomy, firstCourseOf.get(l.id) ?? null));
+  const puzzles = rawPuzzles.map((p) => toContentItem(p, "puzzle", taxonomy));
+  const shaders = rawShaders.map((s) => toContentItem(s, "shader", taxonomy));
+  const circuits = rawCircuits.map((c) => toContentItem(c, "circuit", taxonomy));
+  const projects = rawProjects.map((p) => toContentItem(p, "project", taxonomy));
   return [...courses, ...lessons, ...puzzles, ...shaders, ...circuits, ...projects];
 }
 
@@ -92,6 +98,7 @@ function matchesFilters(item, filters) {
 
   return true;
 }
+
 function courseToRaw(course, lessonsById) {
   const own = course.lessons.map((id) => lessonsById.get(id)).filter(Boolean);
   const union = (key) => [...new Set(own.flatMap((l) => l[key] || []))];
@@ -106,14 +113,11 @@ function courseToRaw(course, lessonsById) {
   };
 }
 
-// Adds { likes, dislikes, score } to an item. score is the Wilson lower
-// bound (0..1), so a handful of likes can't outrank a well-established item.
 function withRating(item, totals) {
   const { likes = 0, dislikes = 0 } = totals.get(`${item.type}:${item.id}`) ?? {};
   return { ...item, rating: { likes, dislikes, score: wilsonScore(likes, dislikes) } };
 }
 
-// Best rated first; ties fall back to net likes, then title so order is stable.
 function compareByRating(a, b) {
   return (
     b.rating.score - a.rating.score ||
@@ -122,15 +126,9 @@ function compareByRating(a, b) {
   );
 }
 
-// types/areas/topics/tags/languages/difficulty are all arrays: values
-// within one axis are OR'd together, axes are AND'd together. An empty
-// array for an axis means "no filter on that axis."
-//
-// Ordering:
-//   no query            -> by rating
-//   sort: "relevance"   -> text relevance, boosted by rating (default)
-//   sort: "rating"      -> matches ordered purely by rating
-//
+// types/areas/topics/tags/languages/difficulty are all arrays: values within one
+// axis are OR'd, axes are AND'd. Empty array = no filter on that axis.
+// sort: "relevance" (default, text match boosted by rating) | "rating".
 // async: await it.
 export async function searchContent({
   query,
@@ -151,8 +149,6 @@ export async function searchContent({
     return items.filter((item) => matchesFilters(item, filters)).sort(compareByRating);
   }
 
-  // Lessons/puzzles/shaders/circuits/projects are separate id namespaces, so a
-  // composite key avoids collisions if two types ever share a slug.
   const keyOf = (item) => `${item.type}:${item.id}`;
   const byKey = new Map(items.map((item) => [keyOf(item), item]));
 
@@ -180,8 +176,6 @@ export async function searchContent({
     return hits.map((hit) => byKey.get(hit.id)).sort(compareByRating);
   }
 
-  // MiniSearch scores are unbounded floats, so normalize against the best hit
-  // before mixing in the rating; otherwise the boost would be meaningless.
   const topScore = hits[0]?.score || 1;
   return hits
     .map((hit) => {
