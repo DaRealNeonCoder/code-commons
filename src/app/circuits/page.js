@@ -5,8 +5,8 @@ export const metadata = {
   title: "Circuits — codeloop",
 };
 
-export default function CircuitsIndexPage() {
-  const circuits = getAllCircuits();
+export default async function CircuitsIndexPage() {
+  const circuits = await getAllCircuits();
 
   return (
     <div className="w-full h-full overflow-y-auto bg-zinc-950 px-6 py-12">
