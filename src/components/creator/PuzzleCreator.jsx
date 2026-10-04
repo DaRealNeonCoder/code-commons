@@ -91,7 +91,6 @@ return ( <div className="w-full h-full overflow-y-auto px-6 py-12"> <div classNa
      /> <h1 className="mt-1 text-2xl font-semibold">Create a puzzle</h1> <p className="mt-1 text-zinc-600 dark:text-zinc-400">
 Same block editor as lessons, plus difficulty, topic filters and test cases. </p>
 
-```
     <fieldset disabled={!project.canEdit} className="m-0 min-w-0 border-0 p-0">
       <section className="mt-8 rounded-md border border-zinc-200 p-5 dark:border-zinc-800">
         <h2 className="mb-4 font-mono text-sm text-zinc-500">puzzle details</h2>
@@ -181,7 +180,6 @@ Same block editor as lessons, plus difficulty, topic filters and test cases. </p
     </fieldset>
   </div>
 </div>
-```
 
 );
 }

@@ -124,7 +124,6 @@ return ( <div className="flex h-full w-full flex-col">
 You're viewing someone else's project. It's read-only, and nothing you do here is saved. </p>
 )}
 
-```
   {view === "workspace" ? (
     // The playground's own toolbar carries the tabs (headerLeft), so there's
     // one bar instead of two. Lesson pane = live preview of the markdown tab.
@@ -238,7 +237,6 @@ You're viewing someone else's project. It's read-only, and nothing you do here i
     </>
   )}
 </div>
-```
 
 );
 }
