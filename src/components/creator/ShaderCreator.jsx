@@ -4,239 +4,291 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import TextBlockEditor, { newTextBlock } from "@/components/creator/TextBlockEditor";
 import { blocksToMarkdown } from "@/lib/blocksToMarkdown";
-import FilterFields from "@/components/filters/FilterFields";
 import ShaderPlayground from "@/components/shaders/ShaderPlayground";
 import LessonPreview from "@/components/creator/LessonPreview";
 import { DEFAULT_SHADER } from "@/lib/shaders/defaultShader";
 import useProjectAutosave from "@/components/creator/useProjectAutosave";
 
-const STATUS_TEXT = {
-saved: "saved",
-dirty: "unsaved changes",
-saving: "saving...",
-error: "couldn't save",
+// Shader lessons aren't categorised; the save route still expects these keys,
+// so send empty defaults.
+const NO_SELECTION = {
+  areas: [],
+  topics: [],
+  tags: [],
+  languages: [],
+  difficulty: "",
 };
 
-// Same look as ShaderPlayground's own view toggles, so the tabs feel native.
+const STATUS_TEXT = {
+  saved: "saved",
+  dirty: "unsaved changes",
+  saving: "saving...",
+  error: "couldn't save",
+};
+
 function ViewTab({ label, active, onClick }) {
-return (
-<button
-type="button"
-role="tab"
-aria-selected={active}
-onClick={onClick}
-className={`rounded border px-3 py-1 font-mono text-xs transition-colors ${
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={`rounded border px-3 py-1 font-mono text-xs transition-colors ${
         active
           ? "border-fuchsia-400 text-fuchsia-400"
           : "border-zinc-700 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300"
       }`}
->
-{label} </button>
-);
+    >
+      {label}
+    </button>
+  );
 }
 
 export default function ShaderCreator({ project }) {
-const saved = project.data ?? {};
+  const saved = project.data ?? {};
 
-// The workspace is the default view; the Markdown creator is one tab away.
-const [view, setView] = useState("workspace");
+  // The workspace is the default view; the Markdown creator is one tab away.
+  const [view, setView] = useState("workspace");
 
-// `baselineCode` is what the project was opened with (what "reset" returns to).
-// `code` is the live copy. `seed` is what the workspace mounts with each time
-// it's shown, so coming back from the markdown tab restores the latest code.
-const [baselineCode] = useState(() => saved.code ?? DEFAULT_SHADER);
-const [code, setCode] = useState(baselineCode);
-const [seed, setSeed] = useState(baselineCode);
+  // `baselineCode` is what the project was opened with (what "reset" returns to).
+  // `code` is the live copy reported by the playground. `seed` is what the
+  // workspace mounts with each time it's shown, so coming back from the
+  // markdown tab restores the latest code.
+  const [baselineCode] = useState(() => saved.code ?? DEFAULT_SHADER);
+  const [code, setCode] = useState(baselineCode);
+  const [seed, setSeed] = useState(baselineCode);
 
-const [title, setTitle] = useState(project.title ?? "");
-const [summary, setSummary] = useState(saved.summary ?? "");
-const [blocks, setBlocks] = useState(
-Array.isArray(saved.blocks) ? saved.blocks : [newTextBlock({ size: "title", bold: true })]
-);
-const [status, setStatus] = useState(null);
+  const [title, setTitle] = useState(project.title ?? "");
+  const [summary, setSummary] = useState(saved.summary ?? "");
+  const [blocks, setBlocks] = useState(
+    Array.isArray(saved.blocks)
+      ? saved.blocks
+      : [newTextBlock({ size: "title", bold: true })]
+  );
+  const [status, setStatus] = useState(null);
 
-const [areas, setAreas] = useState(saved.areas ?? []);
-const [topics, setTopics] = useState(saved.topics ?? []);
-const [tags, setTags] = useState(saved.tags ?? []);
-const [languages, setLanguages] = useState(saved.languages ?? []);
-const [difficulty, setDifficulty] = useState(saved.difficulty ?? "");
+  const markdown = useMemo(() => blocksToMarkdown(blocks), [blocks]);
+  const hasText = markdown.trim() !== "";
 
-const markdown = useMemo(() => blocksToMarkdown(blocks), [blocks]);
-const hasText = markdown.trim() !== "";
+  const saveState = useProjectAutosave({
+    projectId: project.id,
+    enabled: project.canEdit,
+    title,
+    data: { summary, code, blocks },
+  });
 
-const saveState = useProjectAutosave({
-projectId: project.id,
-enabled: project.canEdit,
-title,
-data: { summary, code, blocks, areas, topics, tags, languages, difficulty },
-});
+  function changeView(next) {
+    if (next === "workspace") setSeed(code);
+    setView(next);
+  }
 
-function changeView(next) {
-if (next === "workspace") setSeed(code);
-setView(next);
-}
+  async function handleSave() {
+    setStatus("saving");
 
-async function handleSave() {
-setStatus("saving");
-try {
-const res = await fetch("/api/shader-lessons", {
-method: "POST",
-headers: { "Content-Type": "application/json" },
-body: JSON.stringify({
-projectId: project.id,
-title,
-summary,
-difficulty,
-areas,
-topics,
-tags,
-languages,
-starterCode: code,
-blocks,
-}),
-});
-const data = await res.json();
-if (!res.ok) throw new Error(data.error || "Something went wrong.");
-setStatus({ ok: data.id });
-} catch (err) {
-setStatus({ error: err.message });
-}
-}
+    try {
+      const res = await fetch("/api/shader-lessons", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          projectId: project.id,
+          title,
+          summary,
+          ...NO_SELECTION,
+          starterCode: code,
+          blocks,
+        }),
+      });
 
-// Left side of the bar: identical in both views, so the tabs never move.
-const header = ( <div className="flex flex-wrap items-center gap-x-3 gap-y-2"> <Link href="/create" className="font-mono text-sm text-zinc-400 hover:text-zinc-200">
-← /create </Link> <span className="flex items-center gap-2 font-mono text-sm text-zinc-100"> <span className="h-2 w-2 rounded-full bg-fuchsia-400" />
-/create/shader </span> <div role="tablist" aria-label="Project view" className="flex items-center gap-1.5">
-<ViewTab label="workspace" active={view === "workspace"} onClick={() => changeView("workspace")} />
-<ViewTab label="markdown" active={view === "markdown"} onClick={() => changeView("markdown")} /> </div>
-{project.canEdit && (
-<span
-role="status"
-aria-live="polite"
-className={`font-mono text-xs ${saveState === "error" ? "text-red-400" : "text-zinc-500"}`}
->
-{STATUS_TEXT[saveState]} </span>
-)} </div>
-);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Something went wrong.");
+      setStatus({ ok: data.id });
+    } catch (err) {
+      setStatus({ error: err.message });
+    }
+  }
 
-return ( <div className="flex h-full w-full flex-col">
-{!project.canEdit && ( <p className="shrink-0 border-b border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm text-amber-700 dark:text-amber-400">
-You're viewing someone else's project. It's read-only, and nothing you do here is saved. </p>
-)}
+  // Lesson pane = live preview of the markdown tab. Only passed once there's
+  // text, so someone making a personal project isn't shown an empty lesson pane.
+  const lessonProps = hasText
+    ? {
+        lessonTitle: title.trim() || "Untitled lesson",
+        lessonContent: <LessonPreview source={markdown} />,
+      }
+    : {};
 
-  {view === "workspace" ? (
-    // The playground's own toolbar carries the tabs (headerLeft), so there's
-    // one bar instead of two. Lesson pane = live preview of the markdown tab.
-    <ShaderPlayground
-      headerLeft={header}
-      initialCode={seed}
-      resetCode={baselineCode}
-      onCodeChange={setCode}
-      lessonTitle={title.trim() || "Untitled lesson"}
-      lessonContent={<LessonPreview source={markdown} />}
-      lessonOpenByDefault={hasText}
-    />
-  ) : (
-    <>
-      <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-zinc-800 bg-zinc-950 px-4 py-2">
-        {header}
+  return (
+    <div className="flex h-full w-full flex-col">
+      {!project.canEdit && (
+        <p className="shrink-0 border-b border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm text-amber-700 dark:text-amber-400">
+          You're viewing someone else's project. It's read-only, and nothing you
+          do here is saved.
+        </p>
+      )}
+
+      {/* Same bar in both views, so the tabs never move. */}
+      <div className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b border-zinc-800 bg-zinc-950 px-4 py-2">
+        <Link
+          href="/create"
+          className="font-mono text-sm text-zinc-400 hover:text-zinc-200"
+        >
+          ← /create
+        </Link>
+
+        <span className="flex items-center gap-2 font-mono text-sm text-zinc-100">
+          <span className="h-2 w-2 rounded-full bg-fuchsia-400" />
+          /create/shader
+        </span>
+
+        <div
+          role="tablist"
+          aria-label="Project view"
+          className="flex items-center gap-1.5"
+        >
+          <ViewTab
+            label="workspace"
+            active={view === "workspace"}
+            onClick={() => changeView("workspace")}
+          />
+          <ViewTab
+            label="markdown"
+            active={view === "markdown"}
+            onClick={() => changeView("markdown")}
+          />
+        </div>
+
+        {project.canEdit && (
+          <span
+            role="status"
+            aria-live="polite"
+            className={`font-mono text-xs ${
+              saveState === "error" ? "text-red-400" : "text-zinc-500"
+            }`}
+          >
+            {STATUS_TEXT[saveState]}
+          </span>
+        )}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-6 py-8">
-        <div className="mx-auto max-w-4xl">
-          <h1 className="text-2xl font-semibold">Create a shader lesson</h1>
-          <p className="mt-1 text-zinc-600 dark:text-zinc-400">
-            Add the lesson text and details. The starter shader is whatever is in the workspace.
-          </p>
+      {view === "workspace" ? (
+        // Mounted fresh each time it's shown (not hidden with CSS), so the
+        // playground always measures a visible container.
+        <div className="flex min-h-0 flex-1 flex-col bg-zinc-950">
+          <ShaderPlayground
+            initialCode={seed}
+            resetCode={baselineCode}
+            onCodeChange={setCode}
+            {...lessonProps}
+          />
+        </div>
+      ) : (
+        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-8">
+          <div className="mx-auto max-w-4xl">
+            <h1 className="text-2xl font-semibold">Create a shader lesson</h1>
 
-          <div className="mt-6 flex items-center justify-between gap-3 rounded-md border border-zinc-200 px-5 py-3 dark:border-zinc-800">
-            <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Starter shader: {code.split("\n").length} lines
+            <p className="mt-1 text-zinc-600 dark:text-zinc-400">
+              Add the lesson text and details. The starter shader is whatever is
+              in the workspace.
             </p>
-            <button
-              type="button"
-              onClick={() => changeView("workspace")}
-              className="shrink-0 font-mono text-sm text-fuchsia-600 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-fuchsia-500 dark:text-fuchsia-400"
-            >
-              open workspace
-            </button>
-          </div>
 
-          <fieldset disabled={!project.canEdit} className="m-0 min-w-0 border-0 p-0">
-            <section className="mt-6 rounded-md border border-zinc-200 p-5 dark:border-zinc-800">
-              <h2 className="mb-4 font-mono text-sm text-zinc-500">lesson details</h2>
+            <div className="mt-6 flex items-center justify-between gap-3 rounded-md border border-zinc-200 px-5 py-3 dark:border-zinc-800">
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                Starter shader: {code.split("\n").length} lines
+              </p>
 
-              <label className="block text-sm font-medium" htmlFor="shader-title">
-                Title
-              </label>
-              <input
-                id="shader-title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Your First Fragment Shader"
-                className="mt-1 mb-4 w-full rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
-              />
-
-              <label className="block text-sm font-medium" htmlFor="shader-summary">
-                Summary
-              </label>
-              <input
-                id="shader-summary"
-                value={summary}
-                onChange={(e) => setSummary(e.target.value)}
-                placeholder="One line shown in the shader lesson list"
-                className="mt-1 w-full rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
-              />
-
-              <div className="mt-4">
-                <FilterFields
-                  areas={areas}
-                  onAreasChange={setAreas}
-                  topics={topics}
-                  onTopicsChange={setTopics}
-                  tags={tags}
-                  onTagsChange={setTags}
-                  languageMode="multi"
-                  languages={languages}
-                  onLanguagesChange={setLanguages}
-                  difficulty={difficulty}
-                  onDifficultyChange={setDifficulty}
-                />
-              </div>
-            </section>
-
-            <TextBlockEditor blocks={blocks} onChange={setBlocks} accent="fuchsia" />
-
-            <details className="mt-6 rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
-              <summary className="cursor-pointer select-none font-mono text-sm text-zinc-500">
-                preview generated markdown
-              </summary>
-              <pre className="mt-3 overflow-x-auto whitespace-pre-wrap rounded bg-zinc-950 p-3 font-mono text-xs text-zinc-300">
-                {markdown || "(nothing yet)"}
-              </pre>
-            </details>
-
-            <div className="mt-6 flex items-center gap-3">
               <button
                 type="button"
-                onClick={handleSave}
-                disabled={status === "saving" || !title.trim() || !difficulty}
-                className="rounded-md bg-fuchsia-600 px-5 py-2.5 font-mono text-sm font-medium text-white transition-colors hover:bg-fuchsia-700 disabled:opacity-50"
+                onClick={() => changeView("workspace")}
+                className="shrink-0 font-mono text-sm text-fuchsia-600 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-fuchsia-500 dark:text-fuchsia-400"
               >
-                {status === "saving" ? "saving..." : "$ save shader lesson"}
+                open workspace
               </button>
-
-              {status?.ok && (
-                <p className="text-sm text-teal-600 dark:text-teal-400">Saved as &ldquo;{status.ok}&rdquo;.</p>
-              )}
-              {status?.error && <p className="text-sm text-red-600 dark:text-red-400">{status.error}</p>}
             </div>
-          </fieldset>
-        </div>
-      </div>
-    </>
-  )}
-</div>
 
-);
+            <fieldset
+              disabled={!project.canEdit}
+              className="m-0 min-w-0 border-0 p-0"
+            >
+              {/* Lesson details */}
+              <section className="mt-6 rounded-md border border-zinc-200 p-5 dark:border-zinc-800">
+                <h2 className="mb-4 font-mono text-sm text-zinc-500">
+                  lesson details
+                </h2>
+
+                <label
+                  className="block text-sm font-medium"
+                  htmlFor="shader-title"
+                >
+                  Title
+                </label>
+
+                <input
+                  id="shader-title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="e.g. Your First Fragment Shader"
+                  className="mt-1 mb-4 w-full rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+                />
+
+                <label
+                  className="block text-sm font-medium"
+                  htmlFor="shader-summary"
+                >
+                  Summary
+                </label>
+
+                <input
+                  id="shader-summary"
+                  value={summary}
+                  onChange={(e) => setSummary(e.target.value)}
+                  placeholder="One line shown in the shader lesson list"
+                  className="mt-1 w-full rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+                />
+              </section>
+
+              <TextBlockEditor
+                blocks={blocks}
+                onChange={setBlocks}
+                accent="fuchsia"
+              />
+
+              {/* Markdown preview */}
+              <details className="mt-6 rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
+                <summary className="cursor-pointer select-none font-mono text-sm text-zinc-500">
+                  preview generated markdown
+                </summary>
+
+                <pre className="mt-3 overflow-x-auto whitespace-pre-wrap rounded bg-zinc-950 p-3 font-mono text-xs text-zinc-300">
+                  {markdown || "(nothing yet)"}
+                </pre>
+              </details>
+
+              {/* Save button */}
+              <div className="mt-6 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={status === "saving" || !title.trim()}
+                  className="rounded-md bg-fuchsia-600 px-5 py-2.5 font-mono text-sm font-medium text-white transition-colors hover:bg-fuchsia-700 disabled:opacity-50"
+                >
+                  {status === "saving" ? "saving..." : "$ save shader lesson"}
+                </button>
+
+                {status?.ok && (
+                  <p className="text-sm text-teal-600 dark:text-teal-400">
+                    Saved as &ldquo;{status.ok}&rdquo;.
+                  </p>
+                )}
+
+                {status?.error && (
+                  <p className="text-sm text-red-600 dark:text-red-400">
+                    {status.error}
+                  </p>
+                )}
+              </div>
+            </fieldset>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

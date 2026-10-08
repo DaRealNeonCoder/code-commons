@@ -1,0 +1,41 @@
+---
+title: "Separate Parenthesis Groups"
+order: 16
+available: true
+areas: []
+topics: ["strings", "stacks"]
+tags: ["balanced-parentheses"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def separate_paren_groups(s):
+      # TODO: split s into its top-level balanced groups
+      pass
+
+  s = input().replace(" ", "")
+  print(*separate_paren_groups(s))
+testCases:
+  - input: "( ) (( )) (( )( ))"
+    expected: "() (()) (()())"
+    hidden: false
+  - input: "()"
+    expected: "()"
+    hidden: true
+  - input: "(()())((()))()"
+    expected: "(()()) ((())) ()"
+    hidden: true
+  - input: "( ( ) ) ( )"
+    expected: "(()) ()"
+    hidden: true
+---
+
+The input is a string of parentheses that contains several **balanced groups** written one after another. Each group is balanced on its own, and groups are never nested inside each other.
+
+Write a function `separate_paren_groups(s)` that splits the string into those separate groups and returns them as a list. Spaces in the input should be ignored (the starter code already removes them).
+
+For example, `"( ) (( )) (( )( ))"` becomes `["()", "(())", "(()())"]`.
+
+> [!TIP]
+> Track the nesting depth as you scan. Whenever it returns to zero, you have just closed a complete group.
+
+The starter code prints the groups separated by spaces.

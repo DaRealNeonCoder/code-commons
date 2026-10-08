@@ -3,7 +3,7 @@ import "katex/dist/katex.min.css";
 import Navbar from "@/components/Navbar";
 
 export const metadata = {
-  title: "Codeloop — learn Python, solve puzzles",
+  title: "CodeCommons — learn Python, solve puzzles",
   description: "Interactive Python lessons and coding puzzles, right in your browser.",
 };
 

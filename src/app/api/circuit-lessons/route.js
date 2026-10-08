@@ -5,7 +5,7 @@ import { parseCircuit, EMPTY_CIRCUIT } from "@/lib/circuits/circuitData";
 const MAX_CIRCUIT_CHARS = 1_000_000;
 
 export async function POST(request) {
-  const p = await readPublishRequest(request, "circuit", "circuit");
+const p = await readPublishRequest(request, "circuit", "circuit", { categorised: false });
   if (p.response) return p.response;
 
   // Missing circuit = empty one; a present but malformed one is rejected.

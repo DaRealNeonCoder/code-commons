@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getAllCircuits } from "@/lib/circuits/circuits";
 
 export const metadata = {
-  title: "Circuits — codeloop",
+  title: "Circuits — codecommons",
 };
 
 export default async function CircuitsIndexPage() {

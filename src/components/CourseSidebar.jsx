@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useLiveProgress } from "@/lib/useLiveProgress";
 import { isLessonComplete } from "@/lib/progressUtils";
 
-const COLLAPSE_KEY = "codeloop:course-sidebar-collapsed";
+const COLLAPSE_KEY = "codecommons:course-sidebar-collapsed";
 const DONE = "text-green-600 dark:text-green-400";
 
 export default function CourseSidebar({ outline, progress: initialProgress, currentLessonId, currentPuzzleId }) {

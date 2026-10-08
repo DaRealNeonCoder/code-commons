@@ -1,0 +1,39 @@
+---
+title: "Count Distinct Characters"
+order: 7
+available: true
+areas: []
+topics: ["strings", "hash-tables"]
+tags: ["hash-set"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def count_distinct_characters(s):
+      # TODO: count distinct characters, ignoring case
+      pass
+
+  s = input()
+  print(count_distinct_characters(s))
+testCases:
+  - input: "xyzXYZ"
+    expected: "3"
+    hidden: false
+  - input: "Jerry"
+    expected: "4"
+    hidden: true
+  - input: "aaaa"
+    expected: "1"
+    hidden: true
+  - input: "Hello World"
+    expected: "8"
+    hidden: true
+---
+
+Write a function `count_distinct_characters(s)` that returns how many **distinct** characters a string contains, ignoring letter case. `"A"` and `"a"` count as the same character.
+
+For example, `"xyzXYZ"` has 3 distinct characters, and `"Jerry"` has 4 (`j`, `e`, `r`, `y`).
+
+> [!TIP]
+> A set only keeps one copy of each value, which makes it a natural fit here.
+
+The starter code reads one line of text (spaces count as characters too) and prints the answer.

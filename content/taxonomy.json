@@ -1,38 +1,294 @@
 {
   "areas": [
-    { "id": "algorithms", "label": "Algorithms" },
-    { "id": "data-structures", "label": "Data Structures" },
-    { "id": "programming-fundamentals", "label": "Programming Fundamentals" },
-    { "id": "web-development", "label": "Web Development" }
+    {
+      "id": "algorithms",
+      "label": "Algorithms"
+    },
+    {
+      "id": "data-structures",
+      "label": "Data Structures"
+    },
+    {
+      "id": "programming-fundamentals",
+      "label": "Programming Fundamentals"
+    },
+    {
+      "id": "web-development",
+      "label": "Web Development"
+    }
   ],
   "topics": [
-    { "id": "searching", "label": "Searching", "areas": ["algorithms"] },
-    { "id": "sorting", "label": "Sorting", "areas": ["algorithms"] },
-    { "id": "graphs", "label": "Graphs", "areas": ["algorithms"] },
-    { "id": "dynamic-programming", "label": "Dynamic Programming", "areas": ["algorithms"] },
-    { "id": "trees", "label": "Trees", "areas": ["data-structures"] },
-    { "id": "arrays", "label": "Arrays", "areas": ["data-structures"] }
+    {
+      "id": "searching",
+      "label": "Searching",
+      "areas": [
+        "algorithms"
+      ]
+    },
+    {
+      "id": "sorting",
+      "label": "Sorting",
+      "areas": [
+        "algorithms"
+      ]
+    },
+    {
+      "id": "graphs",
+      "label": "Graphs",
+      "areas": [
+        "algorithms"
+      ]
+    },
+    {
+      "id": "dynamic-programming",
+      "label": "Dynamic Programming",
+      "areas": [
+        "algorithms"
+      ]
+    },
+    {
+      "id": "trees",
+      "label": "Trees",
+      "areas": [
+        "data-structures"
+      ]
+    },
+    {
+      "id": "arrays",
+      "label": "Arrays",
+      "areas": [
+        "data-structures"
+      ]
+    },
+    {
+      "id": "strings",
+      "label": "Strings",
+      "areas": [
+        "programming-fundamentals",
+        "data-structures"
+      ]
+    },
+    {
+      "id": "math",
+      "label": "Math & Number Theory",
+      "areas": [
+        "programming-fundamentals",
+        "algorithms"
+      ]
+    },
+    {
+      "id": "stacks",
+      "label": "Stacks",
+      "areas": [
+        "data-structures"
+      ]
+    },
+    {
+      "id": "hash-tables",
+      "label": "Hash Tables & Sets",
+      "areas": [
+        "data-structures"
+      ]
+    }
   ],
   "tags": [
-    { "id": "binary-search", "label": "Binary Search", "topics": ["searching", "arrays"] },
-    { "id": "linear-search", "label": "Linear Search", "topics": ["searching"] },
-    { "id": "a-star", "label": "A*", "topics": ["graphs"] },
-    { "id": "dijkstra", "label": "Dijkstra's Algorithm", "topics": ["graphs"] },
-    { "id": "red-black-tree", "label": "Red-Black Tree", "topics": ["trees"] },
-    { "id": "knapsack", "label": "Knapsack", "topics": ["dynamic-programming"] },
-    { "id": "quicksort", "label": "Quicksort", "topics": ["sorting"] },
-    { "id": "fibonacci", "label": "Fibonacci Sequence", "topics": ["dynamic-programming"] },
-    { "id": "two-sum", "label": "Two Sum", "topics": ["arrays"] }
+    {
+      "id": "binary-search",
+      "label": "Binary Search",
+      "topics": [
+        "searching",
+        "arrays"
+      ]
+    },
+    {
+      "id": "linear-search",
+      "label": "Linear Search",
+      "topics": [
+        "searching"
+      ]
+    },
+    {
+      "id": "a-star",
+      "label": "A*",
+      "topics": [
+        "graphs"
+      ]
+    },
+    {
+      "id": "dijkstra",
+      "label": "Dijkstra's Algorithm",
+      "topics": [
+        "graphs"
+      ]
+    },
+    {
+      "id": "red-black-tree",
+      "label": "Red-Black Tree",
+      "topics": [
+        "trees"
+      ]
+    },
+    {
+      "id": "knapsack",
+      "label": "Knapsack",
+      "topics": [
+        "dynamic-programming"
+      ]
+    },
+    {
+      "id": "quicksort",
+      "label": "Quicksort",
+      "topics": [
+        "sorting"
+      ]
+    },
+    {
+      "id": "fibonacci",
+      "label": "Fibonacci Sequence",
+      "topics": [
+        "dynamic-programming"
+      ]
+    },
+    {
+      "id": "two-sum",
+      "label": "Two Sum",
+      "topics": [
+        "arrays"
+      ]
+    },
+    {
+      "id": "prefix-sum",
+      "label": "Prefix Sum / Running Total",
+      "topics": [
+        "arrays"
+      ]
+    },
+    {
+      "id": "running-max",
+      "label": "Running Maximum",
+      "topics": [
+        "arrays"
+      ]
+    },
+    {
+      "id": "pairwise-comparison",
+      "label": "Pairwise Comparison",
+      "topics": [
+        "arrays",
+        "sorting"
+      ]
+    },
+    {
+      "id": "interleave",
+      "label": "Interleaving",
+      "topics": [
+        "arrays"
+      ]
+    },
+    {
+      "id": "binary-strings",
+      "label": "Binary Strings",
+      "topics": [
+        "strings"
+      ]
+    },
+    {
+      "id": "prefixes",
+      "label": "Prefixes",
+      "topics": [
+        "strings"
+      ]
+    },
+    {
+      "id": "substring-search",
+      "label": "Substring Search",
+      "topics": [
+        "strings",
+        "searching"
+      ]
+    },
+    {
+      "id": "palindrome",
+      "label": "Palindromes",
+      "topics": [
+        "strings"
+      ]
+    },
+    {
+      "id": "balanced-parentheses",
+      "label": "Balanced Parentheses",
+      "topics": [
+        "stacks",
+        "strings"
+      ]
+    },
+    {
+      "id": "hash-set",
+      "label": "Hash Set",
+      "topics": [
+        "hash-tables",
+        "strings"
+      ]
+    },
+    {
+      "id": "counting",
+      "label": "Counting / Frequency Map",
+      "topics": [
+        "hash-tables"
+      ]
+    },
+    {
+      "id": "gcd",
+      "label": "Greatest Common Divisor",
+      "topics": [
+        "math"
+      ]
+    },
+    {
+      "id": "prime-check",
+      "label": "Primality Test",
+      "topics": [
+        "math"
+      ]
+    },
+    {
+      "id": "prime-factorization",
+      "label": "Prime Factorization",
+      "topics": [
+        "math"
+      ]
+    }
   ],
   "languages": [
-    { "id": "python", "label": "Python" },
-    { "id": "cpp", "label": "C++" },
-    { "id": "javascript", "label": "JavaScript" },
-    { "id": "java", "label": "Java" }
+    {
+      "id": "python",
+      "label": "Python"
+    },
+    {
+      "id": "cpp",
+      "label": "C++"
+    },
+    {
+      "id": "javascript",
+      "label": "JavaScript"
+    },
+    {
+      "id": "java",
+      "label": "Java"
+    }
   ],
   "difficulties": [
-    { "id": "beginner", "label": "Beginner" },
-    { "id": "intermediate", "label": "Intermediate" },
-    { "id": "advanced", "label": "Advanced" }
+    {
+      "id": "beginner",
+      "label": "Beginner"
+    },
+    {
+      "id": "intermediate",
+      "label": "Intermediate"
+    },
+    {
+      "id": "advanced",
+      "label": "Advanced"
+    }
   ]
 }

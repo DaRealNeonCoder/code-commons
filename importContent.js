@@ -10,13 +10,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import { importLessonsDir } from "../src/lib/db/importLessons";
-import { SYSTEM_OWNER } from "../src/lib/db/lessons";
-import { puzzleStore, shaderStore, circuitStore } from "../src/lib/db/stores";
-import { saveCourse } from "../src/lib/db/courses";
-import { saveChip } from "../src/lib/db/chips";
-import { getProject } from "../src/lib/creatorProjects";
-import { parseCircuit, EMPTY_CIRCUIT } from "../src/lib/circuits/circuitData";
+import { importLessonsDir } from "./src/lib/db/importLessons";
+import { SYSTEM_OWNER } from "./src/lib/db/lessons";
+import { puzzleStore, shaderStore, circuitStore } from "./src/lib/db/stores";
+import { saveCourse } from "./src/lib/db/courses";
+import { saveChip } from "./src/lib/db/chips";
+import { getProject } from "./src/lib/creatorProjects";
+import { parseCircuit, EMPTY_CIRCUIT } from "./src/lib/circuits/circuitData";
 
 const ROOT = process.cwd();
 const str = (v) => (typeof v === "string" ? v : "");

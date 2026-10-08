@@ -13,7 +13,7 @@ export default function Navbar() {
   return (
     <header className="flex items-center justify-between bg-zinc-950 px-6 py-3.5 border-b border-zinc-800">
       <Link href="/" className="font-mono text-sm text-white">
-        <span className="text-teal-400">~/</span>codeloop
+        <span className="text-teal-400">~/</span>codecommons
       </Link>
 
       <nav className="flex items-center gap-6 font-mono text-sm">

@@ -4,7 +4,7 @@ import { readPublishRequest, saveErrorResponse } from "@/lib/publish";
 const MAX_CODE_LENGTH = 20_000;
 
 export async function POST(request) {
-  const p = await readPublishRequest(request, "shader", "shader");
+const p = await readPublishRequest(request, "shader", "shader", { categorised: false });
   if (p.response) return p.response;
 
   const starterCode = typeof p.body.starterCode === "string" ? p.body.starterCode : "";

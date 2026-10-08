@@ -1,0 +1,42 @@
+---
+title: "Binary String XOR"
+order: 5
+available: true
+areas: []
+topics: ["strings"]
+tags: ["binary-strings"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def string_xor(a, b):
+      # TODO: XOR the two binary strings position by position
+      pass
+
+  a = input()
+  b = input()
+  print(string_xor(a, b))
+testCases:
+  - input: "010\n110"
+    expected: "100"
+    hidden: false
+  - input: "0\n0"
+    expected: "0"
+    hidden: true
+  - input: "1111\n0000"
+    expected: "1111"
+    hidden: true
+  - input: "101010\n010101"
+    expected: "111111"
+    hidden: true
+  - input: "1100\n1010"
+    expected: "0110"
+    hidden: true
+---
+
+You are given two strings, `a` and `b`, made only of the characters `0` and `1`, and both with the same length.
+
+Write a function `string_xor(a, b)` that performs a binary XOR on them and returns the result as a string. At each position the result is `1` if the two characters differ, and `0` if they match.
+
+For example, `"010"` XOR `"110"` is `"100"`.
+
+The starter code reads `a` and `b` on separate lines and prints the result.

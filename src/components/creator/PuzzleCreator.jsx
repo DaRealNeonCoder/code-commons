@@ -23,16 +23,16 @@ Array.isArray(saved.blocks) ? saved.blocks : [newTextBlock({ size: "title", bold
 // deterministic rather than from the module counter, because the ids rendered from
 // them (`${key}-input`) must match between server render and hydration.
 const [testCases, setTestCases] = useState(
-Array.isArray(saved.testCases)
-? saved.testCases.map((t, i) =>
-newTestCase({
-key: `tc-saved-${i}`,
-input: t.input ?? "",
-expected: t.expected ?? "",
-hidden: Boolean(t.hidden),
-})
-)
-: []
+    Array.isArray(saved.testCases)
+    ? saved.testCases.map((t, i) =>
+    newTestCase({
+    key: `tc-saved-${i}`,
+    input: t.input ?? "",
+    expected: t.expected ?? "",
+    hidden: Boolean(t.hidden),
+    })
+    )
+    : []
 );
 const [status, setStatus] = useState(null);
 

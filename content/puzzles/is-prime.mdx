@@ -1,0 +1,43 @@
+---
+title: "Is It Prime?"
+order: 10
+available: true
+areas: []
+topics: ["math"]
+tags: ["prime-check"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def is_prime(n):
+      # TODO: return True if n is prime
+      pass
+
+  n = int(input())
+  print("true" if is_prime(n) else "false")
+testCases:
+  - input: "17"
+    expected: "true"
+    hidden: false
+  - input: "1"
+    expected: "false"
+    hidden: true
+  - input: "2"
+    expected: "true"
+    hidden: true
+  - input: "91"
+    expected: "false"
+    hidden: true
+  - input: "97"
+    expected: "true"
+    hidden: true
+  - input: "6"
+    expected: "false"
+    hidden: true
+---
+
+Write a function `is_prime(n)` that returns `True` if `n` is a prime number and `False` otherwise. Remember that `1` is not prime.
+
+> [!TIP]
+> If `n` has a divisor larger than its square root, it must also have one smaller than it. So you only need to test divisors up to `sqrt(n)`.
+
+The starter code reads `n` and prints `true` or `false`.

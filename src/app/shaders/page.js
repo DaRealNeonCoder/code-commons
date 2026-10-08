@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getAllShaders } from "@/lib/shaders/shaders";
 
 export const metadata = {
-  title: "Shaders — codeloop",
+  title: "Shaders — codecommons",
 };
 
 export default async function ShadersIndexPage() {

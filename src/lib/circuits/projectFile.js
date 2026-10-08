@@ -17,7 +17,7 @@ name: ${name}
 savedAt: ${savedAt}
 ---
 
-This circuit was exported from the Codeloop logic simulator.
+This circuit was exported from the codecommons logic simulator.
 
 ${DATA_FENCE_START}
 ${JSON.stringify(payload, null, 2)}

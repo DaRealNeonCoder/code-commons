@@ -5,7 +5,6 @@ import Link from "next/link";
 import TextBlockEditor, { newTextBlock } from "@/components/creator/TextBlockEditor";
 import { blocksToMarkdown } from "@/lib/blocksToMarkdown";
 import LogicSimulator from "@/components/circuits/LogicSimulator";
-import FilterFields from "@/components/filters/FilterFields";
 import LessonPreview from "@/components/creator/LessonPreview";
 import useProjectAutosave from "@/components/creator/useProjectAutosave";
 
@@ -13,6 +12,16 @@ const EMPTY_CIRCUIT = {
   components: [],
   connections: [],
   chips: {},
+};
+
+// Circuit lessons aren't categorised; the save route still expects these keys,
+// so send empty defaults.
+const NO_SELECTION = {
+  areas: [],
+  topics: [],
+  tags: [],
+  languages: [],
+  difficulty: "",
 };
 
 const STATUS_TEXT = {
@@ -75,12 +84,6 @@ export default function CircuitCreator({ project }) {
   );
   const [status, setStatus] = useState(null);
 
-  const [areas, setAreas] = useState(saved.areas ?? []);
-  const [topics, setTopics] = useState(saved.topics ?? []);
-  const [tags, setTags] = useState(saved.tags ?? []);
-  const [languages, setLanguages] = useState(saved.languages ?? []);
-  const [difficulty, setDifficulty] = useState(saved.difficulty ?? "");
-
   const markdown = useMemo(() => blocksToMarkdown(blocks), [blocks]);
   const hasText = markdown.trim() !== "";
 
@@ -88,16 +91,7 @@ export default function CircuitCreator({ project }) {
     projectId: project.id,
     enabled: project.canEdit,
     title,
-    data: {
-      summary,
-      circuit,
-      blocks,
-      areas,
-      topics,
-      tags,
-      languages,
-      difficulty,
-    },
+    data: { summary, circuit, blocks },
   });
 
   function changeView(next) {
@@ -116,11 +110,7 @@ export default function CircuitCreator({ project }) {
           projectId: project.id,
           title,
           summary,
-          difficulty,
-          areas,
-          topics,
-          tags,
-          languages,
+          ...NO_SELECTION,
           starterCircuit: circuit,
           blocks,
         }),
@@ -273,21 +263,7 @@ export default function CircuitCreator({ project }) {
                   value={summary}
                   onChange={(e) => setSummary(e.target.value)}
                   placeholder="One line shown in the circuit lesson list"
-                  className="mt-1 mb-4 w-full rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
-                />
-
-                <FilterFields
-                  areas={areas}
-                  onAreasChange={setAreas}
-                  topics={topics}
-                  onTopicsChange={setTopics}
-                  tags={tags}
-                  onTagsChange={setTags}
-                  languageMode="multi"
-                  languages={languages}
-                  onLanguagesChange={setLanguages}
-                  difficulty={difficulty}
-                  onDifficultyChange={setDifficulty}
+                  className="mt-1 w-full rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
                 />
               </section>
 
@@ -313,9 +289,7 @@ export default function CircuitCreator({ project }) {
                 <button
                   type="button"
                   onClick={handleSave}
-                  disabled={
-                    status === "saving" || !title.trim() || !difficulty
-                  }
+                  disabled={status === "saving" || !title.trim()}
                   className="rounded-md bg-blue-600 px-5 py-2.5 font-mono text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
                 >
                   {status === "saving" ? "saving..." : "$ save circuit lesson"}

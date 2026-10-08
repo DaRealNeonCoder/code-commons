@@ -8,7 +8,7 @@ import { parseCircuit, EMPTY_CIRCUIT } from "@/lib/circuits/circuitData";
 export async function generateMetadata({ params }) {
   const { circuitId } = await params;
   const circuit = await getCircuitById(circuitId);
-  return { title: circuit ? `${circuit.title} — codeloop` : "Circuit — codeloop" };
+  return { title: circuit ? `${circuit.title} — codecommons` : "Circuit — codecommons" };
 }
 
 export default async function CircuitDetailPage({ params }) {

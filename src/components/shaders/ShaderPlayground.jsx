@@ -24,7 +24,16 @@ function ViewToggle({ label, active, onClick }) {
   );
 }
 
-export default function ShaderPlayground({ lessonTitle, lessonContent, initialCode = null }) {
+export default function ShaderPlayground({
+  lessonTitle,
+  lessonContent,
+  initialCode = null,
+  // What "reset" returns to. Falls back to initialCode, then the default shader.
+  resetCode = null,
+  // Called with the latest code on every edit (and on reset), so a parent
+  // (e.g. ShaderCreator) can keep its own copy.
+  onCodeChange = null,
+}) {
   const [code, setCode] = useState(() => initialCode ?? DEFAULT_SHADER);
   const [debouncedCode, setDebouncedCode] = useState(() => initialCode ?? DEFAULT_SHADER);
   const [error, setError] = useState(null);
@@ -77,6 +86,7 @@ export default function ShaderPlayground({ lessonTitle, lessonContent, initialCo
   function handleCodeChange(nextCode) {
     setCode(nextCode);
     setSaveStatus(null); // a stale "saved" message would be misleading after further edits
+    onCodeChange?.(nextCode);
   }
 
   async function handleSave() {
@@ -172,7 +182,7 @@ export default function ShaderPlayground({ lessonTitle, lessonContent, initialCo
 
           <button
             type="button"
-            onClick={() => handleCodeChange(initialCode ?? DEFAULT_SHADER)}
+            onClick={() => handleCodeChange(resetCode ?? initialCode ?? DEFAULT_SHADER)}
             className="rounded border border-zinc-700 px-3 py-1 font-mono text-xs text-zinc-300 transition-colors hover:border-fuchsia-400 hover:text-fuchsia-400"
           >
             reset

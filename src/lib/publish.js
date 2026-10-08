@@ -15,7 +15,20 @@ const fail = (error, status) => ({ response: Response.json({ error }, { status }
 
 const asArray = (value) => (Array.isArray(value) ? value.filter((v) => typeof v === "string") : []);
 
-export async function readPublishRequest(request, projectType, noun) {
+const NO_SELECTION = {
+  areas: [],
+  topics: [],
+  tags: [],
+  languages: [],
+  difficulty: "",
+};
+
+export async function readPublishRequest(
+  request,
+  projectType,
+  noun,
+  { categorised = true } = {}
+) {
   const session = await auth.api.getSession({ headers: request.headers });
   const user = session?.user;
   if (!user) return fail("Sign in required.", 401);
@@ -30,22 +43,28 @@ export async function readPublishRequest(request, projectType, noun) {
 
   const title = typeof body.title === "string" ? body.title.trim().slice(0, 200) : "";
   if (!title) return fail("A title is required.", 400);
-  if (!body.difficulty || typeof body.difficulty !== "string") return fail("Pick a difficulty.", 400);
+
+  if (categorised && (!body.difficulty || typeof body.difficulty !== "string")) {
+    return fail("Pick a difficulty.", 400);
+  }
 
   const blocks = parseBlocks(body.blocks);
   if (!blocks) return fail("The text content is invalid.", 400);
   const markdown = blocksToMarkdown(blocks);
   if (markdown.trim() === "") return fail("Add at least one text block.", 400);
 
-  const selection = {
-    areas: asArray(body.areas),
-    topics: asArray(body.topics),
-    tags: asArray(body.tags),
-    languages: asArray(body.languages),
-    difficulty: body.difficulty,
-  };
-  if (!isValidSelection(loadTaxonomy(), selection)) {
-    return fail("One or more areas/topics/tags/language/difficulty is not recognized.", 400);
+  let selection = NO_SELECTION;
+  if (categorised) {
+    selection = {
+      areas: asArray(body.areas),
+      topics: asArray(body.topics),
+      tags: asArray(body.tags),
+      languages: asArray(body.languages),
+      difficulty: body.difficulty,
+    };
+    if (!isValidSelection(loadTaxonomy(), selection)) {
+      return fail("One or more areas/topics/tags/language/difficulty is not recognized.", 400);
+    }
   }
 
   const given = typeof body.summary === "string" ? body.summary.trim() : "";
