@@ -3,14 +3,20 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import useProjectAutosave from "@/components/creator/useProjectAutosave";
+import usePublishState from "@/components/creator/usePublishState";
 import ProjectBar from "@/components/creator/ProjectBar";
 
 const smallButton =
   "rounded border border-zinc-300 px-2.5 py-1.5 font-mono text-sm text-zinc-500 hover:text-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-rose-500 disabled:opacity-40 dark:border-zinc-700 dark:hover:text-zinc-200";
 
-// `lessons` (every published lesson) and `publishedId` (the course this project
-// was last published as) are computed on the server in the editor page.
-export default function CourseCreator({ project, lessons = [], publishedId: initialPublishedId = null }) {
+// `lessons` (every published lesson), `publishedId` (the course this project
+// was last published as) and `publishState` are computed on the server in the editor page.
+export default function CourseCreator({
+  project,
+  lessons = [],
+  publishedId: initialPublishedId = null,
+  publishState: initialPublishState = "draft",
+}) {
   const saved = project.data ?? {};
 
   const [title, setTitle] = useState(project.title ?? "");
@@ -33,11 +39,18 @@ export default function CourseCreator({ project, lessons = [], publishedId: init
   // Selected lessons that no longer exist.
   const hasMissing = lessonIds.some((id) => !lessonsById.has(id));
 
+  const draftData = { summary, lessonIds };
+
   const saveState = useProjectAutosave({
     projectId: project.id,
     enabled: project.canEdit,
     title,
-    data: { summary, lessonIds },
+    data: draftData,
+  });
+
+  const [publishState, markPublished] = usePublishState({
+    initial: initialPublishState,
+    snapshot: JSON.stringify({ title, data: draftData }),
   });
 
   function addLesson(id) {
@@ -58,7 +71,8 @@ export default function CourseCreator({ project, lessons = [], publishedId: init
     });
   }
 
-  async function handleSave() {
+  async function handlePublish() {
+    const snap = JSON.stringify({ title, data: draftData }); // what this publish actually sends
     setStatus("saving");
     try {
       const res = await fetch("/api/courses", {
@@ -69,6 +83,7 @@ export default function CourseCreator({ project, lessons = [], publishedId: init
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Something went wrong.");
       setPublishedId(data.id);
+      markPublished(snap);
       setStatus({ ok: data.id });
     } catch (err) {
       setStatus({ error: err.message });
@@ -85,6 +100,7 @@ export default function CourseCreator({ project, lessons = [], publishedId: init
           label="/create/course"
           accentClass="text-rose-600 dark:text-rose-400"
           saveState={saveState}
+          publishState={publishState}
           canEdit={project.canEdit}
         />
         <h1 className="mt-1 text-2xl font-semibold">Create a course</h1>
@@ -249,32 +265,19 @@ export default function CourseCreator({ project, lessons = [], publishedId: init
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <button
               type="button"
-              onClick={handleSave}
+              onClick={handlePublish}
               disabled={status === "saving" || !title.trim() || lessonIds.length === 0 || hasMissing}
               className="rounded-md bg-rose-500 px-5 py-2.5 font-mono text-sm font-medium text-white transition-colors hover:bg-rose-600 disabled:opacity-50"
             >
-              {status === "saving" ? "saving..." : publishedId ? "$ update course" : "$ publish course"}
+              {status === "saving" ? "publishing..." : publishState === "draft" ? "$ publish course" : "$ update course"}
             </button>
 
-            {status?.ok ? (
-              <p className="text-sm text-teal-600 dark:text-teal-400">
-                {publishedId ? "Published." : "Saved."}{" "}
-                <Link href={`/courses/${status.ok}`} className="underline">
-                  View it
-                </Link>
-                .
+            {publishedId && status !== "saving" && !status?.error && (
+              <p className={`text-sm ${publishState === "edited" ? "text-amber-600 dark:text-amber-400" : "text-teal-600 dark:text-teal-400"}`}>
+                {publishState === "edited" ? "Published, with unpublished edits." : "Published."}{" "}
+                <Link href={`/courses/${publishedId}`} className="underline">View it</Link>.
+                {publishState === "edited" && " Edits go live when you update the course."}
               </p>
-            ) : (
-              publishedId &&
-              status === null && (
-                <p className="text-sm text-zinc-500">
-                  Published.{" "}
-                  <Link href={`/courses/${publishedId}`} className="underline">
-                    View it
-                  </Link>
-                  . Edits go live when you update the course.
-                </p>
-              )
             )}
             {status?.error && <p className="text-sm text-red-600 dark:text-red-400">{status.error}</p>}
           </div>

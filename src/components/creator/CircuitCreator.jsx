@@ -6,7 +6,9 @@ import TextBlockEditor, { newTextBlock } from "@/components/creator/TextBlockEdi
 import { blocksToMarkdown } from "@/lib/blocksToMarkdown";
 import LogicSimulator from "@/components/circuits/LogicSimulator";
 import LessonPreview from "@/components/creator/LessonPreview";
+import PublishBadge from "@/components/creator/PublishBadge";
 import useProjectAutosave from "@/components/creator/useProjectAutosave";
+import usePublishState from "@/components/creator/usePublishState";
 
 const EMPTY_CIRCUIT = {
   components: [],
@@ -25,7 +27,7 @@ const NO_SELECTION = {
 };
 
 const STATUS_TEXT = {
-  saved: "saved",
+  saved: "draft saved",
   dirty: "unsaved changes",
   saving: "saving...",
   error: "couldn't save",
@@ -61,7 +63,11 @@ function ViewTab({ label, active, onClick }) {
   );
 }
 
-export default function CircuitCreator({ project }) {
+export default function CircuitCreator({
+  project,
+  publishedId: initialPublishedId = null,
+  publishState: initialPublishState = "draft",
+}) {
   const saved = project.data ?? {};
 
   // The workspace is the default view; the Markdown creator is one tab away.
@@ -83,15 +89,23 @@ export default function CircuitCreator({ project }) {
       : [newTextBlock({ size: "title", bold: true })]
   );
   const [status, setStatus] = useState(null);
+  const [publishedId, setPublishedId] = useState(initialPublishedId);
 
   const markdown = useMemo(() => blocksToMarkdown(blocks), [blocks]);
   const hasText = markdown.trim() !== "";
+
+  const draftData = { summary, circuit, blocks };
 
   const saveState = useProjectAutosave({
     projectId: project.id,
     enabled: project.canEdit,
     title,
-    data: { summary, circuit, blocks },
+    data: draftData,
+  });
+
+  const [publishState, markPublished] = usePublishState({
+    initial: initialPublishState,
+    snapshot: JSON.stringify({ title, data: draftData }),
   });
 
   function changeView(next) {
@@ -99,7 +113,8 @@ export default function CircuitCreator({ project }) {
     setView(next);
   }
 
-  async function handleSave() {
+  async function handlePublish() {
+    const snap = JSON.stringify({ title, data: draftData }); // what this publish actually sends
     setStatus("saving");
 
     try {
@@ -118,6 +133,8 @@ export default function CircuitCreator({ project }) {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Something went wrong.");
+      setPublishedId(data.id);
+      markPublished(snap);
       setStatus({ ok: data.id });
     } catch (err) {
       setStatus({ error: err.message });
@@ -176,15 +193,16 @@ export default function CircuitCreator({ project }) {
         </div>
 
         {project.canEdit && (
-          <span
-            role="status"
-            aria-live="polite"
-            className={`font-mono text-xs ${
-              saveState === "error" ? "text-red-400" : "text-zinc-500"
-            }`}
-          >
-            {STATUS_TEXT[saveState]}
-          </span>
+          <>
+            <PublishBadge state={publishState} />
+            <span
+              role="status"
+              aria-live="polite"
+              className={`font-mono text-xs ${saveState === "error" ? "text-red-400" : "text-zinc-500"}`}
+            >
+              {STATUS_TEXT[saveState]}
+            </span>
+          </>
         )}
       </div>
 
@@ -284,20 +302,25 @@ export default function CircuitCreator({ project }) {
                 </pre>
               </details>
 
-              {/* Save button */}
-              <div className="mt-6 flex items-center gap-3">
+              {/* Publish button */}
+              <div className="mt-6 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
-                  onClick={handleSave}
+                  onClick={handlePublish}
                   disabled={status === "saving" || !title.trim()}
                   className="rounded-md bg-blue-600 px-5 py-2.5 font-mono text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {status === "saving" ? "saving..." : "$ save circuit lesson"}
+                  {status === "saving"
+                    ? "publishing..."
+                    : publishState === "draft"
+                      ? "$ publish circuit lesson"
+                      : "$ update circuit lesson"}
                 </button>
 
-                {status?.ok && (
-                  <p className="text-sm text-teal-600 dark:text-teal-400">
-                    Saved as &quot;{status.ok}&quot;.
+                {publishedId && status !== "saving" && !status?.error && (
+                  <p className={`text-sm ${publishState === "edited" ? "text-amber-600 dark:text-amber-400" : "text-teal-600 dark:text-teal-400"}`}>
+                    {publishState === "edited" ? "Published, with unpublished edits." : "Published."}{" "}
+                    <span className="font-mono">{publishedId}</span>
                   </p>
                 )}
 

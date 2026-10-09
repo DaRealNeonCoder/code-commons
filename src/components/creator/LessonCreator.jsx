@@ -6,6 +6,7 @@ import TextBlockEditor, { newTextBlock } from "@/components/creator/TextBlockEdi
 import { blocksToMarkdown } from "@/lib/blocksToMarkdown";
 import FilterFields from "@/components/filters/FilterFields";
 import useProjectAutosave from "@/components/creator/useProjectAutosave";
+import usePublishState from "@/components/creator/usePublishState";
 import ProjectBar from "@/components/creator/ProjectBar";
 
 const smallButton =
@@ -13,24 +14,33 @@ const smallButton =
 
 // `puzzles` (every puzzle, anyone's) and `publishedId` (the lesson this project
 // was last saved as) are computed on the server in the editor page.
-export default function LessonCreator({ project, puzzles = [], publishedId: initialPublishedId = null }) {
+export default function LessonCreator({
+  project,
+  puzzles = [],
+  publishedId: initialPublishedId = null,
+  publishState: initialPublishState = "draft",
+}) {
   const saved = project.data ?? {};
 
   const [title, setTitle] = useState(project.title ?? "");
   const [summary, setSummary] = useState(saved.summary ?? "");
+
   // Older projects stored a list with one blank row; drop blanks and duplicates.
   const [puzzleIds, setPuzzleIds] = useState(() =>
     Array.isArray(saved.puzzleIds)
       ? [...new Set(saved.puzzleIds.filter((id) => typeof id === "string" && id.trim()).map((id) => id.trim()))]
       : []
   );
+
   const [query, setQuery] = useState("");
   const [publishedId, setPublishedId] = useState(initialPublishedId);
+
   const [blocks, setBlocks] = useState(
     Array.isArray(saved.blocks)
       ? saved.blocks
       : [newTextBlock({ size: "title", bold: true }), newTextBlock({ size: "normal" })]
   );
+
   const [status, setStatus] = useState(null); // null | "saving" | { ok } | { error }
 
   const [areas, setAreas] = useState(saved.areas ?? []);
@@ -54,11 +64,27 @@ export default function LessonCreator({ project, puzzles = [], publishedId: init
   // Linked puzzles that no longer exist.
   const hasMissing = puzzleIds.some((id) => !puzzlesById.has(id));
 
+  const draftData = {
+    summary,
+    puzzleIds,
+    blocks,
+    areas,
+    topics,
+    tags,
+    languages,
+    difficulty,
+  };
+
   const saveState = useProjectAutosave({
     projectId: project.id,
     enabled: project.canEdit,
     title,
-    data: { summary, puzzleIds, blocks, areas, topics, tags, languages, difficulty },
+    data: draftData,
+  });
+
+  const [publishState, markPublished] = usePublishState({
+    initial: initialPublishState,
+    snapshot: JSON.stringify({ title, data: draftData }),
   });
 
   function addPuzzle(id) {
@@ -79,28 +105,33 @@ export default function LessonCreator({ project, puzzles = [], publishedId: init
     });
   }
 
-  async function handleSave() {
+  async function handlePublish() {
+    const snap = JSON.stringify({ title, data: draftData });
     setStatus("saving");
+
     try {
       const res = await fetch("/api/lessons", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            projectId: project.id,
-            title,
-            summary,
-            difficulty,
-            areas,
-            topics,
-            tags,
-            languages,
-            puzzles: puzzleIds,
-            blocks,            // <- send the blocks, not `content: markdown`
-            }),
+          projectId: project.id,
+          title,
+          summary,
+          difficulty,
+          areas,
+          topics,
+          tags,
+          languages,
+          puzzles: puzzleIds,
+          blocks,
+        }),
       });
+
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Something went wrong.");
+
       setPublishedId(data.id);
+      markPublished(snap);
       setStatus({ ok: data.id });
     } catch (err) {
       setStatus({ error: err.message });
@@ -113,12 +144,15 @@ export default function LessonCreator({ project, puzzles = [], publishedId: init
         <Link href="/create" className="font-mono text-sm text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
           ← /create
         </Link>
+
         <ProjectBar
           label="/create/lesson"
           accentClass="text-amber-600 dark:text-amber-400"
           saveState={saveState}
+          publishState={publishState}
           canEdit={project.canEdit}
         />
+
         <h1 className="mt-1 text-2xl font-semibold">Create a lesson</h1>
         <p className="mt-1 text-zinc-600 dark:text-zinc-400">
           Write a lesson from text blocks — no Markdown syntax required. Link existing puzzles for readers to practice.
@@ -187,6 +221,7 @@ export default function LessonCreator({ project, puzzles = [], publishedId: init
                       className="flex items-center gap-3 rounded border border-zinc-200 px-3 py-2 dark:border-zinc-800"
                     >
                       <span className="font-mono text-sm text-zinc-400">{String(index + 1).padStart(2, "0")}</span>
+
                       <div className="min-w-0 flex-1">
                         {puzzle ? (
                           <p className="truncate text-sm font-medium">
@@ -200,10 +235,11 @@ export default function LessonCreator({ project, puzzles = [], publishedId: init
                           </p>
                         ) : (
                           <p className="truncate text-sm text-red-600 dark:text-red-400">
-                            <span className="font-mono">{id}</span> no longer exists. Remove it to save.
+                            <span className="font-mono">{id}</span> no longer exists. Remove it to publish.
                           </p>
                         )}
                       </div>
+
                       <div className="flex items-center gap-1">
                         <button
                           type="button"
@@ -278,6 +314,7 @@ export default function LessonCreator({ project, puzzles = [], publishedId: init
                       </p>
                       {puzzle.summary && <p className="truncate text-xs text-zinc-500">{puzzle.summary}</p>}
                     </div>
+
                     <button
                       type="button"
                       onClick={() => addPuzzle(puzzle.id)}
@@ -306,33 +343,34 @@ export default function LessonCreator({ project, puzzles = [], publishedId: init
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <button
               type="button"
-              onClick={handleSave}
+              onClick={handlePublish}
               disabled={status === "saving" || !title.trim() || !difficulty || hasMissing}
               className="rounded-md bg-amber-500 px-5 py-2.5 font-mono text-sm font-medium text-zinc-950 transition-colors hover:bg-amber-400 disabled:opacity-50"
             >
-              {status === "saving" ? "saving..." : publishedId ? "$ update lesson" : "$ save lesson"}
+              {status === "saving"
+                ? "publishing..."
+                : publishState === "draft"
+                  ? "$ publish lesson"
+                  : "$ update lesson"}
             </button>
 
-            {status?.ok ? (
-              <p className="text-sm text-teal-600 dark:text-teal-400">
-                Saved.{" "}
-                <Link href={`/lessons/${status.ok}`} className="underline">
+            {publishedId && status !== "saving" && !status?.error && (
+              <p
+                className={`text-sm ${
+                  publishState === "edited"
+                    ? "text-amber-600 dark:text-amber-400"
+                    : "text-teal-600 dark:text-teal-400"
+                }`}
+              >
+                {publishState === "edited" ? "Published, with unpublished edits." : "Published."}{" "}
+                <Link href={`/lessons/${publishedId}`} className="underline">
                   View it
                 </Link>
                 .
+                {publishState === "edited" && " Edits go live when you update the lesson."}
               </p>
-            ) : (
-              publishedId &&
-              status === null && (
-                <p className="text-sm text-zinc-500">
-                  Saved.{" "}
-                  <Link href={`/lessons/${publishedId}`} className="underline">
-                    View it
-                  </Link>
-                  . Edits go live when you update the lesson.
-                </p>
-              )
             )}
+
             {status?.error && <p className="text-sm text-red-600 dark:text-red-400">{status.error}</p>}
           </div>
         </fieldset>

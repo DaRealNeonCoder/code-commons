@@ -5,27 +5,38 @@ import { auth } from "@/lib/auth";
 import { listProjects } from "@/lib/creatorProjects";
 import { getType } from "@/lib/creatorTypes";
 import DeleteProjectButton from "@/components/creator/DeleteProjectButton";
-
+import PublishBadge from "@/components/creator/PublishBadge";
+import { getPublishedForProjects } from "@/lib/publishedStatus";
 function timeAgo(iso) {
-  const seconds = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 1000));
-  if (seconds < 60) return "just now";
-  const days = Math.floor(seconds / 86400);
-  if (days >= 30) {
-    return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-  }
-  const units = [
-    ["day", 86400],
-    ["hour", 3600],
-    ["minute", 60],
-  ];
-  for (const [name, size] of units) {
-    if (seconds >= size) {
-      const n = Math.floor(seconds / size);
-      return `${n} ${name}${n === 1 ? "" : "s"} ago`;
-    }
-  }
-  return "just now";
+const seconds = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 1000));
+
+if (seconds < 60) return "just now";
+
+const days = Math.floor(seconds / 86400);
+if (days >= 30) {
+return new Date(iso).toLocaleDateString("en-US", {
+month: "short",
+day: "numeric",
+year: "numeric",
+});
 }
+
+const units = [
+["day", 86400],
+["hour", 3600],
+["minute", 60],
+];
+
+for (const [name, size] of units) {
+if (seconds >= size) {
+const n = Math.floor(seconds / size);
+return n + " " + name + (n === 1 ? "" : "s") + " ago";
+}
+}
+
+return "just now";
+}
+
 
 const newButtonClass =
   "inline-block rounded-md bg-violet-600 px-5 py-2.5 font-mono text-sm font-medium text-white transition-colors hover:bg-violet-700";
@@ -36,6 +47,7 @@ export default async function CreateDashboardPage() {
   if (!user) redirect("/");
 
   const projects = (await listProjects(user.id)).filter((p) => getType(p.type));
+  const published = await getPublishedForProjects(projects);
 
   return (
     <div className="w-full h-full overflow-y-auto px-6 py-12">
@@ -73,6 +85,9 @@ export default async function CreateDashboardPage() {
                       {type.label.toLowerCase()}
                     </span>
                     <h2 className="mt-2 truncate text-lg font-semibold">{title}</h2>
+                    <p className="mt-1">
+                      <PublishBadge state={published[p.id]?.state ?? "draft"} />
+                    </p>
                     <p className="mt-1 font-mono text-xs text-zinc-500">edited {timeAgo(p.updatedAt)}</p>
                   </Link>
                   <div className="flex items-center pr-3">
