@@ -9,7 +9,7 @@
 // the author can keep editing them.
 import fs from "node:fs";
 import path from "node:path";
-import matter from "gray-matter";
+import { parseFrontmatter } from "@/lib/frontmatter";
 import { importLessonsDir } from "./src/lib/db/importLessons";
 import { SYSTEM_OWNER } from "./src/lib/db/lessons";
 import { puzzleStore, shaderStore, circuitStore } from "./src/lib/db/stores";
@@ -59,7 +59,7 @@ function report(kind, file, result) {
 
 async function importMdx(kind, dir, store, payloadFor) {
   for (const { file, path: p } of listFiles(dir, ".mdx")) {
-    const { data, content } = matter(fs.readFileSync(p, "utf8"));
+    const { data, content } = parseFrontmatter(fs.readFileSync(p, "utf8"));
     const result = await store.save({ ...common(data, content, file), payload: payloadFor(data) });
     report(kind, file, result);
   }

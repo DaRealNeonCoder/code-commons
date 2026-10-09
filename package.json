@@ -3,17 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-  "dev": "next dev",
-  "build": "next build",
-  "start": "next start",
-  "lint": "eslint",
-  "db:push": "drizzle-kit push"
-},
-  "overrides": {
-    "@esbuild-kit/core-utils": {
-      "esbuild": "^0.25.12"
-    }
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "db:push": "drizzle-kit push"
   },
+"overrides": {
+  "@esbuild-kit/core-utils": {
+    "esbuild": "^0.25.12"
+  },
+  "katex": "$katex",
+  "gray-matter": {
+    "js-yaml": "$js-yaml"
+  }
+},
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
     "@neon/config": "^1.8.3",
@@ -23,8 +27,9 @@
     "better-sqlite3": "^13.0.3",
     "drizzle-orm": "^0.45.3",
     "gray-matter": "^4.0.3",
+    "js-yaml": "^4.3.2",
     "katex": "^0.18.7",
-    "mermaid": "^11.17.2",
+    "mermaid": "^12.1.0",
     "minisearch": "^7.2.0",
     "monaco-editor": "^0.53.0",
     "next": "^16.3.8",
@@ -40,6 +45,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/js-yaml": "^4.0.9",
     "dotenv": "^18.0.5",
     "drizzle-kit": "^0.31.11",
     "eslint": "^9",

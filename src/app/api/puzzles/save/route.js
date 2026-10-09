@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import matter from "gray-matter";
+import { stringifyFrontmatter } from "@/lib/frontmatter";
 import { loadTaxonomy, isValidSelection } from "@/lib/taxonomy";
 
 const PUZZLES_DIR = path.join(process.cwd(), "content/puzzles");
@@ -119,7 +119,7 @@ export async function POST(request) {
   };
   if (testCases.length > 0) frontmatter.testCases = testCases;
 
-  fs.writeFileSync(fullPath, matter.stringify(body.content, frontmatter), "utf8");
+  fs.writeFileSync(fullPath, stringifyFrontmatter(body.content, frontmatter), "utf8");
 
   return Response.json({ id: slug });
 }

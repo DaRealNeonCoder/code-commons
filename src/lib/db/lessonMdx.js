@@ -1,6 +1,6 @@
-import matter from "gray-matter";
-import { getDbLessonBySlug, saveDbLesson } from "./lessons";
+import { parseFrontmatter, stringifyFrontmatter} from "@/lib/frontmatter";
 
+import { getDbLessonBySlug, saveDbLesson } from "./lessons";
 // Round-trip between a lesson's .mdx text and its DB row.
 //
 //   MDX string  --parseLessonMdx-->  fields  --saveLessonMdx-->  DB row
@@ -21,7 +21,7 @@ const strArray = (v) => (Array.isArray(v) ? v.filter((x) => typeof x === "string
 // This is the single place raw MDX enters the DB pipeline, so it's where any
 // future body checks would go.
 export function parseLessonMdx(raw) {
-  const { data, content } = matter(raw);
+const { data, content } = parseFrontmatter(raw);
 
   return {
     title: str(data.title).trim(),
@@ -57,7 +57,7 @@ export function stringifyLessonMdx(lesson) {
   frontmatter.languages = strArray(lesson.languages);
   frontmatter.difficulty = lesson.difficulty || "beginner";
 
-  return matter.stringify(lesson.content ?? "", frontmatter);
+  return stringifyFrontmatter(lesson.content ?? "", frontmatter);
 }
 
 // Parse an MDX string and write it to the DB.

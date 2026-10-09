@@ -1,13 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
-import matter from "gray-matter";
-
+import { parseFrontmatter } from "@/lib/frontmatter";
 
 export function createMdxCollection(dir, defaults = {}) {
   function readFile(fileName) {
     const id = fileName.replace(/\.mdx$/, "");
     const raw = fs.readFileSync(path.join(dir, fileName), "utf8");
-    const { data, content } = matter(raw);
+    const { data, content } = parseFrontmatter(raw);
+
     return {
       id,
       content,
