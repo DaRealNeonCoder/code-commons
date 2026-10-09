@@ -9,7 +9,7 @@
 // the author can keep editing them.
 import fs from "node:fs";
 import path from "node:path";
-import { parseFrontmatter } from "@/lib/frontmatter";
+import { parseFrontmatter } from "./src/lib/frontmatter.js";
 import { importLessonsDir } from "./src/lib/db/importLessons";
 import { SYSTEM_OWNER } from "./src/lib/db/lessons";
 import { puzzleStore, shaderStore, circuitStore } from "./src/lib/db/stores";

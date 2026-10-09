@@ -1,0 +1,40 @@
+---
+title: "Count Unique Values"
+order: 1
+available: true
+areas: ["programming-fundamentals"]
+topics: ["sets"]
+tags: ["set", "len"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  numbers = [int(x) for x in input().split()]
+
+  # TODO: print how many different values appear in the list
+testCases:
+  - input: "1 2 2 3 3 3"
+    expected: "3"
+    hidden: false
+  - input: "5 5 5 5"
+    expected: "1"
+    hidden: true
+  - input: "1 2 3 4 5"
+    expected: "5"
+    hidden: true
+  - input: "7"
+    expected: "1"
+    hidden: true
+  - input: "-1 1 -1 1 0"
+    expected: "3"
+    hidden: true
+  - input: "10 20 10 30 20 40"
+    expected: "4"
+    hidden: true
+---
+
+The starter code reads a line of integers into a list. Print how many **different** values it contains.
+
+For the input `1 2 2 3 3 3`, a correct solution prints `3`.
+
+> [!TIP]
+> Converting a list to a set drops the duplicates for you.

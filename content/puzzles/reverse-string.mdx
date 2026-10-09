@@ -1,0 +1,37 @@
+---
+title: "Reverse a String"
+order: 2
+available: true
+areas: ["programming-fundamentals"]
+topics: ["strings"]
+tags: ["slicing"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  text = input()
+
+  # TODO: print the text reversed
+testCases:
+  - input: "python"
+    expected: "nohtyp"
+    hidden: false
+  - input: "a"
+    expected: "a"
+    hidden: true
+  - input: "racecar"
+    expected: "racecar"
+    hidden: true
+  - input: "Hello World"
+    expected: "dlroW olleH"
+    hidden: true
+  - input: "12345"
+    expected: "54321"
+    hidden: true
+---
+
+The starter code reads a line of text. Print it reversed.
+
+For the input `python`, a correct solution prints `nohtyp`.
+
+> [!TIP]
+> A slice with a negative step walks backward through a string.

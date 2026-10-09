@@ -1,0 +1,41 @@
+---
+title: "Temperature Converter"
+order: 2
+available: true
+areas: ["programming-fundamentals"]
+topics: ["variables", "data-types"]
+tags: ["float", "round"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  celsius = float(input())
+
+  # TODO: convert to Fahrenheit using F = C * 9 / 5 + 32
+  # Round the result to 1 decimal place and print it
+testCases:
+  - input: "0"
+    expected: "32.0"
+    hidden: false
+  - input: "100"
+    expected: "212.0"
+    hidden: true
+  - input: "37"
+    expected: "98.6"
+    hidden: true
+  - input: "-40"
+    expected: "-40.0"
+    hidden: true
+  - input: "25.5"
+    expected: "77.9"
+    hidden: true
+  - input: "-10"
+    expected: "14.0"
+    hidden: true
+---
+
+The starter code reads a temperature in Celsius as a float. Convert it to Fahrenheit using `F = C * 9 / 5 + 32`, round the result to 1 decimal place, and print it.
+
+For an input of `100`, a correct solution prints `212.0`. For `37`, it prints `98.6`.
+
+> [!TIP]
+> `round(number, 1)` rounds to one decimal place.

@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect} from "react";
 import Link from "next/link";
 import CodeEditor from "@/components/CodeEditor";
 import CompletionToggle from "@/components/CompletionToggle";
@@ -113,7 +113,7 @@ export default function CodeWorkspace({
   const [code, setCode] = useState(starters[initialLanguage] || EMPTY_STARTER[initialLanguage]);
   const [output, setOutput] = useState("Output will appear here...");
   const [isRunning, setIsRunning] = useState(false);
-  const [runInBrowser, setRunInBrowser] = useState(false);
+  const [runInBrowser, setRunInBrowser] = useState(true);
   const [stdin, setStdin] = useState(sampleTests[0]?.input ?? "");
   const [results, setResults] = useState(null);
   const [isChecking, setIsChecking] = useState(false);
@@ -135,6 +135,10 @@ export default function CodeWorkspace({
 
   // Browser execution only exists for Python; everything else goes to the server.
   const canRunInBrowser = language === "python";
+    useEffect(() => {
+    if (runInBrowser && canRunInBrowser) preloadPyodide();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
   const useBrowser = runInBrowser && canRunInBrowser;
 
   function handleLanguageChange(nextLanguage) {

@@ -1,0 +1,48 @@
+---
+title: "Apply a Discount"
+order: 1
+available: true
+areas: ["programming-fundamentals"]
+topics: ["functions"]
+tags: ["return", "default-arguments", "round"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def apply_discount(price, percent=10):
+      # TODO: return the price after taking off the discount percentage,
+      # rounded to 2 decimal places
+      pass
+
+  price = float(input())
+  percent = float(input())
+  print(apply_discount(price, percent))
+testCases:
+  - input: "100\n20"
+    expected: "80.0"
+    hidden: false
+  - input: "50\n10"
+    expected: "45.0"
+    hidden: true
+  - input: "59.99\n15"
+    expected: "50.99"
+    hidden: true
+  - input: "200\n0"
+    expected: "200.0"
+    hidden: true
+  - input: "10\n100"
+    expected: "0.0"
+    hidden: true
+  - input: "120.5\n10"
+    expected: "108.45"
+    hidden: true
+  - input: "80\n25"
+    expected: "60.0"
+    hidden: true
+---
+
+Complete the function `apply_discount(price, percent)` so that it **returns** the price after the discount, rounded to 2 decimal places. The starter code reads the price and the discount percentage and prints whatever your function returns.
+
+For a price of `100` and a discount of `20` percent, a correct solution prints `80.0`.
+
+> [!TIP]
+> Make sure you use `return`, not `print`, inside the function. If your function has no `return`, the program prints `None`.

@@ -1,5 +1,4 @@
-import { parseFrontmatter, stringifyFrontmatter} from "@/lib/frontmatter";
-
+import { parseFrontmatter,stringifyFrontmatter } from "../frontmatter.js";
 import { getDbLessonBySlug, saveDbLesson } from "./lessons";
 // Round-trip between a lesson's .mdx text and its DB row.
 //

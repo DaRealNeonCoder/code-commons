@@ -1,0 +1,131 @@
+---
+title: "Tuples and Sets"
+order: 8
+summary: "Meet two more collection types: tuples for fixed groups of values and sets for unique items."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["tuples", "sets", "data-structures"]
+tags: ["unpacking", "immutable", "set-operations"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["unique-count", "common-elements", "min-max-pair"]
+---
+
+Lists are not the only way to group values. **Tuples** and **sets** each solve a slightly different problem.
+
+## Tuples
+
+A tuple is like a list that **can't be changed** after you create it. Use parentheses:
+
+```python
+point = (3, 4)
+colors = ("red", "green", "blue")
+empty = ()
+```
+
+A tuple with only one item needs a trailing comma, otherwise Python treats the parentheses as plain grouping:
+
+```python
+single = (5,)    # a tuple
+not_tuple = (5)  # just the number 5
+```
+
+### Indexing and unpacking
+
+Indexing and slicing work the same as in lists:
+
+```python
+print(colors[0])    # red
+print(colors[-1])   # blue
+print(colors[:2])   # ('red', 'green')
+```
+
+> [!WARNING]
+> Tuples are immutable. `colors[0] = "pink"` raises a `TypeError`. To "change" a tuple, you build a new one.
+
+The most useful tuple trick is **unpacking**: assigning each item to its own variable in one line.
+
+```python
+point = (3, 4)
+x, y = point
+print(x)   # 3
+print(y)   # 4
+```
+
+The number of variables must match the number of items. Unpacking also gives you a tidy way to swap two values:
+
+```python
+a = 1
+b = 2
+a, b = b, a
+print(a, b)   # 2 1
+```
+
+Python quietly uses tuples all over the place. When you write `return low, high` in a function, you're returning a tuple.
+
+## Sets
+
+A set is an **unordered** collection of **unique** items. Use curly braces:
+
+```python
+colors = {"red", "green", "blue"}
+print(colors)   # the order may vary
+```
+
+Key facts:
+
+- A set never contains duplicates. Adding something that is already there does nothing.
+- Sets have no order, so there are no indexes. `colors[0]` is an error.
+- To make an empty set, use `set()`. A bare `{}` is an empty *dictionary*, which you'll meet next.
+
+A very common use is removing duplicates by converting a list into a set:
+
+```python
+numbers = [1, 2, 2, 3, 3, 3]
+unique = set(numbers)
+print(unique)        # {1, 2, 3}
+print(len(unique))   # 3
+```
+
+Changing a set:
+
+```python
+s = {1, 2}
+s.add(3)        # {1, 2, 3}
+s.remove(2)     # {1, 3}, but raises an error if 2 isn't there
+s.discard(99)   # does nothing if 99 isn't there
+print(3 in s)   # True
+```
+
+Looping over a set works, but the order isn't guaranteed. Use `sorted(s)` when you need a predictable order. It gives you a sorted list.
+
+## Set operations
+
+Sets support the same operations as in math class. Say `a = {1, 2, 3, 4}` and `b = {3, 4, 5}`:
+
+| Operation | Operator | Method | Result | Meaning |
+| --- | --- | --- | --- | --- |
+| union | `a \| b` | `a.union(b)` | `{1, 2, 3, 4, 5}` | everything from both |
+| intersection | `a & b` | `a.intersection(b)` | `{3, 4}` | only items in both |
+| difference | `a - b` | `a.difference(b)` | `{1, 2}` | in `a` but not in `b` |
+| symmetric difference | `a ^ b` | `a.symmetric_difference(b)` | `{1, 2, 5}` | in one but not both |
+
+<Details title="Why are sets so quick at checking if something is in them?">
+A set organizes its items so Python can jump straight to the right spot instead of looking through them one by one. Checking `x in some_set` stays fast even with millions of items, while `x in some_list` gets slower as the list grows.
+</Details>
+
+## When to use which
+
+| You want... | Use |
+| --- | --- |
+| an ordered collection you will change | list |
+| a small fixed group, like coordinates or an RGB color | tuple |
+| to return several values together | tuple |
+| to remove duplicates or count unique items | set |
+| to check quickly whether something is present | set |
+| to find what two collections have in common | set |
+
+> [!TIP]
+> If you find yourself writing a loop to remove duplicates or find common items, stop and ask whether a set can do it in one line.
+
+Now try it yourself. The next step is three puzzles that use sets and tuples.

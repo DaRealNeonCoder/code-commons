@@ -1,0 +1,46 @@
+---
+title: "Leap Year"
+order: 1
+available: true
+areas: ["programming-fundamentals"]
+topics: ["conditionals"]
+tags: ["if", "logical-operators"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  year = int(input())
+
+  # TODO: print "Leap year" or "Not a leap year"
+testCases:
+  - input: "2024"
+    expected: "Leap year"
+    hidden: false
+  - input: "1900"
+    expected: "Not a leap year"
+    hidden: true
+  - input: "2000"
+    expected: "Leap year"
+    hidden: true
+  - input: "2023"
+    expected: "Not a leap year"
+    hidden: true
+  - input: "2100"
+    expected: "Not a leap year"
+    hidden: true
+  - input: "2400"
+    expected: "Leap year"
+    hidden: true
+---
+
+Read a year and print `Leap year` or `Not a leap year`.
+
+A year is a leap year if:
+
+- it is divisible by 4, **except**
+- years divisible by 100 are *not* leap years, **unless**
+- they are also divisible by 400.
+
+So 2024 and 2000 are leap years, but 1900 and 2023 are not.
+
+> [!TIP]
+> You can solve this with `and`/`or` in a single condition, or with `if`/`elif`/`else` checking the rules in the right order.

@@ -1,0 +1,41 @@
+---
+title: "Print a Greeting"
+order: 1
+available: true
+areas: ["programming-fundamentals"]
+topics: ["output"]
+tags: ["print", "sep"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  name = input()
+
+  # TODO: print "Hello" and the name, separated by a comma and a space
+testCases:
+  - input: "Ada"
+    expected: "Hello, Ada"
+    hidden: false
+  - input: "World"
+    expected: "Hello, World"
+    hidden: true
+  - input: "Grace Hopper"
+    expected: "Hello, Grace Hopper"
+    hidden: true
+  - input: "Python"
+    expected: "Hello, Python"
+    hidden: true
+  - input: "Guido"
+    expected: "Hello, Guido"
+    hidden: true
+---
+
+The starter code reads a name from the input. Print a greeting made of the word `Hello` and the name, separated by a comma and a space.
+
+For the input `Ada`, a correct solution prints:
+
+```
+Hello, Ada
+```
+
+> [!TIP]
+> Give `print()` two arguments and use `sep` to control what goes between them.

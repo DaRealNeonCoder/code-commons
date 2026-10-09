@@ -1,0 +1,44 @@
+---
+title: "Greatest Common Divisor"
+order: 2
+available: true
+areas: ["programming-fundamentals"]
+topics: ["functions"]
+tags: ["return", "loops", "modulo"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def gcd(a, b):
+      # TODO: return the greatest common divisor of a and b
+      pass
+
+  a = int(input())
+  b = int(input())
+  print(gcd(a, b))
+testCases:
+  - input: "12\n18"
+    expected: "6"
+    hidden: false
+  - input: "17\n5"
+    expected: "1"
+    hidden: true
+  - input: "100\n75"
+    expected: "25"
+    hidden: true
+  - input: "0\n5"
+    expected: "5"
+    hidden: true
+  - input: "48\n180"
+    expected: "12"
+    hidden: true
+  - input: "7\n7"
+    expected: "7"
+    hidden: true
+---
+
+Complete the function `gcd(a, b)` so that it returns the **greatest common divisor** of two non-negative integers: the largest number that divides both of them evenly.
+
+For `12` and `18`, a correct solution prints `6`. If one of the numbers is `0`, the answer is the other number.
+
+> [!TIP]
+> You can try every number from the smaller value down to 1 and return the first one that divides both. For a faster approach, look up Euclid's algorithm: repeatedly replace `a, b` with `b, a % b` until `b` is `0`.

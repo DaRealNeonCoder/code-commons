@@ -1,69 +1,113 @@
 ---
 title: "Hello, World!"
 order: 1
-summary: "Print your very first line of Python."
+summary: "Meet Python and print your first lines of output."
 available: true
 areas: ["programming-fundamentals"]
-topics: []
-tags: []
+topics: ["output"]
+tags: ["print", "comments"]
 languages: ["python"]
 difficulty: "beginner"
-puzzles: ["fibonacci", "knapsack"]
+puzzles: ["print-greeting", "print-multiple-lines"]
 ---
 
-Python is a simple, readable language. To print text to the screen, use the built-in `print()` function — and since this is the first lesson, it also doubles as a demo of everything this page format can do.
+Python is a general-purpose programming language created by Guido van Rossum and first released in 1991. It is popular because its code reads almost like plain English, so you spend less time wrestling with syntax and more time solving problems. People use it for websites, automation, data analysis, games, and AI.
 
-> [!TIP]
-> Type each example out yourself in a puzzle instead of just reading it. You'll remember it better.
+A Python program is just a text file full of instructions. Python reads them from top to bottom, one line at a time, and does what each line says.
 
-> [!WARNING]
-> Python is case-sensitive — `Print("hi")` raises an error, but `print("hi")` works.
-
-## Why print() matters
-
-Every Python program needs some way to show its results.
-
-| Function | What it does |
-| --- | --- |
-| `print()` | Writes text to the screen |
-| `len()` | Counts items in something |
-| `type()` | Tells you what kind of value something is |
-
-## A quick example
+## Your first program
 
 ```python
-print("Hello", "World", sep=", ")
+print("Hello, World!")
 ```
 
-That prints `Hello, World` — `sep` controls what goes between multiple arguments.
+Output:
 
-Calling `print()` itself runs in constant time, $O(1)$, but building a very long string first costs you $O(n)$:
-
-$$
-\text{total cost} = O(1) + O(n)
-$$
-
-Here's roughly what happens when you run code in a puzzle:
-
-```mermaid
-flowchart TD
-  A[You click Run] --> B[Code sent to the server]
-  B --> C[Python executes it]
-  C --> D[Output sent back]
-  D --> E[You see the result]
+```
+Hello, World!
 ```
 
-<Details title="Why does the code run on a server instead of in my browser?">
-Running arbitrary code safely is hard — a sandboxed server keeps things like infinite loops or file access from affecting your device.
+Here is what each part does:
+
+- `print` is a built-in **function**. It displays something on the screen.
+- The parentheses `( )` hold what you want to print. This is called the **argument**.
+- `"Hello, World!"` is a **string**: text wrapped in quotes. Single quotes (`'hi'`) and double quotes (`"hi"`) both work.
+
+> [!WARNING]
+> Python is case-sensitive. `Print("hi")` raises an error, but `print("hi")` works.
+
+## Printing more than one thing
+
+Give `print()` several arguments separated by commas and it prints them all, with a space between each:
+
+```python
+print("Python", "is", "fun")
+```
+
+Output:
+
+```
+Python is fun
+```
+
+Two optional arguments let you change how `print()` behaves:
+
+| Argument | What it controls | Default |
+| --- | --- | --- |
+| `sep` | What goes *between* items | a single space |
+| `end` | What goes *after* the last item | a new line |
+
+```python
+print("2025", "06", "01", sep="-")
+print("Loading", end="...")
+print("done")
+```
+
+Output:
+
+```
+2025-06-01
+Loading...done
+```
+
+Every `print()` normally starts a new line. Setting `end=""` or `end="..."` keeps the next print on the same line.
+
+Numbers don't need quotes, and Python will do the math before printing:
+
+```python
+print(2 + 3)
+print("2 + 3")
+```
+
+Output:
+
+```
+5
+2 + 3
+```
+
+The first line is a calculation. The second is just text, so Python prints it exactly as written.
+
+## Comments
+
+Anything after a `#` is a **comment**. Python ignores it, so you can leave notes for yourself and other people.
+
+```python
+# This line is ignored by Python
+print("Comments are useful")  # You can also put them at the end of a line
+```
+
+Good comments explain *why* you did something, not just *what* the code does.
+
+> [!TIP]
+> Comments are also handy for switching a line off while you debug. Put a `#` in front of it and Python skips it.
+
+<Details title="Why is the first program always 'Hello, World!'?">
+It's a tradition that goes back to a 1970s programming book. Printing a greeting is the smallest program that proves your setup works and shows you how output happens.
 </Details>
 
-Want to go deeper? The [official Python docs](https://docs.python.org/3/library/functions.html#print) cover every argument `print()` accepts.
+## A note about the puzzles
 
-![A simple placeholder image](https://placehold.co/480x200?text=lesson+image)
+In the first few puzzles, the starter code already contains lines like `name = input()`. That line reads the text from the **Input** box so you don't have to. You'll learn how `input()` works in lesson 4. For now, just use the variables it creates.
 
-<DemoPlayer demos={[
-  { label: "print basics", src: "/demo-videos/print-basics.mp4" },
-  { label: "f-strings", src: "/demo-videos/f-strings.mp4" }
-]} />
-
-Now try it yourself — the next step is a short puzzle where you use `print()`.
+Now try it yourself. The next step is two short puzzles where you use `print()`.
