@@ -9,20 +9,21 @@
     "lint": "eslint",
     "db:push": "drizzle-kit push"
   },
-"overrides": {
-  "@esbuild-kit/core-utils": {
-    "esbuild": "^0.25.12"
+  "overrides": {
+    "@esbuild-kit/core-utils": {
+      "esbuild": "^0.25.12"
+    },
+    "katex": "$katex",
+    "gray-matter": {
+      "js-yaml": "$js-yaml"
+    }
   },
-  "katex": "$katex",
-  "gray-matter": {
-    "js-yaml": "$js-yaml"
-  }
-},
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
     "@neon/config": "^1.8.3",
     "@neon/env": "^1.5.0",
     "@neondatabase/serverless": "^1.2.0",
+    "@vercel/analytics": "^2.0.1",
     "better-auth": "^1.7.5",
     "better-sqlite3": "^13.0.3",
     "drizzle-orm": "^0.45.3",
