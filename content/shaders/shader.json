@@ -1,4 +1,0 @@
-{
-  "code": "void main() {\n    vec2 uv = gl_FragCoord.xy / iResolution.xy;\n\n    vec3 color = vec3(uv.x, uv.y, 0.5);\n\n    fragColor = vec4(color, 1.099);\n}\n",
-  "updatedAt": "2026-09-26T13:11:03.053Z"
-}
