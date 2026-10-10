@@ -1,0 +1,35 @@
+---
+title: Pulsing Orbit
+summary: Animate a glowing orb around the center using sine and cosine.
+order: 3
+available: true
+starterCode: |
+  void main() {
+      vec2 point = (2.0 * gl_FragCoord.xy - iResolution.xy) / iResolution.y;
+
+      float angle = iTime * 1.2;
+      vec2 orbitCenter = vec2(cos(angle), sin(angle)) * 0.55;
+      float distanceToOrb = length(point - orbitCenter);
+
+      float radius = 0.12 + 0.035 * sin(iTime * 3.0);
+      float orb = 1.0 - smoothstep(radius, radius + 0.015, distanceToOrb);
+      float glow = 1.0 - smoothstep(0.05, 0.45, distanceToOrb);
+
+      vec3 color = vec3(0.015, 0.005, 0.04);
+      color += vec3(0.25, 0.08, 0.5) * glow;
+      color += vec3(0.95, 0.35, 0.75) * orb;
+
+      fragColor = vec4(color, 1.0);
+  }
+areas: []
+topics: ["animation", "trigonometry"]
+tags: ["orbit", "glow", "sine", "cosine"]
+languages: []
+difficulty: beginner
+---
+
+# **Pulsing Orbit**
+
+Sine and cosine convert the current time into a point moving around a circle. The shader measures the distance from each pixel to that moving point, then layers a sharp orb over a wider, softer glow.
+
+Try changing the orbit radius, angular speed, or pulse frequency. You can also replace the circular path with an ellipse by scaling one component of `orbitCenter`.

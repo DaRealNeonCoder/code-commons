@@ -1,11 +1,16 @@
 "use client";
-import { useRef, useState, useEffect} from "react";
+import { useRef, useState, useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import CodeEditor from "@/components/CodeEditor";
 import CompletionToggle from "@/components/CompletionToggle";
 import AITutor from "@/components/AITutor";
 import { useSession } from "@/lib/auth-client";
-import { preloadPyodide, runPythonInBrowser } from "@/lib/pyodideClient";
+import {
+  getPyodideStatus,
+  preloadPyodide,
+  runPythonInBrowser,
+  subscribePyodideStatus,
+} from "@/lib/pyodideClient";
 import { outputsMatch, withTrailingNewline, clip } from "@/lib/compareOutput";
 
 const ACCENTS = {
@@ -78,6 +83,37 @@ function TestResults({ data }) {
   );
 }
 
+function PyodideDownloadStatus({ status }) {
+  if (status.state !== "loading") return null;
+
+  const progress = status.total > 0
+    ? Math.min(100, Math.round((status.loaded / status.total) * 100))
+    : null;
+
+  return (
+    <div
+      role="status"
+      title="The Python compiler is downloading in the background. You can run code when it is ready."
+      className="flex items-center gap-1.5 rounded border border-zinc-800 bg-zinc-900/70 px-2 py-1"
+    >
+      <span className="sr-only">
+        The Python compiler is downloading in the background. You can run code when it is ready.
+      </span>
+      <span className="h-1 w-12 overflow-hidden rounded-full bg-zinc-700" aria-hidden="true">
+        <span
+          className={`block h-full rounded-full bg-teal-400 transition-[width] duration-300 ${
+            progress === null ? "animate-pulse" : ""
+          }`}
+          style={{ width: `${progress ?? 45}%` }}
+        />
+      </span>
+      <span className="font-mono text-[10px] text-zinc-500">
+        {progress === null ? "compiler" : `${progress}%`}
+      </span>
+    </div>
+  );
+}
+
 export default function CodeWorkspace({
   fileBaseName = "main",
   starterCode = {},
@@ -119,6 +155,11 @@ export default function CodeWorkspace({
   const [isChecking, setIsChecking] = useState(false);
   const [layout, setLayout] = useState(defaultLayout);
   const runtimeWarm = useRef(false);
+  const pyodideStatus = useSyncExternalStore(
+    subscribePyodideStatus,
+    getPyodideStatus,
+    getPyodideStatus
+  );
 
   const colors = ACCENTS[accent] || ACCENTS.amber;
   const showLanguagePicker = !lockedLanguage;
@@ -135,10 +176,10 @@ export default function CodeWorkspace({
 
   // Browser execution only exists for Python; everything else goes to the server.
   const canRunInBrowser = language === "python";
-    useEffect(() => {
+  useEffect(() => {
     if (runInBrowser && canRunInBrowser) preloadPyodide();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+  }, []);
   const useBrowser = runInBrowser && canRunInBrowser;
 
   function handleLanguageChange(nextLanguage) {
@@ -494,6 +535,8 @@ export default function CodeWorkspace({
                     ))}
                   </select>
                 )}
+
+                {useBrowser && <PyodideDownloadStatus status={pyodideStatus} />}
 
                 <button
                   type="button"

@@ -1,0 +1,36 @@
+---
+title: Kaleidoscope
+summary: Fold polar coordinates into repeating wedges to create a moving kaleidoscope.
+order: 4
+available: true
+starterCode: |
+  void main() {
+      vec2 point = (2.0 * gl_FragCoord.xy - iResolution.xy) / iResolution.y;
+      float radius = length(point);
+      float angle = atan(point.y, point.x);
+
+      float sectors = 8.0;
+      float sectorAngle = 6.2831853 / sectors;
+      float foldedAngle = mod(angle, sectorAngle);
+      foldedAngle = abs(foldedAngle - sectorAngle * 0.5);
+
+      vec2 foldedPoint = vec2(cos(foldedAngle), sin(foldedAngle)) * radius;
+      float wave = 0.5 + 0.5 * sin(foldedPoint.x * 16.0 - iTime * 2.0 + radius * 8.0);
+      vec3 color = 0.5 + 0.5 * cos(
+          6.2831853 * (vec3(0.0, 0.18, 0.38) + wave + radius * 0.15)
+      );
+
+      fragColor = vec4(color, 1.0);
+  }
+areas: []
+topics: ["patterns", "trigonometry", "coordinates"]
+tags: ["kaleidoscope", "polar-coordinates", "symmetry"]
+languages: []
+difficulty: intermediate
+---
+
+# **Kaleidoscope**
+
+Polar coordinates make repetition around the center straightforward. `mod` places every angle into one wedge, and `abs` mirrors that wedge so its two sides meet symmetrically.
+
+The folded coordinates drive a traveling wave and a cosine color palette. Change `sectors` to control the symmetry, or adjust the wave frequencies to create different textures.

@@ -1,0 +1,30 @@
+---
+title: Signed Distance Circle
+summary: Draw a crisp circle with a signed distance function and smooth edges.
+order: 1
+available: true
+starterCode: |
+  void main() {
+      vec2 point = (2.0 * gl_FragCoord.xy - iResolution.xy) / iResolution.y;
+
+      float distanceToCenter = length(point);
+      float circle = 1.0 - smoothstep(0.48, 0.5, distanceToCenter);
+
+      vec3 background = vec3(0.015, 0.02, 0.05);
+      vec3 foreground = vec3(0.2, 0.75, 1.0);
+      vec3 color = mix(background, foreground, circle);
+
+      fragColor = vec4(color, 1.0);
+  }
+areas: []
+topics: ["geometry", "distance-fields"]
+tags: ["circle", "smoothstep", "coordinates"]
+languages: []
+difficulty: beginner
+---
+
+# **Signed Distance Circle**
+
+This shader turns each pixel into a point centered around the origin. The length of that point is its distance from the center, so comparing it with a radius creates a circle.
+
+`smoothstep` softens the boundary by mapping a small range of distances to a gradual transition. Try changing the radius or the two edge values to see how they affect the shape.

@@ -1,0 +1,44 @@
+---
+title: Mandelbrot Set
+summary: Explore the Mandelbrot set by iterating complex-number coordinates for every pixel.
+order: 5
+available: true
+starterCode: |
+  void main() {
+      vec2 point = (2.0 * gl_FragCoord.xy - iResolution.xy) / iResolution.y;
+      vec2 c = point * 1.4 + vec2(-0.5, 0.0);
+      vec2 z = vec2(0.0);
+      float iterations = 0.0;
+
+      for (int i = 0; i < 80; i++) {
+          if (dot(z, z) > 16.0) break;
+
+          z = vec2(
+              z.x * z.x - z.y * z.y,
+              2.0 * z.x * z.y
+          ) + c;
+          iterations += 1.0;
+      }
+
+      vec3 color = vec3(0.0);
+      if (iterations < 80.0) {
+          float shade = iterations / 80.0;
+          color = 0.5 + 0.5 * cos(
+              6.2831853 * (vec3(0.0, 0.15, 0.35) + shade * 3.0)
+          );
+      }
+
+      fragColor = vec4(color, 1.0);
+  }
+areas: []
+topics: ["fractals", "complex-numbers", "iteration"]
+tags: ["mandelbrot", "loops", "escape-time"]
+languages: []
+difficulty: intermediate
+---
+
+# **Mandelbrot Set**
+
+Each pixel becomes a complex number `c`. The loop repeatedly applies `z = z² + c`; points that escape become colored according to how many iterations they survived, while points inside the set remain black.
+
+Try changing the zoom and offset in the `c` calculation, increasing the iteration limit, or designing a different color palette. The fixed loop keeps the shader compatible with WebGL fragment shaders.
