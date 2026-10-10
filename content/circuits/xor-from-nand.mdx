@@ -1,0 +1,38 @@
+---
+title: "Build XOR from NAND gates"
+summary: "Make an XOR gate using only NAND gates."
+difficulty: beginner
+areas: [programming-fundamentals]
+topics: [bit-manipulation]
+tags: [parity-bit]
+available: true
+puzzlePorts:
+  inputs: [input_a, input_b]
+  outputs: [led_out]
+testCases:
+  - input: [false, false]
+    expected: [false]
+  - input: [false, true]
+    expected: [true]
+  - input: [true, false]
+    expected: [true]
+  - input: [true, true]
+    expected: [false]
+starterCircuit:
+  components:
+    - { id: input_a, kind: INPUT, label: A, x: 60, y: 100, value: false }
+    - { id: input_b, kind: INPUT, label: B, x: 60, y: 260, value: false }
+    - { id: led_out, kind: LED, label: Q, x: 480, y: 180 }
+  connections: []
+  chips: {}
+---
+
+Build an **XOR** gate from NAND gates: **Q** should light up when exactly one of
+the inputs **A** and **B** is on.
+
+Drag NAND gates onto the canvas and wire them between the two switches and the
+LED. Click the switches to experiment, then select **Check solution** to test
+your circuit on the server.
+
+The labeled inputs and output belong to the puzzle. You can move them, but
+cannot delete them. All checker cases are hidden.

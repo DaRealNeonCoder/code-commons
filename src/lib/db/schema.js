@@ -115,6 +115,12 @@ export const circuits = pgTable(
     ...contentColumns(),
     // { components, connections, chips }
     starterCircuit: jsonb("starter_circuit").notNull().default(sql`'{}'::jsonb`),
+    // null = sandbox/lesson; otherwise ordered INPUT/LED ids in starterCircuit.
+    // { inputs: string[], outputs: string[] } is public; ids survive moving parts.
+    puzzlePorts: jsonb("puzzle_ports"),
+    // [{ input: boolean[], expected: boolean[] }], in puzzlePorts order.
+    // SERVER ONLY: all circuit puzzle cases are hidden, including their inputs.
+    testCases: jsonb("test_cases").notNull().default(sql`'[]'::jsonb`),
   },
   (t) => contentIndexes("circuits", t)
 );

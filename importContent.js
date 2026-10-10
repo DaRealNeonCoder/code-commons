@@ -1,7 +1,7 @@
 // One-off: copies the on-disk content into the database.
 //
 //   npm run db:push
-//   npx tsx --env-file=.env.local scripts/importContent.js
+//   npx tsx --env-file=.env.local importContent.js
 //
 // Idempotent: file names become slugs (URLs stay the same) and re-running updates
 // the same rows. Official content is owned by "system". Courses that came from a
@@ -17,6 +17,7 @@ import { saveCourse } from "./src/lib/db/courses";
 import { saveChip } from "./src/lib/db/chips";
 import { getProject } from "./src/lib/creatorProjects";
 import { parseCircuit, EMPTY_CIRCUIT } from "./src/lib/circuits/circuitData";
+import { getPuzzlePorts, getPuzzleTests, validatePuzzleCircuit } from "./src/lib/circuits/puzzle";
 
 const ROOT = process.cwd();
 const str = (v) => (typeof v === "string" ? v : "");
@@ -76,9 +77,13 @@ async function main() {
 
   await importMdx("shader", "content/shaders", shaderStore, (d) => ({ starterCode: str(d.starterCode) }));
 
-  await importMdx("circuit", "content/circuits", circuitStore, (d) => ({
-    starterCircuit: parseCircuit(d.starterCircuit) ?? EMPTY_CIRCUIT,
-  }));
+  await importMdx("circuit", "content/circuits", circuitStore, (d) => {
+    const starterCircuit = parseCircuit(d.starterCircuit) ?? EMPTY_CIRCUIT;
+    const puzzlePorts = d.puzzlePorts == null ? null : getPuzzlePorts(d.puzzlePorts, starterCircuit);
+    const testCases = puzzlePorts ? getPuzzleTests(d.testCases, puzzlePorts) : [];
+    if (puzzlePorts) validatePuzzleCircuit(starterCircuit, puzzlePorts);
+    return { starterCircuit, puzzlePorts, testCases };
+  });
 
   for (const { file, path: p } of listFiles("content/courses", ".json")) {
     const data = JSON.parse(fs.readFileSync(p, "utf8"));

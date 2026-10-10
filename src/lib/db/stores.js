@@ -11,5 +11,9 @@ export const puzzleStore = createContentStore(puzzles, {
 });
 
 export const shaderStore = createContentStore(shaders, { fallback: "shader", heavy: ["starterCode"] });
-export const circuitStore = createContentStore(circuits, { fallback: "circuit", heavy: ["starterCircuit"] });
+export const circuitStore = createContentStore(circuits, {
+  fallback: "circuit",
+  heavy: ["starterCircuit", "puzzlePorts", "testCases"],
+  listExtra: { isPuzzle: sql`${circuits.puzzlePorts} is not null`.mapWith(Boolean) },
+});
 export const buildStore = createContentStore(builds, { fallback: "build", heavy: ["starterCode"] });

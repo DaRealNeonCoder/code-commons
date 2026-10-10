@@ -4,6 +4,7 @@ import MdxBody from "@/components/mdx/MdxBody";
 import RatedShell from "@/components/rating/RatedShell";
 import { getCircuitById } from "@/lib/circuits/circuits";
 import { parseCircuit, EMPTY_CIRCUIT } from "@/lib/circuits/circuitData";
+import { getPuzzlePorts } from "@/lib/circuits/puzzle";
 
 export async function generateMetadata({ params }) {
   const { circuitId } = await params;
@@ -29,14 +30,18 @@ export default async function CircuitDetailPage({ params }) {
 
   // starterCircuit is jsonb now (an object), but it's still validated before use.
   const initialCircuit = parseCircuit(circuit.starterCircuit) ?? EMPTY_CIRCUIT;
+  const puzzle = circuit.puzzlePorts ? getPuzzlePorts(circuit.puzzlePorts, initialCircuit) : null;
 
   return (
     <main className="flex min-h-[calc(100vh-56px)] flex-1 flex-col bg-zinc-950">
       <RatedShell itemType="circuit" itemId={circuit.id} variant="dark">
         <LogicSimulator
+          key={circuit.id}
           lessonTitle={circuit.title}
           lessonContent={<MdxBody source={circuit.content} />}
           initialCircuit={initialCircuit}
+          puzzleId={circuit.id}
+          puzzle={puzzle}
           showProjectIO={false}
         />
       </RatedShell>

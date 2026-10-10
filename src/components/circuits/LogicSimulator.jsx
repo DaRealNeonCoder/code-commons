@@ -65,6 +65,9 @@ function wirePath(x1, y1, x2, y2) {
  *   layout with its lesson pane — Export/Import there would silently read
  *   from and write to the unrelated global scratch slot instead of this
  *   circuit's own content, which would be confusing.
+ * @param {{inputs: string[], outputs: string[]}} [puzzle] - Public puzzle
+ *   interface. Test cases are never passed to the editor.
+ * @param {string} [puzzleId] - URL id used by the server-side checker.
  */
 export default function LogicSimulator({
   lessonTitle = "Untitled Lesson",
@@ -73,6 +76,8 @@ export default function LogicSimulator({
   onChange = null,
   compact = false,
   showProjectIO = !compact,
+  puzzle = null,
+  puzzleId = null,
 }) {
   const [components, setComponents] = useState(() => initialCircuit?.components ?? []);
   const [connections, setConnections] = useState(() => initialCircuit?.connections ?? []);
@@ -90,7 +95,12 @@ export default function LogicSimulator({
   const [exporting, setExporting] = useState(false);
   const [importing, setImporting] = useState(false);
   const [toast, setToast] = useState(null); // { type: "success" | "error", text }
+  const [checking, setChecking] = useState(false);
   const canvasRef = useRef(null);
+  const fixedComponentIds = useMemo(
+    () => new Set([...(puzzle?.inputs ?? []), ...(puzzle?.outputs ?? [])]),
+    [puzzle]
+  );
 
   // Undo/redo history. currentStateRef always mirrors the latest committed
   // components/connections/chips so pushHistory/undo/redo never read stale
@@ -164,12 +174,17 @@ export default function LogicSimulator({
 
   function deleteSelected() {
     if (!selected) return;
-    pushHistory();
     if (selected.type === "components") {
-      const ids = selected.ids;
+      const ids = new Set([...selected.ids].filter((id) => !fixedComponentIds.has(id)));
+      if (ids.size !== selected.ids.size) {
+        showToast("error", "This puzzle's inputs and outputs cannot be deleted");
+      }
+      if (ids.size === 0) return;
+      pushHistory();
       setComponents((cs) => cs.filter((c) => !ids.has(c.id)));
       setConnections((cs) => cs.filter((c) => !ids.has(c.from.componentId) && !ids.has(c.to.componentId)));
     } else if (selected.type === "wire") {
+      pushHistory();
       setConnections((cs) => cs.filter((c) => c.id !== selected.id));
     }
     setSelected(null);
@@ -242,7 +257,6 @@ export default function LogicSimulator({
     }
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function screenToWorld(clientX, clientY) {
@@ -541,6 +555,7 @@ export default function LogicSimulator({
   }
 
   async function handleImportProject() {
+    if (puzzle) return;
     setImporting(true);
     setToast(null);
     try {
@@ -559,6 +574,33 @@ export default function LogicSimulator({
       showToast("error", "No saved project found on the server");
     } finally {
       setImporting(false);
+    }
+  }
+
+  async function handleCheckPuzzle() {
+    if (!puzzleId || checking) return;
+    const submitted = { components, connections, chips };
+    setChecking(true);
+    setToast(null);
+    try {
+      const res = await fetch(`/api/circuits/${encodeURIComponent(puzzleId)}/check`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ circuit: submitted }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(data?.error || "The circuit could not be checked");
+      if (typeof data?.solved !== "boolean") throw new Error("The circuit could not be checked");
+      const current = currentStateRef.current;
+      if (current.components !== submitted.components || current.connections !== submitted.connections || current.chips !== submitted.chips) {
+        showToast("error", "Your circuit changed during the check. Check again to test this version.");
+        return;
+      }
+      showToast(data?.solved ? "success" : "error", data?.solved ? "Puzzle solved!" : "Not quite — keep experimenting");
+    } catch (error) {
+      showToast("error", error.message || "The circuit could not be checked");
+    } finally {
+      setChecking(false);
     }
   }
 
@@ -596,9 +638,21 @@ export default function LogicSimulator({
       <div className="flex min-h-0 flex-1 flex-col">
         {/* component palette */}
         <div className="flex items-center gap-2 overflow-x-auto border-b border-zinc-800 bg-zinc-950 px-4 py-2">
-          <PaletteSwatch label="IN" className="bg-zinc-700 text-zinc-200" onDragStart={(e) => handleDragStart(e, { kind: "INPUT" })} />
+          <PaletteSwatch
+            label="IN"
+            className="bg-zinc-700 text-zinc-200"
+            draggable={!puzzle}
+            title={puzzle ? "Puzzle inputs are already on the canvas" : undefined}
+            onDragStart={(e) => handleDragStart(e, { kind: "INPUT" })}
+          />
           <PaletteSwatch label="NAND" className="bg-blue-600 text-white" onDragStart={(e) => handleDragStart(e, { kind: "NAND" })} />
-          <PaletteSwatch label="LED" className="border border-zinc-600 bg-zinc-800 text-zinc-400" onDragStart={(e) => handleDragStart(e, { kind: "LED" })} />
+          <PaletteSwatch
+            label="LED"
+            className="border border-zinc-600 bg-zinc-800 text-zinc-400"
+            draggable={!puzzle}
+            title={puzzle ? "Puzzle outputs are already on the canvas" : undefined}
+            onDragStart={(e) => handleDragStart(e, { kind: "LED" })}
+          />
           {Object.values(chips).map((chip) => (
             <PaletteSwatch
               key={chip.id}
@@ -625,6 +679,15 @@ export default function LogicSimulator({
             >
               + Create Chip
             </button>
+            {puzzle && (
+              <button
+                onClick={handleCheckPuzzle}
+                disabled={checking}
+                className="rounded-md bg-emerald-600 px-3 py-1.5 font-mono text-xs font-semibold text-white transition-colors hover:bg-emerald-500 disabled:cursor-wait disabled:opacity-60"
+              >
+                {checking ? "Checking…" : "Check solution"}
+              </button>
+            )}
           </div>
 
           {/* Export/Import hit the single-slot /api/projects stub, which is
@@ -632,7 +695,7 @@ export default function LogicSimulator({
               embeds this editor (compact), or that renders one specific
               circuit's own content, sets showProjectIO={false} since these
               buttons would otherwise read/write an unrelated global slot. */}
-          {showProjectIO && (
+          {showProjectIO && !puzzle && (
             <div className="flex shrink-0 items-center gap-2 border-l border-zinc-800 pl-4">
               <button
                 onClick={handleExportProject}
@@ -732,6 +795,14 @@ export default function LogicSimulator({
               const pillShape = comp.kind === "LED" || comp.kind === "INPUT";
               return (
                 <Fragment key={comp.id}>
+                  {fixedComponentIds.has(comp.id) && (
+                    <span
+                      className="pointer-events-none absolute whitespace-nowrap font-mono text-[10px] text-zinc-400"
+                      style={{ left: comp.x, top: comp.y - 20 }}
+                    >
+                      {comp.label || comp.id} · fixed
+                    </span>
+                  )}
                   <div
                     onMouseDown={(e) => handleComponentMouseDown(e, comp)}
                     className={`absolute flex select-none items-center justify-center font-mono text-xs font-semibold ${
@@ -815,6 +886,7 @@ export default function LogicSimulator({
 
           {toast && (
             <div
+              role="status"
               className={`pointer-events-none absolute left-1/2 top-3 -translate-x-1/2 rounded-md border px-3 py-1.5 font-mono text-xs shadow-lg ${
                 toast.type === "success"
                   ? "border-emerald-900 bg-emerald-950/90 text-emerald-300"
@@ -856,12 +928,15 @@ export default function LogicSimulator({
   );
 }
 
-function PaletteSwatch({ label, className, style, onDragStart }) {
+function PaletteSwatch({ label, className, style, onDragStart, draggable = true, title }) {
   return (
     <div
-      draggable
+      draggable={draggable}
       onDragStart={onDragStart}
-      className={`flex h-9 shrink-0 min-w-[3.25rem] cursor-grab items-center justify-center rounded-md px-2 font-mono text-[11px] font-semibold active:cursor-grabbing ${className ?? ""}`}
+      title={title}
+      className={`flex h-9 shrink-0 min-w-[3.25rem] items-center justify-center rounded-md px-2 font-mono text-[11px] font-semibold ${
+        draggable ? "cursor-grab active:cursor-grabbing" : "cursor-not-allowed opacity-50"
+      } ${className ?? ""}`}
       style={style}
     >
       {label}
