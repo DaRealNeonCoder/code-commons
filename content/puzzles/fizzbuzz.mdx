@@ -1,0 +1,51 @@
+---
+title: "FizzBuzz"
+order: 3
+available: true
+areas: ["programming-fundamentals"]
+topics: ["loops", "conditionals"]
+tags: ["for", "if", "modulo"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  n = int(input())
+
+  # TODO: print the numbers from 1 to n, one per line,
+  # replacing multiples of 3 with Fizz, multiples of 5 with Buzz,
+  # and multiples of both with FizzBuzz
+testCases:
+  - input: "5"
+    expected: "1\n2\nFizz\n4\nBuzz"
+    hidden: false
+  - input: "15"
+    expected: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz"
+    hidden: true
+  - input: "1"
+    expected: "1"
+    hidden: true
+  - input: "20"
+    expected: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz\n16\n17\nFizz\n19\nBuzz"
+    hidden: true
+  - input: "30"
+    expected: "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz\n16\n17\nFizz\n19\nBuzz\nFizz\n22\n23\nFizz\nBuzz\n26\nFizz\n28\n29\nFizzBuzz"
+    hidden: true
+---
+
+The classic. Read an integer `n` and print the numbers from 1 to `n`, one per line, with these replacements:
+
+- multiples of 3 print `Fizz`
+- multiples of 5 print `Buzz`
+- multiples of both 3 and 5 print `FizzBuzz`
+
+For an input of `5`, a correct solution prints:
+
+```
+1
+2
+Fizz
+4
+Buzz
+```
+
+> [!TIP]
+> The order of your checks matters. A number like 15 matches several rules, so test the most specific one first.

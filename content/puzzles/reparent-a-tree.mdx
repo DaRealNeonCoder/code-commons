@@ -1,0 +1,86 @@
+---
+title: "Reparent a Tree"
+order: 126
+available: true
+areas: []
+topics: ["trees", "recursion"]
+tags: ["tree-rerooting"]
+languages: []
+difficulty: "advanced"
+starterCode: |
+  def reparent(tree, new_root):
+      # tree is a dict {"label": str, "children": [...]} (children is optional)
+      # TODO: return the same tree re-rooted at the node labelled new_root, in the same dict format,
+      # or None if there is no such node
+      pass
+
+  import json
+
+
+  def normalize(node):
+      children = sorted((normalize(c) for c in node.get("children", [])), key=lambda c: c["label"])
+      return {"label": node["label"], "children": children}
+
+
+  tree = json.loads(input())
+  new_root = input()
+  result = reparent(tree, new_root)
+  print("none" if result is None else json.dumps(normalize(result)))
+testCases:
+  - input: "{\"label\": \"x\"}\nx"
+    expected: "{\"label\": \"x\", \"children\": []}"
+    hidden: true
+  - input: "{\"label\": \"parent\", \"children\": [{\"label\": \"x\"}, {\"label\": \"sibling\"}]}\nx"
+    expected: "{\"label\": \"x\", \"children\": [{\"label\": \"parent\", \"children\": [{\"label\": \"sibling\", \"children\": []}]}]}"
+    hidden: true
+  - input: "{\"label\": \"parent\", \"children\": [{\"label\": \"a\"}, {\"label\": \"x\"}, {\"label\": \"b\"}, {\"label\": \"c\"}]}\nx"
+    expected: "{\"label\": \"x\", \"children\": [{\"label\": \"parent\", \"children\": [{\"label\": \"a\", \"children\": []}, {\"label\": \"b\", \"children\": []}, {\"label\": \"c\", \"children\": []}]}]}"
+    hidden: true
+  - input: "{\"label\": \"level-0\", \"children\": [{\"label\": \"level-1\", \"children\": [{\"label\": \"level-2\", \"children\": [{\"label\": \"level-3\", \"children\": [{\"label\": \"x\"}]}]}]}]}\nx"
+    expected: "{\"label\": \"x\", \"children\": [{\"label\": \"level-3\", \"children\": [{\"label\": \"level-2\", \"children\": [{\"label\": \"level-1\", \"children\": [{\"label\": \"level-0\", \"children\": []}]}]}]}]}"
+    hidden: true
+  - input: "{\"label\": \"parent\", \"children\": [{\"label\": \"x\", \"children\": [{\"label\": \"kid-0\"}, {\"label\": \"kid-1\"}]}]}\nx"
+    expected: "{\"label\": \"x\", \"children\": [{\"label\": \"kid-0\", \"children\": []}, {\"label\": \"kid-1\", \"children\": []}, {\"label\": \"parent\", \"children\": []}]}"
+    hidden: true
+  - input: "{\"label\": \"grandparent\", \"children\": [{\"label\": \"parent\", \"children\": [{\"label\": \"x\", \"children\": [{\"label\": \"kid-0\"}, {\"label\": \"kid-1\"}]}, {\"label\": \"sibling-0\"}, {\"label\": \"sibling-1\"}]}, {\"label\": \"uncle\", \"children\": [{\"label\": \"cousin-0\"}, {\"label\": \"cousin-1\"}]}]}\nx"
+    expected: "{\"label\": \"x\", \"children\": [{\"label\": \"kid-0\", \"children\": []}, {\"label\": \"kid-1\", \"children\": []}, {\"label\": \"parent\", \"children\": [{\"label\": \"grandparent\", \"children\": [{\"label\": \"uncle\", \"children\": [{\"label\": \"cousin-0\", \"children\": []}, {\"label\": \"cousin-1\", \"children\": []}]}]}, {\"label\": \"sibling-0\", \"children\": []}, {\"label\": \"sibling-1\", \"children\": []}]}]}"
+    hidden: true
+  - input: "{\"label\": \"x\"}\nnonexistent"
+    expected: "none"
+    hidden: true
+  - input: "{\"label\": \"parent\", \"children\": [{\"label\": \"x\", \"children\": [{\"label\": \"kid-0\"}, {\"label\": \"kid-1\"}]}, {\"label\": \"sibling-0\"}, {\"label\": \"sibling-1\"}]}\nnonexistent"
+    expected: "none"
+    hidden: true
+---
+
+Trees are usually drawn from the root, but a tree is just a set of nodes and the connections between them, so any node can be the root. Re-rooting a tree at a different node means looking at the same tree from that node's point of view: the chosen node becomes the root, its former parent becomes one of its children, that node's former parent becomes a child of it, and so on up to the old root.
+
+For example, re-rooting
+
+```text
+        parent
+       /      \
+      x      sibling
+```
+
+at `x` gives
+
+```text
+      x
+      |
+    parent
+      |
+   sibling
+```
+
+Your task is to re-root a tree at a given node.
+
+## Input
+
+The first line is the tree in JSON, e.g. `{"label": "parent", "children": [{"label": "x"}, {"label": "sibling"}]}` (`children` may be left out for a leaf). The second line is the label of the new root.
+
+## Output
+
+Print the re-rooted tree in JSON. Every node is printed as `{"label": ..., "children": [...]}` with `children` always present (an empty list for a leaf) and the children of each node sorted by label; the starter code does this normalising for you, so your function may return its children in any order. Print `none` if there is no node with that label.
+
+*Adapted from the [POV](https://github.com/exercism/problem-specifications/tree/main/exercises/pov) exercise on Exercism (MIT License). Original source: Adaptation of exercise from 4clojure (https://github.com/oxalorg/4ever-clojure).*

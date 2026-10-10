@@ -1,0 +1,99 @@
+---
+title: "Rotational Cipher"
+order: 44
+available: true
+areas: []
+topics: ["strings", "cryptography"]
+tags: ["caesar-cipher"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def rotate_text(text, key):
+      # TODO: shift every letter forward by key positions, keeping case; leave other characters alone
+      pass
+
+  key = int(input())
+  text = input()
+  print(rotate_text(text, key))
+testCases:
+  - input: "0\na"
+    expected: "a"
+    hidden: true
+  - input: "1\na"
+    expected: "b"
+    hidden: true
+  - input: "26\na"
+    expected: "a"
+    hidden: true
+  - input: "13\nm"
+    expected: "z"
+    hidden: true
+  - input: "13\nn"
+    expected: "a"
+    hidden: true
+  - input: "5\nOMG"
+    expected: "TRL"
+    hidden: true
+  - input: "5\nO M G"
+    expected: "T R L"
+    hidden: true
+  - input: "4\nTesting 1 2 3 testing"
+    expected: "Xiwxmrk 1 2 3 xiwxmrk"
+    hidden: true
+  - input: "21\nLet's eat, Grandma!"
+    expected: "Gzo'n zvo, Bmviyhv!"
+    hidden: true
+  - input: "13\nThe quick brown fox jumps over the lazy dog."
+    expected: "Gur dhvpx oebja sbk whzcf bire gur ynml qbt."
+    hidden: true
+  - input: "13\nHello, World!"
+    expected: "Uryyb, Jbeyq!"
+    hidden: true
+  - input: "25\nabcXYZ"
+    expected: "zabWXY"
+    hidden: true
+  - input: "26\nSame text"
+    expected: "Same text"
+    hidden: true
+  - input: "7\nThe quick brown fox jumps over the lazy dog."
+    expected: "Aol xbpjr iyvdu mve qbtwz vcly aol shgf kvn."
+    hidden: true
+---
+
+Create an implementation of the rotational cipher, also sometimes called the Caesar cipher.
+
+The Caesar cipher is a simple shift cipher that relies on transposing all the letters in the alphabet using an integer key between `0` and `26`.
+Using a key of `0` or `26` will always yield the same output due to modular arithmetic.
+The letter is shifted for as many values as the value of the key.
+
+The general notation for rotational ciphers is `ROT + <key>`.
+The most commonly used rotational cipher is `ROT13`.
+
+A `ROT13` on the Latin alphabet would be as follows:
+
+```text
+Plain:  abcdefghijklmnopqrstuvwxyz
+Cipher: nopqrstuvwxyzabcdefghijklm
+```
+
+It is stronger than the Atbash cipher because it has 27 possible keys, and 25 usable keys.
+
+Ciphertext is written out in the same formatting as the input including spaces and punctuation.
+
+## Examples
+
+- ROT5 `omg` gives `trl`
+- ROT0 `c` gives `c`
+- ROT26 `Cool` gives `Cool`
+- ROT13 `The quick brown fox jumps over the lazy dog.` gives `Gur dhvpx oebja sbk whzcf bire gur ynml qbt.`
+- ROT13 `Gur dhvpx oebja sbk whzcf bire gur ynml qbt.` gives `The quick brown fox jumps over the lazy dog.`
+
+## Input
+
+The first line is the integer shift key. The second line is the text.
+
+## Output
+
+Print the text with every letter rotated by the key. Upper and lower case are preserved, and other characters are unchanged.
+
+*Adapted from the [Rotational Cipher](https://github.com/exercism/problem-specifications/tree/main/exercises/rotational-cipher) exercise on Exercism (MIT License). Original source: Wikipedia (https://en.wikipedia.org/wiki/Caesar_cipher).*

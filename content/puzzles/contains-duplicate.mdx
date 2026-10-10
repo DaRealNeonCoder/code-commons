@@ -1,0 +1,37 @@
+---
+title: "Contains Duplicate"
+order: 50
+available: true
+areas: []
+topics: ["arrays", "hash-tables"]
+tags: ["hash-set"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def has_duplicate(numbers):
+      # TODO: True if any value appears more than once
+      pass
+
+  numbers = list(map(int, input().split()))
+  print("true" if has_duplicate(numbers) else "false")
+testCases:
+  - input: "1 2 3 4 5"
+    expected: "false"
+    hidden: false
+  - input: "1 2 3 4 4"
+    expected: "true"
+    hidden: true
+  - input: "1 1 2 2 3 3 4 4 5"
+    expected: "true"
+    hidden: true
+  - input: "7"
+    expected: "false"
+    hidden: true
+---
+
+Write a function `has_duplicate(numbers)` that returns `True` if **any value appears at least twice** in the list, and `False` if every value is unique.
+
+> [!TIP]
+> Comparing every pair works but gets slow on big lists. Try keeping a set of values you've already seen: if the next value is in it, you've found a duplicate.
+
+The starter code reads one line of integers and prints `true` or `false`.

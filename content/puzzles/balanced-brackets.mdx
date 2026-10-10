@@ -1,0 +1,45 @@
+---
+title: "Balanced Brackets"
+order: 26
+available: true
+areas: []
+topics: ["stacks", "strings"]
+tags: ["balanced-parentheses"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def correct_bracketing(brackets):
+      # TODO: True if every "(" has a matching ")" that comes after it
+      pass
+
+  brackets = input()
+  print("true" if correct_bracketing(brackets) else "false")
+testCases:
+  - input: "()"
+    expected: "true"
+    hidden: false
+  - input: "(()())"
+    expected: "true"
+    hidden: true
+  - input: ")(()"
+    expected: "false"
+    hidden: true
+  - input: "("
+    expected: "false"
+    hidden: true
+  - input: "((()))"
+    expected: "true"
+    hidden: true
+  - input: "())("
+    expected: "false"
+    hidden: true
+---
+
+You are given a string made only of `(` and `)` characters.
+
+Write a function `correct_bracketing(brackets)` that returns `True` if every opening bracket has a matching closing bracket that comes **after** it, and `False` otherwise. For example, `"(()())"` is correct, but `")(()"` is not, even though the counts match.
+
+> [!TIP]
+> You don't need a full stack for a single kind of bracket. A counter that goes up for `(` and down for `)` is enough. What two things must be true about the counter?
+
+The starter code reads one non-empty string and prints `true` or `false`.

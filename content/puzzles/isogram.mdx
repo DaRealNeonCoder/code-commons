@@ -1,0 +1,92 @@
+---
+title: "Isogram"
+order: 23
+available: true
+areas: []
+topics: ["strings"]
+tags: ["isogram"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def is_isogram(phrase):
+      # TODO: return True if no letter appears more than once (spaces and hyphens may repeat)
+      pass
+
+  phrase = input()
+  print("true" if is_isogram(phrase) else "false")
+testCases:
+  - input: "isogram"
+    expected: "true"
+    hidden: true
+  - input: "eleven"
+    expected: "false"
+    hidden: true
+  - input: "zzyzx"
+    expected: "false"
+    hidden: true
+  - input: "subdermatoglyphic"
+    expected: "true"
+    hidden: true
+  - input: "Alphabet"
+    expected: "false"
+    hidden: true
+  - input: "alphAbet"
+    expected: "false"
+    hidden: true
+  - input: "thumbscrew-japingly"
+    expected: "true"
+    hidden: true
+  - input: "thumbscrew-jappingly"
+    expected: "false"
+    hidden: true
+  - input: "six-year-old"
+    expected: "true"
+    hidden: true
+  - input: "Emily Jung Schwartzkopf"
+    expected: "true"
+    hidden: true
+  - input: "accentor"
+    expected: "false"
+    hidden: true
+  - input: "angola"
+    expected: "false"
+    hidden: true
+  - input: "up-to-date"
+    expected: "false"
+    hidden: true
+  - input: "lumberjacks"
+    expected: "true"
+    hidden: true
+  - input: "background"
+    expected: "true"
+    hidden: true
+  - input: "isograms"
+    expected: "false"
+    hidden: true
+  - input: "a-b-C"
+    expected: "true"
+    hidden: true
+---
+
+Determine if a word or phrase is an isogram.
+
+An isogram (also known as a "non-pattern word") is a word or phrase without a repeating letter, however spaces and hyphens are allowed to appear multiple times.
+
+Examples of isograms:
+
+- lumberjacks
+- background
+- downstream
+- six-year-old
+
+The word _isograms_, however, is not an isogram, because the s repeats.
+
+## Input
+
+A single line containing a word or phrase.
+
+## Output
+
+Print `true` if it is an isogram, otherwise `false`.
+
+*Adapted from the [Isogram](https://github.com/exercism/problem-specifications/tree/main/exercises/isogram) exercise on Exercism (MIT License). Original source: Wikipedia (https://en.wikipedia.org/wiki/Isogram).*

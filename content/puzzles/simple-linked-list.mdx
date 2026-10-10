@@ -1,0 +1,140 @@
+---
+title: "Simple Linked List"
+order: 122
+available: true
+areas: []
+topics: ["linked-lists", "stacks"]
+tags: ["singly-linked-list"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def linked_list_operations(initial, operations):
+      # initial is a list of ints pushed one after another; operations are strings:
+      # "push 5", "pop", "peek", "reverse", "count" or "toList"
+      # the list is a stack: push and pop work at the head, which is the most recently pushed value
+      # TODO: return one result string per operation:
+      #   push, reverse -> "ok"
+      #   pop -> the removed head value as text, or "empty" if the list is empty
+      #   peek -> the head value as text without removing it, or "empty"
+      #   count -> the number of items as text
+      #   toList -> the values from head to tail separated by commas, or "-" if the list is empty
+      pass
+
+  _, *initial = map(int, input().split())
+  n = int(input())
+  operations = [input() for _ in range(n)]
+  print("\n".join(linked_list_operations(initial, operations)))
+testCases:
+  - input: "0\n1\ncount"
+    expected: "0"
+    hidden: true
+  - input: "1 1\n1\ncount"
+    expected: "1"
+    hidden: true
+  - input: "3 1 2 3\n1\ncount"
+    expected: "3"
+    hidden: true
+  - input: "0\n1\npop"
+    expected: "empty"
+    hidden: true
+  - input: "1 1\n1\npop"
+    expected: "1"
+    hidden: true
+  - input: "2 1 2\n1\npop"
+    expected: "2"
+    hidden: true
+  - input: "2 1 2\n2\npop\npop"
+    expected: "2\n1"
+    hidden: true
+  - input: "2 1 2\n5\ncount\npop\ncount\npop\ncount"
+    expected: "2\n2\n1\n1\n0"
+    hidden: true
+  - input: "0\n1\npush 1"
+    expected: "ok"
+    hidden: true
+  - input: "2 1 2\n1\npush 3"
+    expected: "ok"
+    hidden: true
+  - input: "2 1 2\n2\npush 3\ncount"
+    expected: "ok\n3"
+    hidden: true
+  - input: "0\n8\npush 1\npush 2\npop\npush 3\ncount\npop\npop\ncount"
+    expected: "ok\nok\n2\nok\n2\n3\n1\n0"
+    hidden: true
+  - input: "0\n1\npeek"
+    expected: "empty"
+    hidden: true
+  - input: "1 1\n1\npeek"
+    expected: "1"
+    hidden: true
+  - input: "2 1 2\n1\npeek"
+    expected: "2"
+    hidden: true
+  - input: "2 1 2\n2\npeek\ncount"
+    expected: "2\n2"
+    hidden: true
+  - input: "0\n7\npush 1\npush 2\npeek\npop\npeek\npush 3\npeek"
+    expected: "ok\nok\n2\n2\n1\nok\n3"
+    hidden: true
+  - input: "0\n1\ntoList"
+    expected: "-"
+    hidden: true
+  - input: "3 1 2 3\n1\ntoList"
+    expected: "3,2,1"
+    hidden: true
+  - input: "0\n6\npush 1\npush 2\npush 3\npop\npush 4\ntoList"
+    expected: "ok\nok\nok\n3\nok\n4,2,1"
+    hidden: true
+  - input: "0\n2\nreverse\ntoList"
+    expected: "ok\n-"
+    hidden: true
+  - input: "1 1\n2\nreverse\ntoList"
+    expected: "ok\n1"
+    hidden: true
+  - input: "3 1 2 3\n5\nreverse\ncount\npop\npop\npop"
+    expected: "ok\n3\n1\n2\n3"
+    hidden: true
+  - input: "3 1 2 3\n5\nreverse\nreverse\npop\npop\npop"
+    expected: "ok\nok\n3\n2\n1"
+    hidden: true
+  - input: "3 1 2 3\n6\ntoList\nreverse\ntoList\npeek\npop\ncount"
+    expected: "3,2,1\nok\n1,2,3\n1\n1\n2"
+    hidden: true
+  - input: "0\n5\npush 9\ntoList\npeek\npop\npop"
+    expected: "ok\n9\n9\n9\nempty"
+    hidden: true
+  - input: "1 5\n2\nreverse\ntoList"
+    expected: "ok\n5"
+    hidden: true
+---
+
+You work for a music streaming company.
+
+You've been tasked with creating a playlist feature for your music player application.
+
+Write a prototype of the music player application.
+
+For the prototype, each song will simply be represented by a number.
+Given a range of numbers (the song IDs), create a singly linked list.
+
+Given a singly linked list, you should be able to reverse the list to play the songs in the opposite order.
+
+> [!NOTE]
+> The linked list is a fundamental data structure in computer science, often used in the implementation of other data structures.
+>
+> The simplest kind of linked list is a **singly** linked list.
+> That means that each element (or "node") contains data, along with something that points to the next node in the list.
+>
+> If you want to dig deeper into linked lists, check out [this article][intro-linked-list] that explains it using nice drawings.
+>
+> [intro-linked-list]: https://medium.com/basecs/whats-a-linked-list-anyway-part-1-d8b7e6508b9d
+
+## Input
+
+The first line is a count followed by the initial values (pushed in that order). The second line is the number of operations. Each following line is one operation.
+
+## Output
+
+Print one line of result per operation, as described in the starter code comments.
+
+*Adapted from the [Simple Linked List](https://github.com/exercism/problem-specifications/tree/main/exercises/simple-linked-list) exercise on Exercism (MIT License). Original source: Inspired by 'Data Structures and Algorithms with Object-Oriented Design Patterns in Ruby', singly linked-lists. (https://web.archive.org/web/20160731005714/http://brpreiss.com/books/opus8/html/page96.html).*

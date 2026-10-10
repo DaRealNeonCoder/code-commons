@@ -1,0 +1,141 @@
+---
+title: "Poker"
+order: 109
+available: true
+areas: []
+topics: ["sorting", "strings"]
+tags: ["poker-hands"]
+languages: []
+difficulty: "advanced"
+starterCode: |
+  def poker_winners(hands):
+      # each hand is a string like "4S 5H 6C 7D 8S" (rank then suit: S, H, D, C)
+      # TODO: return the winning hand(s) as a list, in their original order
+      pass
+
+  n = int(input())
+  hands = [input() for _ in range(n)]
+  print("\n".join(poker_winners(hands)))
+testCases:
+  - input: "1\n4S 5S 7H 8D JC"
+    expected: "4S 5S 7H 8D JC"
+    hidden: true
+  - input: "3\n4D 5S 6S 8D 3C\n2S 4C 7S 9H 10H\n3S 4S 5D 6H JH"
+    expected: "3S 4S 5D 6H JH"
+    hidden: true
+  - input: "4\n4D 5S 6S 8D 3C\n2S 4C 7S 9H 10H\n3S 4S 5D 6H JH\n3H 4H 5C 6C JD"
+    expected: "3S 4S 5D 6H JH\n3H 4H 5C 6C JD"
+    hidden: true
+  - input: "2\n3S 5H 6S 8D 7H\n2S 5D 6D 8C 7S"
+    expected: "3S 5H 6S 8D 7H"
+    hidden: true
+  - input: "2\n2S 5H 6S 8D 7H\n3S 4D 6D 8C 7S"
+    expected: "2S 5H 6S 8D 7H"
+    hidden: true
+  - input: "2\n4S 5H 6C 8D KH\n2S 4H 6S 4D JH"
+    expected: "2S 4H 6S 4D JH"
+    hidden: true
+  - input: "2\n4S 2H 6S 2D JH\n2S 4H 6C 4D JD"
+    expected: "2S 4H 6C 4D JD"
+    hidden: true
+  - input: "2\n4H 4S AH JC 3D\n4C 4D AS 5D 6C"
+    expected: "4H 4S AH JC 3D"
+    hidden: true
+  - input: "2\n2S 8H 6S 8D JH\n4S 5H 4C 8C 5C"
+    expected: "4S 5H 4C 8C 5C"
+    hidden: true
+  - input: "2\n2S QS 2C QD JH\nJD QH JS 8D QC"
+    expected: "JD QH JS 8D QC"
+    hidden: true
+  - input: "2\nJD QH JS 8D QC\nJS QS JC 2D QD"
+    expected: "JD QH JS 8D QC"
+    hidden: true
+  - input: "2\n6S 6H 3S 3H AS\n7H 7S 2H 2S AC"
+    expected: "7H 7S 2H 2S AC"
+    hidden: true
+  - input: "2\n5C 2S 5S 4H 4C\n6S 2S 6H 7C 2C"
+    expected: "6S 2S 6H 7C 2C"
+    hidden: true
+  - input: "2\n2S 8H 2H 8D JH\n4S 5H 4C 8S 4H"
+    expected: "4S 5H 4C 8S 4H"
+    hidden: true
+  - input: "2\n2S 2H 2C 8D JH\n4S AH AS 8C AD"
+    expected: "4S AH AS 8C AD"
+    hidden: true
+  - input: "2\n5S AH AS 7C AD\n4S AH AS 8C AD"
+    expected: "4S AH AS 8C AD"
+    hidden: true
+  - input: "2\n4S 5H 4C 8D 4H\n3S 4D 2S 6D 5C"
+    expected: "3S 4D 2S 6D 5C"
+    hidden: true
+  - input: "2\n4S 5H 4C 8D 4H\n10D JH QS KD AC"
+    expected: "10D JH QS KD AC"
+    hidden: true
+  - input: "2\n4S 5H 4C 8D 4H\n4D AH 3S 2D 5C"
+    expected: "4D AH 3S 2D 5C"
+    hidden: true
+  - input: "2\n2C 3D 7H 5H 2S\nQS KH AC 2D 3S"
+    expected: "2C 3D 7H 5H 2S"
+    hidden: true
+  - input: "2\n4S 6C 7S 8D 5H\n5S 7H 8S 9D 6H"
+    expected: "5S 7H 8S 9D 6H"
+    hidden: true
+  - input: "2\n2H 3C 4D 5D 6H\n4S AH 3S 2D 5H"
+    expected: "2H 3C 4D 5D 6H"
+    hidden: true
+  - input: "2\n4C 6H 7D 8D 5H\n2S 4S 5S 6S 7S"
+    expected: "2S 4S 5S 6S 7S"
+    hidden: true
+  - input: "2\n2H 7H 8H 9H 6H\n3S 5S 6S 7S 8S"
+    expected: "2H 7H 8H 9H 6H"
+    hidden: true
+  - input: "2\n3H 6H 7H 8H 5H\n4S 5H 4C 5D 4H"
+    expected: "4S 5H 4C 5D 4H"
+    hidden: true
+  - input: "2\n4H 4S 4D 9S 9D\n5H 5S 5D 8S 8D"
+    expected: "5H 5S 5D 8S 8D"
+    hidden: true
+  - input: "2\n4S 5H 4D 5D 4H\n3S 3H 2S 3D 3C"
+    expected: "3S 3H 2S 3D 3C"
+    hidden: true
+  - input: "2\n2S 2H 2C 8D 2D\n4S 5H 5S 5D 5C"
+    expected: "4S 5H 5S 5D 5C"
+    hidden: true
+  - input: "2\n3S 3H 2S 3D 3C\n3S 3H 4S 3D 3C"
+    expected: "3S 3H 4S 3D 3C"
+    hidden: true
+  - input: "2\n4S 5H 5S 5D 5C\n7S 8S 9S 6S 10S"
+    expected: "7S 8S 9S 6S 10S"
+    hidden: true
+  - input: "2\nKC AH AS AD AC\n10C JC QC KC AC"
+    expected: "10C JC QC KC AC"
+    hidden: true
+  - input: "2\nKS AH AS AD AC\n4H AH 3H 2H 5H"
+    expected: "4H AH 3H 2H 5H"
+    hidden: true
+  - input: "2\n2C AC QC 10C KC\nQH KH AH 2H 3H"
+    expected: "2C AC QC 10C KC"
+    hidden: true
+  - input: "2\n4H 6H 7H 8H 5H\n5S 7S 8S 9S 6S"
+    expected: "5S 7S 8S 9S 6S"
+    hidden: true
+  - input: "2\n2H 3H 4H 5H 6H\n4D AD 3D 2D 5D"
+    expected: "2H 3H 4H 5H 6H"
+    hidden: true
+---
+
+Pick the best hand(s) from a list of poker hands.
+
+See [Wikipedia][poker-hands] for an overview of poker hands.
+
+[poker-hands]: https://en.wikipedia.org/wiki/List_of_poker_hands
+
+## Input
+
+The first line is the number of hands. Each following line is a five-card hand such as `4S 5H 6C 7D 8S` (ranks `2`-`10`, `J`, `Q`, `K`, `A`; suits `S`, `H`, `D`, `C`).
+
+## Output
+
+Print the winning hand(s), one per line, exactly as given and in input order (several hands print on a tie). Standard poker ranking applies, from high card up to straight flush; an ace can be low in a straight (`A 2 3 4 5`), and suits never break ties.
+
+*Adapted from the [Poker](https://github.com/exercism/problem-specifications/tree/main/exercises/poker) exercise on Exercism (MIT License). Original source: Inspired by the training course from Udacity. (https://www.udacity.com/course/design-of-computer-programs--cs212).*

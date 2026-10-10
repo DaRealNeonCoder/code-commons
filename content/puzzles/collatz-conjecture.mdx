@@ -1,0 +1,84 @@
+---
+title: "Collatz Conjecture"
+order: 10
+available: true
+areas: []
+topics: ["math"]
+tags: ["collatz"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def collatz_steps(n):
+      # TODO: return the number of steps needed to reach 1
+      pass
+
+  n = int(input())
+  print(collatz_steps(n))
+testCases:
+  - input: "1"
+    expected: "0"
+    hidden: true
+  - input: "16"
+    expected: "4"
+    hidden: true
+  - input: "12"
+    expected: "9"
+    hidden: true
+  - input: "1000000"
+    expected: "152"
+    hidden: true
+  - input: "2"
+    expected: "1"
+    hidden: true
+  - input: "27"
+    expected: "111"
+    hidden: true
+  - input: "97"
+    expected: "118"
+    hidden: true
+  - input: "871"
+    expected: "178"
+    hidden: true
+  - input: "6171"
+    expected: "261"
+    hidden: true
+---
+
+One evening, you stumbled upon an old notebook filled with cryptic scribbles, as though someone had been obsessively chasing an idea.
+On one page, a single question stood out: **Can every number find its way to 1?**
+It was tied to something called the **Collatz Conjecture**, a puzzle that has baffled thinkers for decades.
+
+The rules were deceptively simple.
+Pick any positive integer.
+
+- If it's even, divide it by 2.
+- If it's odd, multiply it by 3 and add 1.
+
+Then, repeat these steps with the result, continuing indefinitely.
+
+Curious, you picked number 12 to test and began the journey:
+
+12 ➜ 6 ➜ 3 ➜ 10 ➜ 5 ➜ 16 ➜ 8 ➜ 4 ➜ 2 ➜ 1
+
+Counting from the second number (6), it took 9 steps to reach 1, and each time the rules repeated, the number kept changing.
+At first, the sequence seemed unpredictable — jumping up, down, and all over.
+Yet, the conjecture claims that no matter the starting number, we'll always end at 1.
+
+It was fascinating, but also puzzling.
+Why does this always seem to work?
+Could there be a number where the process breaks down, looping forever or escaping into infinity?
+The notebook suggested solving this could reveal something profound — and with it, fame, [fortune][collatz-prize], and a place in history awaits whoever could unlock its secrets.
+
+[collatz-prize]: https://mathprize.net/posts/collatz-conjecture/
+
+Given a positive integer, return the number of steps it takes to reach 1 according to the rules of the Collatz Conjecture.
+
+## Input
+
+A single positive integer.
+
+## Output
+
+Print the number of steps it takes to reach 1.
+
+*Adapted from the [Collatz Conjecture](https://github.com/exercism/problem-specifications/tree/main/exercises/collatz-conjecture) exercise on Exercism (MIT License). Original source: Wikipedia (https://en.wikipedia.org/wiki/Collatz_conjecture).*

@@ -1,0 +1,232 @@
+---
+title: "Complex Numbers"
+order: 64
+available: true
+areas: []
+topics: ["math"]
+tags: ["complex-numbers"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def complex_op(op, numbers):
+      # op is add, sub, mul, div, conjugate, abs, real or imaginary
+      # numbers are the real and imaginary parts: [a, b] or, for the binary operations, [a, b, c, d]
+      # TODO: return a (real, imaginary) tuple for add/sub/mul/div/conjugate, or a single number for abs/real/imaginary
+      pass
+
+  parts = input().split()
+  op = parts[0]
+  numbers = [float(x) for x in parts[1:]]
+  result = complex_op(op, numbers)
+  show = lambda x: f"{round(x, 5) + 0.0:.5f}"
+  print(*(show(x) for x in result)) if isinstance(result, tuple) else print(show(result))
+testCases:
+  - input: "real 1 0"
+    expected: "1.00000"
+    hidden: true
+  - input: "real 0 1"
+    expected: "0.00000"
+    hidden: true
+  - input: "real 1 2"
+    expected: "1.00000"
+    hidden: true
+  - input: "imaginary 1 0"
+    expected: "0.00000"
+    hidden: true
+  - input: "imaginary 0 1"
+    expected: "1.00000"
+    hidden: true
+  - input: "imaginary 1 2"
+    expected: "2.00000"
+    hidden: true
+  - input: "mul 0 1 0 1"
+    expected: "-1.00000 0.00000"
+    hidden: true
+  - input: "add 1 0 2 0"
+    expected: "3.00000 0.00000"
+    hidden: true
+  - input: "add 0 1 0 2"
+    expected: "0.00000 3.00000"
+    hidden: true
+  - input: "add 1 2 3 4"
+    expected: "4.00000 6.00000"
+    hidden: true
+  - input: "sub 1 0 2 0"
+    expected: "-1.00000 0.00000"
+    hidden: true
+  - input: "sub 0 1 0 2"
+    expected: "0.00000 -1.00000"
+    hidden: true
+  - input: "sub 1 2 3 4"
+    expected: "-2.00000 -2.00000"
+    hidden: true
+  - input: "mul 1 0 2 0"
+    expected: "2.00000 0.00000"
+    hidden: true
+  - input: "mul 0 1 0 2"
+    expected: "-2.00000 0.00000"
+    hidden: true
+  - input: "mul 1 2 3 4"
+    expected: "-5.00000 10.00000"
+    hidden: true
+  - input: "div 1 0 2 0"
+    expected: "0.50000 0.00000"
+    hidden: true
+  - input: "div 0 1 0 2"
+    expected: "0.50000 0.00000"
+    hidden: true
+  - input: "div 1 2 3 4"
+    expected: "0.44000 0.08000"
+    hidden: true
+  - input: "abs 5 0"
+    expected: "5.00000"
+    hidden: true
+  - input: "abs -5 0"
+    expected: "5.00000"
+    hidden: true
+  - input: "abs 0 5"
+    expected: "5.00000"
+    hidden: true
+  - input: "abs 0 -5"
+    expected: "5.00000"
+    hidden: true
+  - input: "abs 3 4"
+    expected: "5.00000"
+    hidden: true
+  - input: "conjugate 5 0"
+    expected: "5.00000 0.00000"
+    hidden: true
+  - input: "conjugate 0 5"
+    expected: "0.00000 -5.00000"
+    hidden: true
+  - input: "conjugate 1 1"
+    expected: "1.00000 -1.00000"
+    hidden: true
+  - input: "add 1.5 -2 3 4.25"
+    expected: "4.50000 2.25000"
+    hidden: true
+  - input: "mul 2 3 -1 4"
+    expected: "-14.00000 5.00000"
+    hidden: true
+  - input: "div 3 4 1 -2"
+    expected: "-1.00000 2.00000"
+    hidden: true
+  - input: "abs 6 8"
+    expected: "10.00000"
+    hidden: true
+  - input: "conjugate -3 7"
+    expected: "-3.00000 -7.00000"
+    hidden: true
+  - input: "sub 0 0 5 5"
+    expected: "-5.00000 -5.00000"
+    hidden: true
+---
+
+A **complex number** is expressed in the form `z = a + b * i`, where:
+
+- `a` is the **real part** (a real number),
+
+- `b` is the **imaginary part** (also a real number), and
+
+- `i` is the **imaginary unit** satisfying `i^2 = -1`.
+
+## Operations on Complex Numbers
+
+### Conjugate
+
+The conjugate of the complex number `z = a + b * i` is given by:
+
+```text
+zc = a - b * i
+```
+
+### Absolute Value
+
+The absolute value (or modulus) of `z` is defined as:
+
+```text
+|z| = sqrt(a^2 + b^2)
+```
+
+The square of the absolute value is computed as the product of `z` and its conjugate `zc`:
+
+```text
+|z|^2 = z * zc = a^2 + b^2
+```
+
+### Addition
+
+The sum of two complex numbers `z1 = a + b * i` and `z2 = c + d * i` is computed by adding their real and imaginary parts separately:
+
+```text
+z1 + z2 = (a + b * i) + (c + d * i)
+        = (a + c) + (b + d) * i
+```
+
+### Subtraction
+
+The difference of two complex numbers is obtained by subtracting their respective parts:
+
+```text
+z1 - z2 = (a + b * i) - (c + d * i)
+        = (a - c) + (b - d) * i
+```
+
+### Multiplication
+
+The product of two complex numbers is defined as:
+
+```text
+z1 * z2 = (a + b * i) * (c + d * i)
+        = (a * c - b * d) + (b * c + a * d) * i
+```
+
+### Reciprocal
+
+The reciprocal of a non-zero complex number is given by:
+
+```text
+1 / z = 1 / (a + b * i)
+      = a / (a^2 + b^2) - b / (a^2 + b^2) * i
+```
+
+### Division
+
+The division of one complex number by another is given by:
+
+```text
+z1 / z2 = z1 * (1 / z2)
+        = (a + b * i) / (c + d * i)
+        = (a * c + b * d) / (c^2 + d^2) + (b * c - a * d) / (c^2 + d^2) * i
+```
+
+### Exponentiation
+
+Raising _e_ (the base of the natural logarithm) to a complex exponent can be expressed using Euler's formula:
+
+```text
+e^(a + b * i) = e^a * e^(b * i)
+              = e^a * (cos(b) + i * sin(b))
+```
+
+## Implementation Requirements
+
+Given that you should not use built-in support for complex numbers, implement the following operations:
+
+- **addition** of two complex numbers
+- **subtraction** of two complex numbers
+- **multiplication** of two complex numbers
+- **division** of two complex numbers
+- **conjugate** of a complex number
+- **absolute value** of a complex number
+- **exponentiation** of _e_ (the base of the natural logarithm) to a complex number
+
+## Input
+
+One line: the operation followed by the real and imaginary part of each operand (`add a b c d` for `(a + bi) + (c + di)`, `conjugate a b`, `abs a b`, ...).
+
+## Output
+
+Print the result rounded to five decimal places: `real imaginary` for `add`, `sub`, `mul`, `div` and `conjugate`, and a single number for `abs`, `real` and `imaginary`.
+
+*Adapted from the [Complex Numbers](https://github.com/exercism/problem-specifications/tree/main/exercises/complex-numbers) exercise on Exercism (MIT License). Original source: Wikipedia (https://en.wikipedia.org/wiki/Complex_number).*

@@ -1,0 +1,65 @@
+---
+title: "Diffie-Hellman"
+order: 117
+available: true
+areas: []
+topics: ["math", "cryptography"]
+tags: ["diffie-hellman", "modular-exponentiation"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def diffie_hellman(mode, p, a, b):
+      # mode "public": a is g and b is the private key; return g ** private mod p
+      # mode "secret": a is the other party's public key and b is your private key; return their_public ** private mod p
+      # TODO: return the result
+      pass
+
+  mode, p, a, b = input().split()
+  print(diffie_hellman(mode, int(p), int(a), int(b)))
+testCases:
+  - input: "public 23 5 6"
+    expected: "8"
+    hidden: true
+  - input: "public 23 5 15"
+    expected: "19"
+    hidden: true
+  - input: "secret 23 19 6"
+    expected: "2"
+    hidden: true
+  - input: "public 23 5 4"
+    expected: "4"
+    hidden: true
+  - input: "public 23 5 3"
+    expected: "10"
+    hidden: true
+  - input: "public 4294967291 2 123456789"
+    expected: "3862799565"
+    hidden: true
+  - input: "public 1000003 7 999"
+    expected: "325994"
+    hidden: true
+  - input: "secret 23 10 6"
+    expected: "6"
+    hidden: true
+  - input: "secret 1000003 56789 4321"
+    expected: "55522"
+    hidden: true
+---
+
+The Diffie-Hellman key exchange lets two people, Alice and Bob, agree on a shared secret over a public channel.
+
+They first agree on a prime number `p` and a generator `g`. Each picks a private key greater than 1 and less than `p`, and publishes the matching public key: `g` to the power of the private key, modulo `p`.
+
+Each then combines the other's public key with their own private key: the other's public key to the power of your private key, modulo `p`. Remarkably, both of them arrive at the same shared secret, which an eavesdropper who only saw the public keys cannot easily compute.
+
+Your task is to carry out these two calculations.
+
+## Input
+
+One line with four values: the mode (`public` or `secret`), the prime `p`, and two numbers `a` and `b`. For `public`, `a` is the generator `g` and `b` is a private key; for `secret`, `a` is the other party's public key and `b` is your private key.
+
+## Output
+
+For `public`, print the public key `g^b mod p`. For `secret`, print the shared secret `a^b mod p`.
+
+*Adapted from the [Diffie-Hellman](https://github.com/exercism/problem-specifications/tree/main/exercises/diffie-hellman) exercise on Exercism (MIT License). Original source: Wikipedia, 1024 bit key from www.cryptopp.com/wiki. (https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange).*

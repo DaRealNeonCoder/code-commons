@@ -1,0 +1,44 @@
+---
+title: "Common Elements"
+order: 2
+available: true
+areas: ["programming-fundamentals"]
+topics: ["sets"]
+tags: ["set-operations", "intersection", "sorted"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  a = [int(x) for x in input().split()]
+  b = [int(x) for x in input().split()]
+
+  # TODO: print the numbers that appear in BOTH lists,
+  # sorted from smallest to largest, separated by spaces
+  # If there are none, print "none"
+testCases:
+  - input: "1 2 3 4\n3 4 5 6"
+    expected: "3 4"
+    hidden: false
+  - input: "1 2\n3 4"
+    expected: "none"
+    hidden: true
+  - input: "5 5 6\n6 6 7"
+    expected: "6"
+    hidden: true
+  - input: "10 20 30\n30 20 10"
+    expected: "10 20 30"
+    hidden: true
+  - input: "-1 0 1\n1 2 3"
+    expected: "1"
+    hidden: true
+---
+
+The starter code reads two lists of integers, `a` and `b`. Print the numbers that appear in **both**, each only once, sorted from smallest to largest, separated by spaces. If the lists have nothing in common, print `none`.
+
+For the inputs `1 2 3 4` and `3 4 5 6`, a correct solution prints:
+
+```
+3 4
+```
+
+> [!TIP]
+> The set intersection operator `&` finds the shared items. Use `sorted()` to turn the result into an ordered list. An empty set counts as falsy, which can help with the `none` case.

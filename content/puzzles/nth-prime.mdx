@@ -1,0 +1,55 @@
+---
+title: "Nth Prime"
+order: 29
+available: true
+areas: []
+topics: ["math"]
+tags: ["primes"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def nth_prime(n):
+      # TODO: return the nth prime number (the 1st prime is 2)
+      pass
+
+  n = int(input())
+  print(nth_prime(n))
+testCases:
+  - input: "1"
+    expected: "2"
+    hidden: true
+  - input: "2"
+    expected: "3"
+    hidden: true
+  - input: "6"
+    expected: "13"
+    hidden: true
+  - input: "10001"
+    expected: "104743"
+    hidden: true
+  - input: "10"
+    expected: "29"
+    hidden: true
+  - input: "100"
+    expected: "541"
+    hidden: true
+  - input: "1000"
+    expected: "7919"
+    hidden: true
+---
+
+Given a number n, determine what the nth prime is.
+
+By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.
+
+If your language provides methods in the standard library to deal with prime numbers, pretend they don't exist and implement them yourself.
+
+## Input
+
+A single integer `n` (at least 1).
+
+## Output
+
+Print the `n`th prime number.
+
+*Adapted from the [Nth Prime](https://github.com/exercism/problem-specifications/tree/main/exercises/nth-prime) exercise on Exercism (MIT License). Original source: A variation on Problem 7 at Project Euler (https://projecteuler.net/problem=7).*

@@ -1,0 +1,1191 @@
+{
+  "areas": [
+    {
+      "id": "algorithms",
+      "label": "Algorithms"
+    },
+    {
+      "id": "data-structures",
+      "label": "Data Structures"
+    },
+    {
+      "id": "programming-fundamentals",
+      "label": "Programming Fundamentals"
+    },
+    {
+      "id": "web-development",
+      "label": "Web Development"
+    }
+  ],
+  "topics": [
+    {
+      "id": "searching",
+      "label": "Searching",
+      "areas": [
+        "algorithms"
+      ]
+    },
+    {
+      "id": "sorting",
+      "label": "Sorting",
+      "areas": [
+        "algorithms"
+      ]
+    },
+    {
+      "id": "graphs",
+      "label": "Graphs",
+      "areas": [
+        "algorithms"
+      ]
+    },
+    {
+      "id": "dynamic-programming",
+      "label": "Dynamic Programming",
+      "areas": [
+        "algorithms"
+      ]
+    },
+    {
+      "id": "trees",
+      "label": "Trees",
+      "areas": [
+        "data-structures"
+      ]
+    },
+    {
+      "id": "arrays",
+      "label": "Arrays",
+      "areas": [
+        "data-structures"
+      ]
+    },
+    {
+      "id": "math",
+      "label": "Math",
+      "areas": [
+        "algorithms",
+        "programming-fundamentals"
+      ]
+    },
+    {
+      "id": "strings",
+      "label": "Strings",
+      "areas": [
+        "programming-fundamentals",
+        "algorithms"
+      ]
+    },
+    {
+      "id": "stacks",
+      "label": "Stacks",
+      "areas": [
+        "data-structures"
+      ]
+    },
+    {
+      "id": "cryptography",
+      "label": "Cryptography",
+      "areas": [
+        "algorithms"
+      ]
+    },
+    {
+      "id": "control-flow",
+      "label": "Control Flow",
+      "areas": [
+        "programming-fundamentals"
+      ]
+    },
+    {
+      "id": "bit-manipulation",
+      "label": "Bit Manipulation",
+      "areas": [
+        "algorithms",
+        "programming-fundamentals"
+      ]
+    },
+    {
+      "id": "date-time",
+      "label": "Date & Time",
+      "areas": [
+        "programming-fundamentals"
+      ]
+    },
+    {
+      "id": "hash-maps",
+      "label": "Hash Maps",
+      "areas": [
+        "data-structures"
+      ]
+    },
+    {
+      "id": "parsing",
+      "label": "Parsing",
+      "areas": [
+        "programming-fundamentals",
+        "algorithms"
+      ]
+    },
+    {
+      "id": "recursion",
+      "label": "Recursion",
+      "areas": [
+        "algorithms",
+        "programming-fundamentals"
+      ]
+    },
+    {
+      "id": "matrices",
+      "label": "Matrices",
+      "areas": [
+        "data-structures"
+      ]
+    },
+    {
+      "id": "simulation",
+      "label": "Simulation",
+      "areas": [
+        "algorithms"
+      ]
+    },
+    {
+      "id": "backtracking",
+      "label": "Backtracking",
+      "areas": [
+        "algorithms"
+      ]
+    },
+    {
+      "id": "queues",
+      "label": "Queues",
+      "areas": [
+        "data-structures"
+      ]
+    },
+    {
+      "id": "linked-lists",
+      "label": "Linked Lists",
+      "areas": [
+        "data-structures"
+      ]
+    },
+    {
+      "id": "concurrency",
+      "label": "Concurrency",
+      "areas": [
+        "programming-fundamentals",
+        "algorithms"
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "id": "binary-search",
+      "label": "Binary Search",
+      "topics": [
+        "searching",
+        "arrays"
+      ]
+    },
+    {
+      "id": "linear-search",
+      "label": "Linear Search",
+      "topics": [
+        "searching"
+      ]
+    },
+    {
+      "id": "a-star",
+      "label": "A*",
+      "topics": [
+        "graphs"
+      ]
+    },
+    {
+      "id": "dijkstra",
+      "label": "Dijkstra's Algorithm",
+      "topics": [
+        "graphs"
+      ]
+    },
+    {
+      "id": "red-black-tree",
+      "label": "Red-Black Tree",
+      "topics": [
+        "trees"
+      ]
+    },
+    {
+      "id": "knapsack",
+      "label": "Knapsack",
+      "topics": [
+        "dynamic-programming"
+      ]
+    },
+    {
+      "id": "quicksort",
+      "label": "Quicksort",
+      "topics": [
+        "sorting"
+      ]
+    },
+    {
+      "id": "fibonacci",
+      "label": "Fibonacci Sequence",
+      "topics": [
+        "dynamic-programming"
+      ]
+    },
+    {
+      "id": "two-sum",
+      "label": "Two Sum",
+      "topics": [
+        "arrays"
+      ]
+    },
+    {
+      "id": "coin-change",
+      "label": "Coin Change",
+      "topics": [
+        "dynamic-programming"
+      ]
+    },
+    {
+      "id": "sieve-of-eratosthenes",
+      "label": "Sieve of Eratosthenes",
+      "topics": [
+        "math"
+      ]
+    },
+    {
+      "id": "collatz",
+      "label": "Collatz Conjecture",
+      "topics": [
+        "math"
+      ]
+    },
+    {
+      "id": "prime-factorization",
+      "label": "Prime Factorization",
+      "topics": [
+        "math"
+      ]
+    },
+    {
+      "id": "roman-numerals",
+      "label": "Roman Numerals",
+      "topics": [
+        "strings"
+      ]
+    },
+    {
+      "id": "luhn",
+      "label": "Luhn Algorithm",
+      "topics": [
+        "strings",
+        "math"
+      ]
+    },
+    {
+      "id": "balanced-brackets",
+      "label": "Balanced Brackets",
+      "topics": [
+        "stacks",
+        "strings"
+      ]
+    },
+    {
+      "id": "pascals-triangle",
+      "label": "Pascal's Triangle",
+      "topics": [
+        "arrays",
+        "math"
+      ]
+    },
+    {
+      "id": "spiral-matrix",
+      "label": "Spiral Matrix",
+      "topics": [
+        "arrays"
+      ]
+    },
+    {
+      "id": "bfs",
+      "label": "Breadth-First Search",
+      "topics": [
+        "graphs",
+        "matrices"
+      ]
+    },
+    {
+      "id": "water-jug",
+      "label": "Water Jug Problem",
+      "topics": [
+        "graphs"
+      ]
+    },
+    {
+      "id": "acronym",
+      "label": "Acronym",
+      "topics": [
+        "strings"
+      ]
+    },
+    {
+      "id": "armstrong-numbers",
+      "label": "Armstrong Numbers",
+      "topics": [
+        "math"
+      ]
+    },
+    {
+      "id": "atbash-cipher",
+      "label": "Atbash Cipher",
+      "topics": [
+        "strings",
+        "cryptography"
+      ]
+    },
+    {
+      "id": "number-bases",
+      "label": "Number Bases",
+      "topics": [
+        "math",
+        "strings",
+        "arrays"
+      ]
+    },
+    {
+      "id": "conditionals",
+      "label": "Conditionals",
+      "topics": [
+        "strings",
+        "control-flow"
+      ]
+    },
+    {
+      "id": "geometry",
+      "label": "Geometry",
+      "topics": [
+        "math",
+        "control-flow",
+        "simulation"
+      ]
+    },
+    {
+      "id": "sum-of-squares",
+      "label": "Sum Of Squares",
+      "topics": [
+        "math"
+      ]
+    },
+    {
+      "id": "bit-counting",
+      "label": "Bit Counting",
+      "topics": [
+        "bit-manipulation"
+      ]
+    },
+    {
+      "id": "datetime",
+      "label": "Datetime",
+      "topics": [
+        "date-time"
+      ]
+    },
+    {
+      "id": "powers-of-two",
+      "label": "Powers Of Two",
+      "topics": [
+        "math"
+      ]
+    },
+    {
+      "id": "hamming-distance",
+      "label": "Hamming Distance",
+      "topics": [
+        "strings"
+      ]
+    },
+    {
+      "id": "isbn",
+      "label": "ISBN",
+      "topics": [
+        "strings",
+        "math"
+      ]
+    },
+    {
+      "id": "isogram",
+      "label": "Isogram",
+      "topics": [
+        "strings"
+      ]
+    },
+    {
+      "id": "leap-year",
+      "label": "Leap Year",
+      "topics": [
+        "math",
+        "control-flow"
+      ]
+    },
+    {
+      "id": "ordinals",
+      "label": "Ordinals",
+      "topics": [
+        "strings",
+        "control-flow"
+      ]
+    },
+    {
+      "id": "primes",
+      "label": "Primes",
+      "topics": [
+        "math"
+      ]
+    },
+    {
+      "id": "pangram",
+      "label": "Pangram",
+      "topics": [
+        "strings"
+      ]
+    },
+    {
+      "id": "perfect-numbers",
+      "label": "Perfect Numbers",
+      "topics": [
+        "math"
+      ]
+    },
+    {
+      "id": "rna",
+      "label": "RNA Transcription",
+      "topics": [
+        "strings"
+      ]
+    },
+    {
+      "id": "fizzbuzz",
+      "label": "Fizzbuzz",
+      "topics": [
+        "math",
+        "control-flow"
+      ]
+    },
+    {
+      "id": "resistor-colors",
+      "label": "Resistor Colors",
+      "topics": [
+        "arrays",
+        "math"
+      ]
+    },
+    {
+      "id": "reverse-string",
+      "label": "Reverse String",
+      "topics": [
+        "strings"
+      ]
+    },
+    {
+      "id": "caesar-cipher",
+      "label": "Caesar Cipher",
+      "topics": [
+        "strings",
+        "cryptography"
+      ]
+    },
+    {
+      "id": "compression",
+      "label": "Compression",
+      "topics": [
+        "strings"
+      ]
+    },
+    {
+      "id": "scrabble",
+      "label": "Scrabble",
+      "topics": [
+        "strings",
+        "hash-maps"
+      ]
+    },
+    {
+      "id": "sliding-window",
+      "label": "Sliding Window",
+      "topics": [
+        "strings",
+        "arrays"
+      ]
+    },
+    {
+      "id": "unit-conversion",
+      "label": "Unit Conversion",
+      "topics": [
+        "math"
+      ]
+    },
+    {
+      "id": "integer-square-root",
+      "label": "Integer Square Root",
+      "topics": [
+        "math",
+        "searching"
+      ]
+    },
+    {
+      "id": "multiples",
+      "label": "Multiples",
+      "topics": [
+        "math"
+      ]
+    },
+    {
+      "id": "affine-cipher",
+      "label": "Affine Cipher",
+      "topics": [
+        "strings",
+        "cryptography",
+        "math"
+      ]
+    },
+    {
+      "id": "bitmask",
+      "label": "Bitmask",
+      "topics": [
+        "bit-manipulation"
+      ]
+    },
+    {
+      "id": "modular-arithmetic",
+      "label": "Modular Arithmetic",
+      "topics": [
+        "date-time",
+        "math"
+      ]
+    },
+    {
+      "id": "calendar",
+      "label": "Calendar",
+      "topics": [
+        "date-time"
+      ]
+    },
+    {
+      "id": "number-to-words",
+      "label": "Number To Words",
+      "topics": [
+        "strings",
+        "math"
+      ]
+    },
+    {
+      "id": "validation",
+      "label": "Validation",
+      "topics": [
+        "strings",
+        "parsing"
+      ]
+    },
+    {
+      "id": "pig-latin",
+      "label": "Pig Latin",
+      "topics": [
+        "strings"
+      ]
+    },
+    {
+      "id": "rail-fence-cipher",
+      "label": "Rail Fence Cipher",
+      "topics": [
+        "strings",
+        "cryptography"
+      ]
+    },
+    {
+      "id": "scheduling",
+      "label": "Scheduling",
+      "topics": [
+        "date-time",
+        "parsing"
+      ]
+    },
+    {
+      "id": "math-word-problems",
+      "label": "Math Word Problems",
+      "topics": [
+        "parsing",
+        "strings"
+      ]
+    },
+    {
+      "id": "anagram",
+      "label": "Anagram",
+      "topics": [
+        "strings",
+        "hash-maps"
+      ]
+    },
+    {
+      "id": "data-transformation",
+      "label": "Data Transformation",
+      "topics": [
+        "hash-maps"
+      ]
+    },
+    {
+      "id": "flatten",
+      "label": "Flatten",
+      "topics": [
+        "arrays",
+        "recursion"
+      ]
+    },
+    {
+      "id": "top-k",
+      "label": "Top K",
+      "topics": [
+        "sorting",
+        "arrays"
+      ]
+    },
+    {
+      "id": "indexing",
+      "label": "Indexing",
+      "topics": [
+        "strings",
+        "arrays"
+      ]
+    },
+    {
+      "id": "matrix-slicing",
+      "label": "Matrix Slicing",
+      "topics": [
+        "matrices",
+        "arrays"
+      ]
+    },
+    {
+      "id": "string-formatting",
+      "label": "String Formatting",
+      "topics": [
+        "strings",
+        "arrays"
+      ]
+    },
+    {
+      "id": "queen-attack",
+      "label": "Queen Attack",
+      "topics": [
+        "matrices",
+        "control-flow"
+      ]
+    },
+    {
+      "id": "robot-simulator",
+      "label": "Robot Simulator",
+      "topics": [
+        "simulation"
+      ]
+    },
+    {
+      "id": "dice-scoring",
+      "label": "Dice Scoring",
+      "topics": [
+        "control-flow",
+        "arrays"
+      ]
+    },
+    {
+      "id": "game-of-life",
+      "label": "Conway's Game of Life",
+      "topics": [
+        "matrices",
+        "simulation"
+      ]
+    },
+    {
+      "id": "combinations",
+      "label": "Combinations",
+      "topics": [
+        "backtracking",
+        "math"
+      ]
+    },
+    {
+      "id": "palindromes",
+      "label": "Palindromes",
+      "topics": [
+        "math"
+      ]
+    },
+    {
+      "id": "codon-translation",
+      "label": "Codon Translation",
+      "topics": [
+        "strings",
+        "hash-maps"
+      ]
+    },
+    {
+      "id": "pythagorean-triplet",
+      "label": "Pythagorean Triplet",
+      "topics": [
+        "math",
+        "searching"
+      ]
+    },
+    {
+      "id": "fractions",
+      "label": "Fractions",
+      "topics": [
+        "math"
+      ]
+    },
+    {
+      "id": "saddle-points",
+      "label": "Saddle Points",
+      "topics": [
+        "matrices"
+      ]
+    },
+    {
+      "id": "sublist",
+      "label": "Sublist",
+      "topics": [
+        "arrays"
+      ]
+    },
+    {
+      "id": "tally",
+      "label": "Tally",
+      "topics": [
+        "parsing",
+        "hash-maps"
+      ]
+    },
+    {
+      "id": "vlq",
+      "label": "Variable-Length Quantity",
+      "topics": [
+        "bit-manipulation"
+      ]
+    },
+    {
+      "id": "word-frequency",
+      "label": "Word Frequency",
+      "topics": [
+        "strings",
+        "hash-maps"
+      ]
+    },
+    {
+      "id": "book-store",
+      "label": "Book Store",
+      "topics": [
+        "dynamic-programming"
+      ]
+    },
+    {
+      "id": "bowling",
+      "label": "Bowling",
+      "topics": [
+        "simulation"
+      ]
+    },
+    {
+      "id": "poker-hands",
+      "label": "Poker Hands",
+      "topics": [
+        "sorting",
+        "strings"
+      ]
+    },
+    {
+      "id": "ascii-art",
+      "label": "Ascii Art",
+      "topics": [
+        "strings"
+      ]
+    },
+    {
+      "id": "binary-search-tree",
+      "label": "Binary Search Tree",
+      "topics": [
+        "trees"
+      ]
+    },
+    {
+      "id": "tree-traversal",
+      "label": "Tree Traversal",
+      "topics": [
+        "trees"
+      ]
+    },
+    {
+      "id": "minesweeper",
+      "label": "Minesweeper",
+      "topics": [
+        "matrices"
+      ]
+    },
+    {
+      "id": "tree-reconstruction",
+      "label": "Tree Reconstruction",
+      "topics": [
+        "trees",
+        "recursion"
+      ]
+    },
+    {
+      "id": "music-scales",
+      "label": "Music Scales",
+      "topics": [
+        "strings",
+        "arrays"
+      ]
+    },
+    {
+      "id": "transpose",
+      "label": "Transpose",
+      "topics": [
+        "matrices",
+        "strings"
+      ]
+    },
+    {
+      "id": "word-search",
+      "label": "Word Search",
+      "topics": [
+        "matrices",
+        "searching"
+      ]
+    },
+    {
+      "id": "alphametics",
+      "label": "Alphametics",
+      "topics": [
+        "backtracking",
+        "math"
+      ]
+    },
+    {
+      "id": "card-game",
+      "label": "Card Game",
+      "topics": [
+        "simulation",
+        "queues"
+      ]
+    },
+    {
+      "id": "hex-board",
+      "label": "Hex Board",
+      "topics": [
+        "graphs",
+        "matrices"
+      ]
+    },
+    {
+      "id": "dominoes",
+      "label": "Dominoes",
+      "topics": [
+        "backtracking",
+        "graphs"
+      ]
+    },
+    {
+      "id": "eulerian-path",
+      "label": "Eulerian Path",
+      "topics": [
+        "backtracking",
+        "graphs"
+      ]
+    },
+    {
+      "id": "interpreter",
+      "label": "Interpreter",
+      "topics": [
+        "parsing",
+        "stacks"
+      ]
+    },
+    {
+      "id": "counting-rectangles",
+      "label": "Counting Rectangles",
+      "topics": [
+        "matrices",
+        "strings"
+      ]
+    },
+    {
+      "id": "song-lyrics",
+      "label": "Song Lyrics",
+      "topics": [
+        "strings",
+        "control-flow",
+        "recursion"
+      ]
+    },
+    {
+      "id": "roster",
+      "label": "Roster",
+      "topics": [
+        "hash-maps",
+        "sorting"
+      ]
+    },
+    {
+      "id": "bank-account",
+      "label": "Bank Account",
+      "topics": [
+        "simulation"
+      ]
+    },
+    {
+      "id": "state-machine",
+      "label": "State Machine",
+      "topics": [
+        "simulation"
+      ]
+    },
+    {
+      "id": "circular-buffer",
+      "label": "Circular Buffer",
+      "topics": [
+        "queues",
+        "simulation"
+      ]
+    },
+    {
+      "id": "complex-numbers",
+      "label": "Complex Numbers",
+      "topics": [
+        "math"
+      ]
+    },
+    {
+      "id": "deque",
+      "label": "Deque",
+      "topics": [
+        "linked-lists",
+        "simulation"
+      ]
+    },
+    {
+      "id": "hangman",
+      "label": "Hangman",
+      "topics": [
+        "simulation",
+        "strings"
+      ]
+    },
+    {
+      "id": "flood-fill",
+      "label": "Flood Fill",
+      "topics": [
+        "graphs",
+        "matrices"
+      ]
+    },
+    {
+      "id": "dfs",
+      "label": "Depth-First Search",
+      "topics": [
+        "graphs",
+        "matrices"
+      ]
+    },
+    {
+      "id": "ocr",
+      "label": "Ocr",
+      "topics": [
+        "parsing",
+        "matrices"
+      ]
+    },
+    {
+      "id": "tic-tac-toe",
+      "label": "Tic Tac Toe",
+      "topics": [
+        "matrices",
+        "control-flow"
+      ]
+    },
+    {
+      "id": "nucleotide-count",
+      "label": "Nucleotide Count",
+      "topics": [
+        "strings",
+        "hash-maps"
+      ]
+    },
+    {
+      "id": "truncate",
+      "label": "Truncate",
+      "topics": [
+        "strings"
+      ]
+    },
+    {
+      "id": "parallelism",
+      "label": "Parallelism",
+      "topics": [
+        "concurrency",
+        "hash-maps",
+        "strings"
+      ]
+    },
+    {
+      "id": "letter-frequency",
+      "label": "Letter Frequency",
+      "topics": [
+        "concurrency",
+        "hash-maps",
+        "strings"
+      ]
+    },
+    {
+      "id": "parity-bit",
+      "label": "Parity Bit",
+      "topics": [
+        "bit-manipulation"
+      ]
+    },
+    {
+      "id": "ray-tracing",
+      "label": "Ray Tracing",
+      "topics": [
+        "simulation",
+        "math"
+      ]
+    },
+    {
+      "id": "stopwatch",
+      "label": "Stopwatch",
+      "topics": [
+        "simulation"
+      ]
+    },
+    {
+      "id": "birthday-paradox",
+      "label": "Birthday Paradox",
+      "topics": [
+        "math",
+        "date-time"
+      ]
+    },
+    {
+      "id": "probability",
+      "label": "Probability",
+      "topics": [
+        "math",
+        "date-time"
+      ]
+    },
+    {
+      "id": "tree-building",
+      "label": "Tree Building",
+      "topics": [
+        "trees"
+      ]
+    },
+    {
+      "id": "tree-path",
+      "label": "Tree Path",
+      "topics": [
+        "trees",
+        "graphs"
+      ]
+    },
+    {
+      "id": "tree-rerooting",
+      "label": "Tree Rerooting",
+      "topics": [
+        "trees",
+        "recursion"
+      ]
+    },
+    {
+      "id": "singly-linked-list",
+      "label": "Singly Linked List",
+      "topics": [
+        "linked-lists",
+        "stacks"
+      ]
+    },
+    {
+      "id": "crypto-square",
+      "label": "Crypto Square",
+      "topics": [
+        "strings",
+        "cryptography"
+      ]
+    },
+    {
+      "id": "vigenere-cipher",
+      "label": "Vigenere Cipher",
+      "topics": [
+        "strings",
+        "cryptography"
+      ]
+    },
+    {
+      "id": "diffie-hellman",
+      "label": "Diffie Hellman",
+      "topics": [
+        "math",
+        "cryptography"
+      ]
+    },
+    {
+      "id": "modular-exponentiation",
+      "label": "Modular Exponentiation",
+      "topics": [
+        "math",
+        "cryptography"
+      ]
+    },
+    {
+      "id": "role-playing-game",
+      "label": "Role Playing Game",
+      "topics": [
+        "math"
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "id": "python",
+      "label": "Python"
+    },
+    {
+      "id": "cpp",
+      "label": "C++"
+    },
+    {
+      "id": "javascript",
+      "label": "JavaScript"
+    },
+    {
+      "id": "java",
+      "label": "Java"
+    }
+  ],
+  "difficulties": [
+    {
+      "id": "beginner",
+      "label": "Beginner"
+    },
+    {
+      "id": "intermediate",
+      "label": "Intermediate"
+    },
+    {
+      "id": "advanced",
+      "label": "Advanced"
+    }
+  ]
+}

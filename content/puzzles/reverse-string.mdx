@@ -1,0 +1,67 @@
+---
+title: "Reverse String"
+order: 41
+available: true
+areas: []
+topics: ["strings"]
+tags: ["reverse-string"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def reverse_string(text):
+      # TODO: return the text reversed
+      pass
+
+  text = input()
+  print(reverse_string(text))
+testCases:
+  - input: "robot"
+    expected: "tobor"
+    hidden: true
+  - input: "Ramen"
+    expected: "nemaR"
+    hidden: true
+  - input: "I'm hungry!"
+    expected: "!yrgnuh m'I"
+    hidden: true
+  - input: "racecar"
+    expected: "racecar"
+    hidden: true
+  - input: "drawer"
+    expected: "reward"
+    hidden: true
+  - input: "Hello, World!"
+    expected: "!dlroW ,olleH"
+    hidden: true
+  - input: "a"
+    expected: "a"
+    hidden: true
+  - input: "A man, a plan, a canal"
+    expected: "lanac a ,nalp a ,nam A"
+    hidden: true
+  - input: "0123456789"
+    expected: "9876543210"
+    hidden: true
+---
+
+Reversing strings (reading them from right to left, rather than from left to right) is a surprisingly common task in programming.
+
+For example, in bioinformatics, reversing the sequence of DNA or RNA strings is often important for various analyses, such as finding complementary strands or identifying palindromic sequences that have biological significance.
+
+Your task is to reverse a given string.
+
+Some examples:
+
+- Turn `"stressed"` into `"desserts"`.
+- Turn `"strops"` into `"sports"`.
+- Turn `"racecar"` into `"racecar"`.
+
+## Input
+
+A single line of text.
+
+## Output
+
+Print the text reversed.
+
+*Adapted from the [Reverse String](https://github.com/exercism/problem-specifications/tree/main/exercises/reverse-string) exercise on Exercism (MIT License). Original source: Introductory challenge to reverse an input string (https://www.freecodecamp.org/news/how-to-reverse-a-string-in-javascript-in-3-different-ways-75e4763c68cb).*

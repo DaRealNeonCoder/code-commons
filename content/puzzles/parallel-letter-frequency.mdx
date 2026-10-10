@@ -1,0 +1,83 @@
+---
+title: "Parallel Letter Frequency"
+order: 119
+available: true
+areas: []
+topics: ["concurrency", "hash-maps", "strings"]
+tags: ["parallelism", "letter-frequency"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def letter_frequency(texts):
+      # TODO: return a dict mapping each lower-case letter to how often it appears across all the texts
+      # (tip: count each text in its own thread or process, then combine the counts)
+      pass
+
+  n = int(input())
+  texts = [input() for _ in range(n)]
+  counts = letter_frequency(texts)
+  for letter in sorted(counts):
+      print(letter, counts[letter])
+testCases:
+  - input: "0"
+    expected: ""
+    hidden: true
+  - input: "1\na"
+    expected: "a 1"
+    hidden: true
+  - input: "1\nbbcccd"
+    expected: "b 2\nc 3\nd 1"
+    hidden: true
+  - input: "2\ne\nf"
+    expected: "e 1\nf 1"
+    hidden: true
+  - input: "2\nggh\nhhi"
+    expected: "g 2\nh 3\ni 1"
+    hidden: true
+  - input: "2\nm\nM"
+    expected: "m 2"
+    hidden: true
+  - input: "5\n!\n?\n;\n,\n."
+    expected: ""
+    hidden: true
+  - input: "9\n1\n2\n3\n4\n5\n6\n7\n8\n9"
+    expected: ""
+    hidden: true
+  - input: "1\nThere, peeping among the cloud-wrack above a dark tower high up in the mountains, Sam saw a white star twinkle for a while. The beauty of it smote his heart, as he looked up out of the forsaken land, and hope returned to him. For like a shaft, clear and cold, the thought pierced him that in the end, the shadow was only a small and passing thing: there was light and high beauty forever beyond its reach."
+    expected: "a 32\nb 4\nc 6\nd 14\ne 37\nf 7\ng 8\nh 29\ni 19\nk 6\nl 12\nm 7\nn 19\no 22\np 7\nr 17\ns 16\nt 30\nu 9\nv 2\nw 9\ny 4"
+    hidden: true
+  - input: "50\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc\nabbccc"
+    expected: "a 50\nb 100\nc 150"
+    hidden: true
+  - input: "2\nHello\nWorld"
+    expected: "d 1\ne 1\nh 1\nl 3\no 2\nr 1\nw 1"
+    hidden: true
+  - input: "3\naaa\nAAA\naAa"
+    expected: "a 9"
+    hidden: true
+  - input: "2\nThe quick brown fox\njumps over the lazy dog"
+    expected: "a 1\nb 1\nc 1\nd 1\ne 3\nf 1\ng 1\nh 2\ni 1\nj 1\nk 1\nl 1\nm 1\nn 1\no 4\np 1\nq 1\nr 2\ns 1\nt 2\nu 2\nv 1\nw 1\nx 1\ny 1\nz 1"
+    hidden: true
+  - input: "2\n123 456\n!!!"
+    expected: ""
+    hidden: true
+  - input: "20\nabc\nabc\nabc\nabc\nabc\nabc\nabc\nabc\nabc\nabc\nabc\nabc\nabc\nabc\nabc\nabc\nabc\nabc\nabc\nabc"
+    expected: "a 20\nb 20\nc 20"
+    hidden: true
+---
+
+Count the frequency of letters in texts using parallel computation.
+
+Parallelism is about doing things in parallel that can also be done sequentially.
+A common example is counting the frequency of letters.
+Employ parallelism to calculate the total frequency of each letter in a list of texts.
+
+## Input
+
+The first line is the number of texts `n`. Each of the next `n` lines is one text.
+
+## Output
+
+Print every letter that occurs, as `letter count`, one per line sorted alphabetically. Letters are counted case-insensitively and printed in lower case; digits, punctuation and spaces are ignored. Print nothing if there are no letters. The result is the same however you split the work, so you are free to use threads or processes.
+
+*Adapted from the [Parallel Letter Frequency](https://github.com/exercism/problem-specifications/tree/main/exercises/parallel-letter-frequency) exercise on Exercism (MIT License).*

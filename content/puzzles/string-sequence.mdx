@@ -1,0 +1,39 @@
+---
+title: "Number Sequence String"
+order: 21
+available: true
+areas: []
+topics: ["strings"]
+tags: []
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def string_sequence(n):
+      # TODO: return the numbers 0 through n, separated by single spaces
+      pass
+
+  n = int(input())
+  print(string_sequence(n))
+testCases:
+  - input: "5"
+    expected: "0 1 2 3 4 5"
+    hidden: false
+  - input: "0"
+    expected: "0"
+    hidden: true
+  - input: "1"
+    expected: "0 1"
+    hidden: true
+  - input: "10"
+    expected: "0 1 2 3 4 5 6 7 8 9 10"
+    hidden: true
+---
+
+Write a function `string_sequence(n)` that returns a **string** containing every number from `0` up to and including `n`, separated by single spaces.
+
+For example, `string_sequence(5)` returns `"0 1 2 3 4 5"`, and `string_sequence(0)` returns `"0"`.
+
+> [!TIP]
+> Most languages have a "join" helper that glues a list of strings together with a separator, which avoids a trailing space.
+
+The starter code reads `n` and prints the string.

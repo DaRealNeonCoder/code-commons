@@ -1,0 +1,40 @@
+---
+title: "Primes Below N"
+order: 30
+available: true
+areas: []
+topics: ["math"]
+tags: ["sieve"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def primes_below(n):
+      # TODO: return all prime numbers strictly less than n
+      pass
+
+  n = int(input())
+  print(*primes_below(n))
+testCases:
+  - input: "5"
+    expected: "2 3"
+    hidden: false
+  - input: "11"
+    expected: "2 3 5 7"
+    hidden: true
+  - input: "20"
+    expected: "2 3 5 7 11 13 17 19"
+    hidden: true
+  - input: "3"
+    expected: "2"
+    hidden: true
+  - input: "30"
+    expected: "2 3 5 7 11 13 17 19 23 29"
+    hidden: true
+---
+
+Write a function `primes_below(n)` that returns a list of all prime numbers **strictly less than** `n`, in ascending order. For example, `primes_below(11)` returns `[2, 3, 5, 7]`.
+
+> [!TIP]
+> Testing each number separately works for small `n`. For large `n`, look up the *Sieve of Eratosthenes*, which crosses off multiples of each prime instead.
+
+The starter code reads `n` (at least 3) and prints the primes separated by spaces.

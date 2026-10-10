@@ -1,0 +1,85 @@
+---
+title: "Alphametics"
+order: 100
+available: true
+areas: []
+topics: ["backtracking", "math"]
+tags: ["alphametics"]
+languages: []
+difficulty: "advanced"
+starterCode: |
+  def solve_alphametic(puzzle):
+      # TODO: return a dict mapping each letter to its digit, or None if there is no solution
+      pass
+
+  puzzle = input()
+  solution = solve_alphametic(puzzle)
+  if solution is None:
+      print("none")
+  else:
+      for letter in sorted(solution):
+          print(letter, solution[letter])
+testCases:
+  - input: "I + BB == ILL"
+    expected: "B 9\nI 1\nL 0"
+    hidden: true
+  - input: "A == B"
+    expected: "none"
+    hidden: true
+  - input: "A + A + A + A + A + A + A + A + A + A + A + B == BCC"
+    expected: "A 9\nB 1\nC 0"
+    hidden: true
+  - input: "AS + A == MOM"
+    expected: "A 9\nM 1\nO 0\nS 2"
+    hidden: true
+  - input: "NO + NO + TOO == LATE"
+    expected: "A 0\nE 2\nL 1\nN 7\nO 4\nT 9"
+    hidden: true
+  - input: "HE + SEES + THE == LIGHT"
+    expected: "E 4\nG 2\nH 5\nI 0\nL 1\nS 9\nT 7"
+    hidden: true
+  - input: "AND + A + STRONG + OFFENSE + AS + A + GOOD == DEFENSE"
+    expected: "A 5\nD 3\nE 4\nF 7\nG 8\nN 0\nO 2\nR 1\nS 6\nT 9"
+    hidden: true
+  - input: "THIS + A + FIRE + THEREFORE + FOR + ALL + HISTORIES + I + TELL + A + TALE + THAT + FALSIFIES + ITS + TITLE + TIS + A + LIE + THE + TALE + OF + THE + LAST + FIRE + HORSES + LATE + AFTER + THE + FIRST + FATHERS + FORESEE + THE + HORRORS + THE + LAST + FREE + TROLL + TERRIFIES + THE + HORSES + OF + FIRE + THE + TROLL + RESTS + AT + THE + HOLE + OF + LOSSES + IT + IS + THERE + THAT + SHE + STORES + ROLES + OF + LEATHERS + AFTER + SHE + SATISFIES + HER + HATE + OFF + THOSE + FEARS + A + TASTE + RISES + AS + SHE + HEARS + THE + LEAST + FAR + HORSE + THOSE + FAST + HORSES + THAT + FIRST + HEAR + THE + TROLL + FLEE + OFF + TO + THE + FOREST + THE + HORSES + THAT + ALERTS + RAISE + THE + STARES + OF + THE + OTHERS + AS + THE + TROLL + ASSAILS + AT + THE + TOTAL + SHIFT + HER + TEETH + TEAR + HOOF + OFF + TORSO + AS + THE + LAST + HORSE + FORFEITS + ITS + LIFE + THE + FIRST + FATHERS + HEAR + OF + THE + HORRORS + THEIR + FEARS + THAT + THE + FIRES + FOR + THEIR + FEASTS + ARREST + AS + THE + FIRST + FATHERS + RESETTLE + THE + LAST + OF + THE + FIRE + HORSES + THE + LAST + TROLL + HARASSES + THE + FOREST + HEART + FREE + AT + LAST + OF + THE + LAST + TROLL + ALL + OFFER + THEIR + FIRE + HEAT + TO + THE + ASSISTERS + FAR + OFF + THE + TROLL + FASTS + ITS + LIFE + SHORTER + AS + STARS + RISE + THE + HORSES + REST + SAFE + AFTER + ALL + SHARE + HOT + FISH + AS + THEIR + AFFILIATES + TAILOR + A + ROOFS + FOR + THEIR + SAFE == FORTRESSES"
+    expected: "A 1\nE 0\nF 5\nH 8\nI 7\nL 2\nO 6\nR 3\nS 4\nT 9"
+    hidden: true
+---
+
+Given an alphametics puzzle, find the correct solution.
+
+[Alphametics][alphametics] is a puzzle where letters in words are replaced with numbers.
+
+For example `SEND + MORE = MONEY`:
+
+```text
+  S E N D
+  M O R E +
+-----------
+M O N E Y
+```
+
+Replacing these with valid numbers gives:
+
+```text
+  9 5 6 7
+  1 0 8 5 +
+-----------
+1 0 6 5 2
+```
+
+This is correct because every letter is replaced by a different number and the words, translated into numbers, then make a valid sum.
+
+Each letter must represent a different digit, and the leading digit of a multi-digit number must not be zero.
+
+[alphametics]: https://en.wikipedia.org/wiki/Alphametics
+
+## Input
+
+A single line containing the puzzle, such as `SEND + MORE == MONEY`.
+
+## Output
+
+If there is a solution, print each letter and its digit as `letter digit`, one per line, sorted by letter. Each letter stands for a different digit, and no number may start with a leading zero. Print `none` if there is no solution.
+
+*Adapted from the [Alphametics](https://github.com/exercism/problem-specifications/tree/main/exercises/alphametics) exercise on Exercism (MIT License).*

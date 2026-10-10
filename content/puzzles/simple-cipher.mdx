@@ -1,0 +1,102 @@
+---
+title: "Simple Cipher"
+order: 121
+available: true
+areas: []
+topics: ["strings", "cryptography"]
+tags: ["vigenere-cipher"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def substitution_cipher(mode, key, text):
+      # mode is "encode" or "decode"; key and text are lower-case letters
+      # TODO: shift each letter of the text by the matching letter of the key (a = 0, b = 1, ...), repeating the key as needed;
+      # forwards when encoding, backwards when decoding
+      pass
+
+  mode, key = input().split()
+  text = input()
+  print(substitution_cipher(mode, key, text))
+testCases:
+  - input: "encode abcdefghij\naaaaaaaaaa"
+    expected: "abcdefghij"
+    hidden: true
+  - input: "decode abcdefghij\nabcdefghij"
+    expected: "aaaaaaaaaa"
+    hidden: true
+  - input: "encode iamapandabear\niamapandabear"
+    expected: "qayaeaagaciai"
+    hidden: true
+  - input: "encode abcdefghij\nzzzzzzzzzz"
+    expected: "zabcdefghi"
+    hidden: true
+  - input: "decode abcdefghij\nzabcdefghi"
+    expected: "zzzzzzzzzz"
+    hidden: true
+  - input: "encode abc\niamapandabear"
+    expected: "iboaqcnecbfcr"
+    hidden: true
+  - input: "decode abc\niboaqcnecbfcr"
+    expected: "iamapandabear"
+    hidden: true
+  - input: "encode abc\naaaaaa"
+    expected: "abcabc"
+    hidden: true
+  - input: "decode abc\nabcabc"
+    expected: "aaaaaa"
+    hidden: true
+  - input: "encode zebra\nattackatdawn"
+    expected: "zxurcjeuuavr"
+    hidden: true
+  - input: "decode zebra\nzxtyxjzxbafb"
+    expected: "atshxkvwkagx"
+    hidden: true
+  - input: "encode b\nxyz"
+    expected: "yza"
+    hidden: true
+---
+
+Create an implementation of the [Vigenère cipher][wiki].
+The Vigenère cipher is a simple substitution cipher.
+
+## Cipher terminology
+
+A cipher is an algorithm used to encrypt, or encode, a string.
+The unencrypted string is called the _plaintext_ and the encrypted string is called the _ciphertext_.
+Converting plaintext to ciphertext is called _encoding_ while the reverse is called _decoding_.
+
+In a _substitution cipher_, each plaintext letter is replaced with a ciphertext letter which is computed with the help of a _key_.
+(Note, it is possible for replacement letter to be the same as the original letter.)
+
+## Encoding details
+
+In this cipher, the key is a series of lowercase letters, such as `"abcd"`.
+Each letter of the plaintext is _shifted_ or _rotated_ by a distance based on a corresponding letter in the key.
+An `"a"` in the key means a shift of 0 (that is, no shift).
+A `"b"` in the key means a shift of 1.
+A `"c"` in the key means a shift of 2, and so on.
+
+The first letter of the plaintext uses the first letter of the key, the second letter of the plaintext uses the second letter of the key and so on.
+If you run out of letters in the key before you run out of letters in the plaintext, start over from the start of the key again.
+
+If the key only contains one letter, such as `"dddddd"`, then all letters of the plaintext are shifted by the same amount (three in this example), which would make this the same as a rotational cipher or shift cipher (sometimes called a Caesar cipher).
+For example, the plaintext `"iamapandabear"` would become `"ldpdsdqgdehdu"`.
+
+If the key only contains the letter `"a"` (one or more times), the shift distance is zero and the ciphertext is the same as the plaintext.
+
+Usually the key is more complicated than that, though!
+If the key is `"abcd"` then letters of the plaintext would be shifted by a distance of 0, 1, 2, and 3.
+If the plaintext is `"hello"`, we need 5 shifts so the key would wrap around, giving shift distances of 0, 1, 2, 3, and 0.
+Applying those shifts to the letters of `"hello"` we get `"hfnoo"`.
+
+[wiki]: https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher
+
+## Input
+
+The first line is `encode` or `decode` followed by the key. The second line is the text.
+
+## Output
+
+Print the encoded or decoded text. Each letter of the text is shifted by the corresponding letter of the key (`a` shifts by 0, `b` by 1, and so on), and the key is repeated if the text is longer.
+
+*Adapted from the [Simple Cipher](https://github.com/exercism/problem-specifications/tree/main/exercises/simple-cipher) exercise on Exercism (MIT License). Original source: Substitution Cipher at Wikipedia (https://en.wikipedia.org/wiki/Substitution_cipher).*

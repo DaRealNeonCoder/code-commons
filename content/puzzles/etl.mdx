@@ -1,0 +1,93 @@
+---
+title: "ETL"
+order: 14
+available: true
+areas: []
+topics: ["hash-maps"]
+tags: ["data-transformation"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def transform(legacy):
+      # legacy maps a score (int) to a list of upper-case letters worth that score
+      # TODO: return a dict mapping each lower-case letter to its score
+      pass
+
+  n = int(input())
+  legacy = {}
+  for _ in range(n):
+      score, *letters = input().split()
+      legacy[int(score)] = letters
+  new = transform(legacy)
+  for letter in sorted(new):
+      print(letter, new[letter])
+testCases:
+  - input: "1\n1 A"
+    expected: "a 1"
+    hidden: true
+  - input: "1\n1 A E I O U"
+    expected: "a 1\ne 1\ni 1\no 1\nu 1"
+    hidden: true
+  - input: "2\n1 A E\n2 D G"
+    expected: "a 1\nd 2\ne 1\ng 2"
+    hidden: true
+  - input: "7\n1 A E I O U L N R S T\n2 D G\n3 B C M P\n4 F H V W Y\n5 K\n8 J X\n10 Q Z"
+    expected: "a 1\nb 3\nc 3\nd 2\ne 1\nf 4\ng 2\nh 4\ni 1\nj 8\nk 5\nl 1\nm 3\nn 1\no 1\np 3\nq 10\nr 1\ns 1\nt 1\nu 1\nv 4\nw 4\nx 8\ny 4\nz 10"
+    hidden: true
+  - input: "3\n1 A E\n2 D G\n10 Q Z"
+    expected: "a 1\nd 2\ne 1\ng 2\nq 10\nz 10"
+    hidden: true
+  - input: "1\n5 K"
+    expected: "k 5"
+    hidden: true
+---
+
+You work for a company that makes an online multiplayer game called Lexiconia.
+
+To play the game, each player is given 13 letters, which they must rearrange to create words.
+Different letters have different point values, since it's easier to create words with some letters than others.
+
+The game was originally launched in English, but it is very popular, and now the company wants to expand to other languages as well.
+
+Different languages need to support different point values for letters.
+The point values are determined by how often letters are used, compared to other letters in that language.
+
+For example, the letter 'C' is quite common in English, and is only worth 3 points.
+But in Norwegian it's a very rare letter, and is worth 10 points.
+
+To make it easier to add new languages, your team needs to change the way letters and their point values are stored in the game.
+
+Your task is to change the data format of letters and their point values in the game.
+
+Currently, letters are stored in groups based on their score, in a one-to-many mapping.
+
+- 1 point: "A", "E", "I", "O", "U", "L", "N", "R", "S", "T",
+- 2 points: "D", "G",
+- 3 points: "B", "C", "M", "P",
+- 4 points: "F", "H", "V", "W", "Y",
+- 5 points: "K",
+- 8 points: "J", "X",
+- 10 points: "Q", "Z",
+
+This needs to be changed to store each individual letter with its score in a one-to-one mapping.
+
+- "a" is worth 1 point.
+- "b" is worth 3 points.
+- "c" is worth 3 points.
+- "d" is worth 2 points.
+- etc.
+
+As part of this change, the team has also decided to change the letters to be lower-case rather than upper-case.
+
+> [!NOTE]
+> If you want to look at how the data was previously structured and how it needs to change, take a look at the examples in the test suite.
+
+## Input
+
+The first line is the number `n` of scores. Each of the next `n` lines has a score followed by the letters worth that score.
+
+## Output
+
+Print every letter in lower case with its score, as `letter score`, one per line, sorted alphabetically.
+
+*Adapted from the [ETL](https://github.com/exercism/problem-specifications/tree/main/exercises/etl) exercise on Exercism (MIT License). Original source: Based on an exercise by the JumpstartLab team for students at The Turing School of Software and Design. (https://www.turing.edu/).*

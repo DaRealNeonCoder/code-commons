@@ -1,0 +1,150 @@
+---
+title: "Split-Second Stopwatch"
+order: 123
+available: true
+areas: []
+topics: ["simulation"]
+tags: ["state-machine", "stopwatch"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def stopwatch(commands):
+      # commands are strings: start, stop, lap, reset, "advanceTime HH:MM:SS", state, currentLap, total, previousLaps
+      # the stopwatch is already created and in the "ready" state
+      # TODO: return one result string per command (see the Output section)
+      pass
+
+  n = int(input())
+  commands = [input() for _ in range(n)]
+  print("\n".join(stopwatch(commands)))
+testCases:
+  - input: "1\nstate"
+    expected: "ready"
+    hidden: true
+  - input: "1\ncurrentLap"
+    expected: "00:00:00"
+    hidden: true
+  - input: "1\ntotal"
+    expected: "00:00:00"
+    hidden: true
+  - input: "1\npreviousLaps"
+    expected: "none"
+    hidden: true
+  - input: "2\nstart\nstate"
+    expected: "ok\nrunning"
+    hidden: true
+  - input: "2\nstart\npreviousLaps"
+    expected: "ok\nnone"
+    hidden: true
+  - input: "3\nstart\nadvanceTime 00:00:05\ncurrentLap"
+    expected: "ok\nok\n00:00:05"
+    hidden: true
+  - input: "3\nstart\nadvanceTime 00:00:23\ntotal"
+    expected: "ok\nok\n00:00:23"
+    hidden: true
+  - input: "2\nstart\nstart"
+    expected: "ok\nerror"
+    hidden: true
+  - input: "3\nstart\nstop\nstate"
+    expected: "ok\nok\nstopped"
+    hidden: true
+  - input: "5\nstart\nadvanceTime 00:00:05\nstop\nadvanceTime 00:00:08\ncurrentLap"
+    expected: "ok\nok\nok\nok\n00:00:05"
+    hidden: true
+  - input: "5\nstart\nadvanceTime 00:00:13\nstop\nadvanceTime 00:00:44\ntotal"
+    expected: "ok\nok\nok\nok\n00:00:13"
+    hidden: true
+  - input: "1\nstop"
+    expected: "error"
+    hidden: true
+  - input: "3\nstart\nstop\nstop"
+    expected: "ok\nok\nerror"
+    hidden: true
+  - input: "4\nstart\nstop\nstart\nstate"
+    expected: "ok\nok\nok\nrunning"
+    hidden: true
+  - input: "7\nstart\nadvanceTime 00:01:20\nstop\nadvanceTime 00:00:20\nstart\nadvanceTime 00:00:08\ncurrentLap"
+    expected: "ok\nok\nok\nok\nok\nok\n00:01:28"
+    hidden: true
+  - input: "7\nstart\nadvanceTime 00:00:23\nstop\nadvanceTime 00:00:44\nstart\nadvanceTime 00:00:09\ntotal"
+    expected: "ok\nok\nok\nok\nok\nok\n00:00:32"
+    hidden: true
+  - input: "7\nstart\nadvanceTime 00:01:38\nlap\npreviousLaps\nadvanceTime 00:00:44\nlap\npreviousLaps"
+    expected: "ok\nok\nok\n00:01:38\nok\nok\n00:01:38,00:00:44"
+    hidden: true
+  - input: "6\nstart\nadvanceTime 00:08:22\nlap\ncurrentLap\nadvanceTime 00:00:15\ncurrentLap"
+    expected: "ok\nok\nok\n00:00:00\nok\n00:00:15"
+    hidden: true
+  - input: "5\nstart\nadvanceTime 00:00:22\nlap\nadvanceTime 00:00:33\ntotal"
+    expected: "ok\nok\nok\nok\n00:00:55"
+    hidden: true
+  - input: "1\nlap"
+    expected: "error"
+    hidden: true
+  - input: "3\nstart\nstop\nlap"
+    expected: "ok\nok\nerror"
+    hidden: true
+  - input: "6\nstart\nadvanceTime 00:11:22\nlap\npreviousLaps\nstop\npreviousLaps"
+    expected: "ok\nok\nok\n00:11:22\nok\n00:11:22"
+    hidden: true
+  - input: "4\nstart\nstop\nreset\nstate"
+    expected: "ok\nok\nok\nready"
+    hidden: true
+  - input: "5\nstart\nadvanceTime 00:00:10\nstop\nreset\ncurrentLap"
+    expected: "ok\nok\nok\nok\n00:00:00"
+    hidden: true
+  - input: "9\nstart\nadvanceTime 00:00:10\nlap\nadvanceTime 00:00:20\nlap\npreviousLaps\nstop\nreset\npreviousLaps"
+    expected: "ok\nok\nok\nok\nok\n00:00:10,00:00:20\nok\nok\nnone"
+    hidden: true
+  - input: "1\nreset"
+    expected: "error"
+    hidden: true
+  - input: "2\nstart\nreset"
+    expected: "ok\nerror"
+    hidden: true
+  - input: "15\nstart\nadvanceTime 01:23:45\ncurrentLap\nlap\npreviousLaps\nadvanceTime 04:01:40\ncurrentLap\ntotal\nlap\npreviousLaps\nadvanceTime 08:43:05\ncurrentLap\ntotal\nlap\npreviousLaps"
+    expected: "ok\nok\n01:23:45\nok\n01:23:45\nok\n04:01:40\n05:25:25\nok\n01:23:45,04:01:40\nok\n08:43:05\n14:08:30\nok\n01:23:45,04:01:40,08:43:05"
+    hidden: true
+---
+
+You've always run for the thrill of it — no schedules, no timers, just the sound of your feet on the pavement.
+But now that you've joined a competitive running crew, things are getting serious.
+Training sessions are timed to the second, and every split second counts.
+To keep pace, you've picked up the _Split-Second Stopwatch_ — a sleek, high-tech gadget that's about to become your new best friend.
+
+Your task is to build a stopwatch to keep precise track of lap times.
+
+The stopwatch uses four commands (start, stop, lap, and reset) to keep track of:
+
+1. The current lap's tracked time
+2. Previously recorded lap times
+
+What commands can be used depends on which state the stopwatch is in:
+
+1. Ready: initial state
+2. Running: tracking time
+3. Stopped: not tracking time
+
+| Command | Begin state | End state | Effect                                                   |
+| ------- | ----------- | --------- | -------------------------------------------------------- |
+| Start   | Ready       | Running   | Start tracking time                                      |
+| Start   | Stopped     | Running   | Resume tracking time                                     |
+| Stop    | Running     | Stopped   | Stop tracking time                                       |
+| Lap     | Running     | Running   | Add current lap to previous laps, then reset current lap |
+| Reset   | Stopped     | Ready     | Reset current lap and clear previous laps                |
+
+## Input
+
+The first line is the number of commands. Each following line is one command: `start`, `stop`, `lap`, `reset`, `advanceTime HH:MM:SS` (time passes), or one of the queries `state`, `currentLap`, `total`, `previousLaps`.
+
+## Output
+
+Print one line per command, in order:
+
+- `start`, `stop`, `lap`, `reset`: `ok`, or `error` if the command is not allowed in the current state
+- `advanceTime`: `ok`
+- `state`: `ready`, `running` or `stopped`
+- `currentLap` and `total`: the time as `HH:MM:SS`
+- `previousLaps`: the recorded lap times as `HH:MM:SS` separated by commas, or `none`
+
+*Adapted from the [Split-Second Stopwatch](https://github.com/exercism/problem-specifications/tree/main/exercises/split-second-stopwatch) exercise on Exercism (MIT License). Original source: Erik Schierboom (https://github.com/exercism/problem-specifications/pull/2547).*

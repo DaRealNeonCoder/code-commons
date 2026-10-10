@@ -1,0 +1,116 @@
+---
+title: "Rail Fence Cipher"
+order: 81
+available: true
+areas: []
+topics: ["strings", "cryptography"]
+tags: ["rail-fence-cipher"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def rail_fence(mode, message, rails):
+      # mode is "encode" or "decode"
+      # TODO: return the encoded or decoded message
+      pass
+
+  mode, rails = input().split()
+  message = input()
+  print(rail_fence(mode, message, int(rails)))
+testCases:
+  - input: "encode 2\nXOXOXOXOXOXOXOXOXO"
+    expected: "XXXXXXXXXOOOOOOOOO"
+    hidden: true
+  - input: "encode 3\nWEAREDISCOVEREDFLEEATONCE"
+    expected: "WECRLTEERDSOEEFEAOCAIVDEN"
+    hidden: true
+  - input: "encode 4\nEXERCISES"
+    expected: "ESXIEECSR"
+    hidden: true
+  - input: "decode 3\nTEITELHDVLSNHDTISEIIEA"
+    expected: "THEDEVILISINTHEDETAILS"
+    hidden: true
+  - input: "decode 5\nEIEXMSMESAORIWSCE"
+    expected: "EXERCISMISAWESOME"
+    hidden: true
+  - input: "decode 6\n133714114238148966225439541018335470986172518171757571896261"
+    expected: "112358132134558914423337761098715972584418167651094617711286"
+    hidden: true
+  - input: "decode 3\nWECRLTEERDSOEEFEAOCAIVDEN"
+    expected: "WEAREDISCOVEREDFLEEATONCE"
+    hidden: true
+  - input: "encode 5\nHELLOWORLD"
+    expected: "HLERDLOLWO"
+    hidden: true
+  - input: "decode 2\nHOLELWRDLO"
+    expected: "HWORLDELLO"
+    hidden: true
+  - input: "encode 4\nAB"
+    expected: "AB"
+    hidden: true
+---
+
+Implement encoding and decoding for the rail fence cipher.
+
+The Rail Fence cipher is a form of transposition cipher that gets its name from the way in which it's encoded.
+It was already used by the ancient Greeks.
+
+In the Rail Fence cipher, the message is written downwards on successive "rails" of an imaginary fence, then moving up when we get to the bottom (like a zig-zag).
+Finally the message is then read off in rows.
+
+For example, using three "rails" and the message "WE ARE DISCOVERED FLEE AT ONCE", the cipherer writes out:
+
+```text
+W . . . E . . . C . . . R . . . L . . . T . . . E
+. E . R . D . S . O . E . E . F . E . A . O . C .
+. . A . . . I . . . V . . . D . . . E . . . N . .
+```
+
+Then reads off:
+
+```text
+WECRLTEERDSOEEFEAOCAIVDEN
+```
+
+To decrypt a message you take the zig-zag shape and fill the ciphertext along the rows.
+
+```text
+? . . . ? . . . ? . . . ? . . . ? . . . ? . . . ?
+. ? . ? . ? . ? . ? . ? . ? . ? . ? . ? . ? . ? .
+. . ? . . . ? . . . ? . . . ? . . . ? . . . ? . .
+```
+
+The first row has seven spots that can be filled with "WECRLTE".
+
+```text
+W . . . E . . . C . . . R . . . L . . . T . . . E
+. ? . ? . ? . ? . ? . ? . ? . ? . ? . ? . ? . ? .
+. . ? . . . ? . . . ? . . . ? . . . ? . . . ? . .
+```
+
+Now the 2nd row takes "ERDSOEEFEAOC".
+
+```text
+W . . . E . . . C . . . R . . . L . . . T . . . E
+. E . R . D . S . O . E . E . F . E . A . O . C .
+. . ? . . . ? . . . ? . . . ? . . . ? . . . ? . .
+```
+
+Leaving "AIVDEN" for the last row.
+
+```text
+W . . . E . . . C . . . R . . . L . . . T . . . E
+. E . R . D . S . O . E . E . F . E . A . O . C .
+. . A . . . I . . . V . . . D . . . E . . . N . .
+```
+
+If you now read along the zig-zag shape you can read the original message.
+
+## Input
+
+The first line is `encode` or `decode` followed by the number of rails. The second line is the message.
+
+## Output
+
+Print the encoded or decoded message.
+
+*Adapted from the [Rail Fence Cipher](https://github.com/exercism/problem-specifications/tree/main/exercises/rail-fence-cipher) exercise on Exercism (MIT License). Original source: Wikipedia (https://en.wikipedia.org/wiki/Transposition_cipher#Rail_Fence_cipher).*

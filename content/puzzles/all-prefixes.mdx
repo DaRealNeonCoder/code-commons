@@ -1,0 +1,36 @@
+---
+title: "All Prefixes"
+order: 6
+available: true
+areas: []
+topics: ["strings"]
+tags: ["prefixes"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def all_prefixes(s):
+      # TODO: return every prefix of s, from shortest to longest
+      pass
+
+  s = input()
+  print(*all_prefixes(s))
+testCases:
+  - input: "abc"
+    expected: "a ab abc"
+    hidden: false
+  - input: "x"
+    expected: "x"
+    hidden: true
+  - input: "WWW"
+    expected: "W WW WWW"
+    hidden: true
+  - input: "code"
+    expected: "c co cod code"
+    hidden: true
+---
+
+Write a function `all_prefixes(s)` that returns a list of all prefixes of the string `s`, ordered from shortest to longest. The whole string counts as its own longest prefix.
+
+For example, `all_prefixes("abc")` returns `["a", "ab", "abc"]`.
+
+The starter code reads a non-empty string and prints the prefixes separated by spaces.

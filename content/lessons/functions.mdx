@@ -1,0 +1,192 @@
+---
+title: "Functions"
+order: 10
+summary: "Package code into reusable, named blocks with parameters and return values."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["functions"]
+tags: ["def", "parameters", "return", "default-arguments", "scope"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["apply-discount", "gcd", "fibonacci"]
+---
+
+You've been using functions all along: `print()`, `len()`, `int()`. A **function** is a named block of code you can run whenever you want. Now it's time to write your own.
+
+## Defining functions
+
+Use `def`, a name, parentheses, and a colon. The indented lines below are the function's **body**:
+
+```python
+def greet():
+    print("Hello!")
+
+greet()
+greet()
+```
+
+Output:
+
+```
+Hello!
+Hello!
+```
+
+Defining a function doesn't run it. The code only runs when you **call** it with `greet()`. Functions let you write something once and use it many times.
+
+## Parameters and arguments
+
+Functions become powerful when you can give them input. The names in the parentheses of the definition are **parameters**. The actual values you pass when calling are **arguments**.
+
+```python
+def greet(name):
+    print(f"Hello, {name}!")
+
+greet("Ada")
+greet("Alan")
+```
+
+Output:
+
+```
+Hello, Ada!
+Hello, Alan!
+```
+
+With several parameters, arguments are matched up **by position**:
+
+```python
+def add(a, b):
+    print(a + b)
+
+add(2, 3)   # 5
+```
+
+## Return values
+
+`print()` shows something on the screen, but the program can't use it afterward. `return` hands a value **back to the caller**, so you can store it or use it in more calculations:
+
+```python
+def square(n):
+    return n * n
+
+result = square(4)
+print(result)            # 16
+print(square(3) + 1)     # 10
+```
+
+The moment Python reaches a `return`, the function ends. Anything after it in the body is skipped.
+
+```python
+def sign(n):
+    if n < 0:
+        return "negative"
+    if n == 0:
+        return "zero"
+    return "positive"
+```
+
+A function can return several values at once. They come back as a tuple, which you can unpack:
+
+```python
+def min_max(numbers):
+    return min(numbers), max(numbers)
+
+low, high = min_max([4, 9, 2])
+print(low, high)   # 2 9
+```
+
+> [!WARNING]
+> A function with no `return` gives back `None`. A common mistake is to `print` inside a function and then expect to use the result: `x = greet("Ada")` makes `x` equal to `None`.
+
+## Default arguments
+
+You can give a parameter a default value. If the caller leaves it out, the default is used:
+
+```python
+def power(base, exponent=2):
+    return base ** exponent
+
+print(power(5))      # 25
+print(power(2, 10))  # 1024
+```
+
+Parameters with defaults must come **after** the ones without.
+
+## Keyword arguments
+
+You can also pass arguments **by name**. This makes calls easier to read, and the order no longer matters:
+
+```python
+def describe(name, species, age=1):
+    print(f"{name} is a {age}-year-old {species}.")
+
+describe("Rex", "dog", 3)
+describe(species="cat", name="Mia")
+describe("Bo", "bird", age=2)
+```
+
+Output:
+
+```
+Rex is a 3-year-old dog.
+Mia is a 1-year-old cat.
+Bo is a 2-year-old bird.
+```
+
+When you mix the two styles, positional arguments must come first.
+
+## Variable scope
+
+A variable created inside a function is **local**. It exists only while the function runs and can't be seen from outside:
+
+```python
+def add_five(price):
+    total = price + 5
+    return total
+
+print(add_five(10))   # 15
+print(total)          # NameError: 'total' is not defined
+```
+
+A function can *read* variables from outside, but assigning to a name inside a function creates a brand-new local variable, even if the same name exists outside:
+
+```python
+x = 10
+
+def change():
+    x = 99
+    print(x)   # 99
+
+change()
+print(x)       # 10
+```
+
+> [!TIP]
+> Prefer passing values in through parameters and getting results out through `return`. Functions that rely only on their own inputs are much easier to understand and test.
+
+<Details title="What does the pass keyword do?">
+`pass` is a placeholder that does nothing. Python needs at least one line in a function body, so `pass` lets you write the function's outline first and fill it in later. You'll see it in the starter code of some puzzles.
+</Details>
+
+## Putting it together
+
+```python
+def is_even(n):
+    return n % 2 == 0
+
+def count_evens(numbers):
+    total = 0
+    for n in numbers:
+        if is_even(n):
+            total += 1
+    return total
+
+print(count_evens([1, 2, 3, 4, 6]))   # 3
+```
+
+Small functions built from other small functions are how real programs are made.
+
+In the puzzles for this lesson, the starter code gives you the function header and the input/output lines. Your job is to fill in the body.
+
+That's the last lesson, so well done on finishing the course! Now try the final three puzzles.

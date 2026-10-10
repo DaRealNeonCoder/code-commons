@@ -1,0 +1,86 @@
+---
+title: "Spiral Matrix"
+order: 89
+available: true
+areas: []
+topics: ["arrays"]
+tags: ["spiral-matrix"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def spiral_matrix(size):
+      # TODO: return a size x size matrix (list of lists) filled in a clockwise spiral starting at 1
+      pass
+
+  size = int(input())
+  for row in spiral_matrix(size):
+      print(*row)
+testCases:
+  - input: "0"
+    expected: ""
+    hidden: true
+  - input: "1"
+    expected: "1"
+    hidden: true
+  - input: "2"
+    expected: "1 2\n4 3"
+    hidden: true
+  - input: "3"
+    expected: "1 2 3\n8 9 4\n7 6 5"
+    hidden: true
+  - input: "4"
+    expected: "1 2 3 4\n12 13 14 5\n11 16 15 6\n10 9 8 7"
+    hidden: true
+  - input: "5"
+    expected: "1 2 3 4 5\n16 17 18 19 6\n15 24 25 20 7\n14 23 22 21 8\n13 12 11 10 9"
+    hidden: true
+  - input: "7"
+    expected: "1 2 3 4 5 6 7\n24 25 26 27 28 29 8\n23 40 41 42 43 30 9\n22 39 48 49 44 31 10\n21 38 47 46 45 32 11\n20 37 36 35 34 33 12\n19 18 17 16 15 14 13"
+    hidden: true
+  - input: "10"
+    expected: "1 2 3 4 5 6 7 8 9 10\n36 37 38 39 40 41 42 43 44 11\n35 64 65 66 67 68 69 70 45 12\n34 63 84 85 86 87 88 71 46 13\n33 62 83 96 97 98 89 72 47 14\n32 61 82 95 100 99 90 73 48 15\n31 60 81 94 93 92 91 74 49 16\n30 59 80 79 78 77 76 75 50 17\n29 58 57 56 55 54 53 52 51 18\n28 27 26 25 24 23 22 21 20 19"
+    hidden: true
+---
+
+In a small village near an ancient forest, there was a legend of a hidden treasure buried deep within the woods.
+Despite numerous attempts, no one had ever succeeded in finding it.
+This was about to change, however, thanks to a young explorer named Elara.
+She had discovered an old document containing instructions on how to locate the treasure.
+Using these instructions, Elara was able to draw a map that revealed the path to the treasure.
+
+To her surprise, the path followed a peculiar clockwise spiral.
+It was no wonder no one had been able to find the treasure before!
+With the map in hand, Elara embarks on her journey to uncover the hidden treasure.
+
+Your task is to return a square matrix of a given size.
+
+The matrix should be filled with natural numbers, starting from 1 in the top-left corner, increasing in an inward, clockwise spiral order, like these examples:
+
+## Examples
+
+### Spiral matrix of size 3
+
+```text
+1 2 3
+8 9 4
+7 6 5
+```
+
+### Spiral matrix of size 4
+
+```text
+ 1  2  3 4
+12 13 14 5
+11 16 15 6
+10  9  8 7
+```
+
+## Input
+
+A single integer `size`.
+
+## Output
+
+Print the matrix one row per line, with the numbers in each row separated by spaces. Print nothing if `size` is 0.
+
+*Adapted from the [Spiral Matrix](https://github.com/exercism/problem-specifications/tree/main/exercises/spiral-matrix) exercise on Exercism (MIT License). Original source: Reddit r/dailyprogrammer challenge #320 [Easy] Spiral Ascension. (https://web.archive.org/web/20230607064729/https://old.reddit.com/r/dailyprogrammer/comments/6i60lr/20170619_challenge_320_easy_spiral_ascension/).*

@@ -1,0 +1,232 @@
+---
+title: "State of Tic-Tac-Toe"
+order: 90
+available: true
+areas: []
+topics: ["matrices", "control-flow"]
+tags: ["tic-tac-toe"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def tic_tac_toe_state(board):
+      # board is a list of three strings of "X", "O" and " " (X always moves first)
+      # TODO: return "win", "draw" or "ongoing", or None if the board cannot occur in a real game
+      pass
+
+  board = [input().replace(".", " ") for _ in range(3)]
+  result = tic_tac_toe_state(board)
+  print("error" if result is None else result)
+testCases:
+  - input: "XOO\nX..\nX.."
+    expected: "win"
+    hidden: true
+  - input: "OXO\n.X.\n.X."
+    expected: "win"
+    hidden: true
+  - input: "OOX\n..X\n..X"
+    expected: "win"
+    hidden: true
+  - input: "OXX\nOX.\nO.."
+    expected: "win"
+    hidden: true
+  - input: "XOX\n.OX\n.O."
+    expected: "win"
+    hidden: true
+  - input: "XXO\n.XO\n..O"
+    expected: "win"
+    hidden: true
+  - input: "XXX\nXOO\nO.."
+    expected: "win"
+    hidden: true
+  - input: "O..\nXXX\n.O."
+    expected: "win"
+    hidden: true
+  - input: ".OO\nO.X\nXXX"
+    expected: "win"
+    hidden: true
+  - input: "OOO\nXXO\nXX."
+    expected: "win"
+    hidden: true
+  - input: "XX.\nOOO\nX.."
+    expected: "win"
+    hidden: true
+  - input: "XOX\n.XX\nOOO"
+    expected: "win"
+    hidden: true
+  - input: "XOO\n.X.\n..X"
+    expected: "win"
+    hidden: true
+  - input: "O.X\nOX.\nX.."
+    expected: "win"
+    hidden: true
+  - input: "OXX\nOOX\nX.O"
+    expected: "win"
+    hidden: true
+  - input: "..O\n.OX\nOXX"
+    expected: "win"
+    hidden: true
+  - input: "XXX\nXOO\nXOO"
+    expected: "win"
+    hidden: true
+  - input: "XOX\nOXO\nXOX"
+    expected: "win"
+    hidden: true
+  - input: "XOX\nXXO\nOXO"
+    expected: "draw"
+    hidden: true
+  - input: "XXO\nOXX\nXOO"
+    expected: "draw"
+    hidden: true
+  - input: "...\nX..\n..."
+    expected: "ongoing"
+    hidden: true
+  - input: "O..\n.X.\n..."
+    expected: "ongoing"
+    hidden: true
+  - input: "X..\n.XO\nOX."
+    expected: "ongoing"
+    hidden: true
+  - input: "XX.\n...\n..."
+    expected: "error"
+    hidden: true
+  - input: "OOX\n...\n..."
+    expected: "error"
+    hidden: true
+  - input: "XXX\nOOO\n..."
+    expected: "error"
+    hidden: true
+  - input: "XXX\nOOO\nXOX"
+    expected: "error"
+    hidden: true
+  - input: "OO.\nXXX\n.O."
+    expected: "error"
+    hidden: true
+  - input: "XX.\nOOO\n.XX"
+    expected: "error"
+    hidden: true
+  - input: "XXX\nOO.\n..."
+    expected: "win"
+    hidden: true
+  - input: "XOX\nXOO\nOXX"
+    expected: "draw"
+    hidden: true
+  - input: "...\n...\n..."
+    expected: "ongoing"
+    hidden: true
+  - input: "OOO\nXX.\nX.."
+    expected: "win"
+    hidden: true
+  - input: "XOX\nOXO\nOXO"
+    expected: "error"
+    hidden: true
+---
+
+In this exercise, you're going to implement a program that determines the state of a [tic-tac-toe][] game.
+(_You may also know the game as "noughts and crosses" or "Xs and Os"._)
+
+The game is played on a 3×3 grid.
+Players take turns to place `X`s and `O`s on the grid.
+The game ends when one player has won by placing three of marks in a row, column, or along a diagonal of the grid, or when the entire grid is filled up.
+
+In this exercise, we will assume that `X` starts.
+
+It's your job to determine which state a given game is in.
+
+There are 3 potential game states:
+
+- The game is **ongoing**.
+- The game ended in a **draw**.
+- The game ended in a **win**.
+
+If the given board is invalid, throw an appropriate error.
+
+If a board meets the following conditions, it is invalid:
+
+- The given board cannot be reached when turns are taken in the correct order (remember that `X` starts).
+- The game was played after it already ended.
+
+## Examples
+
+### Ongoing game
+
+```text
+   |   |
+ X |   |
+___|___|___
+   |   |
+   | X | O
+___|___|___
+   |   |
+ O | X |
+   |   |
+```
+
+### Draw
+
+```text
+   |   |
+ X | O | X
+___|___|___
+   |   |
+ X | X | O
+___|___|___
+   |   |
+ O | X | O
+   |   |
+```
+
+### Win
+
+```text
+   |   |
+ X | X | X
+___|___|___
+   |   |
+   | O | O
+___|___|___
+   |   |
+   |   |
+   |   |
+```
+
+### Invalid
+
+#### Wrong turn order
+
+```text
+   |   |
+ O | O | X
+___|___|___
+   |   |
+   |   |
+___|___|___
+   |   |
+   |   |
+   |   |
+```
+
+#### Continued playing after win
+
+```text
+   |   |
+ X | X | X
+___|___|___
+   |   |
+ O | O | O
+___|___|___
+   |   |
+   |   |
+   |   |
+```
+
+[tic-tac-toe]: https://en.wikipedia.org/wiki/Tic-tac-toe
+
+## Input
+
+Three lines, one per row of the board, made of `X`, `O` and `.` (an empty square). In this puzzle spaces are written as `.` on input and output so they survive copy-and-paste; the starter code converts them for you, so your function works with real spaces.
+
+## Output
+
+Print `win` if one player has three in a row, `draw` if the board is full with no winner, or `ongoing` if the game can continue. Print `error` if the board is impossible: the counts show that O started or a player moved twice in a row, both players have won, or play continued after someone had already won.
+
+*Adapted from the [State of Tic-Tac-Toe](https://github.com/exercism/problem-specifications/tree/main/exercises/state-of-tic-tac-toe) exercise on Exercism (MIT License). Original source: Created by Sascha Mann for the Julia track of the Exercism Research Experiment. (https://github.com/exercism/research_experiment_1/tree/julia-dev/exercises/julia-1-a).*

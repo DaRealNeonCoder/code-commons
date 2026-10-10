@@ -1,0 +1,135 @@
+---
+title: "OCR Numbers"
+order: 108
+available: true
+areas: []
+topics: ["parsing", "matrices"]
+tags: ["ocr"]
+languages: []
+difficulty: "advanced"
+starterCode: |
+  def ocr_convert(rows):
+      # rows is a list of strings; each digit is 3 columns wide and 4 rows tall, drawn with " ", "_" and "|"
+      # a blank line of four rows separates lines of digits
+      # TODO: return the recognised digits as a string ("?" for an unreadable digit, "," between lines of digits),
+      # or None if the grid size is invalid
+      pass
+
+  n = int(input())
+  rows = [input().replace(".", " ") for _ in range(n)]
+  result = ocr_convert(rows)
+  print("error" if result is None else result)
+testCases:
+  - input: "4\n._.\n|.|\n|_|\n..."
+    expected: "0"
+    hidden: true
+  - input: "4\n...\n..|\n..|\n..."
+    expected: "1"
+    hidden: true
+  - input: "4\n...\n.._\n..|\n..."
+    expected: "?"
+    hidden: true
+  - input: "3\n._.\n|.|\n..."
+    expected: "error"
+    hidden: true
+  - input: "4\n....\n...|\n...|\n...."
+    expected: "error"
+    hidden: true
+  - input: "4\n......._....._........_.._.\n..|..||.|..||.|..|..||.||.|\n..|..||_|..||_|..|..||_||_|\n..........................."
+    expected: "110101100"
+    hidden: true
+  - input: "4\n......._....._..........._.\n..|..||.|..||.|.....||.||.|\n..|..|._|..||_|..|..||_||_|\n..........................."
+    expected: "11?10?1?0"
+    hidden: true
+  - input: "4\n._.\n._|\n|_.\n..."
+    expected: "2"
+    hidden: true
+  - input: "4\n._.\n._|\n._|\n..."
+    expected: "3"
+    hidden: true
+  - input: "4\n...\n|_|\n..|\n..."
+    expected: "4"
+    hidden: true
+  - input: "4\n._.\n|_.\n._|\n..."
+    expected: "5"
+    hidden: true
+  - input: "4\n._.\n|_.\n|_|\n..."
+    expected: "6"
+    hidden: true
+  - input: "4\n._.\n..|\n..|\n..."
+    expected: "7"
+    hidden: true
+  - input: "4\n._.\n|_|\n|_|\n..."
+    expected: "8"
+    hidden: true
+  - input: "4\n._.\n|_|\n._|\n..."
+    expected: "9"
+    hidden: true
+  - input: "4\n...._.._....._.._.._.._.._.._.\n..|._|._||_||_.|_...||_||_||.|\n..||_.._|..|._||_|..||_|._||_|\n.............................."
+    expected: "1234567890"
+    hidden: true
+  - input: "12\n...._.._.\n..|._|._|\n..||_.._|\n.........\n...._.._.\n|_||_.|_.\n..|._||_|\n.........\n._.._.._.\n..||_||_|\n..||_|._|\n........."
+    expected: "123,456,789"
+    hidden: true
+---
+
+Your best friend Marta recently landed their dream job working with a local history museum's collections.
+Knowing of your interests in programming, they confide in you about an issue at work for an upcoming exhibit on computing history.
+A local university's math department had donated several boxes of historical printouts, but given the poor condition of the documents, the decision has been made to digitize the text.
+However, the university's old printer had some quirks in how text was represented, and your friend could use your help to extract the data successfully.
+
+Optical Character Recognition or OCR is software that converts images of text into machine-readable text.
+Given a grid of characters representing some digits, convert the grid to a string of digits.
+If the grid has multiple rows of cells, the rows should be separated in the output with a `","`.
+
+- The grid is made of one of more lines of cells.
+- Each line of the grid is made of one or more cells.
+- Each cell is three columns wide and four rows high (3x4) and represents one digit.
+- Digits are drawn using pipes (`"|"`), underscores (`"_"`), and spaces (`" "`).
+
+## Edge cases
+
+- If the input is not a valid size, your program should indicate there is an error.
+- If the input is the correct size, but a cell is not recognizable, your program should output a `"?"` for that character.
+
+## Examples
+
+The following input (without the comments) is converted to `"1234567890"`.
+
+```text
+      _  _     _  _  _  _  _  _  #
+    | _| _||_||_ |_   ||_||_|| | # Decimal numbers.
+    ||_  _|  | _||_|  ||_| _||_| #
+                                 # The fourth line is always blank,
+```
+
+The following input is converted to `"123,456,789"`.
+
+&lt;!-- prettier-ignore-start -->
+
+```text
+    _  _ 
+  | _| _|
+  ||_  _|
+         
+    _  _ 
+|_||_ |_ 
+  | _||_|
+         
+ _  _  _ 
+  ||_||_|
+  ||_| _|
+         
+```
+
+&lt;!-- prettier-ignore-end -->
+
+## Input
+
+The first line is the number of rows. Each following line is one row of the grid. In this puzzle spaces are written as `.` on input and output so they survive copy-and-paste; the starter code converts them for you, so your function works with real spaces.
+
+## Output
+
+Print the recognised text. Digits are 3 columns wide and 4 rows tall; the bottom row is always blank. Print `?` for a digit that cannot be recognised, separate several lines of digits with a comma, and print `error` if the number of rows is not a multiple of four or the width is not a multiple of three.
+
+*Adapted from the [OCR Numbers](https://github.com/exercism/problem-specifications/tree/main/exercises/ocr-numbers) exercise on Exercism (MIT License). Original source: Inspired by the Bank OCR kata (https://codingdojo.org/kata/BankOCR/).*

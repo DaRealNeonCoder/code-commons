@@ -1,0 +1,98 @@
+---
+title: "Diamond"
+order: 12
+available: true
+areas: []
+topics: ["strings"]
+tags: ["ascii-art"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def make_diamond(letter):
+      # TODO: return the diamond for the letter as a list of rows (each row padded with spaces to the full width)
+      pass
+
+  letter = input()
+  for row in make_diamond(letter):
+      print(row.replace(" ", "."))
+testCases:
+  - input: "A"
+    expected: "A"
+    hidden: true
+  - input: "B"
+    expected: ".A.\nB.B\n.A."
+    hidden: true
+  - input: "C"
+    expected: "..A..\n.B.B.\nC...C\n.B.B.\n..A.."
+    hidden: true
+  - input: "D"
+    expected: "...A...\n..B.B..\n.C...C.\nD.....D\n.C...C.\n..B.B..\n...A..."
+    hidden: true
+  - input: "Z"
+    expected: ".........................A.........................\n........................B.B........................\n.......................C...C.......................\n......................D.....D......................\n.....................E.......E.....................\n....................F.........F....................\n...................G...........G...................\n..................H.............H..................\n.................I...............I.................\n................J.................J................\n...............K...................K...............\n..............L.....................L..............\n.............M.......................M.............\n............N.........................N............\n...........O...........................O...........\n..........P.............................P..........\n.........Q...............................Q.........\n........R.................................R........\n.......S...................................S.......\n......T.....................................T......\n.....U.......................................U.....\n....V.........................................V....\n...W...........................................W...\n..X.............................................X..\n.Y...............................................Y.\nZ.................................................Z\n.Y...............................................Y.\n..X.............................................X..\n...W...........................................W...\n....V.........................................V....\n.....U.......................................U.....\n......T.....................................T......\n.......S...................................S.......\n........R.................................R........\n.........Q...............................Q.........\n..........P.............................P..........\n...........O...........................O...........\n............N.........................N............\n.............M.......................M.............\n..............L.....................L..............\n...............K...................K...............\n................J.................J................\n.................I...............I.................\n..................H.............H..................\n...................G...........G...................\n....................F.........F....................\n.....................E.......E.....................\n......................D.....D......................\n.......................C...C.......................\n........................B.B........................\n.........................A........................."
+    hidden: true
+  - input: "F"
+    expected: ".....A.....\n....B.B....\n...C...C...\n..D.....D..\n.E.......E.\nF.........F\n.E.......E.\n..D.....D..\n...C...C...\n....B.B....\n.....A....."
+    hidden: true
+---
+
+The diamond kata takes as its input a letter, and outputs it in a diamond shape.
+Given a letter, it prints a diamond starting with 'A', with the supplied letter at the widest point.
+
+## Requirements
+
+- The first row contains one 'A'.
+- The last row contains one 'A'.
+- All rows, except the first and last, have exactly two identical letters.
+- All rows have as many trailing spaces as leading spaces. (This might be 0).
+- The diamond is horizontally symmetric.
+- The diamond is vertically symmetric.
+- The diamond has a square shape (width equals height).
+- The letters form a diamond shape.
+- The top half has the letters in ascending order.
+- The bottom half has the letters in descending order.
+- The four corners (containing the spaces) are triangles.
+
+## Examples
+
+In the following examples, spaces are indicated by `·` characters.
+
+Diamond for letter 'A':
+
+```text
+A
+```
+
+Diamond for letter 'C':
+
+```text
+··A··
+·B·B·
+C···C
+·B·B·
+··A··
+```
+
+Diamond for letter 'E':
+
+```text
+····A····
+···B·B···
+··C···C··
+·D·····D·
+E·······E
+·D·····D·
+··C···C··
+···B·B···
+····A····
+```
+
+## Input
+
+A single upper-case letter.
+
+## Output
+
+Print the diamond, one row per line: `A` at the top and bottom, the given letter in the middle, each row holding two copies of its letter (one for `A`) with the rest filled with spaces. In this puzzle spaces are written as `.` on input and output so they survive copy-and-paste; the starter code converts them for you, so your function works with real spaces.
+
+*Adapted from the [Diamond](https://github.com/exercism/problem-specifications/tree/main/exercises/diamond) exercise on Exercism (MIT License). Original source: Seb Rose (https://web.archive.org/web/20220807163751/http://claysnow.co.uk/recycling-tests-in-tdd/).*

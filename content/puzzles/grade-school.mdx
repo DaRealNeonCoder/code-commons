@@ -1,0 +1,85 @@
+---
+title: "Grade School"
+order: 18
+available: true
+areas: []
+topics: ["hash-maps", "sorting"]
+tags: ["roster"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def school_roster(students, grade=None):
+      # students is a list of (name, grade) pairs; a student already added is ignored
+      # TODO: return the names sorted by grade and then by name, or only the given grade's names (sorted) if grade is given
+      pass
+
+  n = int(input())
+  students = []
+  for _ in range(n):
+      name, grade = input().split()
+      students.append((name, int(grade)))
+  query = input().split()
+  grade = int(query[1]) if len(query) == 2 else None
+  print(*school_roster(students, grade))
+testCases:
+  - input: "0\nroster"
+    expected: ""
+    hidden: true
+  - input: "1\nAimee 2\nroster"
+    expected: "Aimee"
+    hidden: true
+  - input: "3\nBlair 2\nJames 2\nPaul 2\nroster"
+    expected: "Blair James Paul"
+    hidden: true
+  - input: "2\nChelsea 3\nLogan 7\nroster"
+    expected: "Chelsea Logan"
+    hidden: true
+  - input: "3\nJim 3\nPeter 2\nAnna 1\nroster"
+    expected: "Anna Peter Jim"
+    hidden: true
+  - input: "3\nPeter 2\nZoe 2\nAlex 2\nroster"
+    expected: "Alex Peter Zoe"
+    hidden: true
+  - input: "7\nPeter 2\nAnna 1\nBarb 1\nZoe 2\nAlex 2\nJim 3\nCharlie 1\nroster"
+    expected: "Anna Barb Charlie Alex Peter Zoe Jim"
+    hidden: true
+  - input: "0\ngrade 1"
+    expected: ""
+    hidden: true
+  - input: "4\nPeter 2\nZoe 2\nAlex 2\nJim 3\ngrade 1"
+    expected: ""
+    hidden: true
+  - input: "3\nFranklin 5\nBradley 5\nJeff 1\ngrade 5"
+    expected: "Bradley Franklin"
+    hidden: true
+---
+
+Given students' names along with the grade they are in, create a roster for the school.
+
+In the end, you should be able to:
+
+- Add a student's name to the roster for a grade:
+  - "Add Jim to grade 2."
+  - "OK."
+- Get a list of all students enrolled in a grade:
+  - "Which students are in grade 2?"
+  - "We've only got Jim right now."
+- Get a sorted list of all students in all grades.
+  Grades should be sorted as 1, 2, 3, etc., and students within a grade should be sorted alphabetically by name.
+  - "Who is enrolled in school right now?"
+  - "Let me think.
+    We have Anna, Barb, and Charlie in grade 1, Alex, Peter, and Zoe in grade 2, and Jim in grade 5.
+    So the answer is: Anna, Barb, Charlie, Alex, Peter, Zoe, and Jim."
+
+Note that all our students only have one name (it's a small town, what do you want?), and each student cannot be added more than once to a grade or the roster.
+In this puzzle a student is never listed twice.
+
+## Input
+
+The first line is the number of students. Each of the next lines has a student's name and grade. The last line is either `roster` (everyone) or `grade <n>` (only that grade).
+
+## Output
+
+Print the names separated by spaces: for `roster`, sorted by grade and then by name; for `grade <n>`, sorted by name. Print an empty line if there are none.
+
+*Adapted from the [Grade School](https://github.com/exercism/problem-specifications/tree/main/exercises/grade-school) exercise on Exercism (MIT License). Original source: A pairing session with Phil Battos at gSchool.*

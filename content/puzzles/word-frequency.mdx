@@ -1,0 +1,46 @@
+---
+title: "Word Frequency"
+order: 1
+available: true
+areas: ["programming-fundamentals"]
+topics: ["dictionaries"]
+tags: ["counting", "get", "items"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  text = input()
+
+  # TODO: count how many times each word appears (ignore capitalization)
+  # Print one line per word, in the order each word FIRST appears:
+  # word: count
+testCases:
+  - input: "the cat and the hat"
+    expected: "the: 2\ncat: 1\nand: 1\nhat: 1"
+    hidden: false
+  - input: "a a a"
+    expected: "a: 3"
+    hidden: true
+  - input: "Red red RED blue"
+    expected: "red: 3\nblue: 1"
+    hidden: true
+  - input: "one"
+    expected: "one: 1"
+    hidden: true
+  - input: "to be or not to be"
+    expected: "to: 2\nbe: 2\nor: 1\nnot: 1"
+    hidden: true
+---
+
+The starter code reads a line of text. Count how many times each word appears, ignoring capitalization, and print one line per word in the format `word: count`. List the words in the order they **first** appear.
+
+For the input `the cat and the hat`, a correct solution prints:
+
+```
+the: 2
+cat: 1
+and: 1
+hat: 1
+```
+
+> [!TIP]
+> Lowercase the text, use `.split()` to get the words, then use `counts.get(word, 0) + 1` to update the dictionary. Dictionaries keep the order that keys were added in.

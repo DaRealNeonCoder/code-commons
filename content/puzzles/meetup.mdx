@@ -1,0 +1,211 @@
+---
+title: "Meetup"
+order: 74
+available: true
+areas: []
+topics: ["date-time"]
+tags: ["calendar"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def meetup_date(year, month, week, weekday):
+      # week is "first", "second", "third", "fourth", "fifth", "last" or "teenth"; weekday is e.g. "Monday"
+      # TODO: return the date as "YYYY-MM-DD", or None if that day does not exist
+      pass
+
+  year, month, week, weekday = input().split()
+  result = meetup_date(int(year), int(month), week, weekday)
+  print("none" if result is None else result)
+testCases:
+  - input: "2013 5 teenth Monday"
+    expected: "2013-05-13"
+    hidden: true
+  - input: "2013 3 teenth Tuesday"
+    expected: "2013-03-19"
+    hidden: true
+  - input: "2013 1 teenth Wednesday"
+    expected: "2013-01-16"
+    hidden: true
+  - input: "2013 6 teenth Wednesday"
+    expected: "2013-06-19"
+    hidden: true
+  - input: "2013 9 teenth Thursday"
+    expected: "2013-09-19"
+    hidden: true
+  - input: "2013 9 teenth Friday"
+    expected: "2013-09-13"
+    hidden: true
+  - input: "2013 10 teenth Saturday"
+    expected: "2013-10-19"
+    hidden: true
+  - input: "2013 6 teenth Sunday"
+    expected: "2013-06-16"
+    hidden: true
+  - input: "2013 4 first Monday"
+    expected: "2013-04-01"
+    hidden: true
+  - input: "2013 7 first Wednesday"
+    expected: "2013-07-03"
+    hidden: true
+  - input: "2013 10 first Thursday"
+    expected: "2013-10-03"
+    hidden: true
+  - input: "2013 12 first Friday"
+    expected: "2013-12-06"
+    hidden: true
+  - input: "2013 3 first Sunday"
+    expected: "2013-03-03"
+    hidden: true
+  - input: "2013 4 second Monday"
+    expected: "2013-04-08"
+    hidden: true
+  - input: "2013 7 second Wednesday"
+    expected: "2013-07-10"
+    hidden: true
+  - input: "2013 9 second Thursday"
+    expected: "2013-09-12"
+    hidden: true
+  - input: "2013 12 second Friday"
+    expected: "2013-12-13"
+    hidden: true
+  - input: "2013 3 second Sunday"
+    expected: "2013-03-10"
+    hidden: true
+  - input: "2013 4 third Monday"
+    expected: "2013-04-15"
+    hidden: true
+  - input: "2013 7 third Wednesday"
+    expected: "2013-07-17"
+    hidden: true
+  - input: "2013 9 third Thursday"
+    expected: "2013-09-19"
+    hidden: true
+  - input: "2013 12 third Friday"
+    expected: "2013-12-20"
+    hidden: true
+  - input: "2013 3 third Sunday"
+    expected: "2013-03-17"
+    hidden: true
+  - input: "2013 4 fourth Monday"
+    expected: "2013-04-22"
+    hidden: true
+  - input: "2013 6 fourth Tuesday"
+    expected: "2013-06-25"
+    hidden: true
+  - input: "2013 9 fourth Thursday"
+    expected: "2013-09-26"
+    hidden: true
+  - input: "2013 12 fourth Friday"
+    expected: "2013-12-27"
+    hidden: true
+  - input: "2013 3 fourth Sunday"
+    expected: "2013-03-24"
+    hidden: true
+  - input: "2013 3 last Monday"
+    expected: "2013-03-25"
+    hidden: true
+  - input: "2013 6 last Tuesday"
+    expected: "2013-06-25"
+    hidden: true
+  - input: "2013 9 last Thursday"
+    expected: "2013-09-26"
+    hidden: true
+  - input: "2013 12 last Friday"
+    expected: "2013-12-27"
+    hidden: true
+  - input: "2013 2 last Saturday"
+    expected: "2013-02-23"
+    hidden: true
+  - input: "2012 2 last Wednesday"
+    expected: "2012-02-29"
+    hidden: true
+  - input: "2012 12 first Friday"
+    expected: "2012-12-07"
+    hidden: true
+  - input: "2024 2 last Thursday"
+    expected: "2024-02-29"
+    hidden: true
+  - input: "2023 2 fifth Monday"
+    expected: "none"
+    hidden: true
+  - input: "2000 1 teenth Saturday"
+    expected: "2000-01-15"
+    hidden: true
+  - input: "2021 12 first Friday"
+    expected: "2021-12-03"
+    hidden: true
+  - input: "2016 2 fifth Monday"
+    expected: "2016-02-29"
+    hidden: true
+---
+
+Every month, your partner meets up with their best friend.
+Both of them have very busy schedules, making it challenging to find a suitable date!
+Given your own busy schedule, your partner always double-checks potential meetup dates with you:
+
+- "Can I meet up on the first Friday of next month?"
+- "What about the third Wednesday?"
+- "Maybe the last Sunday?"
+
+In this month's call, your partner asked you this question:
+
+- "I'd like to meet up on the teenth Thursday; is that okay?"
+
+Confused, you ask what a "teenth" day is.
+Your partner explains that a teenth day, a concept they made up, refers to the days in a month that end in '-teenth':
+
+- 13th (thirteenth)
+- 14th (fourteenth)
+- 15th (fifteenth)
+- 16th (sixteenth)
+- 17th (seventeenth)
+- 18th (eighteenth)
+- 19th (nineteenth)
+
+As there are also seven weekdays, it is guaranteed that each day of the week has _exactly one_ teenth day each month.
+
+Now that you understand the concept of a teenth day, you check your calendar.
+You don't have anything planned on the teenth Thursday, so you happily confirm the date with your partner.
+
+Your task is to find the exact date of a meetup, given a month, year, weekday and week.
+
+There are six week values to consider: `first`, `second`, `third`, `fourth`, `last`, `teenth`.
+
+For example, you might be asked to find the date for the meetup on the first Monday in January 2018 (January 1, 2018).
+
+Similarly, you might be asked to find:
+
+- the third Tuesday of August 2019 (August 20, 2019)
+- the teenth Wednesday of May 2020 (May 13, 2020)
+- the fourth Sunday of July 2021 (July 25, 2021)
+- the last Thursday of November 2022 (November 24, 2022)
+- the teenth Saturday of August 1953 (August 15, 1953)
+
+## Teenth
+
+The teenth week refers to the seven days in a month that end in '-teenth' (13th, 14th, 15th, 16th, 17th, 18th and 19th).
+
+If asked to find the teenth Saturday of August, 1953, we check its calendar:
+
+```plaintext
+    August 1953
+Su Mo Tu We Th Fr Sa
+                   1
+ 2  3  4  5  6  7  8
+ 9 10 11 12 13 14 15
+16 17 18 19 20 21 22
+23 24 25 26 27 28 29
+30 31
+```
+
+From this we find that the teenth Saturday is August 15, 1953.
+
+## Input
+
+One line: the year, the month (1-12), the week (`first`, `second`, `third`, `fourth`, `fifth`, `last` or `teenth`) and the weekday name.
+
+## Output
+
+Print the date as `YYYY-MM-DD`. Print `none` if that day does not exist (for example a fifth Monday in a month that has only four). The teenth day is the one falling between the 13th and 19th.
+
+*Adapted from the [Meetup](https://github.com/exercism/problem-specifications/tree/main/exercises/meetup) exercise on Exercism (MIT License). Original source: Jeremy Hinegardner mentioned a Boulder meetup that happens on the Wednesteenth of every month.*

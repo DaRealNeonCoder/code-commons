@@ -1,0 +1,43 @@
+---
+title: "Same Characters"
+order: 23
+available: true
+areas: []
+topics: ["strings", "hash-tables"]
+tags: ["hash-set"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def same_chars(a, b):
+      # TODO: True if both words are made of exactly the same set of characters
+      pass
+
+  a = input()
+  b = input()
+  print("true" if same_chars(a, b) else "false")
+testCases:
+  - input: "eabcdzzzz\ndddzzzzzzzddeddabc"
+    expected: "true"
+    hidden: false
+  - input: "abcd\ndddddddabc"
+    expected: "true"
+    hidden: true
+  - input: "dddddddabc\nabcd"
+    expected: "true"
+    hidden: true
+  - input: "eabcd\ndddddddabc"
+    expected: "false"
+    hidden: true
+  - input: "abcd\ndddddddabce"
+    expected: "false"
+    hidden: true
+  - input: "eabcdzzzz\ndddzzzzzzzddddabc"
+    expected: "false"
+    hidden: true
+---
+
+Write a function `same_chars(a, b)` that checks whether two words are built from the **same set of characters**. How many times each character appears doesn't matter, only which characters appear.
+
+For example, `"abcd"` and `"dddddddabc"` both use exactly `a`, `b`, `c` and `d`, so the answer is `True`. But `"abcd"` and `"dddddddabce"` are different because the second one also contains `e`.
+
+The starter code reads the two words on separate lines.

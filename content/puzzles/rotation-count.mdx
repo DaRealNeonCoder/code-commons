@@ -1,0 +1,45 @@
+---
+title: "Rotation Count"
+order: 36
+available: true
+areas: []
+topics: ["searching", "arrays"]
+tags: ["binary-search", "rotated-array"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def rotation_count(numbers):
+      # TODO: how many positions was the sorted list rotated to the right?
+      pass
+
+  numbers = list(map(int, input().split()))
+  print(rotation_count(numbers))
+testCases:
+  - input: "15 18 2 3 6 12"
+    expected: "2"
+    hidden: false
+  - input: "7 9 11 12 5"
+    expected: "4"
+    hidden: true
+  - input: "7 9 11 12 15"
+    expected: "0"
+    hidden: true
+  - input: "2 1"
+    expected: "1"
+    hidden: true
+  - input: "3 4 5 1 2"
+    expected: "3"
+    hidden: true
+  - input: "1"
+    expected: "0"
+    hidden: true
+---
+
+A list of **distinct** integers was originally sorted in ascending order, then rotated: some number of elements were moved from the end to the front. For example, rotating `[2, 3, 6, 12, 15, 18]` right by 2 gives `[15, 18, 2, 3, 6, 12]`.
+
+Write a function `rotation_count(numbers)` that returns how many positions the list was rotated. A list that is still fully sorted has a rotation count of `0`.
+
+> [!TIP]
+> The rotation count equals the index of the smallest element. Binary search can find it by comparing the middle element to the last one.
+
+The starter code reads one line of integers.

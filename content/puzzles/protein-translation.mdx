@@ -1,0 +1,161 @@
+---
+title: "Protein Translation"
+order: 79
+available: true
+areas: []
+topics: ["strings", "hash-maps"]
+tags: ["codon-translation"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def translate_strand(strand):
+      # TODO: return the list of proteins, or None if the strand contains an invalid codon
+      pass
+
+  strand = input()
+  result = translate_strand(strand)
+  print("error" if result is None else " ".join(result))
+testCases:
+  - input: "AUG"
+    expected: "Methionine"
+    hidden: true
+  - input: "UUU"
+    expected: "Phenylalanine"
+    hidden: true
+  - input: "UUC"
+    expected: "Phenylalanine"
+    hidden: true
+  - input: "UUA"
+    expected: "Leucine"
+    hidden: true
+  - input: "UUG"
+    expected: "Leucine"
+    hidden: true
+  - input: "UCU"
+    expected: "Serine"
+    hidden: true
+  - input: "UCC"
+    expected: "Serine"
+    hidden: true
+  - input: "UCA"
+    expected: "Serine"
+    hidden: true
+  - input: "UCG"
+    expected: "Serine"
+    hidden: true
+  - input: "UAU"
+    expected: "Tyrosine"
+    hidden: true
+  - input: "UAC"
+    expected: "Tyrosine"
+    hidden: true
+  - input: "UGU"
+    expected: "Cysteine"
+    hidden: true
+  - input: "UGC"
+    expected: "Cysteine"
+    hidden: true
+  - input: "UGG"
+    expected: "Tryptophan"
+    hidden: true
+  - input: "UAA"
+    expected: ""
+    hidden: true
+  - input: "UAG"
+    expected: ""
+    hidden: true
+  - input: "UGA"
+    expected: ""
+    hidden: true
+  - input: "UUUUUU"
+    expected: "Phenylalanine Phenylalanine"
+    hidden: true
+  - input: "UUAUUG"
+    expected: "Leucine Leucine"
+    hidden: true
+  - input: "AUGUUUUGG"
+    expected: "Methionine Phenylalanine Tryptophan"
+    hidden: true
+  - input: "UAGUGG"
+    expected: ""
+    hidden: true
+  - input: "UGGUAG"
+    expected: "Tryptophan"
+    hidden: true
+  - input: "AUGUUUUAA"
+    expected: "Methionine Phenylalanine"
+    hidden: true
+  - input: "UGGUAGUGG"
+    expected: "Tryptophan"
+    hidden: true
+  - input: "UGGUGUUAUUAAUGGUUU"
+    expected: "Tryptophan Cysteine Tyrosine"
+    hidden: true
+  - input: "AUGAUG"
+    expected: "Methionine Methionine"
+    hidden: true
+  - input: "AUGUUUUCU"
+    expected: "Methionine Phenylalanine Serine"
+    hidden: true
+  - input: "UUUUUA"
+    expected: "Phenylalanine Leucine"
+    hidden: true
+  - input: "AUGXYZ"
+    expected: "error"
+    hidden: true
+  - input: "UAAAUG"
+    expected: ""
+    hidden: true
+  - input: "AUGUUUUC"
+    expected: "error"
+    hidden: true
+---
+
+Your job is to translate RNA sequences into proteins.
+
+RNA strands are made up of three-nucleotide sequences called **codons**.
+Each codon translates to an **amino acid**.
+When joined together, those amino acids make a protein.
+
+In the real world, there are 64 codons, which in turn correspond to 20 amino acids.
+However, for this exercise, you’ll only use a few of the possible 64.
+They are listed below:
+
+| Codon              | Amino Acid    |
+| ------------------ | ------------- |
+| AUG                | Methionine    |
+| UUU, UUC           | Phenylalanine |
+| UUA, UUG           | Leucine       |
+| UCU, UCC, UCA, UCG | Serine        |
+| UAU, UAC           | Tyrosine      |
+| UGU, UGC           | Cysteine      |
+| UGG                | Tryptophan    |
+| UAA, UAG, UGA      | STOP          |
+
+For example, the RNA string “AUGUUUUCU” has three codons: “AUG”, “UUU” and “UCU”.
+These map to Methionine, Phenylalanine, and Serine.
+
+## “STOP” Codons
+
+You’ll note from the table above that there are three **“STOP” codons**.
+If you encounter any of these codons, ignore the rest of the sequence — the protein is complete.
+
+For example, “AUGUUUUCUUAAAUG” contains a STOP codon (“UAA”).
+Once we reach that point, we stop processing.
+We therefore only consider the part before it (i.e. “AUGUUUUCU”), not any further codons after it (i.e. “AUG”).
+
+Learn more about [protein translation on Wikipedia][protein-translation].
+
+[protein-translation]: https://en.wikipedia.org/wiki/Translation_(biology)
+
+## Input
+
+A single line containing an RNA strand.
+
+## Output
+
+Print the proteins in order, separated by spaces, stopping at the first STOP codon. Print `error` if a codon is invalid or incomplete before the strand ends or a STOP is reached.
+
+Codons: AUG Methionine; UUU, UUC Phenylalanine; UUA, UUG Leucine; UCU, UCC, UCA, UCG Serine; UAU, UAC Tyrosine; UGU, UGC Cysteine; UGG Tryptophan; UAA, UAG, UGA STOP.
+
+*Adapted from the [Protein Translation](https://github.com/exercism/problem-specifications/tree/main/exercises/protein-translation) exercise on Exercism (MIT License). Original source: Tyler Long.*

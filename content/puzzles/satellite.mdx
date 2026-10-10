@@ -1,0 +1,102 @@
+---
+title: "Satellite"
+order: 85
+available: true
+areas: []
+topics: ["trees", "recursion"]
+tags: ["tree-reconstruction"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def postorder_from_traversals(preorder, inorder):
+      # TODO: rebuild the binary tree from its two traversals and return its post-order traversal as a list,
+      # or None if the traversals are inconsistent (different length, different letters, or repeated letters)
+      pass
+
+  _, *preorder = input().split()
+  _, *inorder = input().split()
+  result = postorder_from_traversals(preorder, inorder)
+  print("error" if result is None else " ".join(result))
+testCases:
+  - input: "0\n0"
+    expected: ""
+    hidden: true
+  - input: "1 a\n1 a"
+    expected: "a"
+    hidden: true
+  - input: "5 a i x f r\n5 i a f x r"
+    expected: "i f r x a"
+    hidden: true
+  - input: "2 a b\n3 b a r"
+    expected: "error"
+    hidden: true
+  - input: "3 x y z\n3 a b c"
+    expected: "error"
+    hidden: true
+  - input: "3 a b a\n3 b a a"
+    expected: "error"
+    hidden: true
+  - input: "4 a b c d\n4 d c b a"
+    expected: "d c b a"
+    hidden: true
+  - input: "4 a b c d\n4 a b c d"
+    expected: "d c b a"
+    hidden: true
+  - input: "9 a b d g h c e f i\n9 g d h b a e c i f"
+    expected: "g h d b e i f c a"
+    hidden: true
+  - input: "7 a b d e c f g\n7 d b e a f c g"
+    expected: "d e b f g c a"
+    hidden: true
+  - input: "3 x y z\n3 z y x"
+    expected: "z y x"
+    hidden: true
+  - input: "2 a b\n2 b a"
+    expected: "b a"
+    hidden: true
+  - input: "3 a b c\n3 a b d"
+    expected: "error"
+    hidden: true
+  - input: "3 a a b\n3 a b a"
+    expected: "error"
+    hidden: true
+  - input: "5 a b c d e\n5 e d c b a"
+    expected: "e d c b a"
+    hidden: true
+---
+
+Imagine you need to transmit a binary tree to a satellite approaching Alpha Centauri and you have limited bandwidth.
+Since the tree has no repeating items it can be uniquely represented by its [pre-order and in-order traversals][wiki].
+
+Write the software for the satellite to rebuild the tree from the traversals.
+
+A pre-order traversal reads the value of the current node before (hence "pre") reading the left subtree in pre-order.
+Afterwards the right subtree is read in pre-order.
+
+An in-order traversal reads the left subtree in-order then the current node and finally the right subtree in-order.
+So in order from left to right.
+
+For example the pre-order traversal of this tree is [a, i, x, f, r].
+The in-order traversal of this tree is [i, a, f, x, r]
+
+```text
+  a
+ / \
+i   x
+   / \
+  f   r
+```
+
+Note: the first item in the pre-order traversal is always the root.
+
+[wiki]: https://en.wikipedia.org/wiki/Tree_traversal
+
+## Input
+
+Two lines: the pre-order traversal and the in-order traversal of a binary tree. Each line starts with the number of nodes, followed by the node labels.
+
+## Output
+
+Rebuild the tree, then print its **post-order** traversal (left subtree, right subtree, node) with labels separated by spaces. Print `error` if the traversals have different lengths, contain different labels, or contain a repeated label. An empty tree prints an empty line.
+
+*Adapted from the [Satellite](https://github.com/exercism/problem-specifications/tree/main/exercises/satellite) exercise on Exercism (MIT License).*

@@ -1,0 +1,45 @@
+---
+title: "Largest Prime Factor"
+order: 29
+available: true
+areas: []
+topics: ["math"]
+tags: ["prime-factorization"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def largest_prime_factor(n):
+      # TODO: return the largest prime that divides n
+      pass
+
+  n = int(input())
+  print(largest_prime_factor(n))
+testCases:
+  - input: "13195"
+    expected: "29"
+    hidden: false
+  - input: "2048"
+    expected: "2"
+    hidden: true
+  - input: "10"
+    expected: "5"
+    hidden: true
+  - input: "49"
+    expected: "7"
+    hidden: true
+  - input: "97"
+    expected: "97"
+    hidden: true
+  - input: "600851475143"
+    expected: "6857"
+    hidden: true
+---
+
+Write a function `largest_prime_factor(n)` that returns the largest **prime** number that divides `n` evenly. Assume `n >= 2`. If `n` is itself prime, the answer is `n`.
+
+For example, `largest_prime_factor(13195)` is `29` (since `13195 = 5 x 7 x 13 x 29`).
+
+> [!TIP]
+> Divide out each small factor completely as you find it. By the time you pass the square root of what's left, the remainder is your answer. This also keeps big inputs like `600851475143` fast.
+
+The starter code reads `n` and prints the result.

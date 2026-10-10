@@ -1,0 +1,47 @@
+---
+title: "Tribonacci Numbers"
+order: 31
+available: true
+areas: []
+topics: ["dynamic-programming"]
+tags: ["fibonacci"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def tribonacci(n):
+      # TODO: return the nth number of the sequence
+      pass
+
+  n = int(input())
+  print(tribonacci(n))
+testCases:
+  - input: "1"
+    expected: "0"
+    hidden: false
+  - input: "5"
+    expected: "4"
+    hidden: true
+  - input: "8"
+    expected: "24"
+    hidden: true
+  - input: "12"
+    expected: "274"
+    hidden: true
+  - input: "20"
+    expected: "35890"
+    hidden: true
+---
+
+The Tribonacci sequence is like Fibonacci, but each term is the sum of the **three** previous terms:
+
+- `tribonacci(0) = 0`
+- `tribonacci(1) = 0`
+- `tribonacci(2) = 1`
+- `tribonacci(n) = tribonacci(n-1) + tribonacci(n-2) + tribonacci(n-3)` for `n >= 3`
+
+Write a function `tribonacci(n)` that returns the nth term. The sequence begins `0, 0, 1, 1, 2, 4, 7, 13, 24, ...`.
+
+> [!TIP]
+> Plain recursion recalculates the same terms again and again and becomes very slow. Store results you've already computed, or build the sequence upwards from the start.
+
+The starter code reads `n` and prints the result.

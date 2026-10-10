@@ -1,0 +1,36 @@
+---
+title: "Flip Case"
+order: 18
+available: true
+areas: []
+topics: ["strings"]
+tags: []
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def flip_case(s):
+      # TODO: lowercase becomes uppercase and vice versa
+      pass
+
+  s = input()
+  print(flip_case(s))
+testCases:
+  - input: "Hello"
+    expected: "hELLO"
+    hidden: false
+  - input: "abc XYZ 123"
+    expected: "ABC xyz 123"
+    hidden: true
+  - input: "Python3"
+    expected: "pYTHON3"
+    hidden: true
+  - input: "a"
+    expected: "A"
+    hidden: true
+---
+
+Write a function `flip_case(s)` that turns every lowercase letter into uppercase and every uppercase letter into lowercase. Characters that aren't letters stay exactly as they are.
+
+For example, `"Hello"` becomes `"hELLO"`.
+
+The starter code reads one line of text and prints the result.

@@ -1,0 +1,135 @@
+---
+title: "Rectangles"
+order: 110
+available: true
+areas: []
+topics: ["matrices", "strings"]
+tags: ["counting-rectangles"]
+languages: []
+difficulty: "advanced"
+starterCode: |
+  def count_rectangles(rows):
+      # rows is a list of strings drawn with "+", "-", "|" and " "
+      # TODO: return how many rectangles can be traced along the drawn lines, corner to corner on "+"
+      pass
+
+  n = int(input())
+  rows = [input().replace(".", " ") for _ in range(n)]
+  print(count_rectangles(rows))
+testCases:
+  - input: "0"
+    expected: "0"
+    hidden: true
+  - input: "1\n."
+    expected: "0"
+    hidden: true
+  - input: "3\n+-+\n|.|\n+-+"
+    expected: "1"
+    hidden: true
+  - input: "5\n..+-+\n..|.|\n+-+-+\n|.|..\n+-+.."
+    expected: "2"
+    hidden: true
+  - input: "5\n..+-+\n..|.|\n+-+-+\n|.|.|\n+-+-+"
+    expected: "5"
+    hidden: true
+  - input: "2\n+--+\n+--+"
+    expected: "1"
+    hidden: true
+  - input: "3\n++\n||\n++"
+    expected: "1"
+    hidden: true
+  - input: "2\n++\n++"
+    expected: "1"
+    hidden: true
+  - input: "5\n..+-+\n....|\n+-+-+\n|.|.-\n+-+-+"
+    expected: "1"
+    hidden: true
+  - input: "5\n+------+----+\n|......|....|\n+---+--+....|\n|...|.......|\n+---+-------+"
+    expected: "3"
+    hidden: true
+  - input: "5\n+------+----+\n|......|....|\n+------+....|\n|...|.......|\n+---+-------+"
+    expected: "2"
+    hidden: true
+  - input: "8\n+---+--+----+\n|...+--+----+\n+---+--+....|\n|...+--+----+\n+---+--+--+-+\n+---+--+--+-+\n+------+..|.|\n..........+-+"
+    expected: "60"
+    hidden: true
+  - input: "7\n+-+.+-+\n|.|.|.|\n+-+-+-+\n..|.|..\n+-+-+-+\n|.|.|.|\n+-+.+-+"
+    expected: "5"
+    hidden: true
+  - input: "5\n+--+\n|..|\n+--+\n|..|\n+--+"
+    expected: "3"
+    hidden: true
+  - input: "3\n+-+.+-+\n|.|.|.|\n+-+.+-+"
+    expected: "2"
+    hidden: true
+  - input: "5\n+-+-+\n|.|.|\n+-+-+\n|.|.|\n+-+-+"
+    expected: "9"
+    hidden: true
+---
+
+Count the rectangles in an ASCII diagram like the one below.
+
+```text
+   +--+
+  ++  |
++-++--+
+|  |  |
++--+--+
+```
+
+The above diagram contains these 6 rectangles:
+
+```text
+
++-----+
+|     |
++-----+
+```
+
+```text
+   +--+
+   |  |
+   |  |
+   |  |
+   +--+
+```
+
+```text
+   +--+
+   |  |
+   +--+
+
+```
+
+```text
+
+   +--+
+   |  |
+   +--+
+```
+
+```text
+
++--+
+|  |
++--+
+```
+
+```text
+
+  ++
+  ++
+
+```
+
+You may assume that the input is always a proper rectangle (i.e. the length of every line equals the length of the first line).
+
+## Input
+
+The first line is the number of rows. Each following line is one row of an ASCII diagram made of `+`, `-`, `|` and `.` (a space).
+
+## Output
+
+Print the number of rectangles in the diagram. A rectangle has `+` in all four corners, horizontal sides made only of `-` or `+`, and vertical sides made only of `|` or `+`. In this puzzle spaces are written as `.` on input and output so they survive copy-and-paste; the starter code converts them for you, so your function works with real spaces.
+
+*Adapted from the [Rectangles](https://github.com/exercism/problem-specifications/tree/main/exercises/rectangles) exercise on Exercism (MIT License).*

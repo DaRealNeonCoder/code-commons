@@ -1,0 +1,122 @@
+---
+title: "Sublist"
+order: 91
+available: true
+areas: []
+topics: ["arrays"]
+tags: ["sublist"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def compare_lists(first, second):
+      # TODO: return "equal", "sublist", "superlist" or "unequal"
+      pass
+
+  _, *first = map(int, input().split())
+  _, *second = map(int, input().split())
+  print(compare_lists(first, second))
+testCases:
+  - input: "0\n0"
+    expected: "equal"
+    hidden: true
+  - input: "0\n3 1 2 3"
+    expected: "sublist"
+    hidden: true
+  - input: "3 1 2 3\n0"
+    expected: "superlist"
+    hidden: true
+  - input: "3 1 2 3\n3 1 2 3"
+    expected: "equal"
+    hidden: true
+  - input: "3 1 2 3\n3 2 3 4"
+    expected: "unequal"
+    hidden: true
+  - input: "3 1 2 5\n8 0 1 2 3 1 2 5 6"
+    expected: "sublist"
+    hidden: true
+  - input: "3 1 1 2\n7 0 1 1 1 2 1 2"
+    expected: "sublist"
+    hidden: true
+  - input: "3 0 1 2\n6 0 1 2 3 4 5"
+    expected: "sublist"
+    hidden: true
+  - input: "3 2 3 4\n6 0 1 2 3 4 5"
+    expected: "sublist"
+    hidden: true
+  - input: "3 3 4 5\n6 0 1 2 3 4 5"
+    expected: "sublist"
+    hidden: true
+  - input: "6 0 1 2 3 4 5\n3 0 1 2"
+    expected: "superlist"
+    hidden: true
+  - input: "6 0 1 2 3 4 5\n2 2 3"
+    expected: "superlist"
+    hidden: true
+  - input: "6 0 1 2 3 4 5\n3 3 4 5"
+    expected: "superlist"
+    hidden: true
+  - input: "2 1 3\n3 1 2 3"
+    expected: "unequal"
+    hidden: true
+  - input: "3 1 2 3\n2 1 3"
+    expected: "unequal"
+    hidden: true
+  - input: "2 1 2\n2 1 22"
+    expected: "unequal"
+    hidden: true
+  - input: "3 1 2 3\n3 3 2 1"
+    expected: "unequal"
+    hidden: true
+  - input: "3 1 0 1\n2 10 1"
+    expected: "unequal"
+    hidden: true
+  - input: "3 1 2 3\n5 1 2 3 4 5"
+    expected: "sublist"
+    hidden: true
+  - input: "2 1 2\n3 1 3 2"
+    expected: "unequal"
+    hidden: true
+  - input: "0\n1 1"
+    expected: "sublist"
+    hidden: true
+  - input: "3 1 1 2\n4 1 1 1 2"
+    expected: "sublist"
+    hidden: true
+  - input: "2 2 1\n4 1 2 1 2"
+    expected: "sublist"
+    hidden: true
+---
+
+Given any two lists `A` and `B`, determine if:
+
+- List `A` is equal to list `B`; or
+- List `A` contains list `B` (`A` is a superlist of `B`); or
+- List `A` is contained by list `B` (`A` is a sublist of `B`); or
+- None of the above is true, thus lists `A` and `B` are unequal
+
+Specifically, list `A` is equal to list `B` if both lists have the same values in the same order.
+List `A` is a superlist of `B` if `A` contains a contiguous sub-sequence of values equal to `B`.
+List `A` is a sublist of `B` if `B` contains a contiguous sub-sequence of values equal to `A`.
+
+Examples:
+
+- If `A = []` and `B = []` (both lists are empty), then `A` and `B` are equal
+- If `A = [1, 2, 3]` and `B = []`, then `A` is a superlist of `B`
+- If `A = []` and `B = [1, 2, 3]`, then `A` is a sublist of `B`
+- If `A = [1, 2, 3]` and `B = [1, 2, 3, 4, 5]`, then `A` is a sublist of `B`
+- If `A = [3, 4, 5]` and `B = [1, 2, 3, 4, 5]`, then `A` is a sublist of `B`
+- If `A = [3, 4]` and `B = [1, 2, 3, 4, 5]`, then `A` is a sublist of `B`
+- If `A = [1, 2, 3]` and `B = [1, 2, 3]`, then `A` and `B` are equal
+- If `A = [1, 2, 3, 4, 5]` and `B = [2, 3, 4]`, then `A` is a superlist of `B`
+- If `A = [1, 2, 4]` and `B = [1, 2, 3, 4, 5]`, then `A` and `B` are unequal
+- If `A = [1, 2, 3]` and `B = [1, 3, 2]`, then `A` and `B` are unequal
+
+## Input
+
+Two lines, one per list. Each line starts with the number of elements, followed by the elements.
+
+## Output
+
+Print `equal` if the lists are identical, `sublist` if the first appears as a contiguous run inside the second, `superlist` if the second appears inside the first, and `unequal` otherwise.
+
+*Adapted from the [Sublist](https://github.com/exercism/problem-specifications/tree/main/exercises/sublist) exercise on Exercism (MIT License).*

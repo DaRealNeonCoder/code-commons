@@ -1,0 +1,137 @@
+---
+title: "Swift Scheduling"
+order: 92
+available: true
+areas: []
+topics: ["date-time", "parsing"]
+tags: ["scheduling"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  from datetime import datetime, timedelta
+
+
+  def delivery_date_for(meeting_start, description):
+      # meeting_start is an ISO date-time string
+      # TODO: return the delivery date-time as an ISO string
+      pass
+
+  meeting_start = input()
+  description = input()
+  print(delivery_date_for(meeting_start, description))
+testCases:
+  - input: "2012-02-13T09:00:00\nNOW"
+    expected: "2012-02-13T11:00:00"
+    hidden: true
+  - input: "1999-06-03T09:45:00\nASAP"
+    expected: "1999-06-03T17:00:00"
+    hidden: true
+  - input: "2008-12-21T13:00:00\nASAP"
+    expected: "2008-12-22T13:00:00"
+    hidden: true
+  - input: "2008-12-21T14:50:00\nASAP"
+    expected: "2008-12-22T13:00:00"
+    hidden: true
+  - input: "2025-02-03T16:00:00\nEOW"
+    expected: "2025-02-07T17:00:00"
+    hidden: true
+  - input: "1997-04-29T10:50:00\nEOW"
+    expected: "1997-05-02T17:00:00"
+    hidden: true
+  - input: "2005-09-14T11:00:00\nEOW"
+    expected: "2005-09-16T17:00:00"
+    hidden: true
+  - input: "2011-05-19T08:30:00\nEOW"
+    expected: "2011-05-22T20:00:00"
+    hidden: true
+  - input: "2022-08-05T14:00:00\nEOW"
+    expected: "2022-08-07T20:00:00"
+    hidden: true
+  - input: "2008-02-25T10:30:00\nEOW"
+    expected: "2008-02-29T17:00:00"
+    hidden: true
+  - input: "2007-01-02T14:15:00\n2M"
+    expected: "2007-02-01T08:00:00"
+    hidden: true
+  - input: "2013-11-21T15:30:00\n11M"
+    expected: "2014-11-03T08:00:00"
+    hidden: true
+  - input: "2019-11-18T15:15:00\n4M"
+    expected: "2020-04-01T08:00:00"
+    hidden: true
+  - input: "2003-01-01T10:45:00\nQ1"
+    expected: "2003-03-31T08:00:00"
+    hidden: true
+  - input: "2001-04-09T09:00:00\nQ4"
+    expected: "2001-12-31T08:00:00"
+    hidden: true
+  - input: "2022-10-06T11:00:00\nQ3"
+    expected: "2023-09-29T08:00:00"
+    hidden: true
+  - input: "2019-06-15T09:50:00\nQ2"
+    expected: "2019-06-28T08:00:00"
+    hidden: true
+---
+
+This week, it is your turn to take notes in the department's planning meeting.
+In this meeting, your boss will set delivery dates for all open work items.
+Annoyingly, instead of specifying the _actual_ delivery dates, your boss will only _describe them_ in an abbreviated format.
+As many of your colleagues won't be familiar with this corporate lingo, you'll need to convert these delivery date descriptions to actual delivery dates.
+
+Your task is to convert delivery date descriptions to _actual_ delivery dates, based on when the meeting started.
+
+There are two types of delivery date descriptions:
+
+1. Fixed: a predefined set of words.
+2. Variable: words that have a variable component, but follow a predefined set of patterns.
+
+## Fixed delivery date descriptions
+
+There are three fixed delivery date descriptions:
+
+- `"NOW"`
+- `"ASAP"` (As Soon As Possible)
+- `"EOW"` (End Of Week)
+
+The following table shows how to translate them:
+
+| Description | Meeting start                 | Delivery date                       |
+| ----------- | ----------------------------- | ----------------------------------- |
+| `"NOW"`     | -                             | Two hours after the meeting started |
+| `"ASAP"`    | Before 13:00                  | Today at 17:00                      |
+| `"ASAP"`    | After or at 13:00             | Tomorrow at 13:00                   |
+| `"EOW"`     | Monday, Tuesday, or Wednesday | Friday at 17:00                     |
+| `"EOW"`     | Thursday or Friday            | Sunday at 20:00                     |
+
+## Variable delivery date descriptions
+
+There are two variable delivery date description patterns:
+
+- `"<N>M"` (N-th month)
+- `"Q<N>"` (N-th quarter)
+
+| Description | Meeting start             | Delivery date                                             |
+| ----------- | ------------------------- | --------------------------------------------------------- |
+| `"<N>M"`    | Before N-th month         | At 8:00 on the _first_ workday of this year's N-th month  |
+| `"<N>M"`    | After or in N-th month    | At 8:00 on the _first_ workday of next year's N-th month  |
+| `"Q<N>"`    | Before or in N-th quarter | At 8:00 on the _last_ workday of this year's N-th quarter |
+| `"Q<N>"`    | After N-th quarter        | At 8:00 on the _last_ workday of next year's N-th quarter |
+
+> [!NOTE]
+> A workday is a Monday, Tuesday, Wednesday, Thursday, or Friday.
+>
+> A year has four quarters, each with three months:
+> 1. January/February/March
+> 2. April/May/June
+> 3. July/August/September
+> 4. October/November/December.
+
+## Input
+
+The first line is the meeting start as an ISO date-time (`YYYY-MM-DDTHH:MM:SS`). The second line is the delivery description: `NOW`, `ASAP`, `EOW`, `<n>M` (n is a month number) or `Q<n>` (n is a quarter number).
+
+## Output
+
+Print the delivery date-time in the same ISO format.
+
+*Adapted from the [Swift Scheduling](https://github.com/exercism/problem-specifications/tree/main/exercises/swift-scheduling) exercise on Exercism (MIT License). Original source: Erik Schierboom (https://github.com/exercism/problem-specifications/pull/2536).*

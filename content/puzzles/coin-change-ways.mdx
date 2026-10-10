@@ -1,0 +1,43 @@
+---
+title: "Coin Change Ways"
+order: 42
+available: true
+areas: []
+topics: ["dynamic-programming"]
+tags: ["coin-change"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def count_ways(amount, coins):
+      # TODO: number of different combinations of coins that add up to amount
+      pass
+
+  amount = int(input())
+  coins = list(map(int, input().split()))
+  print(count_ways(amount, coins))
+testCases:
+  - input: "5\n1 2 5"
+    expected: "4"
+    hidden: false
+  - input: "3\n2"
+    expected: "0"
+    hidden: true
+  - input: "10\n10"
+    expected: "1"
+    hidden: true
+  - input: "4\n1 2 3"
+    expected: "4"
+    hidden: true
+  - input: "10\n2 5 3 6"
+    expected: "5"
+    hidden: true
+---
+
+You have an unlimited supply of each kind of coin. Write a function `count_ways(amount, coins)` that returns the number of **different combinations** of coins that add up exactly to `amount`.
+
+The order of coins doesn't matter: `1 + 2` and `2 + 1` are the same combination. For example, with coins `[1, 2, 5]` there are 4 ways to make `5`: `5`, `2+2+1`, `2+1+1+1` and `1+1+1+1+1`.
+
+> [!TIP]
+> Keep an array `ways[x]` for each amount `x`, starting with `ways[0] = 1`. Process one coin type at a time, and for each amount from the coin's value upwards add `ways[x - coin]`. Looping over coins on the outside is what prevents `1+2` and `2+1` from being counted twice.
+
+The starter code reads the amount on the first line and the coin values on the second.

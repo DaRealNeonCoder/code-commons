@@ -1,0 +1,42 @@
+---
+title: "Smallest Change to Palindrome"
+order: 27
+available: true
+areas: []
+topics: ["arrays"]
+tags: ["palindrome"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def smallest_change(numbers):
+      # TODO: minimum number of elements to change so the list reads the same both ways
+      pass
+
+  numbers = list(map(int, input().split()))
+  print(smallest_change(numbers))
+testCases:
+  - input: "1 2 3 5 4 7 9 6"
+    expected: "4"
+    hidden: false
+  - input: "1 2 3 4 3 2 2"
+    expected: "1"
+    hidden: true
+  - input: "1 2 3 2 1"
+    expected: "0"
+    hidden: true
+  - input: "3 1"
+    expected: "1"
+    hidden: true
+  - input: "1 2 3 4 5 6"
+    expected: "3"
+    hidden: true
+---
+
+A list is a **palindrome** if it reads the same forwards and backwards. In one change you can replace any single element with any other number.
+
+Write a function `smallest_change(numbers)` that returns the minimum number of changes needed to turn the list into a palindrome. For example, `[1, 2, 3, 4, 3, 2, 2]` needs just 1 change (make the last element a `1`).
+
+> [!TIP]
+> Compare the first element with the last, the second with the second-to-last, and so on. Each mismatched pair costs exactly one change.
+
+The starter code reads one line of integers and prints the count.

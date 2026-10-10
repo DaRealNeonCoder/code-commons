@@ -1,0 +1,42 @@
+---
+title: "Largest Divisor"
+order: 17
+available: true
+areas: []
+topics: ["math"]
+tags: []
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def largest_divisor(n):
+      # TODO: return the largest number smaller than n that divides n evenly
+      pass
+
+  n = int(input())
+  print(largest_divisor(n))
+testCases:
+  - input: "15"
+    expected: "5"
+    hidden: false
+  - input: "3"
+    expected: "1"
+    hidden: true
+  - input: "100"
+    expected: "50"
+    hidden: true
+  - input: "97"
+    expected: "1"
+    hidden: true
+  - input: "36"
+    expected: "18"
+    hidden: true
+---
+
+Write a function `largest_divisor(n)` that returns the largest number **smaller than `n`** that divides `n` evenly. Assume `n >= 2`.
+
+For example, `largest_divisor(15)` is `5`. For a prime number the answer is always `1`.
+
+> [!TIP]
+> Counting down from `n - 1` and stopping at the first number that divides `n` works. Can you think of a way to do it with fewer checks?
+
+The starter code reads `n` and prints the result.

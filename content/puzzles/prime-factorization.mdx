@@ -1,0 +1,42 @@
+---
+title: "Prime Factorization"
+order: 13
+available: true
+areas: []
+topics: ["math"]
+tags: ["prime-factorization"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def factorize(n):
+      # TODO: return the prime factors of n in ascending order
+      pass
+
+  n = int(input())
+  print(*factorize(n))
+testCases:
+  - input: "8"
+    expected: "2 2 2"
+    hidden: false
+  - input: "25"
+    expected: "5 5"
+    hidden: true
+  - input: "70"
+    expected: "2 5 7"
+    hidden: true
+  - input: "97"
+    expected: "97"
+    hidden: true
+  - input: "360"
+    expected: "2 2 2 3 3 5"
+    hidden: true
+---
+
+Write a function `factorize(n)` that returns the prime factors of an integer `n >= 2` as a list, from smallest to largest. Each factor appears as many times as it divides `n`.
+
+For example, `factorize(70)` returns `[2, 5, 7]`, and `factorize(8)` returns `[2, 2, 2]`. The product of the returned list always equals `n`.
+
+> [!TIP]
+> Divide out `2` as many times as you can, then try `3`, `4`, `5`, and so on. Composite candidates never divide evenly because their prime parts were already removed.
+
+The starter code reads `n` and prints the factors separated by spaces.

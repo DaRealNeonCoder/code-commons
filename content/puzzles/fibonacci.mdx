@@ -1,0 +1,43 @@
+---
+title: "Fibonacci Sequence"
+order: 3
+available: true
+areas: ["programming-fundamentals"]
+topics: ["functions", "dynamic-programming"]
+tags: ["fibonacci"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def fibonacci(n):
+      # TODO: return the nth Fibonacci number
+      pass
+
+  n = int(input())
+  print(fibonacci(n))
+testCases:
+  - input: "10"
+    expected: "55"
+    hidden: false
+  - input: "0"
+    expected: "0"
+    hidden: true
+  - input: "1"
+    expected: "1"
+    hidden: true
+  - input: "30"
+    expected: "832040"
+    hidden: true
+  - input: "2"
+    expected: "1"
+    hidden: true
+  - input: "20"
+    expected: "6765"
+    hidden: true
+---
+
+Write a function `fibonacci(n)` that returns the nth number in the Fibonacci sequence (0-indexed, with `fibonacci(0) == 0` and `fibonacci(1) == 1`). Every number after that is the sum of the two before it: 0, 1, 1, 2, 3, 5, 8, ...
+
+> [!TIP]
+> You can solve this recursively, but an iterative loop will be faster for large `n`.
+
+The starter code reads `n` from input and prints the result. For an input of `10`, a correct solution prints `55`. Press **Run** to try your code on the sample input, and **Submit** to check it against every test, including hidden ones.

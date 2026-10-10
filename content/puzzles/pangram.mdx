@@ -1,0 +1,88 @@
+---
+title: "Pangram"
+order: 30
+available: true
+areas: []
+topics: ["strings"]
+tags: ["pangram"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def is_pangram(sentence):
+      # TODO: return True if the sentence uses every letter of the alphabet at least once
+      pass
+
+  sentence = input()
+  print("true" if is_pangram(sentence) else "false")
+testCases:
+  - input: "abcdefghijklmnopqrstuvwxyz"
+    expected: "true"
+    hidden: true
+  - input: "the quick brown fox jumps over the lazy dog"
+    expected: "true"
+    hidden: true
+  - input: "a quick movement of the enemy will jeopardize five gunboats"
+    expected: "false"
+    hidden: true
+  - input: "five boxing wizards jump quickly at it"
+    expected: "false"
+    hidden: true
+  - input: "the_quick_brown_fox_jumps_over_the_lazy_dog"
+    expected: "true"
+    hidden: true
+  - input: "the 1 quick brown fox jumps over the 2 lazy dogs"
+    expected: "true"
+    hidden: true
+  - input: "7h3 qu1ck brown fox jumps ov3r 7h3 lazy dog"
+    expected: "false"
+    hidden: true
+  - input: "\"Five quacking Zephyrs jolt my wax bed.\""
+    expected: "true"
+    hidden: true
+  - input: "abcdefghijklm ABCDEFGHIJKLM"
+    expected: "false"
+    hidden: true
+  - input: "Pack my box with five dozen liquor jugs."
+    expected: "true"
+    hidden: true
+  - input: "How vexingly quick daft zebras jump!"
+    expected: "true"
+    hidden: true
+  - input: "Not a pangram at all"
+    expected: "false"
+    hidden: true
+  - input: "abcdefghijklmnopqrstuvwxy"
+    expected: "false"
+    hidden: true
+---
+
+You work for a company that sells fonts through their website.
+They'd like to show a different sentence each time someone views a font on their website.
+To give a comprehensive sense of the font, the random sentences should use **all** the letters in the English alphabet.
+
+They're running a competition to get suggestions for sentences that they can use.
+You're in charge of checking the submissions to see if they are valid.
+
+> [!NOTE]
+> Pangram comes from Greek, παν γράμμα, pan gramma, which means "every letter".
+>
+> The best known English pangram is:
+>
+> > The quick brown fox jumps over the lazy dog.
+
+Your task is to figure out if a sentence is a pangram.
+
+A pangram is a sentence using every letter of the alphabet at least once.
+It is case insensitive, so it doesn't matter if a letter is lower-case (e.g. `k`) or upper-case (e.g. `K`).
+
+For this exercise, a sentence is a pangram if it contains each of the 26 letters in the English alphabet.
+
+## Input
+
+A single line containing a sentence.
+
+## Output
+
+Print `true` if the sentence is a pangram (ignoring case), otherwise `false`.
+
+*Adapted from the [Pangram](https://github.com/exercism/problem-specifications/tree/main/exercises/pangram) exercise on Exercism (MIT License). Original source: Wikipedia (https://en.wikipedia.org/wiki/Pangram).*

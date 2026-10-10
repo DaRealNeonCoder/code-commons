@@ -1,0 +1,48 @@
+---
+title: "Happy String"
+order: 25
+available: true
+areas: []
+topics: ["strings"]
+tags: []
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def is_happy(s):
+      # TODO: length >= 3 and every 3 consecutive letters are all different
+      pass
+
+  s = input()
+  print("true" if is_happy(s) else "false")
+testCases:
+  - input: "a"
+    expected: "false"
+    hidden: false
+  - input: "aa"
+    expected: "false"
+    hidden: true
+  - input: "abcd"
+    expected: "true"
+    hidden: true
+  - input: "aabb"
+    expected: "false"
+    hidden: true
+  - input: "adb"
+    expected: "true"
+    hidden: true
+  - input: "xyy"
+    expected: "false"
+    hidden: true
+  - input: "abca"
+    expected: "true"
+    hidden: true
+  - input: "aba"
+    expected: "false"
+    hidden: true
+---
+
+A string is **happy** if it has at least 3 characters and every group of 3 consecutive characters are all different from each other.
+
+Write a function `is_happy(s)` that returns `True` for a happy string and `False` otherwise. For example, `"abcd"` is happy, `"aabb"` is not (the first three letters repeat `a`), and `"aba"` is not either (the first and third letters match).
+
+The starter code reads one string and prints `true` or `false`.

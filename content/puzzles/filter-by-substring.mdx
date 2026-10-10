@@ -1,0 +1,40 @@
+---
+title: "Filter by Substring"
+order: 19
+available: true
+areas: []
+topics: ["strings"]
+tags: ["substring-search"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def filter_by_substring(words, sub):
+      # TODO: keep only the words that contain sub
+      pass
+
+  words = input().split()
+  sub = input()
+  print(*filter_by_substring(words, sub))
+testCases:
+  - input: "abc bacd cde array\na"
+    expected: "abc bacd array"
+    hidden: false
+  - input: "grunt trumpet prune\nru"
+    expected: "grunt trumpet prune"
+    hidden: true
+  - input: "apple banana cherry\nan"
+    expected: "banana"
+    hidden: true
+  - input: "dog cat bird\ni"
+    expected: "bird"
+    hidden: true
+  - input: "xyz xxy yyx\nxy"
+    expected: "xyz xxy"
+    hidden: true
+---
+
+Write a function `filter_by_substring(words, sub)` that returns only the words that **contain** the string `sub` somewhere inside them. Keep the original order.
+
+For example, filtering `["abc", "bacd", "cde", "array"]` by `"a"` gives `["abc", "bacd", "array"]`.
+
+The starter code reads the words on the first line and the substring on the second. Every test has at least one matching word.

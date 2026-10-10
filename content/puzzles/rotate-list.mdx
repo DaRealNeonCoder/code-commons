@@ -1,0 +1,49 @@
+---
+title: "Rotate a List"
+order: 3
+available: true
+areas: ["programming-fundamentals"]
+topics: ["lists"]
+tags: ["slicing"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  numbers = [int(x) for x in input().split()]
+  k = int(input())
+
+  # TODO: rotate the list to the right by k positions
+  # (the last k items move to the front)
+  # Print the result on one line, separated by spaces
+testCases:
+  - input: "1 2 3 4 5\n2"
+    expected: "4 5 1 2 3"
+    hidden: false
+  - input: "1 2 3\n0"
+    expected: "1 2 3"
+    hidden: true
+  - input: "1 2 3\n3"
+    expected: "1 2 3"
+    hidden: true
+  - input: "1 2 3 4\n6"
+    expected: "3 4 1 2"
+    hidden: true
+  - input: "7\n5"
+    expected: "7"
+    hidden: true
+  - input: "10 20 30 40 50\n1"
+    expected: "50 10 20 30 40"
+    hidden: true
+---
+
+The starter code reads a list of integers and a number `k`. Rotate the list to the **right** by `k` positions, so the last `k` items move to the front, and print the result on one line separated by spaces.
+
+For the input `1 2 3 4 5` and `k = 2`, a correct solution prints:
+
+```
+4 5 1 2 3
+```
+
+Note that `k` can be larger than the length of the list. Rotating by the full length gives you the same list back.
+
+> [!TIP]
+> Slicing does most of the work: take the last `k` items, then everything before them. For big `k`, the `%` operator can shrink it to a rotation that does the same thing.

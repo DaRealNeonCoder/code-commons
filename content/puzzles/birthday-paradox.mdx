@@ -1,0 +1,107 @@
+---
+title: "Birthday Paradox"
+order: 115
+available: true
+areas: []
+topics: ["math", "date-time"]
+tags: ["birthday-paradox", "probability"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def birthday_paradox(mode, items):
+      # mode "shared": items are birthdates "YYYY-MM-DD"; return True if two share a birthday (same month and day)
+      # mode "probability": items is [group_size]; return the percentage chance (0-100) that at least two people share a birthday
+      # TODO: implement both modes
+      pass
+
+  mode = input()
+  _, *items = input().split()
+  result = birthday_paradox(mode, items)
+  print(("true" if result else "false") if mode == "shared" else f"{result:.6f}")
+testCases:
+  - input: "shared\n1 2000-01-01"
+    expected: "false"
+    hidden: true
+  - input: "shared\n2 2000-01-01 2000-01-01"
+    expected: "true"
+    hidden: true
+  - input: "shared\n2 2012-05-09 2012-05-17"
+    expected: "false"
+    hidden: true
+  - input: "shared\n2 1999-10-23 1988-10-23"
+    expected: "true"
+    hidden: true
+  - input: "shared\n2 2007-12-19 2007-04-27"
+    expected: "false"
+    hidden: true
+  - input: "shared\n2 1997-08-04 1963-11-23"
+    expected: "false"
+    hidden: true
+  - input: "shared\n4 1966-07-29 1977-02-12 2001-12-25 1980-11-10"
+    expected: "false"
+    hidden: true
+  - input: "shared\n4 1966-07-29 1977-02-12 2001-07-29 1980-11-10"
+    expected: "true"
+    hidden: true
+  - input: "shared\n5 1966-07-29 1977-02-12 2001-12-25 1980-07-29 2019-02-12"
+    expected: "true"
+    hidden: true
+  - input: "probability\n1 1"
+    expected: "0.000000"
+    hidden: true
+  - input: "probability\n1 10"
+    expected: "11.694818"
+    hidden: true
+  - input: "probability\n1 23"
+    expected: "50.729723"
+    hidden: true
+  - input: "probability\n1 70"
+    expected: "99.915958"
+    hidden: true
+  - input: "probability\n1 2"
+    expected: "0.273973"
+    hidden: true
+  - input: "probability\n1 5"
+    expected: "2.713557"
+    hidden: true
+  - input: "probability\n1 30"
+    expected: "70.631624"
+    hidden: true
+  - input: "probability\n1 50"
+    expected: "97.037358"
+    hidden: true
+  - input: "probability\n1 100"
+    expected: "99.999969"
+    hidden: true
+  - input: "probability\n1 365"
+    expected: "100.000000"
+    hidden: true
+  - input: "shared\n2 2000-02-29 1996-02-29"
+    expected: "true"
+    hidden: true
+  - input: "shared\n3 1990-01-01 1990-12-31 1991-01-02"
+    expected: "false"
+    hidden: true
+  - input: "shared\n3 1985-06-15 1986-06-15 1987-06-16"
+    expected: "true"
+    hidden: true
+---
+
+The birthday paradox says that in a surprisingly small group of people, it is likely that two of them share a birthday.
+
+A birthdate is a full date of birth (year, month and day); a birthday is only the month and day, which repeat every year. Two birthdates with the same month and day belong to the same birthday.
+
+Your task has two parts:
+
+- Decide whether a list of birthdates contains at least two people who share a birthday.
+- Calculate the probability, as a percentage, that at least two people in a group of a given size share a birthday. Assume there are 365 possible birthdays (no leap days) and that every birthday is equally likely.
+
+## Input
+
+The first line is `shared` or `probability`. The second line is a count followed by the values: birthdates like `1999-10-23` for `shared`, or a single group size for `probability`.
+
+## Output
+
+For `shared`, print `true` if two birthdates fall on the same month and day, otherwise `false`. For `probability`, print the chance in percent with exactly six decimal places (for example `50.729723` for a group of 23).
+
+*Adapted from the [Baffling Birthdays](https://github.com/exercism/problem-specifications/tree/main/exercises/baffling-birthdays) exercise on Exercism (MIT License). Original source: Erik Schierboom (https://github.com/exercism/problem-specifications/pull/2539).*

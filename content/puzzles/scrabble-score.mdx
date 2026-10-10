@@ -1,0 +1,94 @@
+---
+title: "Scrabble Score"
+order: 46
+available: true
+areas: []
+topics: ["strings", "hash-maps"]
+tags: ["scrabble"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def scrabble_score(word):
+      # TODO: return the Scrabble score of the word (ignoring case)
+      pass
+
+  word = input()
+  print(scrabble_score(word))
+testCases:
+  - input: "a"
+    expected: "1"
+    hidden: true
+  - input: "A"
+    expected: "1"
+    hidden: true
+  - input: "f"
+    expected: "4"
+    hidden: true
+  - input: "at"
+    expected: "2"
+    hidden: true
+  - input: "zoo"
+    expected: "12"
+    hidden: true
+  - input: "street"
+    expected: "6"
+    hidden: true
+  - input: "quirky"
+    expected: "22"
+    hidden: true
+  - input: "OxyphenButazone"
+    expected: "41"
+    hidden: true
+  - input: "pinata"
+    expected: "8"
+    hidden: true
+  - input: "abcdefghijklmnopqrstuvwxyz"
+    expected: "87"
+    hidden: true
+  - input: "zzz"
+    expected: "30"
+    hidden: true
+  - input: "Quirky"
+    expected: "22"
+    hidden: true
+---
+
+[Scrabble][wikipedia] is a word game where players place letter tiles on a board to form words.
+Each letter has a value.
+A word's score is the sum of its letters' values.
+
+[wikipedia]: https://en.wikipedia.org/wiki/Scrabble
+
+Your task is to compute a word's Scrabble score by summing the values of its letters.
+
+The letters are valued as follows:
+
+| Letter                       | Value |
+| ---------------------------- | ----- |
+| A, E, I, O, U, L, N, R, S, T | 1     |
+| D, G                         | 2     |
+| B, C, M, P                   | 3     |
+| F, H, V, W, Y                | 4     |
+| K                            | 5     |
+| J, X                         | 8     |
+| Q, Z                         | 10    |
+
+For example, the word "cabbage" is worth 14 points:
+
+- 3 points for C
+- 1 point for A
+- 3 points for B
+- 3 points for B
+- 1 point for A
+- 2 points for G
+- 1 point for E
+
+## Input
+
+A single word.
+
+## Output
+
+Print its score.
+
+*Adapted from the [Scrabble Score](https://github.com/exercism/problem-specifications/tree/main/exercises/scrabble-score) exercise on Exercism (MIT License). Original source: Inspired by the Extreme Startup game (https://github.com/rchatley/extreme_startup).*

@@ -1,0 +1,82 @@
+---
+title: "Conway's Game of Life"
+order: 65
+available: true
+areas: []
+topics: ["matrices", "simulation"]
+tags: ["game-of-life"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def next_generation(matrix):
+      # matrix is a list of rows of 0 (dead) and 1 (alive)
+      # TODO: return the next generation as a new matrix
+      pass
+
+  rows, cols = map(int, input().split())
+  matrix = [list(map(int, input().split())) for _ in range(rows)]
+  for row in next_generation(matrix):
+      print(*row)
+testCases:
+  - input: "3 3\n0 0 0\n0 1 0\n0 0 0"
+    expected: "0 0 0\n0 0 0\n0 0 0"
+    hidden: true
+  - input: "3 3\n0 0 0\n0 1 0\n0 1 0"
+    expected: "0 0 0\n0 0 0\n0 0 0"
+    hidden: true
+  - input: "3 3\n1 0 1\n1 0 1\n1 0 1"
+    expected: "0 0 0\n1 0 1\n0 0 0"
+    hidden: true
+  - input: "3 3\n0 1 0\n1 0 0\n1 1 0"
+    expected: "0 0 0\n1 0 0\n1 1 0"
+    hidden: true
+  - input: "3 3\n1 1 0\n0 0 0\n1 0 0"
+    expected: "0 0 0\n1 1 0\n0 0 0"
+    hidden: true
+  - input: "3 3\n1 1 1\n1 1 1\n1 1 1"
+    expected: "1 0 1\n0 0 0\n1 0 1"
+    hidden: true
+  - input: "8 8\n1 1 0 1 1 0 0 0\n1 0 1 1 0 0 0 0\n1 1 1 0 0 1 1 1\n0 0 0 0 0 1 1 0\n1 0 0 0 1 1 0 0\n1 1 0 0 0 1 1 1\n0 0 1 0 1 0 0 1\n1 0 0 0 0 0 1 1"
+    expected: "1 1 0 1 1 0 0 0\n0 0 0 0 0 1 1 0\n1 0 1 1 1 1 0 1\n1 0 0 0 0 0 0 1\n1 1 0 0 1 0 0 1\n1 1 0 1 0 0 0 1\n1 0 0 0 0 0 0 0\n0 0 0 0 0 0 1 1"
+    hidden: true
+  - input: "3 3\n0 1 0\n0 1 0\n0 1 0"
+    expected: "0 0 0\n1 1 1\n0 0 0"
+    hidden: true
+  - input: "2 2\n1 1\n1 1"
+    expected: "1 1\n1 1"
+    hidden: true
+  - input: "4 4\n0 0 0 0\n0 1 1 0\n0 1 1 0\n0 0 0 0"
+    expected: "0 0 0 0\n0 1 1 0\n0 1 1 0\n0 0 0 0"
+    hidden: true
+  - input: "5 5\n0 1 0 0 0\n0 0 1 0 0\n1 1 1 0 0\n0 0 0 0 0\n0 0 0 0 0"
+    expected: "0 0 0 0 0\n1 0 1 0 0\n0 1 1 0 0\n0 1 0 0 0\n0 0 0 0 0"
+    hidden: true
+---
+
+[Conway's Game of Life][game-of-life] is a fascinating cellular automaton created by the British mathematician John Horton Conway in 1970.
+
+The game consists of a two-dimensional grid of cells that can either be "alive" or "dead."
+
+After each generation, the cells interact with their eight neighbors via a set of rules, which define the new generation.
+
+[game-of-life]: https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
+
+After each generation, the cells interact with their eight neighbors, which are cells adjacent horizontally, vertically, or diagonally.
+
+The following rules are applied to each cell:
+
+- Any live cell with two or three live neighbors lives on.
+- Any dead cell with exactly three live neighbors becomes a live cell.
+- All other cells die or stay dead.
+
+Given a matrix of 1s and 0s (corresponding to live and dead cells), apply the rules to each cell, and return the next generation.
+
+## Input
+
+The first line has the number of rows and columns. Each of the next lines is a row of `0`s and `1`s separated by spaces.
+
+## Output
+
+Print the next generation in the same format, one row per line. The grid does not wrap around its edges.
+
+*Adapted from the [Conway's Game of Life](https://github.com/exercism/problem-specifications/tree/main/exercises/game-of-life) exercise on Exercism (MIT License). Original source: Wikipedia (https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).*

@@ -1,0 +1,143 @@
+---
+title: "Line Up"
+order: 26
+available: true
+areas: []
+topics: ["strings", "control-flow"]
+tags: ["ordinals"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def line_up(name, number):
+      # TODO: return the announcement for this customer
+      pass
+
+  name = input()
+  number = int(input())
+  print(line_up(name, number))
+testCases:
+  - input: "Gianna\n4"
+    expected: "Gianna, you are the 4th customer we serve today. Thank you!"
+    hidden: true
+  - input: "Maarten\n9"
+    expected: "Maarten, you are the 9th customer we serve today. Thank you!"
+    hidden: true
+  - input: "Petronila\n5"
+    expected: "Petronila, you are the 5th customer we serve today. Thank you!"
+    hidden: true
+  - input: "Attakullakulla\n6"
+    expected: "Attakullakulla, you are the 6th customer we serve today. Thank you!"
+    hidden: true
+  - input: "Kate\n7"
+    expected: "Kate, you are the 7th customer we serve today. Thank you!"
+    hidden: true
+  - input: "Maximiliano\n8"
+    expected: "Maximiliano, you are the 8th customer we serve today. Thank you!"
+    hidden: true
+  - input: "Mary\n1"
+    expected: "Mary, you are the 1st customer we serve today. Thank you!"
+    hidden: true
+  - input: "Haruto\n2"
+    expected: "Haruto, you are the 2nd customer we serve today. Thank you!"
+    hidden: true
+  - input: "Henriette\n3"
+    expected: "Henriette, you are the 3rd customer we serve today. Thank you!"
+    hidden: true
+  - input: "Alvarez\n10"
+    expected: "Alvarez, you are the 10th customer we serve today. Thank you!"
+    hidden: true
+  - input: "Jacqueline\n11"
+    expected: "Jacqueline, you are the 11th customer we serve today. Thank you!"
+    hidden: true
+  - input: "Juan\n12"
+    expected: "Juan, you are the 12th customer we serve today. Thank you!"
+    hidden: true
+  - input: "Patricia\n13"
+    expected: "Patricia, you are the 13th customer we serve today. Thank you!"
+    hidden: true
+  - input: "Washi\n21"
+    expected: "Washi, you are the 21st customer we serve today. Thank you!"
+    hidden: true
+  - input: "Ingrid\n22"
+    expected: "Ingrid, you are the 22nd customer we serve today. Thank you!"
+    hidden: true
+  - input: "Mario\n33"
+    expected: "Mario, you are the 33rd customer we serve today. Thank you!"
+    hidden: true
+  - input: "Quentin\n52"
+    expected: "Quentin, you are the 52nd customer we serve today. Thank you!"
+    hidden: true
+  - input: "Nayra\n62"
+    expected: "Nayra, you are the 62nd customer we serve today. Thank you!"
+    hidden: true
+  - input: "Ugo\n72"
+    expected: "Ugo, you are the 72nd customer we serve today. Thank you!"
+    hidden: true
+  - input: "Boris\n91"
+    expected: "Boris, you are the 91st customer we serve today. Thank you!"
+    hidden: true
+  - input: "John\n100"
+    expected: "John, you are the 100th customer we serve today. Thank you!"
+    hidden: true
+  - input: "Zeinab\n101"
+    expected: "Zeinab, you are the 101st customer we serve today. Thank you!"
+    hidden: true
+  - input: "Knud\n112"
+    expected: "Knud, you are the 112th customer we serve today. Thank you!"
+    hidden: true
+  - input: "Yma\n123"
+    expected: "Yma, you are the 123rd customer we serve today. Thank you!"
+    hidden: true
+  - input: "Elias\n972"
+    expected: "Elias, you are the 972nd customer we serve today. Thank you!"
+    hidden: true
+  - input: "Ana\n11"
+    expected: "Ana, you are the 11th customer we serve today. Thank you!"
+    hidden: true
+  - input: "Bo\n22"
+    expected: "Bo, you are the 22nd customer we serve today. Thank you!"
+    hidden: true
+  - input: "Cy\n103"
+    expected: "Cy, you are the 103rd customer we serve today. Thank you!"
+    hidden: true
+  - input: "Di\n112"
+    expected: "Di, you are the 112th customer we serve today. Thank you!"
+    hidden: true
+  - input: "Ed\n1000"
+    expected: "Ed, you are the 1000th customer we serve today. Thank you!"
+    hidden: true
+---
+
+Your friend Yaʻqūb works the counter at a deli in town, slicing, weighing, and wrapping orders for a line of hungry customers that gets longer every day.
+Waiting customers are starting to lose track of who is next, so he wants numbered tickets they can use to track the order in which they arrive.
+
+To make the customers feel special, he does not want the ticket to have only a number on it.
+They shall get a proper English sentence with their name and number on it.
+
+Given a name and a number, your task is to produce a sentence using that name and that number as an [ordinal numeral][ordinal-numeral].
+Yaʻqūb expects to use numbers from 1 up to 999.
+
+Rules:
+
+- Numbers ending in 1 (unless ending in 11) → `"st"`
+- Numbers ending in 2 (unless ending in 12) → `"nd"`
+- Numbers ending in 3 (unless ending in 13) → `"rd"`
+- All other numbers → `"th"`
+
+Examples:
+
+- `"Mary", 1` → `"Mary, you are the 1st customer we serve today. Thank you!"`
+- `"John", 12` → `"John, you are the 12th customer we serve today. Thank you!"`
+- `"Dahir", 162` → `"Dahir, you are the 162nd customer we serve today. Thank you!"`
+
+[ordinal-numeral]: https://en.wikipedia.org/wiki/Ordinal_numeral
+
+## Input
+
+The first line is the customer's name. The second line is their number in the queue.
+
+## Output
+
+Print `<name>, you are the <number><ordinal suffix> customer we serve today. Thank you!` where the suffix is `st`, `nd`, `rd` or `th` (11, 12 and 13 use `th`).
+
+*Adapted from the [Line Up](https://github.com/exercism/problem-specifications/tree/main/exercises/line-up) exercise on Exercism (MIT License). Original source: mk-mxp, based on previous work from Exercism contributors codedge and neenjaw (https://forum.exercism.org/t/new-exercise-ordinal-numbers/19147).*

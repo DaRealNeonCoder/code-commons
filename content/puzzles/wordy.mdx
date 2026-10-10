@@ -1,0 +1,180 @@
+---
+title: "Wordy"
+order: 99
+available: true
+areas: []
+topics: ["parsing", "strings"]
+tags: ["math-word-problems"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def answer(question):
+      # TODO: evaluate the question left to right, or return None if it is not a valid question
+      pass
+
+  question = input()
+  result = answer(question)
+  print("error" if result is None else result)
+testCases:
+  - input: "What is 5?"
+    expected: "5"
+    hidden: true
+  - input: "What is 0?"
+    expected: "0"
+    hidden: true
+  - input: "What is -123?"
+    expected: "-123"
+    hidden: true
+  - input: "What is 1 plus 1?"
+    expected: "2"
+    hidden: true
+  - input: "What is 0 plus 2?"
+    expected: "2"
+    hidden: true
+  - input: "What is 3 plus 0?"
+    expected: "3"
+    hidden: true
+  - input: "What is 53 plus 2?"
+    expected: "55"
+    hidden: true
+  - input: "What is -1 plus -10?"
+    expected: "-11"
+    hidden: true
+  - input: "What is 123 plus 45678?"
+    expected: "45801"
+    hidden: true
+  - input: "What is 4 minus -12?"
+    expected: "16"
+    hidden: true
+  - input: "What is -3 multiplied by 25?"
+    expected: "-75"
+    hidden: true
+  - input: "What is 33 divided by -3?"
+    expected: "-11"
+    hidden: true
+  - input: "What is 1 plus 1 plus 1?"
+    expected: "3"
+    hidden: true
+  - input: "What is 1 plus 5 minus -2?"
+    expected: "8"
+    hidden: true
+  - input: "What is 20 minus 4 minus 13?"
+    expected: "3"
+    hidden: true
+  - input: "What is 17 minus 6 plus 3?"
+    expected: "14"
+    hidden: true
+  - input: "What is 2 multiplied by -2 multiplied by 3?"
+    expected: "-12"
+    hidden: true
+  - input: "What is -3 plus 7 multiplied by -2?"
+    expected: "-8"
+    hidden: true
+  - input: "What is -12 divided by 2 divided by -3?"
+    expected: "2"
+    hidden: true
+  - input: "What is 52 cubed?"
+    expected: "error"
+    hidden: true
+  - input: "What is 1 plus?"
+    expected: "error"
+    hidden: true
+  - input: "What is?"
+    expected: "error"
+    hidden: true
+  - input: "What is 1 plus plus 2?"
+    expected: "error"
+    hidden: true
+  - input: "What is 1 plus 2 1?"
+    expected: "error"
+    hidden: true
+  - input: "What is 1 2 plus?"
+    expected: "error"
+    hidden: true
+  - input: "What is plus 1 2?"
+    expected: "error"
+    hidden: true
+  - input: "What is 3 plus 4 multiplied by 2?"
+    expected: "14"
+    hidden: true
+  - input: "What is -8 divided by 2 divided by -2?"
+    expected: "2"
+    hidden: true
+  - input: "What is 5 cubed?"
+    expected: "error"
+    hidden: true
+  - input: "What is 7 minus?"
+    expected: "error"
+    hidden: true
+  - input: "What is 2 plus 2 2?"
+    expected: "error"
+    hidden: true
+---
+
+Parse and evaluate simple math word problems returning the answer as an integer.
+
+## Iteration 0 — Numbers
+
+Problems with no operations simply evaluate to the number given.
+
+> What is 5?
+
+Evaluates to 5.
+
+## Iteration 1 — Addition
+
+Add two numbers together.
+
+> What is 5 plus 13?
+
+Evaluates to 18.
+
+Handle large numbers and negative numbers.
+
+## Iteration 2 — Subtraction, Multiplication and Division
+
+Now, perform the other three operations.
+
+> What is 7 minus 5?
+
+2
+
+> What is 6 multiplied by 4?
+
+24
+
+> What is 25 divided by 5?
+
+5
+
+## Iteration 3 — Multiple Operations
+
+Handle a set of operations, in sequence.
+
+Since these are verbal word problems, evaluate the expression from left-to-right, _ignoring the typical order of operations._
+
+> What is 5 plus 13 plus 6?
+
+24
+
+> What is 3 plus 2 multiplied by 3?
+
+15 (i.e. not 9)
+
+## Iteration 4 — Errors
+
+The parser should reject:
+
+- Unsupported operations ("What is 52 cubed?")
+- Non-math questions ("Who is the President of the United States")
+- Word problems with invalid syntax ("What is 1 plus plus 2?")
+
+## Input
+
+A single line containing the question.
+
+## Output
+
+Print the numeric answer. Operations are `plus`, `minus`, `multiplied by` and `divided by`, evaluated strictly left to right. Print `error` if the question is not of the form `What is ...?` with valid numbers and operations (for example an unknown operation, a missing operand, or two numbers in a row).
+
+*Adapted from the [Wordy](https://github.com/exercism/problem-specifications/tree/main/exercises/wordy) exercise on Exercism (MIT License). Original source: Inspired by one of the generated questions in the Extreme Startup game. (https://github.com/rchatley/extreme_startup).*

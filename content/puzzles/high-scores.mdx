@@ -1,0 +1,54 @@
+---
+title: "High Scores"
+order: 21
+available: true
+areas: []
+topics: ["sorting", "arrays"]
+tags: ["top-k"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def top_three(scores):
+      # TODO: return the three highest scores, highest first (fewer if there are fewer than three)
+      pass
+
+  _, *scores = map(int, input().split())
+  print(*top_three(scores))
+testCases:
+  - input: "13 10 30 90 30 100 20 10 0 30 40 40 70 70"
+    expected: "100 90 70"
+    hidden: true
+  - input: "3 20 10 30"
+    expected: "30 20 10"
+    hidden: true
+  - input: "4 40 20 40 30"
+    expected: "40 40 30"
+    hidden: true
+  - input: "2 30 70"
+    expected: "70 30"
+    hidden: true
+  - input: "1 40"
+    expected: "40"
+    hidden: true
+  - input: "4 100 100 100 1"
+    expected: "100 100 100"
+    hidden: true
+  - input: "1 5"
+    expected: "5"
+    hidden: true
+  - input: "2 3 9"
+    expected: "9 3"
+    hidden: true
+---
+
+Manage a game player's high score list. Given the scores a player achieved, in the order they were achieved, find the player's three highest scores.
+
+## Input
+
+A single line: the number of scores, followed by the scores in the order they were achieved.
+
+## Output
+
+Print the three highest scores, highest first, separated by spaces. Print all of them if there are fewer than three.
+
+*Adapted from the [High Scores](https://github.com/exercism/problem-specifications/tree/main/exercises/high-scores) exercise on Exercism (MIT License). Original source: Tribute to the eighties' arcade game Frogger.*

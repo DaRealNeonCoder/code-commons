@@ -1,0 +1,40 @@
+---
+title: "Remove First and Last Occurrence"
+order: 46
+available: true
+areas: []
+topics: ["strings"]
+tags: []
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def remove_first_and_last(s, ch):
+      # TODO: delete the first and the last occurrence of ch
+      pass
+
+  s = input()
+  ch = input()
+  print(remove_first_and_last(s, ch))
+testCases:
+  - input: "hello\nl"
+    expected: "heo"
+    hidden: false
+  - input: "abcba\na"
+    expected: "bcb"
+    hidden: true
+  - input: "abc\nb"
+    expected: "ac"
+    hidden: true
+  - input: "xyz\nq"
+    expected: "xyz"
+    hidden: true
+  - input: "banana\na"
+    expected: "bnan"
+    hidden: true
+---
+
+Write a function `remove_first_and_last(s, ch)` that deletes the **first** and the **last** occurrence of the character `ch` from the string `s`. All other characters stay in place.
+
+If `ch` appears only once, just remove that one. If it doesn't appear at all, return `s` unchanged. For example, removing `"l"` from `"hello"` gives `"heo"`, and removing `"b"` from `"abc"` gives `"ac"`.
+
+The starter code reads the string on the first line and the character on the second. No test produces an empty result.

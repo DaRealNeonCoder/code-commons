@@ -1,0 +1,43 @@
+---
+title: "N Largest Numbers"
+order: 38
+available: true
+areas: []
+topics: ["sorting", "heaps"]
+tags: ["top-k"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def n_largest(numbers, n):
+      # TODO: return the n biggest numbers, largest first
+      pass
+
+  numbers = list(map(int, input().split()))
+  n = int(input())
+  print(*n_largest(numbers, n))
+testCases:
+  - input: "25 35 22 85 14 65 75 22 58\n2"
+    expected: "85 75"
+    hidden: false
+  - input: "25 35 22 85 14 65 75 22 58\n3"
+    expected: "85 75 65"
+    hidden: true
+  - input: "5 5 1\n2"
+    expected: "5 5"
+    hidden: true
+  - input: "9\n1"
+    expected: "9"
+    hidden: true
+  - input: "3 1 2\n3"
+    expected: "3 2 1"
+    hidden: true
+---
+
+Write a function `n_largest(numbers, n)` that returns the `n` largest values in a list, ordered from largest to smallest. If a value appears several times in the list, it can appear several times in the result.
+
+For example, `n_largest([25, 35, 22, 85, 14, 65, 75, 22, 58], 3)` returns `[85, 75, 65]`.
+
+> [!TIP]
+> Sorting the whole list and slicing works. If you want to go further, look up a *heap* (priority queue): it can keep just the `n` best values while scanning, which is faster when `n` is small and the list is huge.
+
+The starter code reads the list on the first line and `n` on the second. `n` never exceeds the list length.

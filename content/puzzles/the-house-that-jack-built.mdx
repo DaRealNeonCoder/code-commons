@@ -1,0 +1,175 @@
+---
+title: "The House That Jack Built"
+order: 93
+available: true
+areas: []
+topics: ["strings", "recursion"]
+tags: ["song-lyrics"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def sing_house(first, last):
+      # TODO: return the lines of verses `first` to `last` of "This Is the House That Jack Built",
+      # with "" between verses
+      pass
+
+  first, last = map(int, input().split())
+  print("\n".join(sing_house(first, last)))
+testCases:
+  - input: "1 1"
+    expected: "This is the house that Jack built."
+    hidden: true
+  - input: "2 2"
+    expected: "This is the malt that lay in the house that Jack built."
+    hidden: true
+  - input: "3 3"
+    expected: "This is the rat that ate the malt that lay in the house that Jack built."
+    hidden: true
+  - input: "4 4"
+    expected: "This is the cat that killed the rat that ate the malt that lay in the house that Jack built."
+    hidden: true
+  - input: "5 5"
+    expected: "This is the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+    hidden: true
+  - input: "6 6"
+    expected: "This is the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+    hidden: true
+  - input: "7 7"
+    expected: "This is the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+    hidden: true
+  - input: "8 8"
+    expected: "This is the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+    hidden: true
+  - input: "9 9"
+    expected: "This is the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+    hidden: true
+  - input: "10 10"
+    expected: "This is the rooster that crowed in the morn that woke the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+    hidden: true
+  - input: "11 11"
+    expected: "This is the farmer sowing his corn that kept the rooster that crowed in the morn that woke the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+    hidden: true
+  - input: "12 12"
+    expected: "This is the horse and the hound and the horn that belonged to the farmer sowing his corn that kept the rooster that crowed in the morn that woke the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+    hidden: true
+  - input: "4 8"
+    expected: "This is the cat that killed the rat that ate the malt that lay in the house that Jack built.\nThis is the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\nThis is the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\nThis is the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\nThis is the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+    hidden: true
+  - input: "1 12"
+    expected: "This is the house that Jack built.\nThis is the malt that lay in the house that Jack built.\nThis is the rat that ate the malt that lay in the house that Jack built.\nThis is the cat that killed the rat that ate the malt that lay in the house that Jack built.\nThis is the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\nThis is the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\nThis is the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\nThis is the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\nThis is the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\nThis is the rooster that crowed in the morn that woke the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\nThis is the farmer sowing his corn that kept the rooster that crowed in the morn that woke the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\nThis is the horse and the hound and the horn that belonged to the farmer sowing his corn that kept the rooster that crowed in the morn that woke the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built."
+    hidden: true
+---
+
+Recite the nursery rhyme 'This is the House that Jack Built'.
+
+> [The] process of placing a phrase of clause within another phrase of clause is called embedding.
+> It is through the processes of recursion and embedding that we are able to take a finite number of forms (words and phrases) and construct an infinite number of expressions.
+> Furthermore, embedding also allows us to construct an infinitely long structure, in theory anyway.
+
+- [papyr.com][papyr]
+
+The nursery rhyme reads as follows:
+
+```text
+This is the house that Jack built.
+
+This is the malt
+that lay in the house that Jack built.
+
+This is the rat
+that ate the malt
+that lay in the house that Jack built.
+
+This is the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
+
+This is the dog
+that worried the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
+
+This is the cow with the crumpled horn
+that tossed the dog
+that worried the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
+
+This is the maiden all forlorn
+that milked the cow with the crumpled horn
+that tossed the dog
+that worried the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
+
+This is the man all tattered and torn
+that kissed the maiden all forlorn
+that milked the cow with the crumpled horn
+that tossed the dog
+that worried the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
+
+This is the priest all shaven and shorn
+that married the man all tattered and torn
+that kissed the maiden all forlorn
+that milked the cow with the crumpled horn
+that tossed the dog
+that worried the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
+
+This is the rooster that crowed in the morn
+that woke the priest all shaven and shorn
+that married the man all tattered and torn
+that kissed the maiden all forlorn
+that milked the cow with the crumpled horn
+that tossed the dog
+that worried the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
+
+This is the farmer sowing his corn
+that kept the rooster that crowed in the morn
+that woke the priest all shaven and shorn
+that married the man all tattered and torn
+that kissed the maiden all forlorn
+that milked the cow with the crumpled horn
+that tossed the dog
+that worried the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
+
+This is the horse and the hound and the horn
+that belonged to the farmer sowing his corn
+that kept the rooster that crowed in the morn
+that woke the priest all shaven and shorn
+that married the man all tattered and torn
+that kissed the maiden all forlorn
+that milked the cow with the crumpled horn
+that tossed the dog
+that worried the cat
+that killed the rat
+that ate the malt
+that lay in the house that Jack built.
+```
+
+[papyr]: https://papyr.com/hypertextbooks/grammar/ph_noun.htm
+
+## Input
+
+One line with the first and last verse numbers to sing (verses are numbered from 1).
+
+## Output
+
+Print the verses as lines of text, with an empty line between verses (the function returns the lines as a list, with an empty string between verses).
+
+*Adapted from the [House](https://github.com/exercism/problem-specifications/tree/main/exercises/house) exercise on Exercism (MIT License). Original source: British nursery rhyme (https://en.wikipedia.org/wiki/This_Is_The_House_That_Jack_Built).*

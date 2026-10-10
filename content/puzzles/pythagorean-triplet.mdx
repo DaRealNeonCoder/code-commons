@@ -1,0 +1,98 @@
+---
+title: "Pythagorean Triplet"
+order: 80
+available: true
+areas: []
+topics: ["math", "searching"]
+tags: ["pythagorean-triplet"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def find_triplets(n):
+      # TODO: return all Pythagorean triplets [a, b, c] with a < b < c and a + b + c == n
+      pass
+
+  n = int(input())
+  for triplet in sorted(find_triplets(n)):
+      print(*triplet)
+testCases:
+  - input: "12"
+    expected: "3 4 5"
+    hidden: true
+  - input: "108"
+    expected: "27 36 45"
+    hidden: true
+  - input: "1000"
+    expected: "200 375 425"
+    hidden: true
+  - input: "1001"
+    expected: ""
+    hidden: true
+  - input: "90"
+    expected: "9 40 41\n15 36 39"
+    hidden: true
+  - input: "840"
+    expected: "40 399 401\n56 390 394\n105 360 375\n120 350 370\n140 336 364\n168 315 357\n210 280 350\n240 252 348"
+    hidden: true
+  - input: "30000"
+    expected: "1200 14375 14425\n1875 14000 14125\n5000 12000 13000\n6000 11250 12750\n7500 10000 12500"
+    hidden: true
+  - input: "24"
+    expected: "6 8 10"
+    hidden: true
+  - input: "7"
+    expected: ""
+    hidden: true
+---
+
+You are an accomplished problem-solver, known for your ability to tackle the most challenging mathematical puzzles.
+One evening, you receive an urgent letter from an inventor called the Triangle Tinkerer, who is working on a groundbreaking new project.
+The letter reads:
+
+> Dear Mathematician,
+>
+> I need your help.
+> I am designing a device that relies on the unique properties of Pythagorean triplets — sets of three integers that satisfy the equation a² + b² = c².
+> This device will revolutionize navigation, but for it to work, I must program it with every possible triplet where the sum of a, b, and c equals a specific number, N.
+> Calculating these triplets by hand would take me years, but I hear you are more than up to the task.
+>
+> Time is of the essence.
+> The future of my invention — and perhaps even the future of mathematical innovation — rests on your ability to solve this problem.
+
+Motivated by the importance of the task, you set out to find all Pythagorean triplets that satisfy the condition.
+Your work could have far-reaching implications, unlocking new possibilities in science and engineering.
+Can you rise to the challenge and make history?
+
+# Description
+
+A Pythagorean triplet is a set of three natural numbers, \{a, b, c\}, for which,
+
+```text
+a² + b² = c²
+```
+
+and such that,
+
+```text
+a < b < c
+```
+
+For example,
+
+```text
+3² + 4² = 5².
+```
+
+Given an input integer N, find all Pythagorean triplets for which `a + b + c = N`.
+
+For example, with N = 1000, there is exactly one Pythagorean triplet for which `a + b + c = 1000`: `{200, 375, 425}`.
+
+## Input
+
+A single integer `n`.
+
+## Output
+
+Print every triplet `a b c` with `a < b < c`, `a² + b² = c²` and `a + b + c = n`, one per line, sorted. Print nothing if there are none.
+
+*Adapted from the [Pythagorean Triplet](https://github.com/exercism/problem-specifications/tree/main/exercises/pythagorean-triplet) exercise on Exercism (MIT License). Original source: A variation of Problem 9 from Project Euler (https://projecteuler.net/problem=9).*

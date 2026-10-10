@@ -1,0 +1,73 @@
+---
+title: "Tree Path"
+order: 125
+available: true
+areas: []
+topics: ["trees", "graphs"]
+tags: ["tree-path"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def tree_path(tree, source, target):
+      # tree is a dict {"label": str, "children": [...]} (children is optional)
+      # TODO: return the list of labels on the path from source to target, or None if either node is not in the tree
+      pass
+
+  import json
+
+  tree = json.loads(input())
+  source, target = input().split()
+  path = tree_path(tree, source, target)
+  print("none" if path is None else " ".join(path))
+testCases:
+  - input: "{\"label\": \"parent\", \"children\": [{\"label\": \"x\"}, {\"label\": \"sibling\"}]}\nx parent"
+    expected: "x parent"
+    hidden: true
+  - input: "{\"label\": \"parent\", \"children\": [{\"label\": \"a\"}, {\"label\": \"x\"}, {\"label\": \"b\"}, {\"label\": \"c\"}]}\nx b"
+    expected: "x parent b"
+    hidden: true
+  - input: "{\"label\": \"grandparent\", \"children\": [{\"label\": \"parent\", \"children\": [{\"label\": \"x\", \"children\": [{\"label\": \"kid-0\"}, {\"label\": \"kid-1\"}]}, {\"label\": \"sibling-0\"}, {\"label\": \"sibling-1\"}]}, {\"label\": \"uncle\", \"children\": [{\"label\": \"cousin-0\"}, {\"label\": \"cousin-1\"}]}]}\nx cousin-1"
+    expected: "x parent grandparent uncle cousin-1"
+    hidden: true
+  - input: "{\"label\": \"grandparent\", \"children\": [{\"label\": \"parent\", \"children\": [{\"label\": \"x\"}, {\"label\": \"sibling-0\"}, {\"label\": \"sibling-1\"}]}]}\nx sibling-1"
+    expected: "x parent sibling-1"
+    hidden: true
+  - input: "{\"label\": \"parent\", \"children\": [{\"label\": \"a\"}, {\"label\": \"x\"}, {\"label\": \"b\"}, {\"label\": \"c\"}]}\na c"
+    expected: "a parent c"
+    hidden: true
+  - input: "{\"label\": \"parent\", \"children\": [{\"label\": \"x\", \"children\": [{\"label\": \"kid-0\"}, {\"label\": \"kid-1\"}]}, {\"label\": \"sibling-0\"}, {\"label\": \"sibling-1\"}]}\nx nonexistent"
+    expected: "none"
+    hidden: true
+  - input: "{\"label\": \"parent\", \"children\": [{\"label\": \"x\", \"children\": [{\"label\": \"kid-0\"}, {\"label\": \"kid-1\"}]}, {\"label\": \"sibling-0\"}, {\"label\": \"sibling-1\"}]}\nnonexistent x"
+    expected: "none"
+    hidden: true
+  - input: "{\"label\": \"r\", \"children\": [{\"label\": \"a\", \"children\": [{\"label\": \"c\"}, {\"label\": \"d\"}]}, {\"label\": \"b\"}]}\nc b"
+    expected: "c a r b"
+    hidden: true
+  - input: "{\"label\": \"r\", \"children\": [{\"label\": \"a\", \"children\": [{\"label\": \"c\"}, {\"label\": \"d\"}]}, {\"label\": \"b\"}]}\nc d"
+    expected: "c a d"
+    hidden: true
+  - input: "{\"label\": \"r\", \"children\": [{\"label\": \"a\"}]}\na a"
+    expected: "a"
+    hidden: true
+  - input: "{\"label\": \"r\", \"children\": [{\"label\": \"a\"}]}\na zzz"
+    expected: "none"
+    hidden: true
+  - input: "{\"label\": \"r\", \"children\": [{\"label\": \"a\", \"children\": [{\"label\": \"b\", \"children\": [{\"label\": \"c\"}]}]}]}\nr c"
+    expected: "r a b c"
+    hidden: true
+---
+
+A tree is a connected structure of labelled nodes in which every node except the root has exactly one parent. Because there is only one route between any two nodes, you can always find the path from one node to another by walking up towards the root and down again, regardless of which node is the root.
+
+Your task is to find the path between two nodes of a tree.
+
+## Input
+
+The first line is the tree in JSON, e.g. `{"label": "parent", "children": [{"label": "x"}, {"label": "sibling"}]}` (`children` may be left out for a leaf). The second line has the labels of the starting node and the target node.
+
+## Output
+
+Print the labels on the path from the starting node to the target, both included, separated by spaces. Print `none` if either node is not in the tree.
+
+*Adapted from the [POV](https://github.com/exercism/problem-specifications/tree/main/exercises/pov) exercise on Exercism (MIT License). Original source: Adaptation of exercise from 4clojure (https://github.com/oxalorg/4ever-clojure).*

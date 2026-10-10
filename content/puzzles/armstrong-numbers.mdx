@@ -1,0 +1,77 @@
+---
+title: "Armstrong Numbers"
+order: 4
+available: true
+areas: []
+topics: ["math"]
+tags: ["armstrong-numbers"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def is_armstrong(n):
+      # TODO: return True if n equals the sum of its digits each raised to the number of digits
+      pass
+
+  n = int(input())
+  print("true" if is_armstrong(n) else "false")
+testCases:
+  - input: "0"
+    expected: "true"
+    hidden: true
+  - input: "5"
+    expected: "true"
+    hidden: true
+  - input: "10"
+    expected: "false"
+    hidden: true
+  - input: "153"
+    expected: "true"
+    hidden: true
+  - input: "100"
+    expected: "false"
+    hidden: true
+  - input: "9474"
+    expected: "true"
+    hidden: true
+  - input: "9475"
+    expected: "false"
+    hidden: true
+  - input: "9926315"
+    expected: "true"
+    hidden: true
+  - input: "9926314"
+    expected: "false"
+    hidden: true
+  - input: "154"
+    expected: "false"
+    hidden: true
+  - input: "548834"
+    expected: "true"
+    hidden: true
+  - input: "21897142587612075"
+    expected: "true"
+    hidden: true
+---
+
+An [Armstrong number][armstrong-number] is a number that is the sum of its own digits each raised to the power of the number of digits.
+
+For example:
+
+- 9 is an Armstrong number, because `9 = 9^1 = 9`
+- 10 is _not_ an Armstrong number, because `10 != 1^2 + 0^2 = 1`
+- 153 is an Armstrong number, because: `153 = 1^3 + 5^3 + 3^3 = 1 + 125 + 27 = 153`
+- 154 is _not_ an Armstrong number, because: `154 != 1^3 + 5^3 + 4^3 = 1 + 125 + 64 = 190`
+
+Write some code to determine whether a number is an Armstrong number.
+
+[armstrong-number]: https://en.wikipedia.org/wiki/Narcissistic_number
+
+## Input
+
+A single non-negative integer.
+
+## Output
+
+Print `true` if it is an Armstrong number, otherwise `false`.
+
+*Adapted from the [Armstrong Numbers](https://github.com/exercism/problem-specifications/tree/main/exercises/armstrong-numbers) exercise on Exercism (MIT License). Original source: Wikipedia (https://en.wikipedia.org/wiki/Narcissistic_number).*

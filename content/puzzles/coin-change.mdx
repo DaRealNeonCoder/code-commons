@@ -1,0 +1,113 @@
+---
+title: "Coin Change"
+order: 63
+available: true
+areas: []
+topics: ["dynamic-programming"]
+tags: ["coin-change"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def min_coins(coins, target):
+      # TODO: return the fewest coins that sum to target, or -1 if it is impossible
+      pass
+
+  target = int(input())
+  coins = list(map(int, input().split()))
+  print(min_coins(coins, target))
+testCases:
+  - input: "1\n1 5 10 25"
+    expected: "1"
+    hidden: true
+  - input: "25\n1 5 10 25 100"
+    expected: "1"
+    hidden: true
+  - input: "15\n1 5 10 25 100"
+    expected: "2"
+    hidden: true
+  - input: "23\n1 4 15 20 50"
+    expected: "3"
+    hidden: true
+  - input: "63\n1 5 10 21 25"
+    expected: "3"
+    hidden: true
+  - input: "999\n1 2 5 10 20 50 100"
+    expected: "15"
+    hidden: true
+  - input: "21\n2 5 10 20 50"
+    expected: "5"
+    hidden: true
+  - input: "27\n4 5"
+    expected: "6"
+    hidden: true
+  - input: "20\n1 10 11"
+    expected: "2"
+    hidden: true
+  - input: "0\n1 5 10 21 25"
+    expected: "0"
+    hidden: true
+  - input: "3\n5 10"
+    expected: "-1"
+    hidden: true
+  - input: "94\n5 10"
+    expected: "-1"
+    hidden: true
+  - input: "99\n1 5 10 25"
+    expected: "9"
+    hidden: true
+  - input: "3\n2"
+    expected: "-1"
+    hidden: true
+  - input: "6249\n186 419 83 408"
+    expected: "20"
+    hidden: true
+  - input: "6\n1 3 4"
+    expected: "2"
+    hidden: true
+  - input: "27\n2 5 10 1"
+    expected: "4"
+    hidden: true
+  - input: "1\n5 10"
+    expected: "-1"
+    hidden: true
+  - input: "49\n7"
+    expected: "7"
+    hidden: true
+---
+
+In the mystical village of Coinholt, you stand behind the counter of your bakery, arranging a fresh batch of pastries.
+The door creaks open, and in walks Denara, a skilled merchant with a keen eye for quality goods.
+After a quick meal, she slides a shimmering coin across the counter, representing a value of 100 units.
+
+You smile, taking the coin, and glance at the total cost of the meal: 88 units.
+That means you need to return 12 units in change.
+
+Denara holds out her hand expectantly.
+"Just give me the fewest coins," she says with a smile.
+"My pouch is already full, and I don't want to risk losing them on the road."
+
+You know you have a few options.
+"We have Lumis (worth 10 units), Viras (worth 5 units), and Zenth (worth 2 units) available for change."
+
+You quickly calculate the possibilities in your head:
+
+- one Lumis (1 × 10 units) + one Zenth (1 × 2 units) = 2 coins total
+- two Viras (2 × 5 units) + one Zenth (1 × 2 units) = 3 coins total
+- six Zenth (6 × 2 units) = 6 coins total
+
+"The best choice is two coins: one Lumis and one Zenth," you say, handing her the change.
+
+Denara smiles, clearly impressed.
+"As always, you've got it right."
+
+Determine the fewest number of coins to give a customer so that the sum of their values equals the correct amount of change.
+
+## Input
+
+The first line contains the target amount. The second line contains the available coin denominations as space-separated integers. You have an unlimited supply of each coin.
+
+## Output
+
+Instead of printing the coins themselves, print the **number** of coins in the smallest combination that adds up to exactly the target. Print `-1` if the target cannot be made.
+
+*Adapted from the [Change](https://github.com/exercism/problem-specifications/tree/main/exercises/change) exercise on Exercism (MIT License). Original source: Software Craftsmanship - Coin Change Kata (https://web.archive.org/web/20130115115225/http://craftsmanship.sv.cmu.edu:80/exercises/coin-change-kata).*

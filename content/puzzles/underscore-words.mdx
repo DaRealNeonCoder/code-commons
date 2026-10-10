@@ -1,0 +1,45 @@
+---
+title: "Two Words with an Underscore"
+order: 48
+available: true
+areas: []
+topics: ["strings"]
+tags: []
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def is_underscore_pair(s):
+      # TODO: lowercase letters, one underscore, lowercase letters
+      pass
+
+  s = input()
+  print("true" if is_underscore_pair(s) else "false")
+testCases:
+  - input: "aab_cbbbc"
+    expected: "true"
+    hidden: false
+  - input: "aab_Abbbc"
+    expected: "false"
+    hidden: true
+  - input: "Aaab_abbbc"
+    expected: "false"
+    hidden: true
+  - input: "abc"
+    expected: "false"
+    hidden: true
+  - input: "a_b"
+    expected: "true"
+    hidden: true
+  - input: "a_b_c"
+    expected: "false"
+    hidden: true
+---
+
+A string matches the pattern if it is made of **one or more lowercase letters, then a single underscore, then one or more lowercase letters**, and nothing else.
+
+Write a function `is_underscore_pair(s)` that returns `True` if the entire string matches. For example, `"aab_cbbbc"` matches, but `"aab_Abbbc"` doesn't (uppercase letter), `"abc"` doesn't (no underscore) and `"a_b_c"` doesn't (two underscores).
+
+> [!TIP]
+> You can check this with loops and counters, or with a regular expression such as `[a-z]+_[a-z]+` that must match the whole string.
+
+The starter code reads one string and prints `true` or `false`.

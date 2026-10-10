@@ -1,0 +1,38 @@
+---
+title: "Tidy Up a Name"
+order: 3
+available: true
+areas: ["programming-fundamentals"]
+topics: ["strings"]
+tags: ["string-methods", "strip", "title"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  name = input()
+
+  # TODO: remove the extra spaces at both ends and fix the capitalization
+  # Print the cleaned-up name
+testCases:
+  - input: "  aDA loVElace  "
+    expected: "Ada Lovelace"
+    hidden: false
+  - input: "grace hopper"
+    expected: "Grace Hopper"
+    hidden: true
+  - input: "ALAN TURING   "
+    expected: "Alan Turing"
+    hidden: true
+  - input: "   linus"
+    expected: "Linus"
+    hidden: true
+  - input: "mARGARET hAMILTON"
+    expected: "Margaret Hamilton"
+    hidden: true
+---
+
+The starter code reads a messy name that might have extra spaces at the start or end and strange capitalization. Print the cleaned-up version: no surrounding spaces, and each word capitalized.
+
+For the input `  aDA loVElace  `, a correct solution prints `Ada Lovelace`.
+
+> [!TIP]
+> String methods can be chained: `text.method_one().method_two()`.

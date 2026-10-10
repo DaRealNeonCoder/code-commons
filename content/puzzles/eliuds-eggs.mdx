@@ -1,0 +1,123 @@
+---
+title: "Eliud's Eggs"
+order: 15
+available: true
+areas: []
+topics: ["bit-manipulation"]
+tags: ["bit-counting"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def egg_count(number):
+      # TODO: return how many bits are set in the binary representation of number
+      pass
+
+  number = int(input())
+  print(egg_count(number))
+testCases:
+  - input: "0"
+    expected: "0"
+    hidden: true
+  - input: "16"
+    expected: "1"
+    hidden: true
+  - input: "89"
+    expected: "4"
+    hidden: true
+  - input: "2000000000"
+    expected: "13"
+    hidden: true
+  - input: "7"
+    expected: "3"
+    hidden: true
+  - input: "255"
+    expected: "8"
+    hidden: true
+  - input: "1024"
+    expected: "1"
+    hidden: true
+  - input: "1000000"
+    expected: "7"
+    hidden: true
+---
+
+Your friend Eliud inherited a farm from her grandma Tigist.
+Her granny was an inventor and had a tendency to build things in an overly complicated manner.
+The chicken coop has a digital display showing an encoded number representing the positions of all eggs that could be picked up.
+
+Eliud is asking you to write a program that shows the actual number of eggs in the coop.
+
+The position information encoding is calculated as follows:
+
+1. Scan the potential egg-laying spots and mark down a `1` for an existing egg or a `0` for an empty spot.
+2. Convert the number from binary to decimal.
+3. Show the result on the display.
+
+## Example 1
+
+![Seven individual nest boxes arranged in a row whose first, third, fourth and seventh nests each have a single egg.](https://assets.exercism.org/images/exercises/eliuds-eggs/example-1-coop.svg)
+
+```text
+ _ _ _ _ _ _ _
+|E| |E|E| | |E|
+```
+
+### Resulting Binary
+
+![1011001](https://assets.exercism.org/images/exercises/eliuds-eggs/example-1-binary.svg)
+
+```text
+ _ _ _ _ _ _ _
+|1|0|1|1|0|0|1|
+```
+
+### Decimal number on the display
+
+89
+
+### Actual eggs in the coop
+
+4
+
+## Example 2
+
+![Seven individual nest boxes arranged in a row where only the fourth nest has an egg.](https://assets.exercism.org/images/exercises/eliuds-eggs/example-2-coop.svg)
+
+```text
+ _ _ _ _ _ _ _
+| | | |E| | | |
+```
+
+### Resulting Binary
+
+![0001000](https://assets.exercism.org/images/exercises/eliuds-eggs/example-2-binary.svg)
+
+```text
+ _ _ _ _ _ _ _
+|0|0|0|1|0|0|0|
+```
+
+### Decimal number on the display
+
+8
+
+### Actual eggs in the coop
+
+1
+
+Your task is to count the number of 1 bits in the binary representation of a number.
+
+## Restrictions
+
+Keep your hands off that bit-count functionality provided by your standard library!
+Solve this one yourself using other basic tools instead.
+
+## Input
+
+A single non-negative integer.
+
+## Output
+
+Print the number of `1` bits in its binary representation.
+
+*Adapted from the [Eliud's Eggs](https://github.com/exercism/problem-specifications/tree/main/exercises/eliuds-eggs) exercise on Exercism (MIT License). Original source: Christian Willner, Eric Willigers (https://forum.exercism.org/t/new-exercise-suggestion-pop-count/7632/5).*

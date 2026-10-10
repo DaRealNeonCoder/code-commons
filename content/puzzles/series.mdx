@@ -1,0 +1,90 @@
+---
+title: "Series"
+order: 47
+available: true
+areas: []
+topics: ["strings", "arrays"]
+tags: ["sliding-window"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def series_slices(digits, length):
+      # TODO: return all contiguous substrings of the given length, or None if length is invalid
+      pass
+
+  digits = input()
+  length = int(input())
+  result = series_slices(digits, length)
+  print("error" if result is None else " ".join(result))
+testCases:
+  - input: "1\n1"
+    expected: "1"
+    hidden: true
+  - input: "12\n1"
+    expected: "1 2"
+    hidden: true
+  - input: "35\n2"
+    expected: "35"
+    hidden: true
+  - input: "9142\n2"
+    expected: "91 14 42"
+    hidden: true
+  - input: "777777\n3"
+    expected: "777 777 777 777"
+    hidden: true
+  - input: "918493904243\n5"
+    expected: "91849 18493 84939 49390 93904 39042 90424 04243"
+    hidden: true
+  - input: "12345\n6"
+    expected: "error"
+    hidden: true
+  - input: "12345\n42"
+    expected: "error"
+    hidden: true
+  - input: "12345\n0"
+    expected: "error"
+    hidden: true
+  - input: "123\n-1"
+    expected: "error"
+    hidden: true
+  - input: "49142\n3"
+    expected: "491 914 142"
+    hidden: true
+  - input: "0123456789\n10"
+    expected: "0123456789"
+    hidden: true
+  - input: "12\n3"
+    expected: "error"
+    hidden: true
+  - input: "777\n1"
+    expected: "7 7 7"
+    hidden: true
+---
+
+Given a string of digits, output all the contiguous substrings of length `n` in that string in the order that they appear.
+
+For example, the string "49142" has the following 3-digit series:
+
+- "491"
+- "914"
+- "142"
+
+And the following 4-digit series:
+
+- "4914"
+- "9142"
+
+And if you ask for a 6-digit series from a 5-digit string, you deserve whatever you get.
+
+Note that these series are only required to occupy _adjacent positions_ in the input;
+the digits need not be _numerically consecutive_.
+
+## Input
+
+The first line is a string of digits. The second line is the slice length.
+
+## Output
+
+Print every contiguous substring of that length, in order, separated by spaces. Print `error` if the length is zero, negative, or longer than the string.
+
+*Adapted from the [Series](https://github.com/exercism/problem-specifications/tree/main/exercises/series) exercise on Exercism (MIT License). Original source: A subset of the Problem 8 at Project Euler (https://projecteuler.net/problem=8).*

@@ -1,0 +1,121 @@
+---
+title: "Word Search"
+order: 98
+available: true
+areas: []
+topics: ["matrices", "searching"]
+tags: ["word-search"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def find_word(grid, word):
+      # grid is a list of equal-length strings
+      # TODO: return ((col1, row1), (col2, row2)) for the first and last letter, counting from 1 at the top left,
+      # or None if the word is not in the grid
+      pass
+
+  n = int(input())
+  grid = [input() for _ in range(n)]
+  _, *words = input().split()
+  for word in words:
+      found = find_word(grid, word)
+      if found is None:
+          print(word, "none")
+      else:
+          (col1, row1), (col2, row2) = found
+          print(word, col1, row1, col2, row2)
+testCases:
+  - input: "1\njefblpepre\n1 clojure"
+    expected: "clojure none"
+    hidden: true
+  - input: "1\nclojurermt\n1 clojure"
+    expected: "clojure 1 1 7 1"
+    hidden: true
+  - input: "1\nmtclojurer\n1 clojure"
+    expected: "clojure 3 1 9 1"
+    hidden: true
+  - input: "1\nxcoffeezlp\n1 coffee"
+    expected: "coffee 2 1 7 1"
+    hidden: true
+  - input: "2\njefblpepre\ntclojurerm\n1 clojure"
+    expected: "clojure 2 2 8 2"
+    hidden: true
+  - input: "3\ncamdcimgtc\njefblpepre\nclojurermt\n1 clojure"
+    expected: "clojure 1 3 7 3"
+    hidden: true
+  - input: "10\njefblpepre\ncamdcimgtc\noivokprjsm\npbwasqroua\nrixilelhrs\nwolcqlirpc\nscreeaumgr\nalxhpburyi\njalaycalmp\nclojurermt\n1 clojure"
+    expected: "clojure 1 10 7 10"
+    hidden: true
+  - input: "10\njefblpepre\ncamdcimgtc\noivokprjsm\npbwasqroua\nrixilelhrs\nwolcqlirpc\nscreeaumgr\nalxhpburyi\nclojurermt\njalaycalmp\n1 clojure"
+    expected: "clojure 1 9 7 9"
+    hidden: true
+  - input: "10\njefblpepre\ncamdcimgtc\noivokprjsm\npbwasqroua\nrixilelhrs\nwolcqlirpc\nfortranftw\nalxhpburyi\njalaycalmp\nclojurermt\n2 clojure fortran"
+    expected: "clojure 1 10 7 10\nfortran 1 7 7 7"
+    hidden: true
+  - input: "1\nrixilelhrs\n1 elixir"
+    expected: "elixir 6 1 1 1"
+    hidden: true
+  - input: "10\njefblpepre\ncamdcimgtc\noivokprjsm\npbwasqroua\nrixilelhrs\nwolcqlirpc\nscreeaumgr\nalxhpburyi\njalaycalmp\nclojurermt\n2 clojure elixir"
+    expected: "clojure 1 10 7 10\nelixir 6 5 1 5"
+    hidden: true
+  - input: "10\njefblpepre\ncamdcimgtc\noivokprjsm\npbwasqroua\nrixilelhrs\nwolcqlirpc\nscreeaumgr\nalxhpburyi\njalaycalmp\nclojurermt\n3 clojure ecmascript elixir"
+    expected: "clojure 1 10 7 10\necmascript 10 1 10 10\nelixir 6 5 1 5"
+    hidden: true
+  - input: "10\njefblpepre\ncamdcimgtc\noivokprjsm\npbwasqroua\nrixilelhrs\nwolcqlirpc\nscreeaumgr\nalxhpburyi\njalaycalmp\nclojurermt\n5 clojure ecmascript elixir java rust"
+    expected: "clojure 1 10 7 10\necmascript 10 1 10 10\nelixir 6 5 1 5\njava 1 1 4 4\nrust 9 5 9 2"
+    hidden: true
+  - input: "10\njefblpepre\ncamdcimgtc\noivokprjsm\npbwasqroua\nrixilelhrs\nwolcqlirpc\nscreeaumgr\nalxhpburyi\njalaycalmp\nclojurermt\n6 clojure ecmascript elixir java lua rust"
+    expected: "clojure 1 10 7 10\necmascript 10 1 10 10\nelixir 6 5 1 5\njava 1 1 4 4\nlua 8 9 6 7\nrust 9 5 9 2"
+    hidden: true
+  - input: "10\njefblpepre\ncamdcimgtc\noivokprjsm\npbwasqroua\nrixilelhrs\nwolcqlirpc\nscreeaumgr\nalxhpburyi\njalaycalmp\nclojurermt\n7 clojure ecmascript elixir java lisp lua rust"
+    expected: "clojure 1 10 7 10\necmascript 10 1 10 10\nelixir 6 5 1 5\njava 1 1 4 4\nlisp 3 6 6 3\nlua 8 9 6 7\nrust 9 5 9 2"
+    hidden: true
+  - input: "10\njefblpepre\ncamdcimgtc\noivokprjsm\npbwasqroua\nrixilelhrs\nwolcqlirpc\nscreeaumgr\nalxhpburyi\njalaycalmp\nclojurermt\n8 clojure ecmascript elixir java lisp lua ruby rust"
+    expected: "clojure 1 10 7 10\necmascript 10 1 10 10\nelixir 6 5 1 5\njava 1 1 4 4\nlisp 3 6 6 3\nlua 8 9 6 7\nruby 8 6 5 9\nrust 9 5 9 2"
+    hidden: true
+  - input: "10\njefblpepre\ncamdcimgtc\noivokprjsm\npbwasqroua\nrixilelhrs\nwolcqlirpc\nscreeaumgr\nalxhpburyi\njalaycalmp\nclojurermt\n9 clojure ecmascript elixir haskell java lisp lua ruby rust"
+    expected: "clojure 1 10 7 10\necmascript 10 1 10 10\nelixir 6 5 1 5\nhaskell none\njava 1 1 4 4\nlisp 3 6 6 3\nlua 8 9 6 7\nruby 8 6 5 9\nrust 9 5 9 2"
+    hidden: true
+  - input: "2\nabceli\nxirdfg\n1 elixir"
+    expected: "elixir none"
+    hidden: true
+  - input: "1\nsilabcdefp\n1 lisp"
+    expected: "lisp none"
+    hidden: true
+  - input: "7\ns\nu\nr\na\nb\nc\nt\n1 rust"
+    expected: "rust none"
+    hidden: true
+---
+
+In word search puzzles you get a square of letters and have to find specific words in them.
+
+For example:
+
+```text
+jefblpepre
+camdcimgtc
+oivokprjsm
+pbwasqroua
+rixilelhrs
+wolcqlirpc
+screeaumgr
+alxhpburyi
+jalaycalmp
+clojurermt
+```
+
+There are several programming languages hidden in the above square.
+
+Words can be hidden in all kinds of directions: left-to-right, right-to-left, vertical and diagonal.
+
+Given a puzzle and a list of words return the location of the first and last letter of each word.
+
+## Input
+
+The first line is the number of grid rows, followed by the rows themselves. The last line is a count followed by the words to find (in alphabetical order).
+
+## Output
+
+For each word, in the given order, print `word col1 row1 col2 row2` (columns and rows counted from 1 at the top left, for the first and last letter) or `word none` if it does not appear. Words may run in any of the eight directions.
+
+*Adapted from the [Word Search](https://github.com/exercism/problem-specifications/tree/main/exercises/word-search) exercise on Exercism (MIT License).*

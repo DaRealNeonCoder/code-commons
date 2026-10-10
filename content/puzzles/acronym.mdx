@@ -1,0 +1,80 @@
+---
+title: "Acronym"
+order: 2
+available: true
+areas: []
+topics: ["strings"]
+tags: ["acronym"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def acronym(phrase):
+      # TODO: return the acronym of the phrase
+      pass
+
+  phrase = input()
+  print(acronym(phrase))
+testCases:
+  - input: "Portable Network Graphics"
+    expected: "PNG"
+    hidden: true
+  - input: "Ruby on Rails"
+    expected: "ROR"
+    hidden: true
+  - input: "First In, First Out"
+    expected: "FIFO"
+    hidden: true
+  - input: "GNU Image Manipulation Program"
+    expected: "GIMP"
+    hidden: true
+  - input: "Complementary metal-oxide semiconductor"
+    expected: "CMOS"
+    hidden: true
+  - input: "Rolling On The Floor Laughing So Hard That My Dogs Came Over And Licked Me"
+    expected: "ROTFLSHTMDCOALM"
+    hidden: true
+  - input: "Something - I made up from thin air"
+    expected: "SIMUFTA"
+    hidden: true
+  - input: "Halley's Comet"
+    expected: "HC"
+    hidden: true
+  - input: "The Road _Not_ Taken"
+    expected: "TRNT"
+    hidden: true
+  - input: "Portable Operating System Interface"
+    expected: "POSI"
+    hidden: true
+  - input: "Read-Only Memory"
+    expected: "ROM"
+    hidden: true
+  - input: "Hyper-text markup_language"
+    expected: "HTML"
+    hidden: true
+---
+
+Convert a phrase to its acronym.
+
+Techies love their TLA (Three Letter Acronyms)!
+
+Help generate some jargon by writing a program that converts a long name like Portable Network Graphics to its acronym (PNG).
+
+Punctuation is handled as follows: hyphens are word separators (like whitespace); all other punctuation can be removed from the input.
+
+For example:
+
+| Input                     | Output |
+| ------------------------- | ------ |
+| As Soon As Possible       | ASAP   |
+| Liquid-crystal display    | LCD    |
+| Thank George It's Friday! | TGIF   |
+
+## Input
+
+A single line containing a phrase.
+
+## Output
+
+Print the phrase's acronym in upper case.
+
+*Adapted from the [Acronym](https://github.com/exercism/problem-specifications/tree/main/exercises/acronym) exercise on Exercism (MIT License). Original source: Julien Vanier (https://github.com/monkbroc).*

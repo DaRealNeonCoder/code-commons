@@ -1,0 +1,45 @@
+---
+title: "Rotations to Match"
+order: 51
+available: true
+areas: []
+topics: ["strings"]
+tags: []
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def min_rotations(s):
+      # TODO: fewest rotations (at least 1) that give back the same string
+      pass
+
+  s = input()
+  print(min_rotations(s))
+testCases:
+  - input: "aaaa"
+    expected: "1"
+    hidden: false
+  - input: "ab"
+    expected: "2"
+    hidden: true
+  - input: "abcabc"
+    expected: "3"
+    hidden: true
+  - input: "abc"
+    expected: "3"
+    hidden: true
+  - input: "a"
+    expected: "1"
+    hidden: true
+  - input: "abab"
+    expected: "2"
+    hidden: true
+---
+
+Rotating a string by one step moves its first character to the end: `"abc"` becomes `"bca"`.
+
+Write a function `min_rotations(s)` that returns the **smallest number of rotations, at least 1**, after which the string looks exactly like the original again. For example, `"abcabc"` needs `3` rotations (`abcabc -> bcabca -> cabcab -> abcabc`), while `"aaaa"` needs just `1`. A string with no repeating pattern, like `"abc"`, needs as many rotations as it has letters.
+
+> [!TIP]
+> Try each rotation count `k` from `1` upward and compare `s[k:] + s[:k]` with `s`. The first match is the answer, and `k = len(s)` always works.
+
+The starter code reads one non-empty string.

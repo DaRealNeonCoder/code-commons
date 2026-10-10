@@ -1,0 +1,101 @@
+---
+title: "Matrix"
+order: 28
+available: true
+areas: []
+topics: ["matrices", "arrays"]
+tags: ["matrix-slicing"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def matrix_slice(matrix, mode, index):
+      # mode is "row" or "column"; index counts from 1
+      # TODO: return that row or column as a list
+      pass
+
+  mode, index = input().split()
+  rows = int(input())
+  matrix = [list(map(int, input().split())) for _ in range(rows)]
+  print(*matrix_slice(matrix, mode, int(index)))
+testCases:
+  - input: "row 1\n1\n1"
+    expected: "1"
+    hidden: true
+  - input: "row 2\n2\n1 2\n3 4"
+    expected: "3 4"
+    hidden: true
+  - input: "row 2\n2\n1 2\n10 20"
+    expected: "10 20"
+    hidden: true
+  - input: "row 4\n4\n1 2 3\n4 5 6\n7 8 9\n8 7 6"
+    expected: "8 7 6"
+    hidden: true
+  - input: "column 1\n1\n1"
+    expected: "1"
+    hidden: true
+  - input: "column 3\n3\n1 2 3\n4 5 6\n7 8 9"
+    expected: "3 6 9"
+    hidden: true
+  - input: "column 4\n3\n1 2 3 4\n5 6 7 8\n9 8 7 6"
+    expected: "4 8 6"
+    hidden: true
+  - input: "column 2\n3\n89 1903 3\n18 3 1\n9 4 800"
+    expected: "1903 3 4"
+    hidden: true
+  - input: "row 3\n3\n1 2 3\n4 5 6\n7 8 9"
+    expected: "7 8 9"
+    hidden: true
+  - input: "column 2\n3\n1 2 3\n4 5 6\n7 8 9"
+    expected: "2 5 8"
+    hidden: true
+  - input: "column 1\n4\n9 8 7\n5 3 2\n6 6 7\n1 1 1"
+    expected: "9 5 6 1"
+    hidden: true
+---
+
+Given a string representing a matrix of numbers, return the rows and columns of that matrix.
+
+So given a string with embedded newlines like:
+
+```text
+9 8 7
+5 3 2
+6 6 7
+```
+
+representing this matrix:
+
+```text
+    1  2  3
+  |---------
+1 | 9  8  7
+2 | 5  3  2
+3 | 6  6  7
+```
+
+your code should be able to spit out:
+
+- A list of the rows, reading each row left-to-right while moving top-to-bottom across the rows,
+- A list of the columns, reading each column top-to-bottom while moving from left-to-right.
+
+The rows for our example matrix:
+
+- 9, 8, 7
+- 5, 3, 2
+- 6, 6, 7
+
+And its columns:
+
+- 9, 5, 6
+- 8, 3, 6
+- 7, 2, 7
+
+## Input
+
+The first line is `row` or `column` followed by the 1-based index. The second line is the number of matrix rows. Each following line is one row of integers separated by spaces.
+
+## Output
+
+Print the requested row or column, separated by spaces.
+
+*Adapted from the [Matrix](https://github.com/exercism/problem-specifications/tree/main/exercises/matrix) exercise on Exercism (MIT License). Original source: Exercise by the JumpstartLab team for students at The Turing School of Software and Design. (https://www.turing.edu/).*

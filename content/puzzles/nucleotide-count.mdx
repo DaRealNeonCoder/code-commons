@@ -1,0 +1,85 @@
+---
+title: "Nucleotide Count"
+order: 114
+available: true
+areas: []
+topics: ["strings", "hash-maps"]
+tags: ["nucleotide-count"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def nucleotide_count(strand):
+      # TODO: return a dict with the count of "A", "C", "G" and "T" in the strand, or None if it has any other character
+      pass
+
+  strand = input()
+  counts = nucleotide_count(strand)
+  if counts is None:
+      print("error")
+  else:
+      for nucleotide in "ACGT":
+          print(nucleotide, counts[nucleotide])
+testCases:
+  - input: "G"
+    expected: "A 0\nC 0\nG 1\nT 0"
+    hidden: true
+  - input: "GGGGGGG"
+    expected: "A 0\nC 0\nG 7\nT 0"
+    hidden: true
+  - input: "AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC"
+    expected: "A 20\nC 12\nG 17\nT 21"
+    hidden: true
+  - input: "AGXXACT"
+    expected: "error"
+    hidden: true
+  - input: "GATTACA"
+    expected: "A 3\nC 1\nG 1\nT 2"
+    hidden: true
+  - input: "AAAA"
+    expected: "A 4\nC 0\nG 0\nT 0"
+    hidden: true
+  - input: "ACGTACGTACGT"
+    expected: "A 3\nC 3\nG 3\nT 3"
+    hidden: true
+  - input: "ACGU"
+    expected: "error"
+    hidden: true
+  - input: "GGGGCCCCTTTTAAAAGC"
+    expected: "A 4\nC 5\nG 5\nT 4"
+    hidden: true
+  - input: "t"
+    expected: "error"
+    hidden: true
+---
+
+Each of us inherits from our biological parents a set of chemical instructions known as DNA that influence how our bodies are constructed.
+All known life depends on DNA!
+
+> Note: You do not need to understand anything about nucleotides or DNA to complete this exercise.
+
+DNA is a long chain of other chemicals and the most important are the four nucleotides, adenine, cytosine, guanine and thymine.
+A single DNA chain can contain billions of these four nucleotides and the order in which they occur is important!
+We call the order of these nucleotides in a bit of DNA a "DNA sequence".
+
+We represent a DNA sequence as an ordered collection of these four nucleotides and a common way to do that is with a string of characters such as "ATTACG" for a DNA sequence of 6 nucleotides.
+'A' for adenine, 'C' for cytosine, 'G' for guanine, and 'T' for thymine.
+
+Given a string representing a DNA sequence, count how many of each nucleotide is present.
+If the string contains characters that aren't A, C, G, or T then it is invalid and you should signal an error.
+
+For example:
+
+```text
+"GATTACA" -> 'A': 3, 'C': 1, 'G': 1, 'T': 2
+"INVALID" -> error
+```
+
+## Input
+
+A single line containing a DNA strand.
+
+## Output
+
+Print four lines, `A n`, `C n`, `G n` and `T n`, with the number of each nucleotide in the strand. Print `error` instead if the strand contains any other character.
+
+*Adapted from the [Nucleotide Count](https://github.com/exercism/problem-specifications/tree/main/exercises/nucleotide-count) exercise on Exercism (MIT License). Original source: The Counting DNA Nucleotides problem at Rosalind (https://rosalind.info/problems/dna/).*

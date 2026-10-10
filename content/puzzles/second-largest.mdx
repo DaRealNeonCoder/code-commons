@@ -1,0 +1,43 @@
+---
+title: "Second Largest"
+order: 1
+available: true
+areas: ["programming-fundamentals"]
+topics: ["lists"]
+tags: ["max", "remove", "loops"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  numbers = [int(x) for x in input().split()]
+
+  # TODO: print the second-largest DISTINCT value in the list
+  # (the input always has at least two different values)
+testCases:
+  - input: "4 9 2 7"
+    expected: "7"
+    hidden: false
+  - input: "10 10 5"
+    expected: "5"
+    hidden: true
+  - input: "-1 -5 -3"
+    expected: "-3"
+    hidden: true
+  - input: "1 2"
+    expected: "1"
+    hidden: true
+  - input: "5 5 5 8 8"
+    expected: "5"
+    hidden: true
+  - input: "100 50 75 100"
+    expected: "75"
+    hidden: true
+---
+
+The starter code reads a line of integers into a list called `numbers`. Print the second-largest **distinct** value. If the largest value appears more than once, it still only counts once.
+
+For the input `4 9 2 7`, a correct solution prints `7`. For `10 10 5`, it prints `5`.
+
+The input always contains at least two different values.
+
+> [!TIP]
+> One approach: find the largest value with `max()`, remove every copy of it from the list, then take `max()` again. A `while` loop with `.remove()` works well for removing all copies.

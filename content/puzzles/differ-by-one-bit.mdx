@@ -1,0 +1,42 @@
+---
+title: "Differ by One Bit"
+order: 44
+available: true
+areas: []
+topics: ["bit-manipulation"]
+tags: ["xor-tricks"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def differ_by_one_bit(a, b):
+      # TODO: True if a and b differ in exactly one bit position
+      pass
+
+  a, b = map(int, input().split())
+  print("true" if differ_by_one_bit(a, b) else "false")
+testCases:
+  - input: "13 9"
+    expected: "true"
+    hidden: false
+  - input: "15 8"
+    expected: "false"
+    hidden: true
+  - input: "2 4"
+    expected: "false"
+    hidden: true
+  - input: "5 5"
+    expected: "false"
+    hidden: true
+  - input: "8 0"
+    expected: "true"
+    hidden: true
+---
+
+Look at two non-negative integers in binary. Write a function `differ_by_one_bit(a, b)` that returns `True` if their binary representations differ in **exactly one** bit position, and `False` otherwise.
+
+For example, `13` is `1101` and `9` is `1001`, which differ only in the third bit from the right, so the answer is `True`. Equal numbers differ in zero positions, so the answer is `False`.
+
+> [!TIP]
+> XOR (`^`) gives a number with a `1` in every position where the inputs differ. The question becomes: is that result a power of two? A power of two has exactly one `1` bit, and `x & (x - 1)` clears the lowest set bit.
+
+The starter code reads both numbers from one line.

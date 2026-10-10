@@ -1,0 +1,139 @@
+---
+title: "Phone Number"
+order: 77
+available: true
+areas: []
+topics: ["strings", "parsing"]
+tags: ["validation"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def clean_phone(text):
+      # TODO: return the 10-digit number as a string, or None if the number is invalid
+      pass
+
+  text = input()
+  result = clean_phone(text)
+  print("error" if result is None else result)
+testCases:
+  - input: "(223) 456-7890"
+    expected: "2234567890"
+    hidden: true
+  - input: "223.456.7890"
+    expected: "2234567890"
+    hidden: true
+  - input: "223 456   7890   "
+    expected: "2234567890"
+    hidden: true
+  - input: "123456789"
+    expected: "error"
+    hidden: true
+  - input: "22234567890"
+    expected: "error"
+    hidden: true
+  - input: "12234567890"
+    expected: "2234567890"
+    hidden: true
+  - input: "+1 (223) 456-7890"
+    expected: "2234567890"
+    hidden: true
+  - input: "321234567890"
+    expected: "error"
+    hidden: true
+  - input: "523-abc-7890"
+    expected: "error"
+    hidden: true
+  - input: "523-@:!-7890"
+    expected: "error"
+    hidden: true
+  - input: "(023) 456-7890"
+    expected: "error"
+    hidden: true
+  - input: "(123) 456-7890"
+    expected: "error"
+    hidden: true
+  - input: "(223) 056-7890"
+    expected: "error"
+    hidden: true
+  - input: "(223) 156-7890"
+    expected: "error"
+    hidden: true
+  - input: "1 (023) 456-7890"
+    expected: "error"
+    hidden: true
+  - input: "1 (123) 456-7890"
+    expected: "error"
+    hidden: true
+  - input: "1 (223) 056-7890"
+    expected: "error"
+    hidden: true
+  - input: "1 (223) 156-7890"
+    expected: "error"
+    hidden: true
+  - input: "+1 (613)-995-0253"
+    expected: "6139950253"
+    hidden: true
+  - input: "613-995-0253"
+    expected: "6139950253"
+    hidden: true
+  - input: "1 613 995 0253"
+    expected: "6139950253"
+    hidden: true
+  - input: "223-456-789a"
+    expected: "error"
+    hidden: true
+---
+
+You've joined LinkLine, a leading communications company working to ensure reliable connections for everyone.
+The team faces a big challenge: users submit phone numbers in all sorts of formats — dashes, spaces, dots, parentheses, and even prefixes.
+Some numbers are valid, while others are impossible to use.
+
+Your mission is to turn this chaos into order.
+You'll clean up valid numbers, formatting them appropriately for use in the system.
+At the same time, you'll identify and filter out any invalid entries.
+
+The success of LinkLine's operations depends on your ability to separate the useful from the unusable.
+Are you ready to take on the challenge and keep the connections running smoothly?
+
+Clean up phone numbers so that they can be sent SMS messages.
+
+The **North American Numbering Plan (NANP)** is a telephone numbering system used by many countries in North America like the United States, Canada or Bermuda.
+All NANP-countries share the same international country code: `1`.
+
+NANP numbers are ten-digit numbers consisting of a three-digit Numbering Plan Area code, commonly known as _area code_, followed by a seven-digit local number.
+The first three digits of the local number represent the _exchange code_, followed by the unique four-digit number which is the _subscriber number_.
+
+The format is usually represented as
+
+```text
+NXX NXX-XXXX
+```
+
+where `N` is any digit from 2 through 9 and `X` is any digit from 0 through 9.
+
+Sometimes they also have the country code (represented as `1` or `+1`) prefixed.
+
+Your task is to clean up differently formatted telephone numbers by removing punctuation and the country code if present.
+
+For example, the inputs
+
+- `+1 (613)-995-0253`
+- `613-995-0253`
+- `1 613 995 0253`
+- `613.995.0253`
+
+should all produce the output
+
+`6139950253`
+
+**Note:** As this exercise only deals with telephone numbers used in NANP-countries, only 1 is considered a valid country code.
+
+## Input
+
+A single line containing a phone number in any common format.
+
+## Output
+
+Print the cleaned 10-digit number, or `error` if it is invalid: letters or punctuation other than ` ()-.+`, the wrong number of digits, an 11-digit number not starting with `1`, or an area code or exchange code starting with `0` or `1`.
+
+*Adapted from the [Phone Number](https://github.com/exercism/problem-specifications/tree/main/exercises/phone-number) exercise on Exercism (MIT License). Original source: Exercise by the JumpstartLab team for students at The Turing School of Software and Design. (https://www.turing.edu/).*

@@ -1,0 +1,113 @@
+---
+title: "Number to English"
+order: 75
+available: true
+areas: []
+topics: ["strings", "math"]
+tags: ["number-to-words"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def say_number(n):
+      # TODO: return n written out in English, e.g. 1234 -> "one thousand two hundred thirty-four"
+      pass
+
+  n = int(input())
+  print(say_number(n))
+testCases:
+  - input: "0"
+    expected: "zero"
+    hidden: true
+  - input: "1"
+    expected: "one"
+    hidden: true
+  - input: "14"
+    expected: "fourteen"
+    hidden: true
+  - input: "20"
+    expected: "twenty"
+    hidden: true
+  - input: "22"
+    expected: "twenty-two"
+    hidden: true
+  - input: "30"
+    expected: "thirty"
+    hidden: true
+  - input: "99"
+    expected: "ninety-nine"
+    hidden: true
+  - input: "100"
+    expected: "one hundred"
+    hidden: true
+  - input: "123"
+    expected: "one hundred twenty-three"
+    hidden: true
+  - input: "200"
+    expected: "two hundred"
+    hidden: true
+  - input: "999"
+    expected: "nine hundred ninety-nine"
+    hidden: true
+  - input: "1000"
+    expected: "one thousand"
+    hidden: true
+  - input: "1234"
+    expected: "one thousand two hundred thirty-four"
+    hidden: true
+  - input: "1000000"
+    expected: "one million"
+    hidden: true
+  - input: "1002345"
+    expected: "one million two thousand three hundred forty-five"
+    hidden: true
+  - input: "1000000000"
+    expected: "one billion"
+    hidden: true
+  - input: "987654321123"
+    expected: "nine hundred eighty-seven billion six hundred fifty-four million three hundred twenty-one thousand one hundred twenty-three"
+    hidden: true
+  - input: "13"
+    expected: "thirteen"
+    hidden: true
+  - input: "40"
+    expected: "forty"
+    hidden: true
+  - input: "101"
+    expected: "one hundred one"
+    hidden: true
+  - input: "12345"
+    expected: "twelve thousand three hundred forty-five"
+    hidden: true
+  - input: "1000001"
+    expected: "one million one"
+    hidden: true
+  - input: "987654321012"
+    expected: "nine hundred eighty-seven billion six hundred fifty-four million three hundred twenty-one thousand twelve"
+    hidden: true
+---
+
+Your friend Yaʻqūb works the counter at the busiest deli in town, slicing, weighing, and wrapping orders for a never-ending line of hungry customers.
+To keep things moving, each customer takes a numbered ticket when they arrive.
+
+When it’s time to call the next person, Yaʻqūb reads their number out loud, always in full English words to make sure everyone hears it clearly.
+
+Given a number, your task is to express it in English words exactly as your friend should say it out loud.
+Yaʻqūb expects to use numbers from 0 up to 999,999,999,999.
+
+Examples:
+
+- 0 → zero
+- 1 → one
+- 12 → twelve
+- 123 → one hundred twenty-three
+- 1,234 → one thousand two hundred thirty-four
+
+## Input
+
+A single integer from 0 to 999,999,999,999.
+
+## Output
+
+Print the number in English words: hyphenate compound numbers from 21 to 99 (`forty-two`), do not use the word "and", and use `thousand`, `million` and `billion` for large groups.
+
+*Adapted from the [Say](https://github.com/exercism/problem-specifications/tree/main/exercises/say) exercise on Exercism (MIT License). Original source: A variation on the JavaRanch CattleDrive, Assignment 4 (https://web.archive.org/web/20240907035912/https://coderanch.com/wiki/718804).*

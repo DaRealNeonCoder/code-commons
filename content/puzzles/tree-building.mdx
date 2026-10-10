@@ -1,0 +1,110 @@
+---
+title: "Tree Building"
+order: 124
+available: true
+areas: []
+topics: ["trees"]
+tags: ["tree-building"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def build_tree(records):
+      # records is a list of (record_id, parent_id) pairs in any order; the root has record_id 0 and parent_id 0
+      # TODO: return a dict mapping each node id to the sorted list of its children's ids,
+      # or None if the records do not form a valid tree
+      pass
+
+  n = int(input())
+  records = []
+  for _ in range(n):
+      record_id, parent_id = map(int, input().split())
+      records.append((record_id, parent_id))
+  tree = build_tree(records)
+  if tree is None:
+      print("error")
+  else:
+      for node in sorted(tree):
+          print(node, *tree[node])
+testCases:
+  - input: "0"
+    expected: ""
+    hidden: true
+  - input: "1\n0 0"
+    expected: "0"
+    hidden: true
+  - input: "3\n0 0\n1 0\n2 0"
+    expected: "0 1 2\n1\n2"
+    hidden: true
+  - input: "3\n2 0\n1 0\n0 0"
+    expected: "0 1 2\n1\n2"
+    hidden: true
+  - input: "4\n0 0\n1 0\n2 0\n3 0"
+    expected: "0 1 2 3\n1\n2\n3"
+    hidden: true
+  - input: "7\n5 1\n3 2\n2 0\n4 1\n1 0\n0 0\n6 2"
+    expected: "0 1 2\n1 4 5\n2 3 6\n3\n4\n5\n6"
+    hidden: true
+  - input: "7\n5 2\n3 2\n2 0\n4 1\n1 0\n0 0\n6 2"
+    expected: "0 1 2\n1 4\n2 3 5 6\n3\n4\n5\n6"
+    hidden: true
+  - input: "1\n0 1"
+    expected: "error"
+    hidden: true
+  - input: "2\n0 1\n1 0"
+    expected: "error"
+    hidden: true
+  - input: "2\n1 0\n2 0"
+    expected: "error"
+    hidden: true
+  - input: "3\n0 0\n1 0\n1 0"
+    expected: "error"
+    hidden: true
+  - input: "2\n0 0\n0 0"
+    expected: "error"
+    hidden: true
+  - input: "4\n2 0\n4 2\n1 0\n0 0"
+    expected: "error"
+    hidden: true
+  - input: "7\n5 2\n3 2\n2 2\n4 1\n1 0\n0 0\n6 3"
+    expected: "error"
+    hidden: true
+  - input: "7\n5 2\n3 2\n2 6\n4 1\n1 0\n0 0\n6 3"
+    expected: "error"
+    hidden: true
+  - input: "3\n0 0\n2 0\n1 2"
+    expected: "error"
+    hidden: true
+---
+
+Refactor a tree building algorithm.
+
+Some web-forums have a tree layout, so posts are presented as a tree.
+However the posts are typically stored in a database as an unsorted set of records.
+Thus when presenting the posts to the user the tree structure has to be reconstructed.
+
+Your job will be to refactor a working but slow and ugly piece of code that implements the tree building logic for highly abstracted records.
+The records only contain an ID number and a parent ID number.
+The ID number is always between 0 (inclusive) and the length of the record list (exclusive).
+All records have a parent ID lower than their own ID, except for the root record, which has a parent ID that's equal to its own ID.
+
+An example tree:
+
+```text
+root (ID: 0, parent ID: 0)
+|-- child1 (ID: 1, parent ID: 0)
+|    |-- grandchild1 (ID: 2, parent ID: 1)
+|    +-- grandchild2 (ID: 4, parent ID: 1)
++-- child2 (ID: 3, parent ID: 0)
+|    +-- grandchild3 (ID: 6, parent ID: 3)
++-- child3 (ID: 5, parent ID: 0)
+```
+
+## Input
+
+The first line is the number of records. Each following line is `record_id parent_id`.
+
+## Output
+
+If the records form a valid tree, print one line per node in increasing id order: the node's id followed by the ids of its children in increasing order (for example `1 4 5`; a leaf prints just its id). Print `error` if the records are invalid: ids must be exactly `0, 1, 2, ...` with no gaps or duplicates, node 0 is the root and is its own parent, and every other node's parent id must be smaller than its own id. No records gives no output.
+
+*Adapted from the [Tree Building](https://github.com/exercism/problem-specifications/tree/main/exercises/tree-building) exercise on Exercism (MIT License).*

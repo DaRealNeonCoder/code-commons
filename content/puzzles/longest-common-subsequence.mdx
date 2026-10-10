@@ -1,0 +1,43 @@
+---
+title: "Longest Common Subsequence"
+order: 39
+available: true
+areas: []
+topics: ["dynamic-programming", "strings"]
+tags: ["lcs"]
+languages: []
+difficulty: "advanced"
+starterCode: |
+  def lcs_length(a, b):
+      # TODO: length of the longest subsequence that both strings share
+      pass
+
+  a = input()
+  b = input()
+  print(lcs_length(a, b))
+testCases:
+  - input: "AGGTAB\nGXTXAYB"
+    expected: "4"
+    hidden: false
+  - input: "abc\nabc"
+    expected: "3"
+    hidden: true
+  - input: "abc\ndef"
+    expected: "0"
+    hidden: true
+  - input: "abcdef\nacf"
+    expected: "3"
+    hidden: true
+  - input: "XMJYAUZ\nMZJAWXU"
+    expected: "4"
+    hidden: true
+---
+
+A **subsequence** of a string is what you get by deleting zero or more characters without changing the order of the rest. For example, `"ace"` is a subsequence of `"abcde"`, but `"aec"` is not.
+
+Write a function `lcs_length(a, b)` that returns the length of the **longest common subsequence** of two strings, the longest string that is a subsequence of both. For `"AGGTAB"` and `"GXTXAYB"` the answer is `4` (the subsequence `"GTAB"`).
+
+> [!TIP]
+> Build a table where cell `(i, j)` holds the answer for the first `i` characters of `a` and the first `j` characters of `b`. If the two last characters match, add 1 to the cell diagonally up-left; otherwise take the better of the cell above or to the left.
+
+The starter code reads the two strings on separate lines.

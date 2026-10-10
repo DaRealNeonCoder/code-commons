@@ -1,0 +1,40 @@
+---
+title: "Most Common Words"
+order: 49
+available: true
+areas: []
+topics: ["hash-tables", "strings"]
+tags: ["counting"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def most_common(words, k):
+      # TODO: the k most frequent words; ties are broken alphabetically
+      pass
+
+  words = input().split()
+  k = int(input())
+  print(*most_common(words, k))
+testCases:
+  - input: "red green blue green red red\n2"
+    expected: "red green"
+    hidden: false
+  - input: "a b c a b a\n1"
+    expected: "a"
+    hidden: true
+  - input: "x y z\n3"
+    expected: "x y z"
+    hidden: true
+  - input: "to be or not to be\n2"
+    expected: "be to"
+    hidden: true
+---
+
+Write a function `most_common(words, k)` that returns the `k` words that appear most often in a list, ordered from most to least frequent. If two words appear the same number of times, put the one that comes first **alphabetically** first.
+
+For example, in `["to", "be", "or", "not", "to", "be"]`, both `to` and `be` appear twice and the rest once, so for `k = 2` the result is `["be", "to"]`.
+
+> [!TIP]
+> Build a dictionary that maps each word to its count, then sort its entries by count (descending) and then by word (ascending).
+
+The starter code reads the words on the first line and `k` on the second. `k` never exceeds the number of distinct words.

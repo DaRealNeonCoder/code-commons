@@ -1,0 +1,42 @@
+---
+title: "Monotonic List"
+order: 22
+available: true
+areas: []
+topics: ["arrays"]
+tags: []
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def is_monotonic(numbers):
+      # TODO: True if the list never decreases, or never increases
+      pass
+
+  numbers = list(map(int, input().split()))
+  print("true" if is_monotonic(numbers) else "false")
+testCases:
+  - input: "1 2 4 20"
+    expected: "true"
+    hidden: false
+  - input: "1 20 4 10"
+    expected: "false"
+    hidden: true
+  - input: "4 1 0 -10"
+    expected: "true"
+    hidden: true
+  - input: "5 5 5"
+    expected: "true"
+    hidden: true
+  - input: "1 3 2"
+    expected: "false"
+    hidden: true
+  - input: "3 3 2 1"
+    expected: "true"
+    hidden: true
+---
+
+A list is **monotonic** if its elements are either always going up (or staying equal), or always going down (or staying equal).
+
+Write a function `is_monotonic(numbers)` that returns `True` for a monotonic list and `False` otherwise. For example, `[1, 2, 4, 20]` and `[4, 1, 0, -10]` are monotonic, but `[1, 20, 4, 10]` is not. A list where all values are equal counts as monotonic.
+
+The starter code reads one line of integers and prints `true` or `false`.

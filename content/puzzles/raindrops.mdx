@@ -1,0 +1,109 @@
+---
+title: "Raindrops"
+order: 37
+available: true
+areas: []
+topics: ["math", "control-flow"]
+tags: ["fizzbuzz"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def raindrops(n):
+      # TODO: return the raindrop sounds for n (or n itself as text if there are none)
+      pass
+
+  n = int(input())
+  print(raindrops(n))
+testCases:
+  - input: "1"
+    expected: "1"
+    hidden: true
+  - input: "3"
+    expected: "Pling"
+    hidden: true
+  - input: "5"
+    expected: "Plang"
+    hidden: true
+  - input: "7"
+    expected: "Plong"
+    hidden: true
+  - input: "6"
+    expected: "Pling"
+    hidden: true
+  - input: "8"
+    expected: "8"
+    hidden: true
+  - input: "9"
+    expected: "Pling"
+    hidden: true
+  - input: "10"
+    expected: "Plang"
+    hidden: true
+  - input: "14"
+    expected: "Plong"
+    hidden: true
+  - input: "15"
+    expected: "PlingPlang"
+    hidden: true
+  - input: "21"
+    expected: "PlingPlong"
+    hidden: true
+  - input: "25"
+    expected: "Plang"
+    hidden: true
+  - input: "27"
+    expected: "Pling"
+    hidden: true
+  - input: "35"
+    expected: "PlangPlong"
+    hidden: true
+  - input: "49"
+    expected: "Plong"
+    hidden: true
+  - input: "52"
+    expected: "52"
+    hidden: true
+  - input: "105"
+    expected: "PlingPlangPlong"
+    hidden: true
+  - input: "3125"
+    expected: "Plang"
+    hidden: true
+  - input: "2"
+    expected: "2"
+    hidden: true
+---
+
+Raindrops is a slightly more complex version of the FizzBuzz challenge, a classic interview question.
+
+Your task is to convert a number into its corresponding raindrop sounds.
+
+If a given number:
+
+- is divisible by 3, add "Pling" to the result.
+- is divisible by 5, add "Plang" to the result.
+- is divisible by 7, add "Plong" to the result.
+- **is not** divisible by 3, 5, or 7, the result should be the number as a string.
+
+## Examples
+
+- 28 is divisible by 7, but not 3 or 5, so the result would be `"Plong"`.
+- 30 is divisible by 3 and 5, but not 7, so the result would be `"PlingPlang"`.
+- 34 is not divisible by 3, 5, or 7, so the result would be `"34"`.
+
+> [!NOTE]
+> A common way to test if one number is evenly divisible by another is to compare the [remainder][remainder] or [modulus][modulo] to zero.
+> Most languages provide operators or functions for one (or both) of these.
+>
+> [remainder]: https://exercism.org/docs/programming/operators/remainder
+> [modulo]: https://en.wikipedia.org/wiki/Modulo_operation
+
+## Input
+
+A single positive integer.
+
+## Output
+
+Print the resulting sound string, or the number itself if none apply.
+
+*Adapted from the [Raindrops](https://github.com/exercism/problem-specifications/tree/main/exercises/raindrops) exercise on Exercism (MIT License). Original source: A variation on FizzBuzz, a famous technical interview question that is intended to weed out potential candidates. That question is itself derived from Fizz Buzz, a popular children's game for teaching division. (https://en.wikipedia.org/wiki/Fizz_buzz).*

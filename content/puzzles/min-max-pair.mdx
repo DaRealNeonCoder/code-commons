@@ -1,0 +1,43 @@
+---
+title: "Min and Max Pair"
+order: 3
+available: true
+areas: ["programming-fundamentals"]
+topics: ["tuples"]
+tags: ["tuple", "unpacking", "f-strings"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  numbers = [int(x) for x in input().split()]
+
+  # TODO: create a tuple called pair that holds (smallest, largest)
+  # TODO: unpack the tuple into two variables, low and high
+  # TODO: print "Smallest: <low>, Largest: <high>"
+testCases:
+  - input: "4 9 2 7"
+    expected: "Smallest: 2, Largest: 9"
+    hidden: false
+  - input: "5"
+    expected: "Smallest: 5, Largest: 5"
+    hidden: true
+  - input: "-3 -1 -7"
+    expected: "Smallest: -7, Largest: -1"
+    hidden: true
+  - input: "10 10 10"
+    expected: "Smallest: 10, Largest: 10"
+    hidden: true
+  - input: "1 100 50 25 75"
+    expected: "Smallest: 1, Largest: 100"
+    hidden: true
+---
+
+The starter code reads a line of integers into a list. Put the smallest and largest values into a tuple, unpack that tuple into `low` and `high`, and print them in exactly this format:
+
+```
+Smallest: 2, Largest: 9
+```
+
+That is the output for the input `4 9 2 7`. If the list has only one number, it is both the smallest and the largest.
+
+> [!TIP]
+> `min()` and `max()` work on lists. Then `low, high = pair` splits the tuple back apart.

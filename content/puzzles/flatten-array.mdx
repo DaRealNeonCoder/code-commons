@@ -1,0 +1,91 @@
+---
+title: "Flatten Array"
+order: 16
+available: true
+areas: []
+topics: ["arrays", "recursion"]
+tags: ["flatten"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def flatten_array(items):
+      # TODO: return a flat list of all the values in the nested list, skipping None
+      pass
+
+  import json
+
+  items = json.loads(input())
+  print(json.dumps(flatten_array(items)))
+testCases:
+  - input: "[]"
+    expected: "[]"
+    hidden: true
+  - input: "[0, 1, 2]"
+    expected: "[0, 1, 2]"
+    hidden: true
+  - input: "[[[]]]"
+    expected: "[]"
+    hidden: true
+  - input: "[1, [2, 3, 4, 5, 6, 7], 8]"
+    expected: "[1, 2, 3, 4, 5, 6, 7, 8]"
+    hidden: true
+  - input: "[0, 2, [[2, 3], 8, 100, 4, [[[50]]]], -2]"
+    expected: "[0, 2, 2, 3, 8, 100, 4, 50, -2]"
+    hidden: true
+  - input: "[1, [2, [[3]], [4, [[5]]], 6, 7], 8]"
+    expected: "[1, 2, 3, 4, 5, 6, 7, 8]"
+    hidden: true
+  - input: "[1, 2, null]"
+    expected: "[1, 2]"
+    hidden: true
+  - input: "[null, null, 3]"
+    expected: "[3]"
+    hidden: true
+  - input: "[1, null, null, 4]"
+    expected: "[1, 4]"
+    hidden: true
+  - input: "[0, 2, [[2, 3], 8, [[100]], null, [[null]]], -2]"
+    expected: "[0, 2, 2, 3, 8, 100, -2]"
+    hidden: true
+  - input: "[null, [[[null]]], null, null, [[null, null], null], null]"
+    expected: "[]"
+    hidden: true
+  - input: "[1, [2, [3, [4, [5]]]]]"
+    expected: "[1, 2, 3, 4, 5]"
+    hidden: true
+  - input: "[[[[]]]]"
+    expected: "[]"
+    hidden: true
+  - input: "[null, [null, [null]]]"
+    expected: "[]"
+    hidden: true
+  - input: "[[\"a\", [\"b\"]], \"c\"]"
+    expected: "[\"a\", \"b\", \"c\"]"
+    hidden: true
+---
+
+A shipment of emergency supplies has arrived, but there's a problem.
+To protect from damage, the items — flashlights, first-aid kits, blankets — are packed inside boxes, and some of those boxes are nested several layers deep inside other boxes!
+
+To be prepared for an emergency, everything must be easily accessible in one box.
+Can you unpack all the supplies and place them into a single box, so they're ready when needed most?
+
+Take a nested array of any depth and return a fully flattened array.
+
+Check the test suite for details.
+
+## Example
+
+input: `[1, [2, 6, null], [[null, [4]], 5]]`
+
+output: `[1, 2, 6, 4, 5]`
+
+## Input
+
+A single line containing a nested list in JSON format, e.g. `[1, [2, [null, 3]], 4]`.
+
+## Output
+
+Print the flattened list in JSON format (for example `[1, 2, 3, 4]`), keeping the original order and leaving out `null` values.
+
+*Adapted from the [Flatten Array](https://github.com/exercism/problem-specifications/tree/main/exercises/flatten-array) exercise on Exercism (MIT License). Original source: Interview Question (https://reference.wolfram.com/language/ref/Flatten.html).*

@@ -1,0 +1,42 @@
+---
+title: "Total Set Bits up to N"
+order: 45
+available: true
+areas: []
+topics: ["bit-manipulation"]
+tags: ["popcount"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def total_set_bits(n):
+      # TODO: count the 1-bits in the binary form of every number from 1 to n
+      pass
+
+  n = int(input())
+  print(total_set_bits(n))
+testCases:
+  - input: "1"
+    expected: "1"
+    hidden: false
+  - input: "3"
+    expected: "4"
+    hidden: true
+  - input: "5"
+    expected: "7"
+    hidden: true
+  - input: "8"
+    expected: "13"
+    hidden: true
+  - input: "16"
+    expected: "33"
+    hidden: true
+---
+
+A **set bit** is a `1` in a number's binary form. For example, `5` is `101`, so it has two set bits.
+
+Write a function `total_set_bits(n)` that returns the total number of set bits across **all** the numbers from `1` to `n`, inclusive. For `n = 5` the numbers have `1, 1, 2, 1, 2` set bits, so the answer is `7`.
+
+> [!TIP]
+> Counting the bits of each number one at a time works. To count a number's bits, repeatedly check the last bit (`x & 1`) and shift right (`x >> 1`) until nothing is left.
+
+The starter code reads `n` and prints the total.

@@ -1,0 +1,44 @@
+---
+title: "Rolling Maximum"
+order: 3
+available: true
+areas: []
+topics: ["arrays"]
+tags: ["running-max"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def rolling_max(numbers):
+      # TODO: return a list where element i is the max of numbers[0..i]
+      pass
+
+  numbers = list(map(int, input().split()))
+  print(*rolling_max(numbers))
+testCases:
+  - input: "1 2 3 2 3 4 2"
+    expected: "1 2 3 3 3 4 4"
+    hidden: false
+  - input: "5"
+    expected: "5"
+    hidden: true
+  - input: "3 2 1"
+    expected: "3 3 3"
+    hidden: true
+  - input: "1 5 2 8 7 9"
+    expected: "1 5 5 8 8 9"
+    hidden: true
+  - input: "-3 -5 -1 -2"
+    expected: "-3 -3 -1 -1"
+    hidden: true
+---
+
+Given a list of integers, produce a new list where the element at each position is the largest value seen **so far** (from the start up to and including that position).
+
+Write a function `rolling_max(numbers)` that returns that list.
+
+For example, `[1, 2, 3, 2, 3, 4, 2]` becomes `[1, 2, 3, 3, 3, 4, 4]`.
+
+> [!TIP]
+> One pass is enough: carry the current maximum along and update it as you go.
+
+The starter code reads one line of integers and prints the result separated by spaces.

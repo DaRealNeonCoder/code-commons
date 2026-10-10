@@ -1,0 +1,95 @@
+---
+title: "Bank Account"
+order: 58
+available: true
+areas: []
+topics: ["simulation"]
+tags: ["bank-account", "state-machine"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def bank_account(operations):
+      # operations are strings: "open", "close", "deposit 50", "withdraw 20" or "balance"
+      # TODO: return one result string per operation:
+      #   balance -> the current balance as text
+      #   any other operation -> "ok", or "error" if it is not allowed
+      # Not allowed: opening an account that is already open; doing anything (including closing) on a closed account;
+      # a negative amount; withdrawing more than the balance. A newly opened account has balance 0.
+      pass
+
+  n = int(input())
+  operations = [input() for _ in range(n)]
+  print("\n".join(bank_account(operations)))
+testCases:
+  - input: "2\nopen\nbalance"
+    expected: "ok\n0"
+    hidden: true
+  - input: "3\nopen\ndeposit 100\nbalance"
+    expected: "ok\nok\n100"
+    hidden: true
+  - input: "4\nopen\ndeposit 100\ndeposit 50\nbalance"
+    expected: "ok\nok\nok\n150"
+    hidden: true
+  - input: "4\nopen\ndeposit 100\nwithdraw 75\nbalance"
+    expected: "ok\nok\nok\n25"
+    hidden: true
+  - input: "5\nopen\ndeposit 100\nwithdraw 80\nwithdraw 20\nbalance"
+    expected: "ok\nok\nok\nok\n0"
+    hidden: true
+  - input: "7\nopen\ndeposit 100\ndeposit 110\nwithdraw 200\ndeposit 60\nwithdraw 50\nbalance"
+    expected: "ok\nok\nok\nok\nok\nok\n20"
+    hidden: true
+  - input: "3\nopen\nclose\nbalance"
+    expected: "ok\nok\nerror"
+    hidden: true
+  - input: "3\nopen\nclose\ndeposit 50"
+    expected: "ok\nok\nerror"
+    hidden: true
+  - input: "1\ndeposit 50"
+    expected: "error"
+    hidden: true
+  - input: "3\nopen\nclose\nwithdraw 50"
+    expected: "ok\nok\nerror"
+    hidden: true
+  - input: "1\nclose"
+    expected: "error"
+    hidden: true
+  - input: "2\nopen\nopen"
+    expected: "ok\nerror"
+    hidden: true
+  - input: "5\nopen\ndeposit 50\nclose\nopen\nbalance"
+    expected: "ok\nok\nok\nok\n0"
+    hidden: true
+  - input: "3\nopen\ndeposit 25\nwithdraw 50"
+    expected: "ok\nok\nerror"
+    hidden: true
+  - input: "3\nopen\ndeposit 100\nwithdraw -50"
+    expected: "ok\nok\nerror"
+    hidden: true
+  - input: "2\nopen\ndeposit -50"
+    expected: "ok\nerror"
+    hidden: true
+  - input: "4\nopen\ndeposit 50\nwithdraw 80\nbalance"
+    expected: "ok\nok\nerror\n50"
+    hidden: true
+  - input: "5\nbalance\nopen\nopen\nclose\nclose"
+    expected: "error\nok\nerror\nok\nerror"
+    hidden: true
+  - input: "6\nopen\ndeposit -5\nwithdraw -5\nclose\nopen\nbalance"
+    expected: "ok\nerror\nerror\nok\nok\n0"
+    hidden: true
+---
+
+A bank account can be opened, closed, and used for deposits and withdrawals. Your task is to play through a sequence of operations on one account and report what happens to each.
+
+An account starts out closed. Opening it gives it a balance of 0. While it is open you can deposit money, withdraw money and check the balance; closing it makes it unusable until it is opened again. Operations that are not allowed, such as withdrawing more than the balance, using a negative amount, opening an account that is already open, or touching a closed account, are reported as errors and must not change the account.
+
+## Input
+
+The first line is the number of operations. Each following line is one operation.
+
+## Output
+
+Print one line of result per operation, in order.
+
+*Adapted from the [Bank Account](https://github.com/exercism/problem-specifications/tree/main/exercises/bank-account) exercise on Exercism (MIT License).*

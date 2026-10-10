@@ -1,0 +1,68 @@
+---
+title: "Hangman"
+order: 69
+available: true
+areas: []
+topics: ["simulation", "strings"]
+tags: ["hangman"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def play_hangman(word, guesses):
+      # You have 9 wrong guesses to spare; a repeated guess counts as wrong.
+      # TODO: return (status, masked_word, remaining) after all guesses, or None if a guess is made after the game has ended;
+      # status is "ongoing", "win" or "lose" and masked_word shows unguessed letters as "_"
+      pass
+
+  word = input()
+  _, *guesses = input().split()
+  result = play_hangman(word, guesses)
+  print("error" if result is None else " ".join(map(str, result)))
+testCases:
+  - input: "loot\n0"
+    expected: "ongoing ____ 9"
+    hidden: true
+  - input: "loot\n10 a b c d e f g h i j"
+    expected: "lose ____ 0"
+    hidden: true
+  - input: "loot\n12 t o a b c d e f g h i j"
+    expected: "lose _oot 0"
+    hidden: true
+  - input: "loot\n1 t"
+    expected: "ongoing ___t 9"
+    hidden: true
+  - input: "loot\n2 t t"
+    expected: "ongoing ___t 8"
+    hidden: true
+  - input: "loot\n3 t t o"
+    expected: "ongoing _oot 8"
+    hidden: true
+  - input: "loot\n4 t t o l"
+    expected: "win loot 8"
+    hidden: true
+  - input: "loot\n12 a b c d e f g h i t o l"
+    expected: "win loot 0"
+    hidden: true
+  - input: "loot\n11 a b c d e f g h i j k"
+    expected: "error"
+    hidden: true
+  - input: "loot\n4 t o l l"
+    expected: "error"
+    hidden: true
+---
+
+Hangman is a word guessing game. A secret word is chosen and the player guesses one letter at a time. A correct guess reveals every occurrence of that letter in the word; a wrong guess uses up one of the player's nine allowed failures. Guessing a letter that was already guessed counts as a wrong guess.
+
+The player wins when every letter has been revealed, and loses by guessing wrong once no failures are left. After the game is won or lost no further guesses are allowed.
+
+Your task is to play through a list of guesses and report the state of the game.
+
+## Input
+
+The first line is the secret word. The second line is the number of guesses followed by the guessed letters in order.
+
+## Output
+
+Print `status masked remaining`: the status (`ongoing`, `win` or `lose`), the word with unguessed letters shown as `_`, and the number of wrong guesses still allowed (never below 0; the game is lost on the wrong guess after the allowance reaches 0). Print `error` if any guess comes after the game has already been won or lost.
+
+*Adapted from the [Hangman](https://github.com/exercism/problem-specifications/tree/main/exercises/hangman) exercise on Exercism (MIT License).*

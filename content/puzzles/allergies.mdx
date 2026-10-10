@@ -1,0 +1,141 @@
+---
+title: "Allergies"
+order: 57
+available: true
+areas: []
+topics: ["bit-manipulation"]
+tags: ["bitmask"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def allergens(score):
+      # TODO: return the list of allergens encoded by the score
+      pass
+
+  score = int(input())
+  print(",".join(allergens(score)))
+testCases:
+  - input: "0"
+    expected: ""
+    hidden: true
+  - input: "1"
+    expected: "eggs"
+    hidden: true
+  - input: "3"
+    expected: "eggs,peanuts"
+    hidden: true
+  - input: "2"
+    expected: "peanuts"
+    hidden: true
+  - input: "255"
+    expected: "eggs,peanuts,shellfish,strawberries,tomatoes,chocolate,pollen,cats"
+    hidden: true
+  - input: "7"
+    expected: "eggs,peanuts,shellfish"
+    hidden: true
+  - input: "5"
+    expected: "eggs,shellfish"
+    hidden: true
+  - input: "4"
+    expected: "shellfish"
+    hidden: true
+  - input: "14"
+    expected: "peanuts,shellfish,strawberries"
+    hidden: true
+  - input: "10"
+    expected: "peanuts,strawberries"
+    hidden: true
+  - input: "8"
+    expected: "strawberries"
+    hidden: true
+  - input: "28"
+    expected: "shellfish,strawberries,tomatoes"
+    hidden: true
+  - input: "20"
+    expected: "shellfish,tomatoes"
+    hidden: true
+  - input: "16"
+    expected: "tomatoes"
+    hidden: true
+  - input: "56"
+    expected: "strawberries,tomatoes,chocolate"
+    hidden: true
+  - input: "40"
+    expected: "strawberries,chocolate"
+    hidden: true
+  - input: "32"
+    expected: "chocolate"
+    hidden: true
+  - input: "112"
+    expected: "tomatoes,chocolate,pollen"
+    hidden: true
+  - input: "80"
+    expected: "tomatoes,pollen"
+    hidden: true
+  - input: "64"
+    expected: "pollen"
+    hidden: true
+  - input: "224"
+    expected: "chocolate,pollen,cats"
+    hidden: true
+  - input: "160"
+    expected: "chocolate,cats"
+    hidden: true
+  - input: "128"
+    expected: "cats"
+    hidden: true
+  - input: "192"
+    expected: "pollen,cats"
+    hidden: true
+  - input: "248"
+    expected: "strawberries,tomatoes,chocolate,pollen,cats"
+    hidden: true
+  - input: "509"
+    expected: "eggs,shellfish,strawberries,tomatoes,chocolate,pollen,cats"
+    hidden: true
+  - input: "257"
+    expected: "eggs"
+    hidden: true
+  - input: "34"
+    expected: "peanuts,chocolate"
+    hidden: true
+  - input: "256"
+    expected: ""
+    hidden: true
+---
+
+Given a person's allergy score, determine whether or not they're allergic to a given item, and their full list of allergies.
+
+An allergy test produces a single numeric score which contains the information about all the allergies the person has (that they were tested for).
+
+The list of items (and their value) that were tested are:
+
+- eggs (1)
+- peanuts (2)
+- shellfish (4)
+- strawberries (8)
+- tomatoes (16)
+- chocolate (32)
+- pollen (64)
+- cats (128)
+
+So if Tom is allergic to peanuts and chocolate, he gets a score of 34.
+
+Now, given just that score of 34, your program should be able to say:
+
+- Whether Tom is allergic to any one of those allergens listed above.
+- All the allergens Tom is allergic to.
+
+Note: a given score may include allergens **not** listed above (i.e. allergens that score 256, 512, 1024, etc.).
+Your program should ignore those components of the score.
+For example, if the allergy score is 257, your program should only report the eggs (1) allergy.
+
+## Input
+
+A single integer allergy score.
+
+## Output
+
+Print the allergens the score encodes, in order, separated by commas without spaces. Each allergen is a bit: eggs (1), peanuts (2), shellfish (4), strawberries (8), tomatoes (16), chocolate (32), pollen (64), cats (128). Ignore any higher bits. Print an empty line if there are none.
+
+*Adapted from the [Allergies](https://github.com/exercism/problem-specifications/tree/main/exercises/allergies) exercise on Exercism (MIT License). Original source: Exercise by the JumpstartLab team for students at The Turing School of Software and Design. (https://www.turing.edu/).*

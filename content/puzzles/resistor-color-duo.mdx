@@ -1,0 +1,90 @@
+---
+title: "Resistor Color Duo"
+order: 39
+available: true
+areas: []
+topics: ["arrays", "math"]
+tags: ["resistor-colors"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def resistor_value(colors):
+      # TODO: return the two-digit value given by the first two color bands
+      pass
+
+  colors = input().split()
+  print(resistor_value(colors))
+testCases:
+  - input: "brown black"
+    expected: "10"
+    hidden: true
+  - input: "blue grey"
+    expected: "68"
+    hidden: true
+  - input: "yellow violet"
+    expected: "47"
+    hidden: true
+  - input: "white red"
+    expected: "92"
+    hidden: true
+  - input: "orange orange"
+    expected: "33"
+    hidden: true
+  - input: "green brown orange"
+    expected: "51"
+    hidden: true
+  - input: "black brown"
+    expected: "1"
+    hidden: true
+  - input: "white violet"
+    expected: "97"
+    hidden: true
+  - input: "black grey red"
+    expected: "8"
+    hidden: true
+  - input: "blue green"
+    expected: "65"
+    hidden: true
+---
+
+If you want to build something using a Raspberry Pi, you'll probably use _resistors_.
+For this exercise, you need to know two things about them:
+
+- Each resistor has a resistance value.
+- Resistors are small - so small in fact that if you printed the resistance value on them, it would be hard to read.
+
+To get around this problem, manufacturers print color-coded bands onto the resistors to denote their resistance values.
+Each band has a position and a numeric value.
+
+The first 2 bands of a resistor have a simple encoding scheme: each color maps to a single number.
+For example, if they printed a brown band (value 1) followed by a green band (value 5), it would translate to the number 15.
+
+In this exercise you are going to create a helpful program so that you don't have to remember the values of the bands.
+The program will take color names as input and output a two digit number, even if the input is more than two colors!
+
+The band colors are encoded as follows:
+
+- black: 0
+- brown: 1
+- red: 2
+- orange: 3
+- yellow: 4
+- green: 5
+- blue: 6
+- violet: 7
+- grey: 8
+- white: 9
+
+From the example above:
+brown-green should return 15, and
+brown-green-violet should return 15 too, ignoring the third color.
+
+## Input
+
+A single line with two or three color names separated by spaces (only the first two are used). The colors are black, brown, red, orange, yellow, green, blue, violet, grey and white, worth 0 to 9 in that order.
+
+## Output
+
+Print the two-digit number the first two bands represent.
+
+*Adapted from the [Resistor Color Duo](https://github.com/exercism/problem-specifications/tree/main/exercises/resistor-color-duo) exercise on Exercism (MIT License). Original source: Maud de Vries, Erik Schierboom (https://github.com/exercism/problem-specifications/issues/1464).*

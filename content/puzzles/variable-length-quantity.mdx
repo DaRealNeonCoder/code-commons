@@ -1,0 +1,172 @@
+---
+title: "Variable Length Quantity"
+order: 96
+available: true
+areas: []
+topics: ["bit-manipulation"]
+tags: ["vlq"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def vlq(mode, numbers):
+      # mode is "encode" (numbers -> bytes) or "decode" (bytes -> numbers)
+      # TODO: return the resulting list, or None if decoding an incomplete sequence
+      pass
+
+  mode = input()
+  _, *numbers = map(int, input().split())
+  result = vlq(mode, numbers)
+  print("error" if result is None else " ".join(map(str, result)))
+testCases:
+  - input: "encode\n1 0"
+    expected: "0"
+    hidden: true
+  - input: "encode\n1 64"
+    expected: "64"
+    hidden: true
+  - input: "encode\n1 83"
+    expected: "83"
+    hidden: true
+  - input: "encode\n1 127"
+    expected: "127"
+    hidden: true
+  - input: "encode\n1 128"
+    expected: "129 0"
+    hidden: true
+  - input: "encode\n1 8192"
+    expected: "192 0"
+    hidden: true
+  - input: "encode\n1 173"
+    expected: "129 45"
+    hidden: true
+  - input: "encode\n1 16383"
+    expected: "255 127"
+    hidden: true
+  - input: "encode\n1 16384"
+    expected: "129 128 0"
+    hidden: true
+  - input: "encode\n1 1048576"
+    expected: "192 128 0"
+    hidden: true
+  - input: "encode\n1 120220"
+    expected: "135 171 28"
+    hidden: true
+  - input: "encode\n1 2097151"
+    expected: "255 255 127"
+    hidden: true
+  - input: "encode\n1 2097152"
+    expected: "129 128 128 0"
+    hidden: true
+  - input: "encode\n1 134217728"
+    expected: "192 128 128 0"
+    hidden: true
+  - input: "encode\n1 3503876"
+    expected: "129 213 238 4"
+    hidden: true
+  - input: "encode\n1 268435455"
+    expected: "255 255 255 127"
+    hidden: true
+  - input: "encode\n1 268435456"
+    expected: "129 128 128 128 0"
+    hidden: true
+  - input: "encode\n1 4278190080"
+    expected: "143 248 128 128 0"
+    hidden: true
+  - input: "encode\n1 2254790917"
+    expected: "136 179 149 194 5"
+    hidden: true
+  - input: "encode\n1 4294967295"
+    expected: "143 255 255 255 127"
+    hidden: true
+  - input: "encode\n2 64 127"
+    expected: "64 127"
+    hidden: true
+  - input: "encode\n2 16384 1193046"
+    expected: "129 128 0 200 232 86"
+    hidden: true
+  - input: "encode\n6 8192 1193046 268435455 0 16383 16384"
+    expected: "192 0 200 232 86 255 255 255 127 0 255 127 129 128 0"
+    hidden: true
+  - input: "decode\n1 127"
+    expected: "127"
+    hidden: true
+  - input: "decode\n2 192 0"
+    expected: "8192"
+    hidden: true
+  - input: "decode\n3 255 255 127"
+    expected: "2097151"
+    hidden: true
+  - input: "decode\n4 129 128 128 0"
+    expected: "2097152"
+    hidden: true
+  - input: "decode\n5 143 255 255 255 127"
+    expected: "4294967295"
+    hidden: true
+  - input: "decode\n1 255"
+    expected: "error"
+    hidden: true
+  - input: "decode\n1 128"
+    expected: "error"
+    hidden: true
+  - input: "decode\n15 192 0 200 232 86 255 255 255 127 0 255 127 129 128 0"
+    expected: "8192 1193046 268435455 0 16383 16384"
+    hidden: true
+  - input: "encode\n4 0 127 128 16384"
+    expected: "0 127 129 0 129 128 0"
+    hidden: true
+  - input: "decode\n3 129 128 0"
+    expected: "16384"
+    hidden: true
+  - input: "encode\n2 2097151 268435455"
+    expected: "255 255 127 255 255 255 127"
+    hidden: true
+  - input: "decode\n3 255 127 1"
+    expected: "16383 1"
+    hidden: true
+  - input: "decode\n2 129 128"
+    expected: "error"
+    hidden: true
+---
+
+Implement variable length quantity encoding and decoding.
+
+The goal of this exercise is to implement [VLQ][vlq] encoding/decoding.
+
+In short, the goal of this encoding is to encode integer values in a way that would save bytes.
+Only the first 7 bits of each byte are significant (right-justified; sort of like an ASCII byte).
+So, if you have a 32-bit value, you have to unpack it into a series of 7-bit bytes.
+Of course, you will have a variable number of bytes depending upon your integer.
+To indicate which is the last byte of the series, you leave bit #7 clear.
+In all of the preceding bytes, you set bit #7.
+
+So, if an integer is between `0-127`, it can be represented as one byte.
+Although VLQ can deal with numbers of arbitrary sizes, for this exercise we will restrict ourselves to only numbers that fit in a 32-bit unsigned integer.
+Here are examples of integers as 32-bit values, and the variable length quantities that they translate to:
+
+```text
+ NUMBER        VARIABLE QUANTITY
+00000000              00
+00000040              40
+0000007F              7F
+00000080             81 00
+00002000             C0 00
+00003FFF             FF 7F
+00004000           81 80 00
+00100000           C0 80 00
+001FFFFF           FF FF 7F
+00200000          81 80 80 00
+08000000          C0 80 80 00
+0FFFFFFF          FF FF FF 7F
+```
+
+[vlq]: https://en.wikipedia.org/wiki/Variable-length_quantity
+
+## Input
+
+The first line is `encode` or `decode`. The second line is a count followed by that many integers (numbers to encode, or bytes to decode).
+
+## Output
+
+Print the resulting integers separated by spaces. Each number is written in groups of 7 bits, most significant group first, and every byte except the last has its top bit set. Print `error` if the bytes to decode end with an incomplete sequence.
+
+*Adapted from the [Variable Length Quantity](https://github.com/exercism/problem-specifications/tree/main/exercises/variable-length-quantity) exercise on Exercism (MIT License). Original source: A poor Splice developer having to implement MIDI encoding/decoding. (https://splice.com).*

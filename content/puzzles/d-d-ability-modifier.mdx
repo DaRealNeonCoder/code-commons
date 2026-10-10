@@ -1,0 +1,89 @@
+---
+title: "D&D Ability Modifier"
+order: 112
+available: true
+areas: []
+topics: ["math"]
+tags: ["role-playing-game"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def ability_modifier(score):
+      # TODO: return the modifier for the ability score
+      pass
+
+  score = int(input())
+  print(ability_modifier(score))
+testCases:
+  - input: "3"
+    expected: "-4"
+    hidden: true
+  - input: "4"
+    expected: "-3"
+    hidden: true
+  - input: "5"
+    expected: "-3"
+    hidden: true
+  - input: "6"
+    expected: "-2"
+    hidden: true
+  - input: "7"
+    expected: "-2"
+    hidden: true
+  - input: "8"
+    expected: "-1"
+    hidden: true
+  - input: "9"
+    expected: "-1"
+    hidden: true
+  - input: "10"
+    expected: "0"
+    hidden: true
+  - input: "11"
+    expected: "0"
+    hidden: true
+  - input: "12"
+    expected: "1"
+    hidden: true
+  - input: "13"
+    expected: "1"
+    hidden: true
+  - input: "14"
+    expected: "2"
+    hidden: true
+  - input: "15"
+    expected: "2"
+    hidden: true
+  - input: "16"
+    expected: "3"
+    hidden: true
+  - input: "17"
+    expected: "3"
+    hidden: true
+  - input: "18"
+    expected: "4"
+    hidden: true
+  - input: "1"
+    expected: "-5"
+    hidden: true
+  - input: "20"
+    expected: "5"
+    hidden: true
+  - input: "30"
+    expected: "10"
+    hidden: true
+---
+
+In a role-playing game, every character has abilities such as strength, dexterity and constitution. Each ability has a score, and the score determines a modifier that is added to dice rolls.
+
+The modifier is calculated by subtracting 10 from the ability score, dividing by 2 and rounding **down** (towards negative infinity), so a score of 10 or 11 gives a modifier of 0, and a score of 3 gives -4.
+
+## Input
+
+A single integer ability score.
+
+## Output
+
+Print its modifier.
+
+*Adapted from the [D&D Character](https://github.com/exercism/problem-specifications/tree/main/exercises/dnd-character) exercise on Exercism (MIT License). Original source: Simon Shine, Erik Schierboom (https://github.com/exercism/problem-specifications/issues/616#issuecomment-437358945).*

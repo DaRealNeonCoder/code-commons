@@ -1,0 +1,162 @@
+---
+title: "Lists"
+order: 7
+summary: "Store ordered collections of values and learn to add, remove, sort, and loop over them."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["lists", "data-structures"]
+tags: ["indexing", "slicing", "list-methods", "iteration", "split"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["second-largest", "remove-duplicates", "rotate-list"]
+---
+
+Until now each variable held one value. A **list** holds many values in order, so you can keep a whole shopping list, a set of scores, or a line of words in a single variable.
+
+## Creating lists
+
+Wrap items in square brackets, separated by commas:
+
+```python
+fruits = ["apple", "banana", "cherry"]
+numbers = [4, 8, 15, 16]
+mixed = [1, "two", 3.0, True]
+empty = []
+
+print(len(fruits))   # 3
+```
+
+A list can hold any types, even a mix, though most lists contain one kind of thing.
+
+## Indexing and slicing
+
+Lists work exactly like strings when it comes to positions. Counting starts at `0`, and negative indexes count from the end:
+
+```python
+fruits = ["apple", "banana", "cherry"]
+
+print(fruits[0])      # apple
+print(fruits[-1])     # cherry
+print(fruits[1:])     # ['banana', 'cherry']
+print(fruits[::-1])   # ['cherry', 'banana', 'apple']
+```
+
+Slicing a list always gives you a **new list**.
+
+## Modifying lists
+
+Unlike strings, lists are **mutable**. You can change them in place:
+
+```python
+fruits = ["apple", "banana", "cherry"]
+
+fruits[1] = "blueberry"     # replace an item
+fruits.append("date")       # add to the end
+fruits.insert(0, "apricot") # add at a position
+print(fruits)   # ['apricot', 'apple', 'blueberry', 'cherry', 'date']
+
+fruits.remove("apple")      # remove by value
+last = fruits.pop()         # remove and return the last item
+print(last)     # date
+print(fruits)   # ['apricot', 'blueberry', 'cherry']
+```
+
+You can also delete by position with `del fruits[0]`.
+
+## List methods
+
+| Method | What it does |
+| --- | --- |
+| `.append(x)` | add `x` to the end |
+| `.insert(i, x)` | add `x` at index `i` |
+| `.extend(other)` | add every item from another list |
+| `.remove(x)` | remove the first `x` (error if missing) |
+| `.pop()` / `.pop(i)` | remove and return the last item, or the item at `i` |
+| `.index(x)` | position of the first `x` |
+| `.count(x)` | how many times `x` appears |
+| `.sort()` | sort the list in place |
+| `.reverse()` | reverse the list in place |
+
+```python
+nums = [3, 1, 2]
+nums.sort()
+print(nums)                         # [1, 2, 3]
+print(sorted(nums, reverse=True))   # [3, 2, 1]
+```
+
+`.sort()` changes the list itself. `sorted()` leaves the original alone and gives you a new sorted list.
+
+> [!WARNING]
+> `.sort()`, `.append()`, and friends return `None`. Writing `nums = nums.sort()` throws your list away and stores `None`.
+
+## Iterating over lists
+
+A `for` loop goes through a list item by item:
+
+```python
+for fruit in ["apple", "banana", "cherry"]:
+    print(fruit)
+```
+
+If you need the position as well, loop over the indexes:
+
+```python
+fruits = ["apple", "banana", "cherry"]
+for i in range(len(fruits)):
+    print(i, fruits[i])
+```
+
+<Details title="Is there a nicer way to get the index and the item?">
+Yes: `for i, fruit in enumerate(fruits):` gives you both at once. It does the same thing as the `range(len(...))` version above, just more readable.
+</Details>
+
+## List operations
+
+| Operation | Example | Result |
+| --- | --- | --- |
+| join two lists | `[1, 2] + [3]` | `[1, 2, 3]` |
+| repeat | `[0] * 3` | `[0, 0, 0]` |
+| membership | `3 in [1, 2, 3]` | `True` |
+| length | `len([5, 6])` | `2` |
+| total | `sum([1, 2, 3])` | `6` |
+| smallest / largest | `min([4, 2, 9])`, `max([4, 2, 9])` | `2`, `9` |
+
+> [!WARNING]
+> Assigning a list to a second name does **not** copy it. Both names point to the same list:
+>
+> ```python
+> a = [1, 2, 3]
+> b = a
+> b.append(4)
+> print(a)   # [1, 2, 3, 4]
+> ```
+>
+> Use `b = a.copy()` (or `a[:]`) when you want an independent copy.
+
+## Turning input into a list
+
+Most of the list puzzles give you numbers on one line. The `.split()` string method breaks text into a list of words, splitting on spaces:
+
+```python
+words = "red green blue".split()
+print(words)   # ['red', 'green', 'blue']
+```
+
+`input().split()` therefore gives you a list of strings. Convert each one if you need numbers:
+
+```python
+numbers = []
+for part in input().split():
+    numbers.append(int(part))
+```
+
+To print a list's items on one line, separated by spaces, put a `*` in front of it:
+
+```python
+print(*numbers)   # 4 8 15 16
+```
+
+> [!TIP]
+> In the puzzles, the starter code builds the list for you with `numbers = [int(x) for x in input().split()]`. That line is a shortcut called a *list comprehension*. Read it as "`int(x)` for every `x` in the split input". It does the same as the loop above.
+
+Now try it yourself. The next step is three puzzles that put lists to work.

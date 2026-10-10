@@ -1,0 +1,23 @@
+---
+title: "Why NAND?"
+---
+
+Every gate in this simulator is built out of one primitive: **NAND**.
+
+That's not an accident — NAND is *universal*, meaning any Boolean function
+can be built from NAND gates alone. That's why it's the only basic gate on
+the palette.
+
+### Try it
+
+1. Drag two **IN** switches and one **NAND** onto the canvas.
+2. Wire both inputs into the NAND.
+3. Add an **LED** and wire the NAND's output to it.
+4. Click each input switch — the LED turns off only when *both* inputs are on.
+
+### Building AND from NAND
+
+Feed a NAND gate's output back into both inputs of a second NAND gate, and
+the pair behaves exactly like an AND gate. Build it, then use
+**Create Chip** to save it — from then on you can drag it onto the canvas
+like any other part.

@@ -1,0 +1,114 @@
+---
+title: "Robot Simulator"
+order: 42
+available: true
+areas: []
+topics: ["simulation"]
+tags: ["robot-simulator"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def robot_move(x, y, direction, instructions):
+      # direction is "north", "east", "south" or "west"
+      # TODO: return the final (x, y, direction)
+      pass
+
+  x, y, direction = input().split()
+  instructions = input()
+  print(*robot_move(int(x), int(y), direction, instructions))
+testCases:
+  - input: "0 0 north\nR"
+    expected: "0 0 east"
+    hidden: true
+  - input: "0 0 east\nR"
+    expected: "0 0 south"
+    hidden: true
+  - input: "0 0 south\nR"
+    expected: "0 0 west"
+    hidden: true
+  - input: "0 0 west\nR"
+    expected: "0 0 north"
+    hidden: true
+  - input: "0 0 north\nL"
+    expected: "0 0 west"
+    hidden: true
+  - input: "0 0 west\nL"
+    expected: "0 0 south"
+    hidden: true
+  - input: "0 0 south\nL"
+    expected: "0 0 east"
+    hidden: true
+  - input: "0 0 east\nL"
+    expected: "0 0 north"
+    hidden: true
+  - input: "0 0 north\nA"
+    expected: "0 1 north"
+    hidden: true
+  - input: "0 0 south\nA"
+    expected: "0 -1 south"
+    hidden: true
+  - input: "0 0 east\nA"
+    expected: "1 0 east"
+    hidden: true
+  - input: "0 0 west\nA"
+    expected: "-1 0 west"
+    hidden: true
+  - input: "7 3 north\nRAALAL"
+    expected: "9 4 west"
+    hidden: true
+  - input: "0 0 north\nLAAARALA"
+    expected: "-4 1 west"
+    hidden: true
+  - input: "2 -7 east\nRRAAAAALA"
+    expected: "-3 -8 south"
+    hidden: true
+  - input: "8 4 south\nLAAARRRALLLL"
+    expected: "11 5 north"
+    hidden: true
+  - input: "0 0 north\nRAALAL"
+    expected: "2 1 west"
+    hidden: true
+  - input: "-3 5 west\nAAAA"
+    expected: "-7 5 west"
+    hidden: true
+  - input: "2 -7 south\nLLRAR"
+    expected: "3 -7 south"
+    hidden: true
+  - input: "8 4 east\nLAAARALA"
+    expected: "9 8 north"
+    hidden: true
+---
+
+Write a robot simulator.
+
+A robot factory's test facility needs a program to verify robot movements.
+
+The robots have three possible movements:
+
+- turn right
+- turn left
+- advance
+
+Robots are placed on a hypothetical infinite grid, facing a particular direction (north, east, south, or west) at a set of \{x,y\} coordinates,
+e.g., \{3,8\}, with coordinates increasing to the north and east.
+
+The robot then receives a number of instructions, at which point the testing facility verifies the robot's new position, and in which direction it is pointing.
+
+- The letter-string "RAALAL" means:
+  - Turn right
+  - Advance twice
+  - Turn left
+  - Advance once
+  - Turn left yet again
+- Say a robot starts at \{7, 3\} facing north.
+  Then running this stream of instructions should leave it at \{9, 4\} facing west.
+
+## Input
+
+The first line has the robot's `x` and `y` position and the direction it faces. The second line is a string of instructions: `R` turn right, `L` turn left, `A` advance one square in the facing direction. Facing north and advancing increases `y`; facing east and advancing increases `x`.
+
+## Output
+
+Print the final `x y direction`.
+
+*Adapted from the [Robot Simulator](https://github.com/exercism/problem-specifications/tree/main/exercises/robot-simulator) exercise on Exercism (MIT License). Original source: Inspired by an interview question at a famous company..*

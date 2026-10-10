@@ -1,0 +1,157 @@
+---
+title: "Loops"
+order: 6
+summary: "Repeat actions with while and for loops, and control them with break and continue."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["loops", "control-flow"]
+tags: ["while", "for", "range", "break", "continue", "nested-loops"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["sum-to-n", "multiplication-table", "fizzbuzz", "prime-check"]
+---
+
+Computers are great at repetition. A **loop** runs the same block of code over and over, so you don't have to write it out again and again.
+
+## while loops
+
+A `while` loop repeats as long as its condition is true:
+
+```python
+count = 3
+
+while count > 0:
+    print(count)
+    count -= 1
+
+print("Liftoff!")
+```
+
+Output:
+
+```
+3
+2
+1
+Liftoff!
+```
+
+Every `while` loop needs something inside it that eventually makes the condition false. Here, `count -= 1` does that.
+
+> [!WARNING]
+> If the condition never becomes false, you've written an **infinite loop** and your program will never stop. If you forget `count -= 1` above, it prints `3` forever.
+
+A very common pattern is the **accumulator**: a variable that builds up a result as the loop runs.
+
+```python
+total = 0
+number = 1
+
+while number <= 5:
+    total += number
+    number += 1
+
+print(total)   # 15
+```
+
+## for loops and range()
+
+A `for` loop goes through a sequence one item at a time. The easiest sequence to start with is `range()`:
+
+```python
+for i in range(5):
+    print(i)
+```
+
+Output:
+
+```
+0
+1
+2
+3
+4
+```
+
+`range()` counts up to, but not including, the stop value:
+
+| Call | Produces |
+| --- | --- |
+| `range(5)` | 0, 1, 2, 3, 4 |
+| `range(1, 6)` | 1, 2, 3, 4, 5 |
+| `range(0, 10, 2)` | 0, 2, 4, 6, 8 |
+| `range(5, 0, -1)` | 5, 4, 3, 2, 1 |
+
+A `for` loop can also walk through a string, one character at a time:
+
+```python
+for letter in "hey":
+    print(letter)
+```
+
+> [!TIP]
+> Use `for` when you know how many times to repeat, or when you're going through something. Use `while` when you're waiting for a condition to change.
+
+## break and continue
+
+`break` exits the loop immediately. `continue` skips the rest of the current round and jumps to the next one.
+
+```python
+for n in range(1, 10):
+    if n == 5:
+        break
+    print(n)
+# prints 1, 2, 3, 4
+```
+
+```python
+for n in range(1, 6):
+    if n == 3:
+        continue
+    print(n)
+# prints 1, 2, 4, 5
+```
+
+A handy pattern is `while True:` with a `break` inside: the loop runs "forever" until something inside it decides to stop.
+
+## Nested loops
+
+You can put a loop inside another loop. The inner loop runs completely for every single step of the outer loop:
+
+```python
+for row in range(1, 4):
+    for col in range(1, 4):
+        print(row * col, end=" ")
+    print()
+```
+
+Output:
+
+```
+1 2 3 
+2 4 6 
+3 6 9 
+```
+
+The inner `print(row * col, end=" ")` stays on one line, and the bare `print()` after it moves to the next line. This is where `end` from lesson 1 comes in handy.
+
+<Details title="How many times does a nested loop run?">
+If the outer loop runs 3 times and the inner loop runs 3 times each, the inner body runs 3 × 3 = 9 times in total. Nested loops get slow quickly as the numbers grow, so keep that in mind later.
+</Details>
+
+## Putting it together
+
+Here is a loop that uses a condition, `continue`, and an accumulator to add up only the odd numbers from 1 to 10:
+
+```python
+total = 0
+
+for n in range(1, 11):
+    if n % 2 == 0:
+        continue
+    total += n
+
+print(total)   # 25
+```
+
+Now try it yourself. The next step is four puzzles where loops do the heavy lifting.

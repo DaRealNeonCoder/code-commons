@@ -1,0 +1,39 @@
+---
+title: "Closest Pair"
+order: 28
+available: true
+areas: []
+topics: ["arrays", "sorting"]
+tags: ["pairwise-comparison"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def closest_pair(numbers):
+      # TODO: return the two closest numbers as (smaller, larger)
+      pass
+
+  numbers = list(map(int, input().split()))
+  print(*closest_pair(numbers))
+testCases:
+  - input: "1 2 3 4 5 2"
+    expected: "2 2"
+    hidden: false
+  - input: "1 5 9 12"
+    expected: "9 12"
+    hidden: true
+  - input: "10 3 7"
+    expected: "7 10"
+    hidden: true
+  - input: "-5 -1 20 -4"
+    expected: "-5 -4"
+    hidden: true
+---
+
+Given a list of at least two integers, find the two numbers that are **closest to each other** and return them in order, smaller first.
+
+Write a function `closest_pair(numbers)` that returns that pair. For example, `[1, 2, 3, 4, 5, 2]` gives `(2, 2)` because the two `2`s are zero apart. A value that appears twice counts as two separate elements.
+
+> [!TIP]
+> After sorting, the closest pair must be neighbours. That turns an all-pairs search into a single pass.
+
+The starter code reads one line of integers and prints the pair separated by a space. Every test has a single closest pair.

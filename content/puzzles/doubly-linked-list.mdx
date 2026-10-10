@@ -1,0 +1,118 @@
+---
+title: "Doubly Linked List"
+order: 66
+available: true
+areas: []
+topics: ["linked-lists", "simulation"]
+tags: ["deque"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def deque_operations(operations):
+      # operations are strings: "push 5", "unshift 5", "pop", "shift", "delete 5" or "count"
+      # push/pop work at the end of the list, unshift/shift at the front
+      # TODO: return one result string per operation:
+      #   push, unshift -> "ok"
+      #   pop, shift -> the removed value as text, or "empty" if the list is empty
+      #   delete -> "ok" after removing the first occurrence of the value, or "missing" if it is not there
+      #   count -> the number of items as text
+      pass
+
+  n = int(input())
+  operations = [input() for _ in range(n)]
+  print("\n".join(deque_operations(operations)))
+testCases:
+  - input: "2\npush 7\npop"
+    expected: "ok\n7"
+    hidden: true
+  - input: "4\npush 11\npush 13\npop\npop"
+    expected: "ok\nok\n13\n11"
+    hidden: true
+  - input: "2\npush 17\nshift"
+    expected: "ok\n17"
+    hidden: true
+  - input: "4\npush 23\npush 5\nshift\nshift"
+    expected: "ok\nok\n23\n5"
+    hidden: true
+  - input: "4\nunshift 23\nunshift 5\nshift\nshift"
+    expected: "ok\nok\n5\n23"
+    hidden: true
+  - input: "10\npush 1\npush 2\npop\npush 3\nshift\nunshift 4\npush 5\nshift\npop\nshift"
+    expected: "ok\nok\n2\nok\n1\nok\nok\n4\n5\n3"
+    hidden: true
+  - input: "1\ncount"
+    expected: "0"
+    hidden: true
+  - input: "3\npush 37\npush 1\ncount"
+    expected: "ok\nok\n2"
+    hidden: true
+  - input: "8\npush 31\ncount\nunshift 43\ncount\nshift\ncount\npop\ncount"
+    expected: "ok\n1\nok\n2\n43\n1\n31\n0"
+    hidden: true
+  - input: "7\npush 41\npush 59\npop\npop\npush 47\ncount\npop"
+    expected: "ok\nok\n59\n41\nok\n1\n47"
+    hidden: true
+  - input: "7\npush 41\npush 59\nshift\nshift\npush 47\ncount\nshift"
+    expected: "ok\nok\n41\n59\nok\n1\n47"
+    hidden: true
+  - input: "3\npush 61\ndelete 61\ncount"
+    expected: "ok\nok\n0"
+    hidden: true
+  - input: "7\npush 71\npush 83\npush 79\ndelete 83\ncount\npop\nshift"
+    expected: "ok\nok\nok\nok\n2\n79\n71"
+    hidden: true
+  - input: "7\npush 71\npush 83\npush 79\ndelete 83\ncount\npop\npop"
+    expected: "ok\nok\nok\nok\n2\n79\n71"
+    hidden: true
+  - input: "7\npush 71\npush 83\npush 79\ndelete 83\ncount\nshift\nshift"
+    expected: "ok\nok\nok\nok\n2\n71\n79"
+    hidden: true
+  - input: "5\npush 97\npush 101\ndelete 97\ncount\npop"
+    expected: "ok\nok\nok\n1\n101"
+    hidden: true
+  - input: "5\npush 97\npush 101\ndelete 101\ncount\npop"
+    expected: "ok\nok\nok\n1\n97"
+    hidden: true
+  - input: "9\npush 73\npush 9\npush 9\npush 107\ndelete 9\ncount\npop\npop\npop"
+    expected: "ok\nok\nok\nok\nok\n3\n107\n9\n73"
+    hidden: true
+---
+
+You are working on a project to develop a train scheduling system for a busy railway network.
+
+You've been asked to develop a prototype for the train routes in the scheduling system.
+Each route consists of a sequence of train stations that a given train stops at.
+
+Your team has decided to use a doubly linked list to represent each train route in the schedule.
+Each station along the train's route will be represented by a node in the linked list.
+
+You don't need to worry about arrival and departure times at the stations.
+Each station will simply be represented by a number.
+
+Routes can be extended, adding stations to the beginning or end of a route.
+They can also be shortened by removing stations from the beginning or the end of a route.
+
+Sometimes a station gets closed down, and in that case the station needs to be removed from the route, even if it is not at the beginning or end of the route.
+
+The size of a route is measured not by how far the train travels, but by how many stations it stops at.
+
+> [!NOTE]
+> The linked list is a fundamental data structure in computer science, often used in the implementation of other data structures.
+> As the name suggests, it is a list of nodes that are linked together.
+> It is a list of "nodes", where each node links to its neighbor or neighbors.
+> In a **singly linked list** each node links only to the node that follows it.
+> In a **doubly linked list** each node links to both the node that comes before, as well as the node that comes after.
+>
+> If you want to dig deeper into linked lists, check out [this article][intro-linked-list] that explains it using nice drawings.
+>
+> [intro-linked-list]: https://medium.com/basecs/whats-a-linked-list-anyway-part-1-d8b7e6508b9d
+
+## Input
+
+The first line is the number of operations. Each following line is one operation (see the list above).
+
+## Output
+
+Print one line of result per operation, in order.
+
+*Adapted from the [Linked List](https://github.com/exercism/problem-specifications/tree/main/exercises/linked-list) exercise on Exercism (MIT License). Original source: Classic computer science topic.*

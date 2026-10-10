@@ -1,0 +1,45 @@
+---
+title: "Minimum Subarray Sum"
+order: 32
+available: true
+areas: []
+topics: ["arrays", "dynamic-programming"]
+tags: ["kadane"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def min_subarray_sum(numbers):
+      # TODO: smallest sum of any non-empty run of consecutive elements
+      pass
+
+  numbers = list(map(int, input().split()))
+  print(min_subarray_sum(numbers))
+testCases:
+  - input: "2 3 4 1 2 4"
+    expected: "1"
+    hidden: false
+  - input: "-1 -2 -3"
+    expected: "-6"
+    hidden: true
+  - input: "1 2 3"
+    expected: "1"
+    hidden: true
+  - input: "3 -4 2 -1 5"
+    expected: "-4"
+    hidden: true
+  - input: "-1 -2 -3 2 -10"
+    expected: "-14"
+    hidden: true
+  - input: "5"
+    expected: "5"
+    hidden: true
+---
+
+A **subarray** is a non-empty run of consecutive elements from a list. Write a function `min_subarray_sum(numbers)` that returns the smallest possible sum of any subarray.
+
+For example, in `[2, 3, 4, 1, 2, 4]` the answer is `1` (the single element `1`), and in `[-1, -2, -3]` it is `-6` (the whole list).
+
+> [!TIP]
+> Track the best (smallest) sum of a subarray *ending at the current position*. At each step, either extend it or start fresh from the current element. This is Kadane's algorithm, flipped to find a minimum.
+
+The starter code reads one line of integers and prints the answer.

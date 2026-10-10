@@ -1,0 +1,93 @@
+---
+title: "Go Counting"
+order: 107
+available: true
+areas: []
+topics: ["graphs", "matrices"]
+tags: ["flood-fill", "dfs"]
+languages: []
+difficulty: "advanced"
+starterCode: |
+  def go_territory(board, x, y):
+      # board is a list of strings of "B" (black stone), "W" (white stone) and " " (empty); x is the column, y the row, from 0
+      # TODO: return (owner, squares) where owner is "BLACK", "WHITE" or "NONE" and squares is a set of (x, y) pairs
+      # making up the empty territory containing that square; return None if the coordinate is off the board
+      pass
+
+  n = int(input())
+  board = [input().replace(".", " ") for _ in range(n)]
+  x, y = map(int, input().split())
+  result = go_territory(board, x, y)
+  if result is None:
+      print("error")
+  else:
+      owner, squares = result
+      print(owner)
+      for px, py in sorted(squares):
+          print(px, py)
+testCases:
+  - input: "5\n..B..\n.B.B.\nB.W.B\n.W.W.\n..W..\n0 1"
+    expected: "BLACK\n0 0\n0 1\n1 0"
+    hidden: true
+  - input: "5\n..B..\n.B.B.\nB.W.B\n.W.W.\n..W..\n2 3"
+    expected: "WHITE\n2 3"
+    hidden: true
+  - input: "5\n..B..\n.B.B.\nB.W.B\n.W.W.\n..W..\n1 4"
+    expected: "NONE\n0 3\n0 4\n1 4"
+    hidden: true
+  - input: "5\n..B..\n.B.B.\nB.W.B\n.W.W.\n..W..\n1 1"
+    expected: "NONE"
+    hidden: true
+  - input: "5\n..B..\n.B.B.\nB.W.B\n.W.W.\n..W..\n-1 1"
+    expected: "error"
+    hidden: true
+  - input: "5\n..B..\n.B.B.\nB.W.B\n.W.W.\n..W..\n5 1"
+    expected: "error"
+    hidden: true
+  - input: "5\n..B..\n.B.B.\nB.W.B\n.W.W.\n..W..\n1 -1"
+    expected: "error"
+    hidden: true
+  - input: "5\n..B..\n.B.B.\nB.W.B\n.W.W.\n..W..\n1 5"
+    expected: "error"
+    hidden: true
+---
+
+Count the scored points on a Go board.
+
+In the game of go (also known as baduk, igo, cờ vây and wéiqí) points are gained by completely encircling empty intersections with your stones.
+The encircled intersections of a player are known as its territory.
+
+Calculate the territory of each player.
+You may assume that any stones that have been stranded in enemy territory have already been taken off the board.
+
+Determine the territory which includes a specified coordinate.
+
+Multiple empty intersections may be encircled at once and for encircling only horizontal and vertical neighbors count.
+In the following diagram the stones which matter are marked "O" and the stones that don't are marked "I" (ignored).
+Empty spaces represent empty intersections.
+
+```text
++----+
+|IOOI|
+|O  O|
+|O OI|
+|IOI |
++----+
+```
+
+To be more precise an empty intersection is part of a player's territory if all of its neighbors are either stones of that player or empty intersections that are part of that player's territory.
+
+For more information see [Wikipedia][go-wikipedia] or [Sensei's Library][go-sensei].
+
+[go-wikipedia]: https://en.wikipedia.org/wiki/Go_%28game%29
+[go-sensei]: https://senseis.xmp.net/
+
+## Input
+
+The first line is the number of board rows, followed by the rows (`B` black stone, `W` white stone, `.` empty point). The last line is the `x y` coordinate to examine, counted from 0 with `x` the column and `y` the row. In this puzzle spaces are written as `.` on input and output so they survive copy-and-paste; the starter code converts them for you, so your function works with real spaces.
+
+## Output
+
+Print `error` if the coordinate is off the board. Otherwise print the owner (`BLACK`, `WHITE` or `NONE`) of the empty territory containing that point, then each `x y` point of the territory, one per line, sorted. A territory is owned by a player if it touches only that player's stones; if the point holds a stone the territory is empty and the owner is `NONE`.
+
+*Adapted from the [Go Counting](https://github.com/exercism/problem-specifications/tree/main/exercises/go-counting) exercise on Exercism (MIT License).*

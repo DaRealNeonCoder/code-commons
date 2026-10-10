@@ -1,0 +1,51 @@
+---
+title: "Grade Calculator"
+order: 2
+available: true
+areas: ["programming-fundamentals"]
+topics: ["conditionals"]
+tags: ["if", "elif", "else"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  score = int(input())
+
+  # TODO: print the letter grade for the score
+testCases:
+  - input: "95"
+    expected: "A"
+    hidden: false
+  - input: "85"
+    expected: "B"
+    hidden: true
+  - input: "70"
+    expected: "C"
+    hidden: true
+  - input: "69"
+    expected: "D"
+    hidden: true
+  - input: "59"
+    expected: "F"
+    hidden: true
+  - input: "100"
+    expected: "A"
+    hidden: true
+  - input: "0"
+    expected: "F"
+    hidden: true
+  - input: "80"
+    expected: "B"
+    hidden: true
+---
+
+Read a score from 0 to 100 and print the matching letter grade:
+
+| Score | Grade |
+| --- | --- |
+| 90 to 100 | `A` |
+| 80 to 89 | `B` |
+| 70 to 79 | `C` |
+| 60 to 69 | `D` |
+| below 60 | `F` |
+
+For an input of `85`, a correct solution prints `B`.

@@ -1,0 +1,128 @@
+---
+title: "Transpose"
+order: 95
+available: true
+areas: []
+topics: ["matrices", "strings"]
+tags: ["transpose"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def transpose_lines(rows):
+      # rows is a list of strings that may differ in length
+      # TODO: return the transposed rows; pad shorter rows on the right with spaces if a longer row follows
+      # (and strip trailing padding from the result)
+      pass
+
+  n = int(input())
+  rows = [input().replace(".", " ") for _ in range(n)]
+  for row in transpose_lines(rows):
+      print(row.replace(" ", "."))
+testCases:
+  - input: "0"
+    expected: ""
+    hidden: true
+  - input: "1\nA1"
+    expected: "A\n1"
+    hidden: true
+  - input: "2\nA\n1"
+    expected: "A1"
+    hidden: true
+  - input: "2\nABC\n123"
+    expected: "A1\nB2\nC3"
+    hidden: true
+  - input: "1\nSingle.line."
+    expected: "S\ni\nn\ng\nl\ne\n.\nl\ni\nn\ne\n."
+    hidden: true
+  - input: "2\nThe.fourth.line.\nThe.fifth.line."
+    expected: "TT\nhh\nee\n..\nff\noi\nuf\nrt\nth\nh.\n.l\nli\nin\nne\ne.\n."
+    hidden: true
+  - input: "2\nThe.first.line.\nThe.second.line."
+    expected: "TT\nhh\nee\n..\nfs\nie\nrc\nso\ntn\n.d\nl.\nil\nni\nen\n.e\n.."
+    hidden: true
+  - input: "4\nThe.longest.line.\nA.long.line.\nA.longer.line.\nA.line."
+    expected: "TAAA\nh...\nelll\n.ooi\nlnnn\nogge\nn.e.\nglr\nei.\nsnl\ntei\n..n\nl.e\ni..\nn\ne\n."
+    hidden: true
+  - input: "5\nHEART\nEMBER\nABUSE\nRESIN\nTREND"
+    expected: "HEART\nEMBER\nABUSE\nRESIN\nTREND"
+    hidden: true
+  - input: "4\nFRACTURE\nOUTLINED\nBLOOMING\nSEPTETTE"
+    expected: "FOBS\nRULE\nATOP\nCLOT\nTIME\nUNIT\nRENT\nEDGE"
+    hidden: true
+  - input: "6\nT\nEE\nAAA\nSSSS\nEEEEE\nRRRRRR"
+    expected: "TEASER\n.EASER\n..ASER\n...SER\n....ER\n.....R"
+    hidden: true
+  - input: "6\n11\n2\n3333\n444\n555555\n66666"
+    expected: "123456\n1.3456\n..3456\n..3.56\n....56\n....5"
+    hidden: true
+---
+
+Given an input text output it transposed.
+
+Roughly explained, the transpose of a matrix:
+
+```text
+ABC
+DEF
+```
+
+is given by:
+
+```text
+AD
+BE
+CF
+```
+
+Rows become columns and columns become rows.
+See [transpose][].
+
+If the input has rows of different lengths, this is to be solved as follows:
+
+- Pad to the left with spaces.
+- Don't pad to the right.
+
+Therefore, transposing this matrix:
+
+```text
+ABC
+DE
+```
+
+results in:
+
+```text
+AD
+BE
+C
+```
+
+And transposing:
+
+```text
+AB
+DEF
+```
+
+results in:
+
+```text
+AD
+BE
+ F
+```
+
+In general, all characters from the input should also be present in the transposed output.
+That means that if a column in the input text contains only spaces on its bottom-most row(s), the corresponding output row should contain the spaces in its right-most column(s).
+
+[transpose]: https://en.wikipedia.org/wiki/Transpose
+
+## Input
+
+The first line is the number of rows. Each following line is one row of text (spaces written as `.`).
+
+## Output
+
+Print the transposed text, one row per line: row *i* of the output is made of the *i*-th characters of every input row. If a row is shorter than the rows after it, treat the missing characters as spaces so nothing shifts; do not pad characters that no later row needs. In this puzzle spaces are written as `.` on input and output so they survive copy-and-paste; the starter code converts them for you, so your function works with real spaces.
+
+*Adapted from the [Transpose](https://github.com/exercism/problem-specifications/tree/main/exercises/transpose) exercise on Exercism (MIT License). Original source: Reddit r/dailyprogrammer challenge #270 [Easy]. (https://web.archive.org/web/20230630051421/https://old.reddit.com/r/dailyprogrammer/comments/4msu2x/challenge_270_easy_transpose_the_input_text/).*

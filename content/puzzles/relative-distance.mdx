@@ -1,0 +1,100 @@
+---
+title: "Relative Distance"
+order: 83
+available: true
+areas: []
+topics: ["graphs"]
+tags: ["bfs"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def degree_of_separation(family_tree, person_a, person_b):
+      # family_tree maps each parent to a list of their children
+      # TODO: return the shortest number of connections between the two people, or -1 if they are not connected
+      pass
+
+  n = int(input())
+  family_tree = {}
+  for _ in range(n):
+      parent, *children = input().split()
+      family_tree[parent] = children
+  person_a, person_b = input().split()
+  print(degree_of_separation(family_tree, person_a, person_b))
+testCases:
+  - input: "2\nVera Tomoko\nTomoko Aditi\nVera Tomoko"
+    expected: "1"
+    hidden: true
+  - input: "1\nDalia Olga Yassin\nOlga Yassin"
+    expected: "1"
+    hidden: true
+  - input: "2\nKhadija Mateo\nMateo Rami\nKhadija Rami"
+    expected: "2"
+    hidden: true
+  - input: "52\nAiko Bao Carlos\nBao Dalia Elias\nCarlos Fatima Gustavo\nDalia Hassan Isla\nElias Javier\nFatima Khadija Liam\nGustavo Mina\nHassan Noah Olga\nIsla Pedro\nJavier Quynh Ravi\nKhadija Sofia\nLiam Tariq Uma\nMina Viktor Wang\nNoah Xiomara\nOlga Yuki\nPedro Zane Aditi\nQuynh Boris\nRavi Celine\nSofia Diego Elif\nTariq Farah\nUma Giorgio\nViktor Hana Ian\nWang Jing\nXiomara Kaito\nYuki Leila\nZane Mateo\nAditi Nia\nBoris Oscar\nCeline Priya\nDiego Qi\nElif Rami\nFarah Sven\nGiorgio Tomoko\nHana Umar\nIan Vera\nJing Wyatt\nKaito Xia\nLeila Yassin\nMateo Zara\nNia Antonio\nOscar Bianca\nPriya Cai\nQi Dimitri\nRami Ewa\nSven Fabio\nTomoko Gabriela\nUmar Helena\nVera Igor\nWyatt Jun\nXia Kim\nYassin Lucia\nZara Mohammed\nDimitri Fabio"
+    expected: "9"
+    hidden: true
+  - input: "52\nAiko Bao Carlos\nBao Dalia Elias\nCarlos Fatima Gustavo\nDalia Hassan Isla\nElias Javier\nFatima Khadija Liam\nGustavo Mina\nHassan Noah Olga\nIsla Pedro\nJavier Quynh Ravi\nKhadija Sofia\nLiam Tariq Uma\nMina Viktor Wang\nNoah Xiomara\nOlga Yuki\nPedro Zane Aditi\nQuynh Boris\nRavi Celine\nSofia Diego Elif\nTariq Farah\nUma Giorgio\nViktor Hana Ian\nWang Jing\nXiomara Kaito\nYuki Leila\nZane Mateo\nAditi Nia\nBoris Oscar\nCeline Priya\nDiego Qi\nElif Rami\nFarah Sven\nGiorgio Tomoko\nHana Umar\nIan Vera\nJing Wyatt\nKaito Xia\nLeila Yassin\nMateo Zara\nNia Antonio\nOscar Bianca\nPriya Cai\nQi Dimitri\nRami Ewa\nSven Fabio\nTomoko Gabriela\nUmar Helena\nVera Igor\nWyatt Jun\nXia Kim\nYassin Lucia\nZara Mohammed\nLucia Jun"
+    expected: "14"
+    hidden: true
+  - input: "51\nAiko Bao Carlos\nBao Dalia\nCarlos Fatima Gustavo\nDalia Hassan Isla\nFatima Khadija Liam\nGustavo Mina\nHassan Noah Olga\nIsla Pedro\nJavier Quynh Ravi\nKhadija Sofia\nLiam Tariq Uma\nMina Viktor Wang\nNoah Xiomara\nOlga Yuki\nPedro Zane Aditi\nQuynh Boris\nRavi Celine\nSofia Diego Elif\nTariq Farah\nUma Giorgio\nViktor Hana Ian\nWang Jing\nXiomara Kaito\nYuki Leila\nZane Mateo\nAditi Nia\nBoris Oscar\nCeline Priya\nDiego Qi\nElif Rami\nFarah Sven\nGiorgio Tomoko\nHana Umar\nIan Vera\nJing Wyatt\nKaito Xia\nLeila Yassin\nMateo Zara\nNia Antonio\nOscar Bianca\nPriya Cai\nQi Dimitri\nRami Ewa\nSven Fabio\nTomoko Gabriela\nUmar Helena\nVera Igor\nWyatt Jun\nXia Kim\nYassin Lucia\nZara Mohammed\nWyatt Xia"
+    expected: "12"
+    hidden: true
+---
+
+You've been hired to develop **Noble Knots**, the hottest new dating app for nobility!
+With centuries of royal intermarriage, things have gotten… _complicated_.
+To avoid any _oops-we're-twins_ situations, your job is to build a system that checks how closely two people are related.
+
+Noble Knots is inspired by Iceland's "[Islendinga-App][islendiga-app]," which is backed up by a database that traces all known family connections between Icelanders from the time of the settlement of Iceland.
+Your algorithm will determine the **degree of separation** between two individuals in the royal family tree.
+
+Will your app help crown a perfect match?
+
+[islendiga-app]: https://web.archive.org/web/20250816223614/http://www.islendingaapp.is/information-in-english/
+
+Your task is to determine the degree of separation between two individuals in a family tree.
+This is similar to the pop culture idea that every Hollywood actor is [within six degrees of Kevin Bacon][six-bacons].
+
+- You will be given an input, with all parent names and their children.
+- Each name is unique, a child _can_ have one or two parents.
+- The degree of separation is defined as the shortest number of connections from one person to another.
+- If two individuals are not connected, return a value that represents "no known relationship."
+  In this puzzle, print `-1` for people who are not connected.
+
+## Example
+
+Given the following family tree:
+
+```text
+      ┌──────────┐            ┌──────────┐     ┌───────────┐
+      │  Helena  │            │  Erdős   ├─────┤  Shusaku  │
+      └───┬───┬──┘            └─────┬────┘     └────┬──────┘
+      ┌───┘   └───────┐             └───────┬───────┘
+┌─────┴────┐     ┌────┴───┐           ┌─────┴────┐
+│   Isla   ├─────┤ Tariq  │           │   Kevin  │
+└────┬─────┘     └────┬───┘           └──────────┘
+     │                │
+┌────┴────┐      ┌────┴───┐
+│   Uma   │      │ Morphy │
+└─────────┘      └────────┘
+```
+
+The degree of separation between Tariq and Uma is 2 (Tariq → Isla → Uma).
+There's no known relationship between Isla and Kevin, as there is no connection in the given data.
+The degree of separation between Uma and Isla is 1.
+
+> [!NOTE]
+> Isla and Tariq are siblings and have a separation of 1.
+> Similarly, this implementation would report a separation of 2 from you to your father's brother.
+
+[six-bacons]: https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon
+
+## Input
+
+The first line is the number of parents `n`. Each of the next `n` lines lists a parent followed by their children. The last line has the two people to compare.
+
+## Output
+
+Print the degree of separation (the smallest number of connections between the two people, where a parent and child, or two siblings, are one connection apart), or `-1` if there is no known relationship.
+
+*Adapted from the [Relative Distance](https://github.com/exercism/problem-specifications/tree/main/exercises/relative-distance) exercise on Exercism (MIT License). Original source: vaeng (https://github.com/exercism/problem-specifications/pull/2537).*

@@ -1,0 +1,44 @@
+---
+title: "0/1 Knapsack"
+order: 43
+available: true
+areas: []
+topics: ["dynamic-programming"]
+tags: ["knapsack"]
+languages: []
+difficulty: "advanced"
+starterCode: |
+  def knapsack(capacity, weights, values):
+      # TODO: maximum total value that fits within the capacity
+      pass
+
+  capacity = int(input())
+  weights = list(map(int, input().split()))
+  values = list(map(int, input().split()))
+  print(knapsack(capacity, weights, values))
+testCases:
+  - input: "50\n10 20 30\n60 100 120"
+    expected: "220"
+    hidden: false
+  - input: "10\n5 4 6 3\n10 40 30 50"
+    expected: "90"
+    hidden: true
+  - input: "3\n4 5\n10 20"
+    expected: "0"
+    hidden: true
+  - input: "7\n1 3 4 5\n1 4 5 7"
+    expected: "9"
+    hidden: true
+  - input: "1\n1\n5"
+    expected: "5"
+    hidden: true
+---
+
+A thief has a bag that can carry at most `capacity` kilograms. There are several items, each with a weight and a value, and each item can be taken **at most once**.
+
+Write a function `knapsack(capacity, weights, values)` that returns the largest total value the thief can carry. For example, with capacity `50`, weights `[10, 20, 30]` and values `[60, 100, 120]`, the best choice is the second and third items for a value of `220`.
+
+> [!TIP]
+> Let `best[w]` be the best value achievable with weight limit `w`. For each item, update `best` from the highest weight **down** to the item's weight. Going downwards makes sure the same item isn't used twice.
+
+The starter code reads the capacity, then the weights, then the values (one line each).

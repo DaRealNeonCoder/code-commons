@@ -1,0 +1,85 @@
+---
+title: "Hamming Distance"
+order: 20
+available: true
+areas: []
+topics: ["strings"]
+tags: ["hamming-distance"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def hamming_distance(a, b):
+      # TODO: return the number of positions where a and b differ, or -1 if their lengths differ
+      pass
+
+  a = input()
+  b = input()
+  print(hamming_distance(a, b))
+testCases:
+  - input: "A\nA"
+    expected: "0"
+    hidden: true
+  - input: "G\nT"
+    expected: "1"
+    hidden: true
+  - input: "GGACTGAAATCTG\nGGACTGAAATCTG"
+    expected: "0"
+    hidden: true
+  - input: "GGACGGATTCTG\nAGGACGGATTCT"
+    expected: "9"
+    hidden: true
+  - input: "AATG\nAAA"
+    expected: "-1"
+    hidden: true
+  - input: "ATA\nAGTG"
+    expected: "-1"
+    hidden: true
+  - input: "GAGCCTACTAACGGGAT\nCATCGTAATGACGGCCT"
+    expected: "7"
+    hidden: true
+  - input: "AAAA\nAAAA"
+    expected: "0"
+    hidden: true
+  - input: "ACGT\nTGCA"
+    expected: "4"
+    hidden: true
+  - input: "A\nAT"
+    expected: "-1"
+    hidden: true
+---
+
+Your body is made up of cells that contain DNA.
+Those cells regularly wear out and need replacing, which they achieve by dividing into daughter cells.
+In fact, the average human body experiences about 10 quadrillion cell divisions in a lifetime!
+
+When cells divide, their DNA replicates too.
+Sometimes during this process mistakes happen and single pieces of DNA get encoded with the incorrect information.
+If we compare two strands of DNA and count the differences between them, we can see how many mistakes occurred.
+This is known as the "Hamming distance".
+
+The Hamming distance is useful in many areas of science, not just biology, so it's a nice phrase to be familiar with :)
+
+Calculate the Hamming distance between two DNA strands.
+
+We read DNA using the letters C, A, G and T.
+Two strands might look like this:
+
+    GAGCCTACTAACGGGAT
+    CATCGTAATGACGGCCT
+    ^ ^ ^  ^ ^    ^^
+
+They have 7 differences, and therefore the Hamming distance is 7.
+
+## Implementation notes
+
+The Hamming distance is only defined for sequences of equal length, so an attempt to calculate it between sequences of different lengths should not work.
+
+## Input
+
+Two lines, each containing a DNA strand.
+
+## Output
+
+Print the Hamming distance between the strands, or `-1` if they have different lengths.
+
+*Adapted from the [Hamming](https://github.com/exercism/problem-specifications/tree/main/exercises/hamming) exercise on Exercism (MIT License). Original source: The Calculating Point Mutations problem at Rosalind (https://rosalind.info/problems/hamm/).*

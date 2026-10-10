@@ -1,0 +1,104 @@
+---
+title: "Atbash Cipher"
+order: 5
+available: true
+areas: []
+topics: ["strings", "cryptography"]
+tags: ["atbash-cipher"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def atbash(mode, text):
+      # mode is "encode" or "decode"
+      # TODO: return the encoded or decoded text
+      pass
+
+  mode = input()
+  text = input()
+  print(atbash(mode, text))
+testCases:
+  - input: "encode\nyes"
+    expected: "bvh"
+    hidden: true
+  - input: "encode\nno"
+    expected: "ml"
+    hidden: true
+  - input: "encode\nOMG"
+    expected: "lnt"
+    hidden: true
+  - input: "encode\nO M G"
+    expected: "lnt"
+    hidden: true
+  - input: "encode\nmindblowingly"
+    expected: "nrmwy oldrm tob"
+    hidden: true
+  - input: "encode\nTesting,1 2 3, testing."
+    expected: "gvhgr mt123 gvhgr mt"
+    hidden: true
+  - input: "encode\nTruth is fiction."
+    expected: "gifgs rhurx grlm"
+    hidden: true
+  - input: "encode\nThe quick brown fox jumps over the lazy dog."
+    expected: "gsvjf rxpyi ldmul cqfnk hlevi gsvoz abwlt"
+    hidden: true
+  - input: "decode\nvcvix rhn"
+    expected: "exercism"
+    hidden: true
+  - input: "decode\nzmlyh gzxov rhlug vmzhg vkkrm thglm v"
+    expected: "anobstacleisoftenasteppingstone"
+    hidden: true
+  - input: "decode\ngvhgr mt123 gvhgr mt"
+    expected: "testing123testing"
+    hidden: true
+  - input: "decode\ngsvjf rxpyi ldmul cqfnk hlevi gsvoz abwlt"
+    expected: "thequickbrownfoxjumpsoverthelazydog"
+    hidden: true
+  - input: "decode\nvc vix    r hn"
+    expected: "exercism"
+    hidden: true
+  - input: "decode\nzmlyhgzxovrhlugvmzhgvkkrmthglmv"
+    expected: "anobstacleisoftenasteppingstone"
+    hidden: true
+  - input: "encode\nHello, World!"
+    expected: "svool dliow"
+    hidden: true
+  - input: "decode\nsvool dliow"
+    expected: "helloworld"
+    hidden: true
+---
+
+Create an implementation of the Atbash cipher, an ancient encryption system created in the Middle East.
+
+The Atbash cipher is a simple substitution cipher that relies on transposing all the letters in the alphabet such that the resulting alphabet is backwards.
+The first letter is replaced with the last letter, the second with the second-last, and so on.
+
+An Atbash cipher for the Latin alphabet would be as follows:
+
+```text
+Plain:  abcdefghijklmnopqrstuvwxyz
+Cipher: zyxwvutsrqponmlkjihgfedcba
+```
+
+It is a very weak cipher because it only has one possible key, and it is a simple mono-alphabetic substitution cipher.
+However, this may not have been an issue in the cipher's time.
+
+Ciphertext is written out in groups of fixed length, the traditional group size being 5 letters, leaving numbers unchanged, and punctuation is excluded.
+This is to make it harder to guess things based on word boundaries.
+All text will be encoded as lowercase letters.
+
+## Examples
+
+- Encoding `test` gives `gvhg`
+- Encoding `x123 yes` gives `c123b vh`
+- Decoding `gvhg` gives `test`
+- Decoding `gsvjf rxpyi ldmul cqfnk hlevi gsvoz abwlt` gives `thequickbrownfoxjumpsoverthelazydog`
+
+## Input
+
+The first line is `encode` or `decode`. The second line is the text to process.
+
+## Output
+
+Print the result. When encoding, output is lower case, punctuation and spaces are dropped, and the letters are grouped in blocks of five separated by spaces. When decoding, print the plain text without spaces or punctuation.
+
+*Adapted from the [Atbash Cipher](https://github.com/exercism/problem-specifications/tree/main/exercises/atbash-cipher) exercise on Exercism (MIT License). Original source: Wikipedia (https://en.wikipedia.org/wiki/Atbash).*

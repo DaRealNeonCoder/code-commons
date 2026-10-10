@@ -1,0 +1,137 @@
+---
+title: "Conditional Statements"
+order: 5
+summary: "Make your programs choose between different paths with if, elif, and else."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["conditionals", "control-flow"]
+tags: ["if", "elif", "else", "truthiness"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["leap-year", "grade-calculator", "triangle-type"]
+---
+
+So far, every program ran the same lines in the same order. **Conditional statements** let a program make decisions: do this *if* something is true, otherwise do that.
+
+## if
+
+```python
+temperature = 31
+
+if temperature > 30:
+    print("It's hot outside.")
+```
+
+The pieces:
+
+- `if` is followed by a **condition**, an expression that is `True` or `False`.
+- A colon `:` ends the line.
+- The **indented** lines underneath only run when the condition is true.
+
+> [!WARNING]
+> Indentation is how Python knows which lines belong to the `if`. Use four spaces, and keep the indentation consistent. Forgetting the colon or the indent causes a `SyntaxError` or `IndentationError`.
+
+## else
+
+`else` runs when the condition is false:
+
+```python
+age = 16
+
+if age >= 18:
+    print("You can vote.")
+else:
+    print("Too young to vote.")
+```
+
+## elif
+
+For more than two outcomes, add `elif` ("else if"). Python checks from top to bottom and runs the **first** branch that is true, then skips the rest:
+
+```python
+score = 85
+
+if score >= 90:
+    print("A")
+elif score >= 80:
+    print("B")
+elif score >= 70:
+    print("C")
+else:
+    print("Keep practicing")
+```
+
+Output:
+
+```
+B
+```
+
+Notice that `score >= 80` doesn't need to say `score < 90`. If the score were 95, the first branch would already have run.
+
+> [!TIP]
+> Order matters. Put the most specific or highest-priority checks first.
+
+## Combining conditions
+
+Use `and`, `or`, and `not` from the operators lesson:
+
+```python
+age = 30
+has_id = True
+
+if age >= 18 and has_id:
+    print("Welcome in.")
+```
+
+> [!WARNING]
+> `if x == 1 or 2:` does not mean "x is 1 or 2". Python reads it as `(x == 1) or 2`, and `2` is always truthy, so the condition is always true. Write `if x == 1 or x == 2:` instead.
+
+## Nested conditions
+
+You can put an `if` inside another `if`:
+
+```python
+age = 20
+has_ticket = True
+
+if age >= 18:
+    if has_ticket:
+        print("Enter the show.")
+    else:
+        print("Buy a ticket first.")
+else:
+    print("Adults only.")
+```
+
+Nesting works, but deep nesting gets hard to read. When two conditions must both be true, `and` is often cleaner than nesting.
+
+## Truthiness
+
+Python doesn't need a `bool` in an `if`. Every value counts as either **truthy** or **falsy**:
+
+| Falsy (acts like `False`) | Truthy (acts like `True`) |
+| --- | --- |
+| `False` | `True` |
+| `None` | any non-zero number, such as `1`, `-5`, `0.1` |
+| `0` and `0.0` | any non-empty string, such as `"hi"`, `" "`, `"0"` |
+| `""` (empty string) | |
+
+This makes some checks shorter:
+
+```python
+name = input()
+
+if name:
+    print(f"Hello, {name}!")
+else:
+    print("You didn't type anything.")
+```
+
+Use `bool(value)` to see which way a value goes: `bool("")` is `False`, `bool("0")` is `True`.
+
+<Details title="Is there a one-line version of if/else?">
+Yes, the conditional expression: `label = "adult" if age >= 18 else "minor"`. It's handy for simple choices, but a regular `if`/`else` is clearer when the branches do more than pick a value.
+</Details>
+
+Now try it yourself. The next step is three puzzles where your code has to make decisions.

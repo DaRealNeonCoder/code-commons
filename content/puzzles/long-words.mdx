@@ -1,0 +1,39 @@
+---
+title: "Long Words"
+order: 47
+available: true
+areas: []
+topics: ["strings"]
+tags: []
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def long_words(sentence):
+      # TODO: return the words that have 4 or more letters
+      pass
+
+  sentence = input()
+  print(*long_words(sentence))
+testCases:
+  - input: "Please move back to stream"
+    expected: "Please move back stream"
+    hidden: false
+  - input: "Jing Eco and Tech"
+    expected: "Jing Tech"
+    hidden: true
+  - input: "Jhingai wulu road Zone 3"
+    expected: "Jhingai wulu road Zone"
+    hidden: true
+  - input: "hello world"
+    expected: "hello world"
+    hidden: true
+  - input: "code is fun and easy"
+    expected: "code easy"
+    hidden: true
+---
+
+Write a function `long_words(sentence)` that returns every word in a sentence that is **at least 4 characters long**, in their original order. Words are separated by spaces.
+
+For example, `"Please move back to stream"` gives `["Please", "move", "back", "stream"]`; the word `"to"` is too short.
+
+The starter code reads one sentence and prints the matching words separated by spaces. Every test has at least one matching word.

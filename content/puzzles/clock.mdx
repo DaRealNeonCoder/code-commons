@@ -1,0 +1,154 @@
+---
+title: "Clock"
+order: 62
+available: true
+areas: []
+topics: ["date-time", "math"]
+tags: ["modular-arithmetic"]
+languages: []
+difficulty: "intermediate"
+starterCode: |
+  def clock_time(hour, minute, delta):
+      # TODO: start from hour:minute, add delta minutes (may be negative or huge) and return "HH:MM"
+      pass
+
+  hour, minute, delta = map(int, input().split())
+  print(clock_time(hour, minute, delta))
+testCases:
+  - input: "8 0 0"
+    expected: "08:00"
+    hidden: true
+  - input: "11 9 0"
+    expected: "11:09"
+    hidden: true
+  - input: "24 0 0"
+    expected: "00:00"
+    hidden: true
+  - input: "25 0 0"
+    expected: "01:00"
+    hidden: true
+  - input: "100 0 0"
+    expected: "04:00"
+    hidden: true
+  - input: "1 60 0"
+    expected: "02:00"
+    hidden: true
+  - input: "0 160 0"
+    expected: "02:40"
+    hidden: true
+  - input: "0 1723 0"
+    expected: "04:43"
+    hidden: true
+  - input: "25 160 0"
+    expected: "03:40"
+    hidden: true
+  - input: "201 3001 0"
+    expected: "11:01"
+    hidden: true
+  - input: "72 8640 0"
+    expected: "00:00"
+    hidden: true
+  - input: "-1 15 0"
+    expected: "23:15"
+    hidden: true
+  - input: "-25 0 0"
+    expected: "23:00"
+    hidden: true
+  - input: "-91 0 0"
+    expected: "05:00"
+    hidden: true
+  - input: "1 -40 0"
+    expected: "00:20"
+    hidden: true
+  - input: "1 -160 0"
+    expected: "22:20"
+    hidden: true
+  - input: "1 -4820 0"
+    expected: "16:40"
+    hidden: true
+  - input: "2 -60 0"
+    expected: "01:00"
+    hidden: true
+  - input: "-25 -160 0"
+    expected: "20:20"
+    hidden: true
+  - input: "-121 -5810 0"
+    expected: "22:10"
+    hidden: true
+  - input: "10 0 3"
+    expected: "10:03"
+    hidden: true
+  - input: "6 41 0"
+    expected: "06:41"
+    hidden: true
+  - input: "0 45 40"
+    expected: "01:25"
+    hidden: true
+  - input: "10 0 61"
+    expected: "11:01"
+    hidden: true
+  - input: "0 45 160"
+    expected: "03:25"
+    hidden: true
+  - input: "23 59 2"
+    expected: "00:01"
+    hidden: true
+  - input: "5 32 1500"
+    expected: "06:32"
+    hidden: true
+  - input: "1 1 3500"
+    expected: "11:21"
+    hidden: true
+  - input: "10 3 -3"
+    expected: "10:00"
+    hidden: true
+  - input: "10 3 -30"
+    expected: "09:33"
+    hidden: true
+  - input: "10 3 -70"
+    expected: "08:53"
+    hidden: true
+  - input: "0 3 -4"
+    expected: "23:59"
+    hidden: true
+  - input: "0 0 -160"
+    expected: "21:20"
+    hidden: true
+  - input: "6 15 -160"
+    expected: "03:35"
+    hidden: true
+  - input: "5 32 -1500"
+    expected: "04:32"
+    hidden: true
+  - input: "2 20 -3000"
+    expected: "00:20"
+    hidden: true
+  - input: "23 59 1"
+    expected: "00:00"
+    hidden: true
+  - input: "0 0 -1"
+    expected: "23:59"
+    hidden: true
+  - input: "5 30 1500"
+    expected: "06:30"
+    hidden: true
+  - input: "12 0 -100000"
+    expected: "01:20"
+    hidden: true
+---
+
+Implement a clock that handles times without dates.
+
+You should be able to add and subtract minutes to it.
+
+Two clocks that represent the same time should be equal to each other.
+
+## Input
+
+One line with three integers: the starting hour, the starting minute and the number of minutes to add (negative to subtract). The hour and minute may be out of the usual range.
+
+## Output
+
+Print the resulting time on a 24-hour clock as `HH:MM`, with the clock wrapping around midnight.
+
+*Adapted from the [Clock](https://github.com/exercism/problem-specifications/tree/main/exercises/clock) exercise on Exercism (MIT License). Original source: Pairing session with Erin Drummond.*
