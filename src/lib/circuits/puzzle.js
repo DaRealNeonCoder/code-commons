@@ -2,6 +2,7 @@ import { parseCircuit } from "./circuitData.js";
 import { computeSimulation, getPortCounts } from "./engine.js";
 
 const MAX_PORTS = 5000;
+const MAX_TEST_CASES = 1000;
 const MAX_GATES = 10_000;
 const MAX_DEPTH = 256;
 const MAX_CHECK_WORK = 20_000_000;
@@ -19,7 +20,13 @@ function requireCircuit(condition) {
 // Validate the public interface independently of the secret cases. Never derive
 // port ordering from positions or from the submitted circuit.
 export function getPuzzlePorts(value, starterCircuit) {
-  if (!value || !Array.isArray(value.inputs) || !Array.isArray(value.outputs)) {
+  if (
+    !value ||
+    !Array.isArray(value.inputs) ||
+    !Array.isArray(value.outputs) ||
+    value.inputs.length > MAX_PORTS ||
+    value.outputs.length > MAX_PORTS
+  ) {
     throw new InvalidPuzzleError("Invalid circuit puzzle configuration.");
   }
   const ids = [...value.inputs, ...value.outputs];
@@ -41,7 +48,7 @@ export function getPuzzlePorts(value, starterCircuit) {
 
 export function getPuzzleTests(value, ports) {
   if (
-    !Array.isArray(value) || value.length === 0 ||
+    !Array.isArray(value) || value.length === 0 || value.length > MAX_TEST_CASES ||
     !value.every((test) =>
       Array.isArray(test?.input) && test.input.length === ports.inputs.length && test.input.every(isBit) &&
       Array.isArray(test?.expected) && test.expected.length === ports.outputs.length && test.expected.every(isBit)

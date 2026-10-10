@@ -87,11 +87,20 @@ export default async function ProjectEditorPage({ params }) {
 
   const Editor = EDITORS[type];
   const extraProps = await getExtraProps(type, project.id);
+  const editorData =
+    type === "circuit" && !canEdit
+      ? {
+          ...project.data,
+          puzzle: { enabled: false, inputs: [], outputs: [], testCases: [] },
+          puzzlePorts: null,
+          testCases: [],
+        }
+      : project.data;
 
   return (
     <Editor
       key={project.id}
-      project={{ id: project.id, title: project.title, data: project.data, canEdit }}
+      project={{ id: project.id, title: project.title, data: editorData, canEdit }}
       {...extraProps}
     />
   );

@@ -101,6 +101,7 @@ export default function LogicSimulator({
     () => new Set([...(puzzle?.inputs ?? []), ...(puzzle?.outputs ?? [])]),
     [puzzle]
   );
+  const puzzleInterfaceKey = `${puzzle ? "on" : "off"}:${puzzle?.inputs?.join(",") ?? ""}|${puzzle?.outputs?.join(",") ?? ""}`;
 
   // Undo/redo history. currentStateRef always mirrors the latest committed
   // components/connections/chips so pushHistory/undo/redo never read stale
@@ -108,6 +109,13 @@ export default function LogicSimulator({
   const historyRef = useRef([]);
   const futureRef = useRef([]);
   const currentStateRef = useRef({ components, connections, chips });
+  // A creator may build the circuit before enabling puzzle mode. Do not let an
+  // old undo snapshot remove a now-fixed terminal after the mode is enabled.
+  useEffect(() => {
+    historyRef.current = [];
+    futureRef.current = [];
+  }, [puzzleInterfaceKey]);
+
   useEffect(() => {
     currentStateRef.current = { components, connections, chips };
   });
@@ -679,7 +687,7 @@ export default function LogicSimulator({
             >
               + Create Chip
             </button>
-            {puzzle && (
+            {puzzle && puzzleId && (
               <button
                 onClick={handleCheckPuzzle}
                 disabled={checking}

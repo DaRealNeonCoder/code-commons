@@ -5,6 +5,7 @@ import Link from "next/link";
 import TextBlockEditor, { newTextBlock } from "@/components/creator/TextBlockEditor";
 import { blocksToMarkdown } from "@/lib/blocksToMarkdown";
 import LogicSimulator from "@/components/circuits/LogicSimulator";
+import CircuitPuzzleEditor from "@/components/creator/CircuitPuzzleEditor";
 import LessonPreview from "@/components/creator/LessonPreview";
 import PublishBadge from "@/components/creator/PublishBadge";
 import useProjectAutosave from "@/components/creator/useProjectAutosave";
@@ -32,6 +33,26 @@ const STATUS_TEXT = {
   saving: "saving...",
   error: "couldn't save",
 };
+
+function cleanIds(value) {
+  return Array.isArray(value) ? value.filter((id) => typeof id === "string") : [];
+}
+
+function cleanPuzzleCase(testCase, inputs, outputs, key) {
+  const inputValues = Array.isArray(testCase?.input) ? testCase.input : [];
+  const expectedValues = Array.isArray(testCase?.expected) ? testCase.expected : [];
+  return {
+    key,
+    input: inputs.map((_, index) => Boolean(inputValues[index])),
+    expected: outputs.map((_, index) => Boolean(expectedValues[index])),
+  };
+}
+
+function resizePuzzleCases(testCases, inputs, outputs) {
+  return testCases.map((testCase, index) =>
+    cleanPuzzleCase(testCase, inputs, outputs, testCase.key || `circuit-tc-saved-${index}`)
+  );
+}
 
 function isValidCircuit(c) {
   return (
@@ -91,10 +112,46 @@ export default function CircuitCreator({
   const [status, setStatus] = useState(null);
   const [publishedId, setPublishedId] = useState(initialPublishedId);
 
+  const savedPuzzle = saved.puzzle && typeof saved.puzzle === "object" ? saved.puzzle : {};
+  const initialPuzzleInputs = cleanIds(savedPuzzle.inputs ?? saved.puzzlePorts?.inputs);
+  const initialPuzzleOutputs = cleanIds(savedPuzzle.outputs ?? saved.puzzlePorts?.outputs);
+  const [puzzleEnabled, setPuzzleEnabled] = useState(Boolean(savedPuzzle.enabled ?? saved.puzzlePorts));
+  const [puzzleInputs, setPuzzleInputs] = useState(initialPuzzleInputs);
+  const [puzzleOutputs, setPuzzleOutputs] = useState(initialPuzzleOutputs);
+  const [puzzleTests, setPuzzleTests] = useState(() => {
+    const savedTests = Array.isArray(savedPuzzle.testCases ?? saved.testCases) ? savedPuzzle.testCases : [];
+    return resizePuzzleCases(savedTests, initialPuzzleInputs, initialPuzzleOutputs);
+  });
+
   const markdown = useMemo(() => blocksToMarkdown(blocks), [blocks]);
   const hasText = markdown.trim() !== "";
 
-  const draftData = { summary, circuit, blocks };
+  const puzzle = puzzleEnabled ? { inputs: puzzleInputs, outputs: puzzleOutputs } : null;
+  const cleanPuzzleTests = puzzleTests.map(({ input, expected }) => ({ input, expected }));
+  const draftData = {
+    summary,
+    circuit,
+    blocks,
+    puzzle: {
+      enabled: puzzleEnabled,
+      inputs: puzzleInputs,
+      outputs: puzzleOutputs,
+      testCases: cleanPuzzleTests,
+    },
+  };
+
+  const circuitInputs = circuit.components.filter((component) => component.kind === "INPUT");
+  const circuitOutputs = circuit.components.filter((component) => component.kind === "LED");
+  const selectedIds = new Set([...puzzleInputs, ...puzzleOutputs]);
+  const puzzleHasValidPorts =
+    puzzleInputs.every((id) => circuitInputs.some((component) => component.id === id)) &&
+    puzzleOutputs.length > 0 &&
+    puzzleOutputs.every((id) => circuitOutputs.some((component) => component.id === id)) &&
+    circuit.components.every(
+      (component) =>
+        (component.kind !== "INPUT" && component.kind !== "LED") || selectedIds.has(component.id)
+    );
+  const puzzleReady = !puzzleEnabled || (puzzleHasValidPorts && puzzleTests.length > 0);
 
   const saveState = useProjectAutosave({
     projectId: project.id,
@@ -113,6 +170,26 @@ export default function CircuitCreator({
     setView(next);
   }
 
+  function enablePuzzle(next) {
+    setPuzzleEnabled(next);
+    if (!next) return;
+    const inputs = puzzleInputs.length > 0 ? puzzleInputs : circuitInputs.map((component) => component.id);
+    const outputs = puzzleOutputs.length > 0 ? puzzleOutputs : circuitOutputs.map((component) => component.id);
+    setPuzzleInputs(inputs);
+    setPuzzleOutputs(outputs);
+    setPuzzleTests((tests) => resizePuzzleCases(tests, inputs, outputs));
+  }
+
+  function updatePuzzleInputs(next) {
+    setPuzzleInputs(next);
+    setPuzzleTests((tests) => resizePuzzleCases(tests, next, puzzleOutputs));
+  }
+
+  function updatePuzzleOutputs(next) {
+    setPuzzleOutputs(next);
+    setPuzzleTests((tests) => resizePuzzleCases(tests, puzzleInputs, next));
+  }
+
   async function handlePublish() {
     const snap = JSON.stringify({ title, data: draftData }); // what this publish actually sends
     setStatus("saving");
@@ -126,8 +203,10 @@ export default function CircuitCreator({
           title,
           summary,
           ...NO_SELECTION,
-          starterCircuit: circuit,
-          blocks,
+           starterCircuit: circuit,
+           puzzlePorts: puzzleEnabled ? puzzle : null,
+           testCases: puzzleEnabled ? cleanPuzzleTests.map((testCase) => ({ ...testCase, hidden: true })) : [],
+           blocks,
         }),
       });
 
@@ -156,7 +235,7 @@ export default function CircuitCreator({
     <div className="flex h-full w-full flex-col">
       {!project.canEdit && (
         <p className="shrink-0 border-b border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm text-amber-700 dark:text-amber-400">
-          You're viewing someone else's project. It's read-only, and nothing you
+          You&apos;re viewing someone else&apos;s project. It&apos;s read-only, and nothing you
           do here is saved.
         </p>
       )}
@@ -215,6 +294,7 @@ export default function CircuitCreator({
           <LogicSimulator
             initialCircuit={seed}
             onChange={setCircuit}
+            puzzle={puzzle}
             showProjectIO={false}
             {...lessonProps}
           />
@@ -285,10 +365,22 @@ export default function CircuitCreator({
                 />
               </section>
 
-              <TextBlockEditor
-                blocks={blocks}
-                onChange={setBlocks}
-                accent="blue"
+             <TextBlockEditor
+               blocks={blocks}
+               onChange={setBlocks}
+               accent="blue"
+             />
+
+              <CircuitPuzzleEditor
+                enabled={puzzleEnabled}
+                onEnabledChange={enablePuzzle}
+                components={circuit.components}
+                inputs={puzzleInputs}
+                outputs={puzzleOutputs}
+                onInputsChange={updatePuzzleInputs}
+                onOutputsChange={updatePuzzleOutputs}
+                testCases={puzzleTests}
+                onTestCasesChange={setPuzzleTests}
               />
 
               {/* Markdown preview */}
@@ -307,7 +399,7 @@ export default function CircuitCreator({
                 <button
                   type="button"
                   onClick={handlePublish}
-                  disabled={status === "saving" || !title.trim()}
+                  disabled={status === "saving" || !title.trim() || !puzzleReady}
                   className="rounded-md bg-blue-600 px-5 py-2.5 font-mono text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
                 >
                   {status === "saving"
@@ -316,6 +408,12 @@ export default function CircuitCreator({
                       ? "$ publish circuit lesson"
                       : "$ update circuit lesson"}
                 </button>
+
+                {puzzleEnabled && !puzzleReady && (
+                  <p className="text-sm text-amber-600 dark:text-amber-400">
+                    Select every input and LED, select at least one output, and add a test case before publishing.
+                  </p>
+                )}
 
                 {publishedId && status !== "saving" && !status?.error && (
                   <p className={`text-sm ${publishState === "edited" ? "text-amber-600 dark:text-amber-400" : "text-teal-600 dark:text-teal-400"}`}>

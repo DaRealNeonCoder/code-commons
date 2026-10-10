@@ -46,6 +46,14 @@ definitions, malformed circuits, and cycles are rejected. Circuit size and
 evaluation-work limits apply; inputs and outputs are arrays rather than
 fixed-width bit masks. Ordinary circuit lessons have `puzzlePorts: null`.
 
+Signed-in users can create these from `/create`: open a circuit project, build
+the starter circuit in the workspace, then switch to `markdown`, enable
+`publish as circuit puzzle`, select all of the circuit's input and LED
+components, and add hidden truth-table cases. Puzzle inputs and outputs are
+protected in the workspace once the mode is enabled. Draft puzzle data is
+redacted from non-owners, while the published page exposes only its public
+terminal IDs.
+
 Run checker regression tests with `node --test src/lib/circuits/puzzle.test.mjs`.
 
 ## Status
