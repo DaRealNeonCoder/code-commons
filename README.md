@@ -11,7 +11,7 @@ A free and open-source platform for learning, experimenting with code, and creat
 * **Logic Simulations** — Build and experiment with digital logic circuits.
 * **Content Creation** — Create, publish, and share your own lessons, puzzles, shaders, and circuits.
 * **Code Execution** — Run Python code directly in the browser.
-* **Profiles** — User profiles and basic progress tracking.
+* **Profiles** — User profiles, basic progress tracking, and daily streak.
 
 
 ## Tech Stack

@@ -10,6 +10,8 @@ import PublishBadge from "@/components/creator/PublishBadge";
 import { DEFAULT_SHADER } from "@/lib/shaders/defaultShader";
 import useProjectAutosave from "@/components/creator/useProjectAutosave";
 import usePublishState from "@/components/creator/usePublishState";
+import ShaderPuzzleEditor from "@/components/creator/ShaderPuzzleEditor";
+import { getShaderPuzzle } from "@/lib/shaders/puzzle";
 
 // Shader lessons aren't categorised; the save route still expects these keys,
 // so send empty defaults.
@@ -26,6 +28,14 @@ const STATUS_TEXT = {
   dirty: "unsaved changes",
   saving: "saving...",
   error: "couldn't save",
+};
+
+const DEFAULT_PUZZLE = {
+  width: 96,
+  height: 96,
+  tolerance: 0.08,
+  requiredMatch: 0.96,
+  referenceImage: "",
 };
 
 function ViewTab({ label, active, onClick }) {
@@ -74,10 +84,24 @@ export default function ShaderCreator({
   const [status, setStatus] = useState(null);
   const [publishedId, setPublishedId] = useState(initialPublishedId);
 
+  const savedPuzzle = saved.puzzle ?? saved.puzzleConfig;
+  const [puzzleEnabled, setPuzzleEnabled] = useState(saved.puzzleEnabled ?? Boolean(savedPuzzle));
+  const [puzzle, setPuzzle] = useState(() => ({ ...DEFAULT_PUZZLE, ...(savedPuzzle ?? {}) }));
+
   const markdown = useMemo(() => blocksToMarkdown(blocks), [blocks]);
   const hasText = markdown.trim() !== "";
 
-  const draftData = { summary, code, blocks };
+  let puzzleConfig = null;
+  let puzzleError = null;
+  if (puzzleEnabled) {
+    try {
+      puzzleConfig = getShaderPuzzle(puzzle);
+    } catch (error) {
+      puzzleError = error.message;
+    }
+  }
+  const draftData = { summary, code, blocks, puzzle, puzzleEnabled };
+  const puzzleReady = !puzzleEnabled || Boolean(puzzleConfig);
 
   const saveState = useProjectAutosave({
     projectId: project.id,
@@ -110,6 +134,7 @@ export default function ShaderCreator({
           summary,
           ...NO_SELECTION,
           starterCode: code,
+          puzzle: puzzleConfig,
           blocks,
         }),
       });
@@ -137,7 +162,7 @@ export default function ShaderCreator({
     <div className="flex h-full w-full flex-col">
       {!project.canEdit && (
         <p className="shrink-0 border-b border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm text-amber-700 dark:text-amber-400">
-          You're viewing someone else's project. It's read-only, and nothing you
+          You&apos;re viewing someone else&apos;s project. It&apos;s read-only, and nothing you
           do here is saved.
         </p>
       )}
@@ -195,6 +220,7 @@ export default function ShaderCreator({
             initialCode={seed}
             resetCode={baselineCode}
             onCodeChange={setCode}
+            puzzle={puzzleConfig}
             {...lessonProps}
           />
         </div>
@@ -269,6 +295,14 @@ export default function ShaderCreator({
                 accent="fuchsia"
               />
 
+              <ShaderPuzzleEditor
+                enabled={puzzleEnabled}
+                onEnabledChange={setPuzzleEnabled}
+                puzzle={puzzle}
+                onPuzzleChange={setPuzzle}
+                code={code}
+              />
+
               {/* Markdown preview */}
               <details className="mt-6 rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
                 <summary className="cursor-pointer select-none font-mono text-sm text-zinc-500">
@@ -285,7 +319,7 @@ export default function ShaderCreator({
                 <button
                   type="button"
                   onClick={handlePublish}
-                  disabled={status === "saving" || !title.trim()}
+                  disabled={status === "saving" || !title.trim() || !puzzleReady}
                   className="rounded-md bg-fuchsia-600 px-5 py-2.5 font-mono text-sm font-medium text-white transition-colors hover:bg-fuchsia-700 disabled:opacity-50"
                 >
                   {status === "saving"
@@ -295,10 +329,16 @@ export default function ShaderCreator({
                       : "$ update shader lesson"}
                 </button>
 
+                {puzzleEnabled && !puzzleReady && (
+                  <p className="text-sm text-amber-600 dark:text-amber-400">
+                    {puzzle.referenceImage ? puzzleError : "Capture a reference image before publishing this shader puzzle."}
+                  </p>
+                )}
+
                 {publishedId && status !== "saving" && !status?.error && (
                   <p className={`text-sm ${publishState === "edited" ? "text-amber-600 dark:text-amber-400" : "text-teal-600 dark:text-teal-400"}`}>
                     {publishState === "edited" ? "Published, with unpublished edits." : "Published."}{" "}
-                    <span className="font-mono">{publishedId}</span>
+                    <Link href={`/shaders/${publishedId}`} className="underline">View it</Link>.
                   </p>
                 )}
 

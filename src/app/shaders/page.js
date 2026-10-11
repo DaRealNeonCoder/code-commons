@@ -5,6 +5,8 @@ export const metadata = {
   title: "Shaders — codecommons",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function ShadersIndexPage() {
   const shaders = await getAllShaders();
 
@@ -14,7 +16,7 @@ export default async function ShadersIndexPage() {
         <p className="font-mono text-sm text-fuchsia-600 dark:text-fuchsia-400">/shaders</p>
         <h1 className="mt-1 text-2xl font-semibold">Shader Playground</h1>
         <p className="mt-2 text-sm text-zinc-500">
-          Pick a shader lesson to open in the sandbox.
+          Explore a shader lesson or solve a visual shader puzzle.
         </p>
 
         <div className="mt-8 space-y-3">
@@ -35,6 +37,9 @@ export default async function ShadersIndexPage() {
             >
               <p className="font-medium">
                 {shader.title}{" "}
+                {shader.isPuzzle && (
+                  <span className="font-mono text-xs text-emerald-600 dark:text-emerald-400">· puzzle</span>
+                )}{" "}
                 {!shader.available && (
                   <span className="font-mono text-xs">· coming soon</span>
                 )}

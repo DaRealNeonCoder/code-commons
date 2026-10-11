@@ -18,6 +18,7 @@ import { saveChip } from "./src/lib/db/chips";
 import { getProject } from "./src/lib/creatorProjects";
 import { parseCircuit, EMPTY_CIRCUIT } from "./src/lib/circuits/circuitData";
 import { getPuzzlePorts, getPuzzleTests, validatePuzzleCircuit } from "./src/lib/circuits/puzzle";
+import { getShaderPuzzle } from "./src/lib/shaders/puzzle";
 
 const ROOT = process.cwd();
 const str = (v) => (typeof v === "string" ? v : "");
@@ -75,7 +76,10 @@ async function main() {
     testCases: normalizeTestCases(d.testCases),
   }));
 
-  await importMdx("shader", "content/shaders", shaderStore, (d) => ({ starterCode: str(d.starterCode) }));
+  await importMdx("shader", "content/shaders", shaderStore, (d) => ({
+    starterCode: str(d.starterCode),
+    puzzleConfig: d.shaderPuzzle == null ? null : getShaderPuzzle(d.shaderPuzzle),
+  }));
 
   await importMdx("circuit", "content/circuits", circuitStore, (d) => {
     const starterCircuit = parseCircuit(d.starterCircuit) ?? EMPTY_CIRCUIT;

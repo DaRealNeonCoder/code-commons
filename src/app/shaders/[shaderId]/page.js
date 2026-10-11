@@ -3,6 +3,7 @@ import ShaderPlayground from "@/components/shaders/ShaderPlayground";
 import MdxBody from "@/components/mdx/MdxBody";
 import RatedShell from "@/components/rating/RatedShell";
 import { getShaderById } from "@/lib/shaders/shaders";
+import { getShaderPuzzle } from "@/lib/shaders/puzzle";
 import CommentSection from "@/components/comments/CommentSection";
 
 export async function generateMetadata({ params }) {
@@ -27,6 +28,8 @@ export default async function ShaderDetailPage({ params }) {
     );
   }
 
+  const puzzle = shader.puzzleConfig ? getShaderPuzzle(shader.puzzleConfig) : null;
+
   return (
     <RatedShell itemType="shader" itemId={shader.id} variant="dark">
       <ShaderPlayground
@@ -38,6 +41,8 @@ export default async function ShaderDetailPage({ params }) {
           </>
         }
         initialCode={shader.starterCode}
+        puzzle={puzzle}
+        puzzleId={puzzle ? shader.id : null}
       />
     </RatedShell>
   );

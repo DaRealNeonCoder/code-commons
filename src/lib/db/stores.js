@@ -10,7 +10,11 @@ export const puzzleStore = createContentStore(puzzles, {
   listExtra: { testCount: sql`jsonb_array_length(${puzzles.testCases})`.mapWith(Number) },
 });
 
-export const shaderStore = createContentStore(shaders, { fallback: "shader", heavy: ["starterCode"] });
+export const shaderStore = createContentStore(shaders, {
+  fallback: "shader",
+  heavy: ["starterCode", "puzzleConfig"],
+  listExtra: { isPuzzle: sql`${shaders.puzzleConfig} is not null`.mapWith(Boolean) },
+});
 export const circuitStore = createContentStore(circuits, {
   fallback: "circuit",
   heavy: ["starterCircuit", "puzzlePorts", "testCases"],

@@ -23,7 +23,7 @@ export const PROJECT_TYPES = [
     id: "shader",
     label: "Shader",
     path: "03_shader/",
-    description: "A shader with a live GLSL editor and markdown.",
+    description: "A shader lesson or visual puzzle with a live GLSL editor.",
     accent: "text-fuchsia-600 dark:text-fuchsia-400",
     hoverBorder: "hover:border-fuchsia-400",
     badge: "border-fuchsia-500/40 bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-400",

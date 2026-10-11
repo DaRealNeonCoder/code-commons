@@ -1,5 +1,6 @@
 import { shaderStore } from "@/lib/db/stores";
 import { readPublishRequest, saveErrorResponse } from "@/lib/publish";
+import { getShaderPuzzle, InvalidShaderPuzzleError } from "@/lib/shaders/puzzle";
 
 const MAX_CODE_LENGTH = 20_000;
 
@@ -12,6 +13,16 @@ const p = await readPublishRequest(request, "shader", "shader", { categorised: f
     return Response.json({ error: "Shader source is too long." }, { status: 400 });
   }
 
+  let puzzleConfig;
+  try {
+    puzzleConfig = p.body.puzzle == null ? null : getShaderPuzzle(p.body.puzzle);
+  } catch (error) {
+    if (error instanceof InvalidShaderPuzzleError) {
+      return Response.json({ error: error.message }, { status: 400 });
+    }
+    throw error;
+  }
+
   const result = await shaderStore.save({
     ownerId: p.user.id,
     projectId: p.project.id,
@@ -19,7 +30,7 @@ const p = await readPublishRequest(request, "shader", "shader", { categorised: f
     summary: p.summary,
     body: p.markdown,
     ...p.selection,
-    payload: { starterCode },
+    payload: { starterCode, puzzleConfig },
   });
   if (!result.ok) return saveErrorResponse(result);
 

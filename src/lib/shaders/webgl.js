@@ -233,6 +233,38 @@ export class ShaderRuntime {
   }
 }
 
+// Render one deterministic frame without mounting a visible canvas. Shader
+// puzzle references are captured and checked this way so viewport size,
+// device-pixel-ratio, and animation timing do not affect the result.
+export function renderShaderToDataUrl(userCode, width, height) {
+  if (typeof document === "undefined") throw new Error("Shader rendering requires a browser.");
+  if (![width, height].every((n) => Number.isInteger(n) && n >= 16 && n <= 512)) {
+    throw new Error("Reference dimensions must be whole numbers between 16 and 512.");
+  }
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+
+  let runtime;
+  try {
+    runtime = new ShaderRuntime(canvas);
+    runtime.resize(width, height);
+    const result = runtime.setFragmentSource(userCode);
+    if (!result.success) throw new Error(result.message);
+    runtime.gl.disable(runtime.gl.DITHER);
+    runtime.gl.clearColor(0, 0, 0, 1);
+    runtime.gl.clear(runtime.gl.COLOR_BUFFER_BIT);
+    runtime.render(runtime.startTime);
+    if (runtime.gl.isContextLost() || runtime.gl.getError() !== runtime.gl.NO_ERROR) {
+      throw new Error("WebGL could not render the check frame. Please try again.");
+    }
+    return canvas.toDataURL("image/png");
+  } finally {
+    runtime?.dispose();
+    runtime?.gl.getExtension("WEBGL_lose_context")?.loseContext();
+  }
+}
+
 function locateUniforms(gl, program) {
   return {
     iResolution: gl.getUniformLocation(program, "iResolution"),

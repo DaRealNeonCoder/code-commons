@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import ShaderEditor from "./ShaderEditor";
 import ShaderCanvas from "./ShaderCanvas";
 import { DEFAULT_SHADER } from "@/lib/shaders/defaultShader";
+import { compareShaderRender } from "@/lib/shaders/puzzle";
+import { renderShaderToDataUrl } from "@/lib/shaders/webgl";
 
 const DEBOUNCE_MS = 400;
 
@@ -33,20 +35,24 @@ export default function ShaderPlayground({
   // Called with the latest code on every edit (and on reset), so a parent
   // (e.g. ShaderCreator) can keep its own copy.
   onCodeChange = null,
+  puzzle = null,
+  puzzleId = null,
 }) {
   const [code, setCode] = useState(() => initialCode ?? DEFAULT_SHADER);
   const [debouncedCode, setDebouncedCode] = useState(() => initialCode ?? DEFAULT_SHADER);
   const [error, setError] = useState(null);
   const [saveStatus, setSaveStatus] = useState(null); // null | "saving" | { savedAt } | { error }
+  const [checkStatus, setCheckStatus] = useState(null); // null | "checking" | { solved, matchRatio } | { error }
 
   // Which of the three panes are visible. The lesson pane only exists when
   // there's lesson content (the standalone playground has none).
-  const hasLesson = Boolean(lessonContent);
+  const hasLesson = Boolean(lessonContent || puzzle);
   const [showLesson, setShowLesson] = useState(hasLesson);
   const [showOutput, setShowOutput] = useState(true);
   const [showCode, setShowCode] = useState(true);
 
   const outputRef = useRef(null);
+  const checkVersion = useRef(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
@@ -84,9 +90,45 @@ export default function ShaderPlayground({
   }, []);
 
   function handleCodeChange(nextCode) {
+    checkVersion.current += 1;
     setCode(nextCode);
+    setCheckStatus(null);
     setSaveStatus(null); // a stale "saved" message would be misleading after further edits
     onCodeChange?.(nextCode);
+  }
+
+  async function markSolved() {
+    if (!puzzleId) return;
+    try {
+      const res = await fetch("/api/progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ itemType: "shader", itemId: puzzleId, completed: true }),
+      });
+      if (res.ok) {
+        window.dispatchEvent(new CustomEvent("progress-changed", {
+          detail: { itemType: "shader", itemId: puzzleId, completed: true },
+        }));
+      }
+    } catch {
+      // The visual result is still useful when progress recording is unavailable.
+    }
+  }
+
+  async function handleCheckPuzzle() {
+    if (!puzzle || checkStatus === "checking") return;
+    const version = ++checkVersion.current;
+    setCheckStatus("checking");
+    try {
+      const candidate = renderShaderToDataUrl(code, puzzle.width, puzzle.height);
+      const result = await compareShaderRender(puzzle.referenceImage, candidate, puzzle);
+      if (version !== checkVersion.current) return;
+      setCheckStatus(result);
+      if (result.solved) markSolved();
+    } catch (error) {
+      if (version !== checkVersion.current) return;
+      setCheckStatus({ error: error.message || "The shader could not be checked." });
+    }
   }
 
   async function handleSave() {
@@ -180,6 +222,27 @@ export default function ShaderPlayground({
             </button>
           )}
 
+          {puzzle && (
+            <button
+              type="button"
+              onClick={handleCheckPuzzle}
+              disabled={checkStatus === "checking"}
+              className="rounded border border-emerald-700 px-3 py-1 font-mono text-xs text-emerald-300 transition-colors hover:border-emerald-400 hover:text-emerald-200 disabled:cursor-wait disabled:opacity-50"
+            >
+              {checkStatus === "checking" ? "checking…" : "check solution"}
+            </button>
+          )}
+
+          {checkStatus && checkStatus !== "checking" && (
+            <span role="status" className={`font-mono text-xs ${checkStatus.error ? "text-red-400" : checkStatus.solved ? "text-emerald-400" : "text-amber-400"}`}>
+              {checkStatus.error
+                ? checkStatus.error
+                : checkStatus.solved
+                  ? `solved · ${Math.round(checkStatus.matchRatio * 100)}% match`
+                  : `not quite · ${Math.round(checkStatus.matchRatio * 100)}% match`}
+            </span>
+          )}
+
           <button
             type="button"
             onClick={() => handleCodeChange(resetCode ?? initialCode ?? DEFAULT_SHADER)}
@@ -199,6 +262,22 @@ export default function ShaderPlayground({
           } ${showRight ? "border-b border-zinc-800 md:border-b-0 md:border-r" : ""}`}
         >
           <h2 className="mb-3 mt-4 text-lg font-semibold">{lessonTitle}</h2>
+          {puzzle && (
+            <div className="mb-5 rounded border border-fuchsia-900/50 bg-zinc-950 p-3">
+              <p className="mb-2 font-mono text-xs text-fuchsia-300">target image</p>
+              <img
+                src={puzzle.referenceImage}
+                alt="Shader puzzle target"
+                width={puzzle.width}
+                height={puzzle.height}
+                className="h-auto w-full max-w-xs rounded border border-zinc-800 bg-black"
+              />
+              <p className="mt-2 text-xs text-zinc-500">
+                Check uses a {puzzle.width}×{puzzle.height} frame at time 0 with mouse input set to zero.
+                At least {puzzle.requiredMatch * 100}% of pixels must match within {puzzle.tolerance * 100}% per-channel tolerance.
+              </p>
+            </div>
+          )}
           {lessonContent}
         </div>
 

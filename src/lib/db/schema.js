@@ -106,7 +106,13 @@ export const puzzles = pgTable(
 
 export const shaders = pgTable(
   "shaders",
-  { ...contentColumns(), starterCode: text("starter_code").notNull().default("") },
+  {
+    ...contentColumns(),
+    starterCode: text("starter_code").notNull().default(""),
+    // { referenceImage, width, height, tolerance, requiredMatch }.
+    // The reference is public because learners need to see the target image.
+    puzzleConfig: jsonb("puzzle_config"),
+  },
   (t) => contentIndexes("shaders", t)
 );
 

@@ -1,0 +1,45 @@
+---
+title: Checkerboard Challenge
+summary: Fill the canvas with an eight by eight checkerboard.
+order: 0
+available: true
+starterCode: |
+  void main() {
+      vec2 uv = gl_FragCoord.xy / iResolution.xy;
+      fragColor = vec4(uv.x, uv.y, 0.15, 1.0);
+  }
+shaderPuzzle:
+  width: 96
+  height: 96
+  tolerance: 0.08
+  requiredMatch: 0.96
+  referenceImage: "data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 8 8%22%3E%3Crect width=%228%22 height=%228%22 fill=%22%2314213d%22/%3E%3Cpath fill=%22%23fca311%22 d=%22M0 0h1v1H0zM2 0h1v1H2zM4 0h1v1H4zM6 0h1v1H6zM1 1h1v1H1zM3 1h1v1H3zM5 1h1v1H5zM7 1h1v1H7zM0 2h1v1H0zM2 2h1v1H2zM4 2h1v1H4zM6 2h1v1H6zM1 3h1v1H1zM3 3h1v1H3zM5 3h1v1H5zM7 3h1v1H7zM0 4h1v1H0zM2 4h1v1H2zM4 4h1v1H4zM6 4h1v1H6zM1 5h1v1H1zM3 5h1v1H3zM5 5h1v1H5zM7 5h1v1H7zM0 6h1v1H0zM2 6h1v1H2zM4 6h1v1H4zM6 6h1v1H6zM1 7h1v1H1zM3 7h1v1H3zM5 7h1v1H5zM7 7h1v1H7z%22/%3E%3C/svg%3E"
+areas: []
+topics: ["geometry"]
+tags: ["checkerboard", "coordinates"]
+languages: []
+difficulty: beginner
+---
+
+# **Checkerboard Challenge**
+
+Write a fragment shader that renders the target image: an eight by eight
+checkerboard with navy and orange squares. Use `gl_FragCoord` and
+`iResolution` to turn each fragment into a board coordinate.
+
+Use navy **RGB (20, 33, 61)** and orange **RGB (252, 163, 17)**, dividing each
+channel by 255.0 for GLSL colors. The **bottom-left square is navy**; alternate
+colors horizontally and vertically. Every square occupies one eighth of the
+image width and height. Set alpha to 1.0.
+
+Hint: `floor(uv * 8.0)` gives a square's integer coordinates. Use the parity of
+their sum to choose a color.
+
+The target is checked at a fixed **96 × 96** resolution. Your code is rendered
+at time zero and compared with the reference image, so animation is not needed
+for this puzzle.
+
+Select **check solution** to compare your current code with the target. At
+least **96%** of pixels must be within **8%** per color channel. The live
+preview can stretch with the workspace; the checker always uses the square
+reference size.
