@@ -37,14 +37,9 @@ This roadmap is intentionally commented out so it is available to contributors
 in the source without appearing on the public README page.
 
 ### Misc
-- [ ] Lots of users stop after the first lesson. make it seem more appealing.
-- [ ] Configure input properly for client side python, like this:
-           Monaco Editor: Where the student writes Python.
-           Output panel: Displays print() output.
-           Input prompt: Appears when Python calls input().
-           Pyodide: Pauses execution until the student supplies input, then continues. {Use pyodide.setStdin() to connect Python's input() to a custom input component. The official Pyodide stdin documentation describes how to customize this. GitHub +1
-There is one important catch: the stdin callback is synchronous. You can't simply await a React input component inside it. A proper interactive terminal needs to run Python in a Web Worker and coordinate input requests and responses, or use another architecture that can suspend execution safely.
-} I believe I already use a web worker to avoid inf loops, not 100% sure.
+- [ ] compiler download bar is broken, stuck at half done even though I can compile successfully.
+- [ ] can you remove the separate input drop down inside of the coding pages? I was hoping that the input would show in the output terminal, exactly like a regular terminal python session.
+- [ ] the create page for coding projects should have a separate tab to actually work in, exactly like the shader system, where the markdown editor and the actual editor are different tabs .
 
 
 

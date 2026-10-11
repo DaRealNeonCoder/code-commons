@@ -2,6 +2,8 @@ let worker = null;
 let nextId = 0;
 const pending = new Map(); // id -> { resolve, reject, timer, timeoutMs, onOutput, onInput }
 const statusListeners = new Set();
+const INTERACTIVE_INPUT_ERROR =
+  "Interactive Python input needs a cross-origin isolated page. Reload this page from the normal app URL and try again.";
 
 let pyodideStatus = {
   state: "idle", // idle | loading | ready | error
@@ -25,7 +27,10 @@ export function getPyodideStatus() {
 }
 
 function markPyodideLoading() {
-  if (pyodideStatus.state === "loading") return;
+  // Running code after the runtime has loaded must not reset the status back to
+  // an indeterminate download. The worker keeps the same Pyodide instance for
+  // subsequent runs and will not send another `ready` message in that case.
+  if (pyodideStatus.state === "loading" || pyodideStatus.state === "ready") return;
   setPyodideStatus({ state: "loading", loaded: 0, total: 0, error: null });
 }
 
@@ -47,6 +52,19 @@ function startTimer(p) {
   p.timer = setTimeout(() => {
     resetWorker(`Time limit exceeded (${p.timeoutMs / 1000}s). Is there an infinite loop?`);
   }, p.timeoutMs);
+}
+
+// The worker uses SharedArrayBuffer so its synchronous Pyodide stdin callback
+// can wait without freezing the editor. The headers for this app enable the
+// feature in supported browsers; this check turns a cryptic worker failure
+// into an actionable message when a deployment or browser blocks it.
+export function supportsInteractiveInput() {
+  return (
+    typeof globalThis !== "undefined" &&
+    globalThis.crossOriginIsolated === true &&
+    typeof globalThis.SharedArrayBuffer === "function" &&
+    typeof globalThis.Atomics?.wait === "function"
+  );
 }
 
 function getWorker() {
@@ -112,7 +130,7 @@ export function sendPythonInput(id, line) {
   const { control, data } = p.inputBuffer;
   const state = new Int32Array(control);
   const bytes = new Uint8Array(data);
-  const encoded = line === null ? null : new TextEncoder().encode(`${line}\n`);
+  const encoded = line === null ? null : new TextEncoder().encode(`${String(line)}\n`);
   if (encoded && encoded.length > bytes.length) {
     throw new Error(`Input line is too long (maximum ${bytes.length} UTF-8 bytes).`);
   }
@@ -125,8 +143,17 @@ export function sendPythonInput(id, line) {
   return true;
 }
 
+/** Signal EOF to the run currently waiting on input(). */
+export function sendPythonEOF(id) {
+  return sendPythonInput(id, null);
+}
+
 /** Resolves to { stdout, stderr, error? }. Rejects on timeout/crash. */
 export function runPythonInBrowser(code, { timeoutMs = 10000, stdin = "", interactive = false, onOutput, onInput } = {}) {
+  if (interactive && !supportsInteractiveInput()) {
+    return Promise.reject(new Error(INTERACTIVE_INPUT_ERROR));
+  }
+
   markPyodideLoading();
   return new Promise((resolve, reject) => {
     const id = nextId++;

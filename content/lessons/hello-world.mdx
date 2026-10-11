@@ -1,7 +1,7 @@
 ---
 title: "Hello, World!"
 order: 1
-summary: "Meet Python and print your first lines of output."
+summary: "Write one line of Python, see it print a greeting, then try your first puzzle."
 available: true
 areas: ["programming-fundamentals"]
 topics: ["output"]
@@ -11,30 +11,23 @@ difficulty: "beginner"
 puzzles: ["print-greeting", "print-multiple-lines"]
 ---
 
-Python is a general-purpose programming language created by Guido van Rossum and first released in 1991. It is popular because its code reads almost like plain English, so you spend less time wrestling with syntax and more time solving problems. People use it for websites, automation, data analysis, games, and AI.
-
-A Python program is just a text file full of instructions. Python reads them from top to bottom, one line at a time, and does what each line says.
-
-## Your first program
+Your first Python program needs just one line. `print()` shows a message in the output:
 
 ```python
 print("Hello, World!")
 ```
 
-Output:
+It prints:
 
 ```
 Hello, World!
 ```
 
-Here is what each part does:
+The words inside the quotes are the message. Change them to anything you like and Python will print your version instead. Keep `print` lowercase and the parentheses around the message.
 
-- `print` is a built-in **function**. It displays something on the screen.
-- The parentheses `( )` hold what you want to print. This is called the **argument**.
-- `"Hello, World!"` is a **string**: text wrapped in quotes. Single quotes (`'hi'`) and double quotes (`"hi"`) both work.
+**Ready to make it yours?** The first puzzle gives you a name and asks you to print a greeting. The starter code reads the name for you; you only need to write the `print()` line. You can look up the examples below whenever you need them.
 
-> [!WARNING]
-> Python is case-sensitive. `Print("hi")` raises an error, but `print("hi")` works.
+<Details title="More ways to print: multiple items, numbers, and comments">
 
 ## Printing more than one thing
 
@@ -50,7 +43,7 @@ Output:
 Python is fun
 ```
 
-Two optional arguments let you change how `print()` behaves:
+Two optional arguments let you change how `print()` behaves. You can try `sep` in the first puzzle:
 
 | Argument | What it controls | Default |
 | --- | --- | --- |
@@ -102,12 +95,14 @@ Good comments explain *why* you did something, not just *what* the code does.
 > [!TIP]
 > Comments are also handy for switching a line off while you debug. Put a `#` in front of it and Python skips it.
 
-<Details title="Why is the first program always 'Hello, World!'?">
-It's a tradition that goes back to a 1970s programming book. Printing a greeting is the smallest program that proves your setup works and shows you how output happens.
-</Details>
-
 ## A note about the puzzles
 
 In the first few puzzles, the starter code already contains lines like `name = input()`. That line reads the text from the **Input** box so you don't have to. You'll learn how `input()` works in lesson 4. For now, just use the variables it creates.
 
-Now try it yourself. The next step is two short puzzles where you use `print()`.
+The second puzzle builds on the first: use `print()` to put words on one line and then on separate lines.
+
+</Details>
+
+<Details title="Why is the first program always 'Hello, World!'?">
+It's a tradition that goes back to a 1970s programming book. Printing a greeting is the smallest program that shows how output happens.
+</Details>

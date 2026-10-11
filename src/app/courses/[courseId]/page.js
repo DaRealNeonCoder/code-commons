@@ -32,7 +32,12 @@ export default async function CoursePage({ params }) {
   const nextLesson = lessonStates.find(
     ({ lesson, availablePuzzleIds }) =>
       lesson.available && !isLessonComplete(progress, lesson.id, availablePuzzleIds)
-  )?.lesson ?? availableLessons[0];
+  )?.lesson ?? null;
+  const firstLesson = availableLessons[0] ?? null;
+  const focusLesson = nextLesson ?? firstLesson;
+  const focusLessonIsFirst = focusLesson?.id === firstLesson?.id;
+  const focusPuzzleCount = focusLesson?.puzzles.filter((puzzle) => puzzle.available).length ?? 0;
+  const courseComplete = availableLessons.length > 0 && completedLessons === availableLessons.length;
   const progressPercent = availableLessons.length
     ? Math.round((completedLessons / availableLessons.length) * 100)
     : 0;
@@ -70,15 +75,73 @@ export default async function CoursePage({ params }) {
               </div>
               {nextLesson && (
                 <Link
-                  href={`/lessons/${nextLesson.id}`}
+                  href={`/lessons/${nextLesson.id}?course=${encodeURIComponent(course.id)}`}
                   className="inline-flex items-center justify-center rounded-xl bg-amber-400 px-4 py-2.5 text-sm font-semibold text-zinc-950 transition-colors hover:bg-amber-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
                 >
                   {completedLessons > 0 ? "Continue learning" : "Start the first lesson"}
                   <span aria-hidden="true" className="ml-2 text-base">→</span>
                 </Link>
               )}
+              {courseComplete && (
+                <span className="inline-flex items-center justify-center rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
+                  Course complete ✓
+                </span>
+              )}
             </div>
           </header>
+
+          {focusLesson && (
+            <section className="mt-6 overflow-hidden rounded-3xl border border-amber-200 bg-gradient-to-br from-amber-50 via-white to-teal-50 shadow-sm dark:border-amber-900/70 dark:from-amber-950/40 dark:via-zinc-900 dark:to-teal-950/30">
+              <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+                <div>
+                  <p className="font-mono text-xs font-medium uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">
+                    {courseComplete ? "nice work" : focusLessonIsFirst ? "your first win" : "keep your momentum"}
+                  </p>
+                  <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950 dark:text-white">
+                    {courseComplete
+                      ? "You made it through the course."
+                      : focusLessonIsFirst
+                        ? "Make your first Python program."
+                        : `Next up: ${focusLesson.title}`}
+                  </h2>
+                  <p className="mt-3 max-w-xl leading-7 text-zinc-700 dark:text-zinc-300">
+                    {courseComplete
+                      ? "Revisit any lesson, or start another pass to sharpen what you learned."
+                      : focusLessonIsFirst
+                        ? "Run one line of code, see the result immediately, and turn that first success into a tiny challenge."
+                        : focusLesson.summary || "Pick up where you left off with the next short lesson."}
+                  </p>
+
+                  <div className="mt-5 flex flex-wrap gap-2 font-mono text-xs text-zinc-600 dark:text-zinc-400">
+                    <span className="rounded-full border border-amber-200 bg-white/70 px-2.5 py-1 dark:border-amber-900 dark:bg-zinc-900/70">
+                      {focusPuzzleCount > 0
+                        ? `${focusPuzzleCount} practice ${focusPuzzleCount === 1 ? "puzzle" : "puzzles"}`
+                        : "reading lesson"}
+                    </span>
+                    <span className="rounded-full border border-teal-200 bg-white/70 px-2.5 py-1 dark:border-teal-900 dark:bg-zinc-900/70">
+                      runs in your browser
+                    </span>
+                  </div>
+
+                  <Link
+                    href={`/lessons/${focusLesson.id}?course=${encodeURIComponent(course.id)}`}
+                    className="mt-6 inline-flex items-center rounded-xl bg-zinc-950 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-950 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200"
+                  >
+                    {courseComplete ? "Review the first lesson" : focusLessonIsFirst ? "Try it now" : "Continue the course"}
+                    <span aria-hidden="true" className="ml-2 text-base">→</span>
+                  </Link>
+                </div>
+
+                <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 shadow-lg">
+                  <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2.5">
+                    <span className="font-mono text-xs text-zinc-400">{focusLessonIsFirst ? "first_program.py" : "next_step.py"}</span>
+                    <span className="font-mono text-[10px] uppercase tracking-wide text-teal-400">ready</span>
+                  </div>
+                  <pre className="overflow-x-auto p-5 font-mono text-sm leading-7"><code><span className="text-amber-300">print</span><span className="text-zinc-400">(</span><span className="text-teal-300">&quot;Hello, World!&quot;</span><span className="text-zinc-400">)</span>{"\n\n"}<span className="text-zinc-500"># output</span>{"\n"}<span className="text-green-400">Hello, World!</span></code></pre>
+                </div>
+              </div>
+            </section>
+          )}
 
           <div className="mt-10 flex items-end justify-between gap-4">
             <div>
@@ -112,7 +175,7 @@ export default async function CoursePage({ params }) {
               return (
                 <li key={lesson.id}>
                   <Link
-                    href={`/lessons/${lesson.id}`}
+                    href={`/lessons/${lesson.id}?course=${encodeURIComponent(course.id)}`}
                     className="group flex min-h-32 items-start gap-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-amber-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-amber-700 sm:gap-6 sm:p-6"
                   >
                     <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-mono text-sm ${done ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" : "bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300"}`} aria-label={done ? "completed" : `lesson ${number}`}>

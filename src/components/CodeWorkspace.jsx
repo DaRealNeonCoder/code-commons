@@ -9,6 +9,7 @@ import {
   getPyodideStatus,
   preloadPyodide,
   runPythonInBrowser,
+  sendPythonEOF,
   sendPythonInput,
   subscribePyodideStatus,
 } from "@/lib/pyodideClient";
@@ -112,6 +113,9 @@ function PyodideDownloadStatus({ status }) {
 export default function CodeWorkspace({
   fileBaseName = "main",
   starterCode = {},
+  initialLanguage: preferredLanguage,
+  onCodeChange,
+  onLanguageChange,
   description,
   backHref,
   backLabel,
@@ -134,6 +138,7 @@ export default function CodeWorkspace({
 
   const initialLanguage =
     lockedLanguage ||
+    (LANGUAGES.some((lang) => lang.id === preferredLanguage) ? preferredLanguage : null) ||
     Object.keys(starters).find((id) => LANGUAGES.some((l) => l.id === id)) ||
     "python";
 
@@ -141,17 +146,17 @@ export default function CodeWorkspace({
   const userId = session?.user?.id ?? null;
 
   const [language, setLanguage] = useState(initialLanguage);
-  const [code, setCode] = useState(starters[initialLanguage] || EMPTY_STARTER[initialLanguage]);
+  const [code, setCode] = useState(starters[initialLanguage] ?? EMPTY_STARTER[initialLanguage]);
   const [output, setOutput] = useState("Output will appear here...");
   const [isRunning, setIsRunning] = useState(false);
   const [runInBrowser, setRunInBrowser] = useState(true);
-  const [stdin, setStdin] = useState(sampleTests[0]?.input ?? "");
   const [inputRequest, setInputRequest] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [results, setResults] = useState(null);
   const [isChecking, setIsChecking] = useState(false);
   const [layout, setLayout] = useState(defaultLayout);
   const runtimeWarm = useRef(false);
+  const terminal = useRef({ stdout: "", stderr: "", text: "" });
   const pyodideStatus = useSyncExternalStore(
     subscribePyodideStatus,
     getPyodideStatus,
@@ -181,16 +186,50 @@ export default function CodeWorkspace({
 
   function handleLanguageChange(nextLanguage) {
     setLanguage(nextLanguage);
-    setCode(starters[nextLanguage] || EMPTY_STARTER[nextLanguage]);
+    setCode(starters[nextLanguage] ?? EMPTY_STARTER[nextLanguage]);
+    terminal.current = { stdout: "", stderr: "", text: "" };
     setOutput("Output will appear here...");
     setResults(null);
     setInputRequest(null);
+    onLanguageChange?.(nextLanguage);
   }
 
   function handleToggleBrowserMode() {
     const next = !runInBrowser;
     setRunInBrowser(next);
     if (next) preloadPyodide(); // start the ~10 MB download while the user is still typing
+  }
+
+  function handleCodeChange(nextCode) {
+    setCode(nextCode);
+    onCodeChange?.(nextCode, language);
+  }
+
+  function resetTerminal() {
+    terminal.current = { stdout: "", stderr: "", text: "" };
+    setOutput("");
+  }
+
+  // Pyodide reports cumulative stdout/stderr snapshots while a program runs.
+  // Turn those snapshots into a terminal transcript so input lines can be
+  // echoed at the point they were entered instead of living in a separate box.
+  function appendTerminalOutput(nextStdout = "", nextStderr = "", error = "") {
+    const stdout = String(nextStdout ?? "");
+    const stderr = String(nextStderr ?? "");
+    const previous = terminal.current;
+    const stdoutDelta = stdout.startsWith(previous.stdout)
+      ? stdout.slice(previous.stdout.length)
+      : stdout;
+    const stderrDelta = stderr.startsWith(previous.stderr)
+      ? stderr.slice(previous.stderr.length)
+      : stderr;
+
+    previous.stdout = stdout;
+    previous.stderr = stderr;
+    previous.text += stdoutDelta + stderrDelta;
+    if (error) previous.text += `${previous.text ? "\n" : ""}${String(error)}`;
+    setOutput(previous.text);
+    return previous.text;
   }
 
   // Passing every test marks the item complete, using the same endpoint as the
@@ -230,7 +269,7 @@ export default function CodeWorkspace({
       body: JSON.stringify({
         code,
         language,
-        stdin: checkPuzzleId ? stdin : undefined,
+        stdin: "",
       }),
     });
 
@@ -243,16 +282,16 @@ export default function CodeWorkspace({
   }
 
   async function runInPyodide() {
+    resetTerminal();
     if (!runtimeWarm.current) {
       setOutput("Loading Python runtime (first run only)...");
     }
 
     const result = await runPythonInBrowser(code, {
-      stdin: checkPuzzleId ? stdin : "",
+      stdin: "",
       interactive: true,
       onOutput: (nextStdout, nextStderr) => {
-        const text = [nextStdout, nextStderr].filter(Boolean).join("\n").trimEnd();
-        if (text) setOutput(text);
+        appendTerminalOutput(nextStdout, nextStderr);
       },
       onInput: (id) => {
         setInputRequest({ id });
@@ -262,12 +301,8 @@ export default function CodeWorkspace({
 
     runtimeWarm.current = true;
 
-    const text = [result.stdout, result.stderr, result.error]
-      .filter(Boolean)
-      .join("\n")
-      .trimEnd();
-
-    setOutput(text || "(no output)");
+    const text = appendTerminalOutput(result.stdout, result.stderr, result.error);
+    if (!text) setOutput("(no output)");
     setInputRequest(null);
   }
 
@@ -276,7 +311,25 @@ export default function CodeWorkspace({
     if (!inputRequest) return;
 
     try {
-      sendPythonInput(inputRequest.id, inputValue);
+      const accepted = sendPythonInput(inputRequest.id, inputValue);
+      if (!accepted) return;
+      terminal.current.text += `${inputValue}\n`;
+      setOutput(terminal.current.text);
+      setInputRequest(null);
+      setInputValue("");
+    } catch (err) {
+      setOutput(`Error: ${err.message}`);
+    }
+  }
+
+  function submitEOF() {
+    if (!inputRequest) return;
+
+    try {
+      const accepted = sendPythonEOF(inputRequest.id);
+      if (!accepted) return;
+      terminal.current.text += "^D\n";
+      setOutput(terminal.current.text);
       setInputRequest(null);
       setInputValue("");
     } catch (err) {
@@ -287,6 +340,9 @@ export default function CodeWorkspace({
   const handleRun = async () => {
     setIsRunning(true);
     setResults(null);
+    terminal.current = { stdout: "", stderr: "", text: "" };
+    setInputValue("");
+    setInputRequest(null);
     setOutput("Running...");
 
     try {
@@ -451,6 +507,9 @@ export default function CodeWorkspace({
   const handleSubmit = async () => {
     setIsChecking(true);
     setResults(null);
+    resetTerminal();
+    setInputValue("");
+    setInputRequest(null);
     setOutput("Checking...");
 
     try {
@@ -605,80 +664,65 @@ export default function CodeWorkspace({
               </div>
             </div>
 
-            <div className="flex-1 min-h-0">
-              <CodeEditor
-                code={code}
-                onChange={setCode}
-                language={current.id}
-              />
-            </div>
+             <div className="flex-1 min-h-0">
+               <CodeEditor
+                 code={code}
+                 onChange={handleCodeChange}
+                 language={current.id}
+               />
+             </div>
 
-            {checkPuzzleId && (
-              <details className="border-t border-zinc-800 bg-zinc-950 px-4 py-2 text-xs text-zinc-400">
-                <summary className="cursor-pointer select-none font-mono">
-                  input for Run (stdin) - Submit checks {totalTests} tests
-                  {hiddenTestCount > 0
-                    ? `, ${hiddenTestCount} hidden`
-                    : ""}
-                </summary>
-
-                <textarea
-                  value={stdin}
-                  onChange={(e) => setStdin(e.target.value)}
-                  rows={3}
-                  spellCheck={false}
-                  className="mt-2 w-full rounded border border-zinc-700 bg-zinc-900 p-2 font-mono text-xs text-zinc-100"
-                />
-
-                {sampleTests.length > 1 && (
-                  <div className="mt-1 flex flex-wrap gap-2">
-                    {sampleTests.map((t, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => setStdin(t.input)}
-                        className="rounded border border-zinc-700 px-2 py-0.5 font-mono hover:text-zinc-100"
-                      >
-                        load sample {i + 1}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </details>
-            )}
-
-            {inputRequest && (
-              <form
-                onSubmit={submitInput}
-                className="flex items-center gap-2 border-t border-zinc-800 bg-zinc-950 px-4 py-2"
-              >
-                <label htmlFor="python-input" className="shrink-0 font-mono text-xs text-teal-400">
-                  input&gt;
-                </label>
-                <input
-                  id="python-input"
-                  autoFocus
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  aria-label="Python input"
-                  className="min-w-0 flex-1 rounded border border-teal-700 bg-zinc-900 px-2 py-1 font-mono text-sm text-zinc-100 outline-none focus:border-teal-400"
-                />
-                <button
-                  type="submit"
-                  className="rounded bg-teal-600 px-3 py-1 font-mono text-xs text-white hover:bg-teal-500"
-                >
-                  Enter
-                </button>
-              </form>
-            )}
-
-            <div
-              className={`${
-                checkPuzzleId ? "h-48" : "h-32"
-              } overflow-y-auto whitespace-pre-wrap border-t border-zinc-800 bg-black p-4 font-mono text-sm text-green-400`}
-            >
-              {results ? <TestResults data={results} /> : output}
-            </div>
+             <div
+               className={`${
+                 checkPuzzleId ? "h-48" : "h-32"
+               } overflow-y-auto whitespace-pre-wrap border-t border-zinc-800 bg-black p-4 font-mono text-sm text-green-400`}
+             >
+               {results ? (
+                 <TestResults data={results} />
+               ) : (
+                 <>
+                   <pre className="whitespace-pre-wrap font-mono text-sm text-green-400">{output}</pre>
+                   {inputRequest && (
+                     <form
+                       onSubmit={submitInput}
+                       className="-mx-4 -mb-4 mt-3 flex items-center gap-2 border-t border-zinc-800 bg-black px-4 py-2"
+                     >
+                       <label htmlFor="python-input" className="shrink-0 font-mono text-xs text-teal-400">
+                         input&gt;
+                       </label>
+                       <input
+                         id="python-input"
+                         autoFocus
+                         value={inputValue}
+                         onChange={(e) => setInputValue(e.target.value)}
+                         onKeyDown={(e) => {
+                           if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "d") {
+                             e.preventDefault();
+                             submitEOF();
+                           }
+                         }}
+                         aria-label="Python input"
+                         className="min-w-0 flex-1 border-0 bg-transparent font-mono text-sm text-zinc-100 outline-none placeholder:text-zinc-600"
+                       />
+                       <button
+                         type="submit"
+                         className="rounded bg-teal-600 px-3 py-1 font-mono text-xs text-white hover:bg-teal-500"
+                       >
+                         Enter
+                       </button>
+                       <button
+                         type="button"
+                         onClick={submitEOF}
+                         title="Send end-of-file (Ctrl+D)"
+                         className="rounded border border-zinc-700 px-2 py-1 font-mono text-xs text-zinc-400 hover:border-zinc-500 hover:text-zinc-100"
+                       >
+                         EOF
+                       </button>
+                     </form>
+                   )}
+                 </>
+               )}
+             </div>
           </div>
         )}
 

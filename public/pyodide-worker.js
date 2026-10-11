@@ -4,6 +4,7 @@ importScripts("https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js");
 let pyodidePromise = null;
 let trackingDownloads = false;
 const downloads = new Map();
+const INPUT_BUFFER_BYTES = 65536;
 
 function reportProgress(url, loaded, total) {
   downloads.set(url, { loaded, total });
@@ -71,6 +72,8 @@ self.fetch = async (...args) => {
 
 function getPyodide() {
   if (!pyodidePromise) {
+    // Do not let a retry inherit byte counts from a failed load attempt.
+    downloads.clear();
     trackingDownloads = true;
     pyodidePromise = loadPyodide()
       .then((pyodide) => {
@@ -133,7 +136,7 @@ async function run({ id, code, stdin, interactive }) {
   const input = String(stdin ?? "").replace(/\r\n/g, "\n");
   let position = 0;
   const control = interactive ? new SharedArrayBuffer(8) : null;
-  const data = interactive ? new SharedArrayBuffer(65536) : null;
+  const data = interactive ? new SharedArrayBuffer(INPUT_BUFFER_BYTES) : null;
   pyodide.setStdin({ stdin() {
     if (position < input.length) {
       const end = input.indexOf("\n", position);
@@ -150,7 +153,7 @@ async function run({ id, code, stdin, interactive }) {
     return Atomics.load(state, 0) === 2
       ? null
       : new Uint8Array(data, 0, Atomics.load(state, 1)).slice();
-  }, isatty: interactive });
+  }, isatty: interactive, autoEOF: false });
 
   // Fresh namespace per run so state doesn't leak between runs.
   const globals = pyodide.globals.get("dict")();
