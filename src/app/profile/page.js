@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getAllPuzzles } from "@/lib/puzzles";
-import { getCompletedIds } from "@/lib/progress";
+import { getCompletedIds, getCurrentStreak } from "@/lib/progress";
 import { loadTaxonomy, expandTaxonomy, labelFor } from "@/lib/taxonomy";
 import { getAllCourses } from "@/lib/courses";
 import { getCourseOutline } from "@/lib/courseNav";
@@ -21,6 +21,7 @@ export default async function ProfilePage() {
 
   const taxonomy = loadTaxonomy();
   const completedIds = new Set(await getCompletedIds(user.id, "puzzle"));
+  const currentStreak = await getCurrentStreak(user.id);
 
   // "Coming soon" puzzles aren't playable, so they don't count toward the total.
   const puzzles = (await getAllPuzzles()).filter((p) => p.available);
@@ -122,17 +123,32 @@ export default async function ProfilePage() {
 
         {/* Summary */}
         <section className="mt-8 rounded-lg border border-zinc-800 bg-zinc-900 p-6">
-          <div className="flex items-baseline justify-between">
-            <p className="font-mono text-4xl text-white">
-              {solved.length}
-              <span className="text-lg text-zinc-500"> / {puzzles.length}</span>
-            </p>
+          <div className="grid gap-5 sm:grid-cols-[1fr_auto] sm:items-start">
+            <div>
+              <div className="flex items-baseline justify-between">
+                <p className="font-mono text-4xl text-white">
+                  {solved.length}
+                  <span className="text-lg text-zinc-500"> / {puzzles.length}</span>
+                </p>
 
-            <p className="font-mono text-sm text-zinc-400">puzzles solved</p>
-          </div>
+                <p className="font-mono text-sm text-zinc-400">puzzles solved</p>
+              </div>
 
-          <div className="mt-4 h-2 overflow-hidden rounded-full bg-zinc-800">
-            <div className="h-full bg-teal-400" style={{ width: `${pct}%` }} />
+              <div className="mt-4 h-2 overflow-hidden rounded-full bg-zinc-800">
+                <div className="h-full bg-teal-400" style={{ width: `${pct}%` }} />
+              </div>
+            </div>
+
+            <div className="rounded border border-orange-500/30 bg-orange-500/5 px-4 py-3 sm:min-w-36">
+              <p className="font-mono text-xs uppercase tracking-wide text-orange-300">Daily streak</p>
+              <p className="mt-1 font-mono text-3xl text-white">
+                {currentStreak}
+                <span className="ml-2 text-sm text-zinc-500">
+                  {currentStreak === 1 ? "day" : "days"}
+                </span>
+              </p>
+              <p className="mt-1 text-xs text-zinc-500">Solve a puzzle each day</p>
+            </div>
           </div>
 
           <div className="mt-5 flex flex-wrap gap-3">

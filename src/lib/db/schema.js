@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import {
   boolean,
   check,
+  date,
   index,
   integer,
   jsonb,
@@ -277,6 +278,24 @@ export const progress = pgTable(
     completedAt: timestamp("completed_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.userId, t.itemType, t.itemId] })]
+);
+
+// One row per user and UTC calendar day with qualifying activity. Keeping the
+// activity dates separate from completion progress means re-solving a puzzle
+// cannot inflate a streak, while a user can still build a streak by solving a
+// different puzzle on a later day.
+export const dailyActivity = pgTable(
+  "daily_activity",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    activityDate: date("activity_date", { mode: "string" }).notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.activityDate] }),
+    index("daily_activity_user_date_idx").on(t.userId, t.activityDate),
+  ]
 );
 
 // ---------- media ----------

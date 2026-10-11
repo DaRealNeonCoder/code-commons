@@ -1,6 +1,50 @@
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db } from "./db";
-import { progress } from "./db/schema";
+import { dailyActivity, progress } from "./db/schema";
+
+function utcDateString(date = new Date()) {
+  return date.toISOString().slice(0, 10);
+}
+
+function daysBetween(later, earlier) {
+  const laterMs = Date.parse(`${later}T00:00:00.000Z`);
+  const earlierMs = Date.parse(`${earlier}T00:00:00.000Z`);
+  return Math.round((laterMs - earlierMs) / 86_400_000);
+}
+
+// Solving a puzzle is qualifying activity. This is deliberately separate from
+// authentication/session reads, so logging in never starts or extends a streak.
+export async function recordPuzzleActivity(userId) {
+  await db
+    .insert(dailyActivity)
+    .values({ userId, activityDate: utcDateString() })
+    .onConflictDoNothing();
+}
+
+export async function getCurrentStreak(userId) {
+  const rows = await db
+    .select({ activityDate: dailyActivity.activityDate })
+    .from(dailyActivity)
+    .where(eq(dailyActivity.userId, userId))
+    .orderBy(desc(dailyActivity.activityDate));
+
+  if (rows.length === 0) return 0;
+
+  const today = utcDateString();
+  const latest = rows[0].activityDate;
+  const latestToToday = daysBetween(today, latest);
+
+  // A streak is still current through the day after the last activity. Once a
+  // full day has been missed, the next qualifying activity starts at one.
+  if (latestToToday > 1 || latestToToday < 0) return 0;
+
+  let streak = 1;
+  for (let i = 1; i < rows.length; i += 1) {
+    if (daysBetween(rows[i - 1].activityDate, rows[i].activityDate) !== 1) break;
+    streak += 1;
+  }
+  return streak;
+}
 
 export async function isCompleted(userId, itemType, itemId) {
   const rows = await db
@@ -15,6 +59,7 @@ export async function setCompleted(userId, itemType, itemId, completed) {
   if (completed) {
     // Idempotent: re-completing keeps the original completed_at.
     await db.insert(progress).values({ userId, itemType, itemId }).onConflictDoNothing();
+    if (itemType === "puzzle") await recordPuzzleActivity(userId);
   } else {
     await db
       .delete(progress)

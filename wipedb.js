@@ -5,7 +5,7 @@ import { db } from "./src/lib/db"; // <- adjust to wherever your db client lives
 
 const TABLES = [
   "lessons", "puzzles", "shaders", "circuits", "builds", "courses",
-  "chips", "creator_projects", "ratings", "progress", "media",
+  "chips", "creator_projects", "ratings", "progress", "daily_activity", "media",
 ];
 
 async function main() {
