@@ -41,6 +41,9 @@ export default async function ShaderDetailPage({ params }) {
           </>
         }
         initialCode={shader.starterCode}
+        aiContext={shader.content}
+        contextType="shader"
+        contextTitle={shader.title}
         puzzle={puzzle}
         puzzleId={puzzle ? shader.id : null}
       />

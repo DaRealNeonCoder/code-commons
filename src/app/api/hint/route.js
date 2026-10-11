@@ -7,15 +7,17 @@ const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL
 
 const SYSTEM_INSTRUCTIONS = `
 You are a friendly, patient coding tutor embedded in a "learn to code" website,
-attached to one specific lesson page. A student can ask you for a hint, a
-clarification, or a free-form question while they work through that lesson.
+attached to one specific learning activity. The activity may be a lesson,
+puzzle, digital circuit, shader, or coding project. A student can ask you for a
+hint, a clarification, or a free-form question while they work through it.
 
 You will be given:
-- The lesson's raw markdown content (may include callouts, tables, math,
+- The activity's raw markdown content (may include callouts, tables, math,
   Mermaid diagram source, and references to demo videos/images you can't see
   — treat the surrounding prose as the explanation of those).
-- The student's current code in the editor (their live, possibly unfinished
-  or broken attempt).
+- The student's current work in the editor (code, shader source, or a
+  serialized circuit; it may be unfinished or broken).
+- The activity type and title.
 - A mode ("hint", "clarify", or "question") and optionally the student's own
   question.
 
@@ -25,10 +27,10 @@ Rules:
   handing over working code.
 - For "hint": give the smallest nudge that would unblock them — point at the
   concept, function, or line that's likely the issue, without fixing it.
-- For "clarify": explain the underlying concept from the lesson in different,
-  simpler words than the lesson uses. Assume they've read the lesson but a
-  specific part isn't clicking.
-- For "question": just answer what they asked, using the lesson + their code
+- For "clarify": explain the underlying concept from the activity in
+  different, simpler words than the activity uses. Assume they've read it but
+  a specific part isn't clicking.
+- For "question": just answer what they asked, using the activity + their current work
   as context.
 - Reference their actual code (variable/function names, line content) when it
   helps, but keep it conversational, not a code review.
@@ -53,10 +55,18 @@ export async function POST(req) {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
-  const { mode, lessonContent, code, language, question } = body || {};
+  const {
+    mode,
+    lessonContent,
+    code,
+    language,
+    contextType,
+    contextTitle,
+    question,
+  } = body || {};
 
   if (!lessonContent || typeof code !== "string") {
-    return NextResponse.json({ error: "Missing lesson context." }, { status: 400 });
+    return NextResponse.json({ error: "Missing activity context." }, { status: 400 });
   }
 
   // Keep prompts small & predictable — both comfortably fit gemini-2.5-flash's
@@ -64,17 +74,21 @@ export async function POST(req) {
   // a student's code ever balloons.
   const trimmedLesson = String(lessonContent).slice(0, 8000);
   const trimmedCode = String(code).slice(0, 4000);
+  const trimmedContextType = typeof contextType === "string" ? contextType.slice(0, 40) : "lesson";
+  const trimmedContextTitle = typeof contextTitle === "string" ? contextTitle.slice(0, 200).trim() : "";
   const trimmedQuestion = typeof question === "string" ? question.slice(0, 500).trim() : "";
 
   const modeLabel = mode === "clarify" ? "clarify" : mode === "question" ? "question" : "hint";
 
   const userPrompt = `
-LESSON CONTENT (markdown):
+ACTIVITY CONTENT (markdown):
 """
 ${trimmedLesson}
 """
 
-STUDENT'S CURRENT CODE (${language || "unknown language"}):
+ACTIVITY: ${trimmedContextType}${trimmedContextTitle ? ` — ${trimmedContextTitle}` : ""}
+
+STUDENT'S CURRENT WORK (${language || "unknown language"}):
 """
 ${trimmedCode}
 """
@@ -83,7 +97,7 @@ MODE: ${modeLabel}
 ${
   trimmedQuestion
     ? `STUDENT'S QUESTION: ${trimmedQuestion}`
-    : "(no specific question — give a general hint/clarification based on the lesson and their code above)"
+    : "(no specific question — give a general hint/clarification based on the activity and their current work above)"
 }
 `.trim();
 

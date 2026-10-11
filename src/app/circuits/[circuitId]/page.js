@@ -46,6 +46,9 @@ export default async function CircuitDetailPage({ params }) {
             </>
           }
           initialCircuit={initialCircuit}
+          aiContext={circuit.content}
+          contextType="circuit"
+          contextTitle={circuit.title}
           puzzleId={circuit.id}
           puzzle={puzzle}
           showProjectIO={false}

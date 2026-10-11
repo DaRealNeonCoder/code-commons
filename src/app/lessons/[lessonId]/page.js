@@ -13,6 +13,7 @@ import CourseShell from "@/components/CourseShell";
 import CompleteOnView from "@/components/CompleteOnView";
 import RatedShell from "@/components/rating/RatedShell";
 import CommentSection from "@/components/comments/CommentSection";
+import AITutor from "@/components/AITutor";
 
 export default async function LessonPage({ params, searchParams }) {
   const { lessonId } = await params;
@@ -112,6 +113,12 @@ export default async function LessonPage({ params, searchParams }) {
             )}
             <CommentSection itemType="lesson" itemId={lesson.id} />
           </div>
+          <AITutor
+            lessonContent={lesson.content}
+            language="lesson"
+            contextType="lesson"
+            contextTitle={lesson.title}
+          />
         </div>
       </RatedShell>
     </CourseShell>

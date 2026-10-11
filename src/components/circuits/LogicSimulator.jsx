@@ -10,6 +10,7 @@ import {
   getPortCounts,
 } from "@/lib/circuits/engine";
 import SplitLayout, { CompactShell } from "@/components/circuits/SplitLayout";
+import AITutor from "@/components/AITutor";
 
 const PROJECT_SLOT = "project"; // single stub save-slot; a real project picker comes later
 const MIN_SCALE = 0.25;
@@ -78,6 +79,9 @@ export default function LogicSimulator({
   showProjectIO = !compact,
   puzzle = null,
   puzzleId = null,
+  aiContext = null,
+  contextType = "circuit",
+  contextTitle = lessonTitle,
 }) {
   const [components, setComponents] = useState(() => initialCircuit?.components ?? []);
   const [connections, setConnections] = useState(() => initialCircuit?.connections ?? []);
@@ -102,6 +106,10 @@ export default function LogicSimulator({
     [puzzle]
   );
   const puzzleInterfaceKey = `${puzzle ? "on" : "off"}:${puzzle?.inputs?.join(",") ?? ""}|${puzzle?.outputs?.join(",") ?? ""}`;
+  const tutorCode = useMemo(
+    () => JSON.stringify({ components, connections, chips }, null, 2),
+    [components, connections, chips]
+  );
 
   // Undo/redo history. currentStateRef always mirrors the latest committed
   // components/connections/chips so pushHistory/undo/redo never read stale
@@ -931,6 +939,15 @@ export default function LogicSimulator({
       {modalOpen && <CreateChipModal onCancel={() => setModalOpen(false)} onConfirm={handleCreateChip} />}
       {importChipOpen && (
         <ImportChipModal onClose={() => setImportChipOpen(false)} onImport={handleImportChip} alreadyImportedIds={chipIds} />
+      )}
+      {aiContext && (
+        <AITutor
+          lessonContent={aiContext}
+          code={tutorCode}
+          language="digital logic circuit"
+          contextType={contextType}
+          contextTitle={contextTitle}
+        />
       )}
     </Shell>
   );

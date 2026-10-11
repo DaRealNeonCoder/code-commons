@@ -3,7 +3,13 @@
 import { useState } from "react";
 import Image from "next/image";
 
-export default function AITutor({ lessonContent, code, language }) {
+export default function AITutor({
+  lessonContent,
+  code = "",
+  language = "unknown",
+  contextType = "lesson",
+  contextTitle = "",
+}) {
   const [open, setOpen] = useState(false);
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState([]); // { mode, question, answer }[]
@@ -25,6 +31,8 @@ export default function AITutor({ lessonContent, code, language }) {
           lessonContent,
           code,
           language,
+          contextType,
+          contextTitle,
           question: askedQuestion || undefined,
         }),
       });
@@ -67,7 +75,9 @@ export default function AITutor({ lessonContent, code, language }) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-3 dark:border-zinc-800">
-              <span className="font-mono text-sm font-medium">AI Tutor</span>
+              <span className="font-mono text-sm font-medium">
+                AI Tutor{contextTitle ? ` · ${contextTitle}` : ""}
+              </span>
               <button
                 onClick={() => setOpen(false)}
                 className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
@@ -112,7 +122,7 @@ export default function AITutor({ lessonContent, code, language }) {
                   disabled={loading}
                   className="flex-1 rounded bg-zinc-100 px-2 py-1.5 text-xs font-medium hover:bg-zinc-200 disabled:opacity-50 dark:bg-zinc-800 dark:hover:bg-zinc-700"
                 >
-                  Clarify this lesson
+                  Explain this
                 </button>
               </div>
               <div className="flex gap-2">

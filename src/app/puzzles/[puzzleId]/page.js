@@ -46,12 +46,12 @@ export default async function PuzzlePage({ params, searchParams }) {
 
   const description = (
     <article className="max-w-2xl">
-      <div className="flex flex-wrap items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.16em] text-teal-600 dark:text-teal-400">
-        <span>practice puzzle</span>
-        <span className="text-zinc-400 dark:text-zinc-600">/</span>
-        <span>{puzzle.difficulty}</span>
+      <div className="flex items-baseline justify-between gap-4">
+        <h1 className="text-3xl font-semibold tracking-tight text-zinc-950 dark:text-white sm:text-4xl">{puzzle.title}</h1>
+        <span className="shrink-0 font-mono text-xs font-medium uppercase tracking-[0.14em] text-teal-600 dark:text-teal-400">
+          {puzzle.difficulty}
+        </span>
       </div>
-      <h1 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 dark:text-white sm:text-4xl">{puzzle.title}</h1>
       <div className="mt-6 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-7">
         <MDXRemote source={puzzle.content} components={mdxComponents} options={{ mdxOptions }} />
       </div>
@@ -75,6 +75,9 @@ export default async function PuzzlePage({ params, searchParams }) {
           backLabel="all puzzles"
           itemType="puzzle"
           itemId={puzzle.id}
+          aiContext={puzzle.content}
+          aiContextType="puzzle"
+          aiContextTitle={puzzle.title}
           checkPuzzleId={checkable ? puzzle.id : undefined}
           sampleTests={sampleTests}
           hiddenTestCount={hiddenTestCount}

@@ -71,6 +71,9 @@ export default async function BuildPage({ params }) {
         description={description}
         backHref={isOwner ? "/create" : undefined}
         backLabel="your projects"
+        aiContext={content}
+        aiContextType="coding project"
+        aiContextTitle={title}
         layoutToggle
       />
     </RatedShell>

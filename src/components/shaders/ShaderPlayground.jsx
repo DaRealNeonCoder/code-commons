@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import ShaderEditor from "./ShaderEditor";
 import ShaderCanvas from "./ShaderCanvas";
+import AITutor from "@/components/AITutor";
 import { DEFAULT_SHADER } from "@/lib/shaders/defaultShader";
 import { compareShaderRender } from "@/lib/shaders/puzzle";
 import { renderShaderToDataUrl } from "@/lib/shaders/webgl";
@@ -37,6 +38,9 @@ export default function ShaderPlayground({
   onCodeChange = null,
   puzzle = null,
   puzzleId = null,
+  aiContext = null,
+  contextType = "shader",
+  contextTitle = lessonTitle,
 }) {
   const [code, setCode] = useState(() => initialCode ?? DEFAULT_SHADER);
   const [debouncedCode, setDebouncedCode] = useState(() => initialCode ?? DEFAULT_SHADER);
@@ -331,6 +335,15 @@ export default function ShaderPlayground({
           </div>
         </div>
       </div>
+      {aiContext && (
+        <AITutor
+          lessonContent={aiContext}
+          code={code}
+          language="GLSL fragment shader"
+          contextType={contextType}
+          contextTitle={contextTitle}
+        />
+      )}
     </div>
   );
 }

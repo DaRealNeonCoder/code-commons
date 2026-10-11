@@ -47,3 +47,35 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #3f3f46 #18181b;
 }
+
+/* Keep route transitions quiet on fast navigations while still showing progress for slower ones. */
+@keyframes loading-progress {
+  0% {
+    opacity: 0;
+    transform: translateX(-120%) scaleX(0.7);
+  }
+
+  12% {
+    opacity: 1;
+  }
+
+  55% {
+    transform: translateX(210%) scaleX(1);
+  }
+
+  100% {
+    transform: translateX(390%) scaleX(0.8);
+  }
+}
+
+.loading-progress-bar {
+  animation: loading-progress 1.4s cubic-bezier(0.4, 0, 0.2, 1) 160ms infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-progress-bar {
+    animation: none;
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

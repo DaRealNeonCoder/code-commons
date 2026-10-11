@@ -124,6 +124,8 @@ export default function CodeWorkspace({
   itemType,
   itemId,
   aiContext,
+  aiContextType = "lesson",
+  aiContextTitle = "",
   // Puzzle checking. Only set for puzzles that have test cases.
   checkPuzzleId,
   sampleTests = [],
@@ -731,6 +733,8 @@ export default function CodeWorkspace({
             lessonContent={aiContext}
             code={code}
             language={current.id}
+            contextType={aiContextType}
+            contextTitle={aiContextTitle}
           />
         )}
       </div>
