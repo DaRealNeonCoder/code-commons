@@ -45,19 +45,19 @@ const [collapsed, setCollapsed] = useState(false);
   return (
     <aside
       aria-label={`${outline.title} navigation`}
-      className={`flex min-h-0 shrink-0 flex-col border-r border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 ${
-        collapsed ? "w-11" : "w-64"
+      className={`flex min-h-0 shrink-0 flex-col border-r border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 ${
+        collapsed ? "w-11" : "w-72"
       }`}
     >
       <div
-        className={`flex items-center gap-2 border-b border-zinc-200 px-3 py-2 dark:border-zinc-800 ${
+        className={`flex items-center gap-2 border-b border-zinc-200 px-4 py-3 dark:border-zinc-800 ${
           collapsed ? "justify-center" : "justify-between"
         }`}
       >
         {!collapsed && (
           <Link
             href={`/courses/${outline.id}`}
-            className="truncate font-mono text-xs text-amber-600 hover:underline dark:text-amber-400"
+            className="truncate font-mono text-xs font-medium uppercase tracking-[0.12em] text-amber-700 hover:underline dark:text-amber-400"
           >
             {outline.title}
           </Link>
@@ -67,7 +67,7 @@ const [collapsed, setCollapsed] = useState(false);
           onClick={toggle}
           aria-expanded={!collapsed}
           aria-label={collapsed ? "Expand course sidebar" : "Collapse course sidebar"}
-          className="rounded px-1.5 font-mono text-sm text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
+          className="rounded-lg px-2 py-1 font-mono text-sm text-zinc-400 hover:bg-white hover:text-zinc-700 dark:hover:bg-zinc-900 dark:hover:text-zinc-200"
         >
           {collapsed ? "»" : "«"}
         </button>
@@ -75,9 +75,19 @@ const [collapsed, setCollapsed] = useState(false);
 
       {!collapsed && (
         <nav className="min-h-0 flex-1 overflow-y-auto py-2">
-          <p className="px-3 pb-2 font-mono text-xs text-zinc-400">
-            {lessonsDone}/{availableLessons.length} lessons done
-          </p>
+          <div className="mx-3 mb-3 rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-wide text-zinc-500">
+              <span>Progress</span>
+              <span>{lessonsDone}/{availableLessons.length}</span>
+            </div>
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+              <div
+                className="h-full rounded-full bg-amber-400"
+                style={{ width: `${availableLessons.length ? Math.round((lessonsDone / availableLessons.length) * 100) : 0}%` }}
+              />
+            </div>
+            <p className="mt-2 text-xs text-zinc-500">lessons complete</p>
+          </div>
 
           <ol>
             {lessonStates.map(({ lesson, done, puzzlesDone, puzzlesTotal }, i) => {
@@ -88,7 +98,7 @@ const [collapsed, setCollapsed] = useState(false);
               if (!lesson.available) {
                 return (
                   <li key={lesson.id}>
-                    <div className="flex items-baseline gap-2 px-3 py-1.5 text-sm text-zinc-400 dark:text-zinc-600">
+                    <div className="flex items-baseline gap-2 px-4 py-2 text-sm text-zinc-400 dark:text-zinc-600">
                       <span className="font-mono text-xs">{marker}</span>
                       <span className="truncate">{lesson.title}</span>
                       <span className="font-mono text-xs"># soon</span>
@@ -102,9 +112,9 @@ const [collapsed, setCollapsed] = useState(false);
                   <Link
                     href={`/lessons/${lesson.id}`}
                     aria-current={onLessonPage ? "page" : undefined}
-                    className={`flex items-baseline gap-2 px-3 py-1.5 text-sm transition-colors hover:bg-amber-50 dark:hover:bg-zinc-900 ${
+                    className={`mx-2 flex items-baseline gap-2 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-white dark:hover:bg-zinc-900 ${
                       onLessonPage
-                        ? "bg-amber-50 font-medium text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100"
+                        ? "bg-amber-100/70 font-medium text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100"
                         : isCurrentLesson
                           ? "font-medium text-zinc-900 dark:text-zinc-100"
                           : "text-zinc-600 dark:text-zinc-400"
@@ -120,7 +130,7 @@ const [collapsed, setCollapsed] = useState(false);
                   </Link>
 
                   {isCurrentLesson && lesson.puzzles.length > 0 && (
-                    <ul className="ml-5 border-l border-zinc-200 dark:border-zinc-800">
+                    <ul className="ml-6 border-l border-zinc-200 dark:border-zinc-800">
                       {lesson.puzzles.map((puzzle) => {
                         const isCurrentPuzzle = puzzle.id === currentPuzzleId;
                         const puzzleDone = progress.puzzles.has(puzzle.id);
@@ -130,7 +140,7 @@ const [collapsed, setCollapsed] = useState(false);
                           return (
                             <li
                               key={puzzle.id}
-                              className="flex items-baseline gap-2 px-3 py-1 text-xs text-zinc-400 dark:text-zinc-600"
+                              className="flex items-baseline gap-2 px-3 py-1.5 text-xs text-zinc-400 dark:text-zinc-600"
                             >
                               <span className="font-mono">○</span>
                               <span className="truncate">{puzzle.title}</span>
@@ -144,9 +154,9 @@ const [collapsed, setCollapsed] = useState(false);
                             <Link
                               href={`/puzzles/${puzzle.id}?lesson=${encodeURIComponent(lesson.id)}`}
                               aria-current={isCurrentPuzzle ? "page" : undefined}
-                              className={`flex items-baseline gap-2 px-3 py-1 text-xs transition-colors hover:bg-teal-50 dark:hover:bg-zinc-900 ${
+                              className={`mr-2 flex items-baseline gap-2 rounded-r-lg px-3 py-1.5 text-xs transition-colors hover:bg-white dark:hover:bg-zinc-900 ${
                                 isCurrentPuzzle
-                                  ? "bg-teal-50 font-medium text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100"
+                                  ? "bg-teal-100/70 font-medium text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100"
                                   : "text-zinc-600 dark:text-zinc-400"
                               }`}
                             >

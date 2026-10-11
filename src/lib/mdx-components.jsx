@@ -33,14 +33,14 @@ export const mdxComponents = {
   h1: (props) => <h1 {...props} className="mt-8 mb-4 text-2xl font-semibold first:mt-0" />,
   h2: (props) => <h2 {...props} className="mt-8 mb-3 text-xl font-semibold first:mt-0" />,
   h3: (props) => <h3 {...props} className="mt-6 mb-2 text-lg font-semibold" />,
-  p: (props) => <p {...props} className="mb-4 leading-relaxed" />,
-  ul: (props) => <ul {...props} className="mb-4 ml-5 list-disc space-y-1" />,
-  ol: (props) => <ol {...props} className="mb-4 ml-5 list-decimal space-y-1" />,
+  p: (props) => <p {...props} className="mb-5 leading-8 text-zinc-700 dark:text-zinc-300" />,
+  ul: (props) => <ul {...props} className="mb-5 ml-5 list-disc space-y-2 leading-7 text-zinc-700 dark:text-zinc-300" />,
+  ol: (props) => <ol {...props} className="mb-5 ml-5 list-decimal space-y-2 leading-7 text-zinc-700 dark:text-zinc-300" />,
   strong: (props) => <strong {...props} className="font-semibold" />,
   blockquote: (props) => (
     <blockquote
       {...props}
-      className="my-4 border-l-4 border-zinc-300 pl-4 italic text-zinc-600 dark:border-zinc-700 dark:text-zinc-400"
+      className="my-6 border-l-4 border-amber-300 bg-amber-50/60 py-3 pl-4 pr-3 italic text-zinc-600 dark:border-amber-800 dark:bg-amber-950/20 dark:text-zinc-400"
     />
   ),
   table: (props) => <table {...props} className="my-4 w-full border-collapse text-sm" />,
@@ -53,7 +53,7 @@ export const mdxComponents = {
   ),
   // eslint-disable-next-line @next/next/no-img-element
   img: (props) => <img {...props} className="my-4 rounded-lg border border-zinc-200 dark:border-zinc-800" />,
-  pre: (props) => <pre {...props} className="my-4 overflow-x-auto rounded-lg p-4 text-sm" />,
+  pre: (props) => <pre {...props} className="my-5 overflow-x-auto rounded-xl p-5 text-sm shadow-sm" />,
   code: (props) => {
     // rehype-pretty-code stamps its own <code> (inside <pre>) with
     // data-language — leave those alone so we don't clobber Shiki's

@@ -9,9 +9,10 @@ import {
   getPyodideStatus,
   preloadPyodide,
   runPythonInBrowser,
+  sendPythonInput,
   subscribePyodideStatus,
 } from "@/lib/pyodideClient";
-import { outputsMatch, withTrailingNewline, clip } from "@/lib/compareOutput";
+import { clip } from "@/lib/compareOutput";
 
 const ACCENTS = {
   amber: { dot: "bg-amber-400", link: "text-amber-600 dark:text-amber-400 hover:underline" },
@@ -39,12 +40,6 @@ const EMPTY_STARTER = {
 
 function languageInfo(id) {
   return LANGUAGES.find((lang) => lang.id === id) || LANGUAGES[0];
-}
-
-// The Pyodide worker has no stdin channel, so point sys.stdin at the input from
-// inside Python. This shifts traceback line numbers by 1.
-function withStdin(code, stdinText) {
-  return `import sys, io; sys.stdin = io.StringIO(${JSON.stringify(withTrailingNewline(stdinText))})\n${code}`;
 }
 
 // Parse a response body as JSON, or null if it isn't (e.g. an HTML error page).
@@ -151,6 +146,8 @@ export default function CodeWorkspace({
   const [isRunning, setIsRunning] = useState(false);
   const [runInBrowser, setRunInBrowser] = useState(true);
   const [stdin, setStdin] = useState(sampleTests[0]?.input ?? "");
+  const [inputRequest, setInputRequest] = useState(null);
+  const [inputValue, setInputValue] = useState("");
   const [results, setResults] = useState(null);
   const [isChecking, setIsChecking] = useState(false);
   const [layout, setLayout] = useState(defaultLayout);
@@ -171,8 +168,8 @@ export default function CodeWorkspace({
   const activeLayout = layoutToggle ? layout : "split";
   const showDescription = activeLayout !== "editor";
   const showEditor = activeLayout !== "description";
-  const descriptionWidth = activeLayout === "description" ? "w-full" : "w-1/2";
-  const editorWidth = activeLayout === "editor" ? "w-full" : "w-1/2";
+  const descriptionWidth = activeLayout === "description" ? "w-full" : "w-full lg:w-1/2";
+  const editorWidth = activeLayout === "editor" ? "w-full" : "w-full lg:w-1/2";
 
   // Browser execution only exists for Python; everything else goes to the server.
   const canRunInBrowser = language === "python";
@@ -187,6 +184,7 @@ export default function CodeWorkspace({
     setCode(starters[nextLanguage] || EMPTY_STARTER[nextLanguage]);
     setOutput("Output will appear here...");
     setResults(null);
+    setInputRequest(null);
   }
 
   function handleToggleBrowserMode() {
@@ -249,8 +247,18 @@ export default function CodeWorkspace({
       setOutput("Loading Python runtime (first run only)...");
     }
 
-    const source = checkPuzzleId ? withStdin(code, stdin) : code;
-    const result = await runPythonInBrowser(source);
+    const result = await runPythonInBrowser(code, {
+      stdin: checkPuzzleId ? stdin : "",
+      interactive: true,
+      onOutput: (nextStdout, nextStderr) => {
+        const text = [nextStdout, nextStderr].filter(Boolean).join("\n").trimEnd();
+        if (text) setOutput(text);
+      },
+      onInput: (id) => {
+        setInputRequest({ id });
+        setInputValue("");
+      },
+    });
 
     runtimeWarm.current = true;
 
@@ -260,6 +268,20 @@ export default function CodeWorkspace({
       .trimEnd();
 
     setOutput(text || "(no output)");
+    setInputRequest(null);
+  }
+
+  function submitInput(event) {
+    event.preventDefault();
+    if (!inputRequest) return;
+
+    try {
+      sendPythonInput(inputRequest.id, inputValue);
+      setInputRequest(null);
+      setInputValue("");
+    } catch (err) {
+      setOutput(`Error: ${err.message}`);
+    }
   }
 
   const handleRun = async () => {
@@ -280,6 +302,7 @@ export default function CodeWorkspace({
           : `Network error: ${err.message}`
       );
     } finally {
+      setInputRequest(null);
       setIsRunning(false);
     }
   };
@@ -362,8 +385,8 @@ export default function CodeWorkspace({
 
       try {
         const run = await runPythonInBrowser(
-          withStdin(code, tests[i].input),
-          { timeoutMs: 5000 }
+          code,
+          { timeoutMs: 5000, stdin: tests[i].input }
         );
 
         runtimeWarm.current = true;
@@ -443,6 +466,7 @@ export default function CodeWorkspace({
           : `Network error: ${err.message}`
       );
     } finally {
+      setInputRequest(null);
       setIsChecking(false);
     }
   };
@@ -478,12 +502,12 @@ export default function CodeWorkspace({
         </div>
       )}
 
-      <div className="flex flex-1 min-h-0 w-full">
+      <div className="flex min-h-0 w-full flex-1 flex-col lg:flex-row">
         {/* Left: lesson / puzzle prompt */}
         <div
           className={`${
             showDescription ? descriptionWidth : "hidden"
-          } overflow-y-auto p-8 bg-zinc-50 dark:bg-zinc-900`}
+          } min-h-[19rem] overflow-y-auto bg-zinc-50 p-5 dark:bg-zinc-900 sm:p-8 lg:min-h-0`}
         >
           <div
             className={
@@ -493,7 +517,7 @@ export default function CodeWorkspace({
             {backHref && (
               <Link
                 href={backHref}
-                className={`mb-6 inline-block font-mono text-sm ${colors.link}`}
+                className={`mb-7 inline-block font-mono text-xs font-medium uppercase tracking-[0.12em] ${colors.link}`}
               >
                 ← {backLabel}
               </Link>
@@ -514,14 +538,14 @@ export default function CodeWorkspace({
         {/* Right: toolbar + editor + output. All state lives in this component,
             so unmounting it in "description" mode loses nothing but undo history. */}
         {showEditor && (
-          <div className={`${editorWidth} flex flex-col min-h-0`}>
-            <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-950 px-4 py-2">
+          <div className={`${editorWidth} flex min-h-[28rem] flex-1 flex-col lg:min-h-0 lg:flex-none`}>
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800 bg-zinc-950 px-4 py-2.5">
               <span className="flex items-center gap-2 font-mono text-sm text-zinc-100">
                 <span className={`h-2 w-2 rounded-full ${colors.dot}`} />
                 {fileBaseName}.{current.ext}
               </span>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center justify-end gap-2">
                 {showLanguagePicker && (
                   <select
                     value={language}
@@ -548,7 +572,7 @@ export default function CodeWorkspace({
                       ? "Run Python in your browser (Pyodide) instead of on the server"
                       : "Browser execution is only available for Python"
                   }
-                  className={`rounded border px-2 py-1 font-mono text-xs transition-colors disabled:opacity-40 ${
+                    className={`hidden rounded border px-2 py-1 font-mono text-xs transition-colors disabled:opacity-40 sm:inline-block ${
                     useBrowser
                       ? "border-green-500 bg-green-500/15 text-green-400"
                       : "border-zinc-700 bg-zinc-900 text-zinc-400 hover:text-zinc-100"
@@ -621,6 +645,31 @@ export default function CodeWorkspace({
                   </div>
                 )}
               </details>
+            )}
+
+            {inputRequest && (
+              <form
+                onSubmit={submitInput}
+                className="flex items-center gap-2 border-t border-zinc-800 bg-zinc-950 px-4 py-2"
+              >
+                <label htmlFor="python-input" className="shrink-0 font-mono text-xs text-teal-400">
+                  input&gt;
+                </label>
+                <input
+                  id="python-input"
+                  autoFocus
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  aria-label="Python input"
+                  className="min-w-0 flex-1 rounded border border-teal-700 bg-zinc-900 px-2 py-1 font-mono text-sm text-zinc-100 outline-none focus:border-teal-400"
+                />
+                <button
+                  type="submit"
+                  className="rounded bg-teal-600 px-3 py-1 font-mono text-xs text-white hover:bg-teal-500"
+                >
+                  Enter
+                </button>
+              </form>
             )}
 
             <div

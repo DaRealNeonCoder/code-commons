@@ -23,13 +23,13 @@ export default function NextPuzzleLinks({
   const href = `/puzzles/${puzzle.id}${lessonId ? `?lesson=${encodeURIComponent(lessonId)}` : ""}`;
 
   return (
-    <section className="mt-12 border-t border-zinc-200 pt-8 dark:border-zinc-800" aria-label={heading}>
-      <h2 className="text-xl font-semibold">{heading}</h2>
-      <p className="mt-3 font-medium">{puzzle.title}</p>
-      {puzzle.summary && <p className="mt-0.5 text-zinc-600 dark:text-zinc-400">{puzzle.summary}</p>}
+    <section className="mt-10 rounded-2xl border border-amber-200 bg-amber-50/70 p-5 dark:border-amber-900 dark:bg-amber-950/30 sm:p-6" aria-label={heading}>
+      <p className="font-mono text-xs font-medium uppercase tracking-[0.14em] text-amber-700 dark:text-amber-400">{heading}</p>
+      <h2 className="mt-2 text-lg font-semibold text-zinc-950 dark:text-white">{puzzle.title}</h2>
+      {puzzle.summary && <p className="mt-1 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{puzzle.summary}</p>}
       <Link
         href={href}
-        className={`mt-4 inline-block rounded-md px-5 py-2.5 font-mono text-sm font-medium text-zinc-950 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${ACCENTS[accent] ?? ACCENTS.teal}`}
+        className={`mt-5 inline-flex items-center rounded-xl px-4 py-2.5 text-sm font-semibold text-zinc-950 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${ACCENTS[accent] ?? ACCENTS.teal}`}
       >
         {buttonLabel}
       </Link>

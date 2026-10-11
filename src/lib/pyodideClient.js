@@ -1,6 +1,6 @@
 let worker = null;
 let nextId = 0;
-const pending = new Map(); // id -> { resolve, reject, timer, timeoutMs }
+const pending = new Map(); // id -> { resolve, reject, timer, timeoutMs, onOutput, onInput }
 const statusListeners = new Set();
 
 let pyodideStatus = {
@@ -39,6 +39,14 @@ function resetWorker(reason) {
     p.reject(new Error(reason));
   }
   pending.clear();
+  setPyodideStatus({ state: "idle", loaded: 0, total: 0, error: null });
+}
+
+function startTimer(p) {
+  clearTimeout(p.timer);
+  p.timer = setTimeout(() => {
+    resetWorker(`Time limit exceeded (${p.timeoutMs / 1000}s). Is there an infinite loop?`);
+  }, p.timeoutMs);
 }
 
 function getWorker() {
@@ -68,9 +76,13 @@ function getWorker() {
     if (!p) return;
 
     if (type === "started") {
-      p.timer = setTimeout(() => {
-        resetWorker(`Time limit exceeded (${p.timeoutMs / 1000}s). Is there an infinite loop?`);
-      }, p.timeoutMs);
+      startTimer(p);
+    } else if (type === "output") {
+      p.onOutput?.(rest.stdout, rest.stderr);
+    } else if (type === "input-request") {
+      clearTimeout(p.timer); // time spent typing isn't execution time
+      p.inputBuffer = rest.buffer;
+      p.onInput?.(id);
     } else if (type === "result") {
       clearTimeout(p.timer);
       pending.delete(id);
@@ -79,8 +91,8 @@ function getWorker() {
   };
 
   worker.onerror = (e) => {
-    setPyodideStatus({ state: "error", error: e.message || "Python worker crashed" });
     resetWorker(e.message || "Python worker crashed");
+    setPyodideStatus({ state: "error", error: e.message || "Python worker crashed" });
   };
 
   return worker;
@@ -92,12 +104,33 @@ export function preloadPyodide() {
   getWorker().postMessage({ type: "init" });
 }
 
+/** Submit a line (or EOF with null) to the run currently waiting on input(). */
+export function sendPythonInput(id, line) {
+  const p = pending.get(id);
+  if (!p?.inputBuffer) return false;
+
+  const { control, data } = p.inputBuffer;
+  const state = new Int32Array(control);
+  const bytes = new Uint8Array(data);
+  const encoded = line === null ? null : new TextEncoder().encode(`${line}\n`);
+  if (encoded && encoded.length > bytes.length) {
+    throw new Error(`Input line is too long (maximum ${bytes.length} UTF-8 bytes).`);
+  }
+  if (encoded) bytes.set(encoded);
+  Atomics.store(state, 1, encoded?.length ?? 0);
+  Atomics.store(state, 0, encoded ? 1 : 2);
+  p.inputBuffer = null;
+  startTimer(p);
+  Atomics.notify(state, 0);
+  return true;
+}
+
 /** Resolves to { stdout, stderr, error? }. Rejects on timeout/crash. */
-export function runPythonInBrowser(code, { timeoutMs = 10000 } = {}) {
+export function runPythonInBrowser(code, { timeoutMs = 10000, stdin = "", interactive = false, onOutput, onInput } = {}) {
   markPyodideLoading();
   return new Promise((resolve, reject) => {
     const id = nextId++;
-    pending.set(id, { resolve, reject, timer: null, timeoutMs });
-    getWorker().postMessage({ id, type: "run", code });
+    pending.set(id, { resolve, reject, timer: null, timeoutMs, onOutput, onInput, inputBuffer: null });
+    getWorker().postMessage({ id, type: "run", code, stdin, interactive });
   });
 }
