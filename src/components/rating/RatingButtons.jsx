@@ -60,6 +60,8 @@ function applyVote(state, next) {
  * @param {"sm"|"md"} [size]
  * @param {"auto"|"dark"} [tone] - "dark" for the always-dark workspace chrome
  * @param {boolean} [showSummary] - adds "86% liked · 12 votes" next to the buttons
+ * @param {string} [endpoint] - alternate vote endpoint for reusable rating UI
+ * @param {object} [votePayload] - extra fields sent to an alternate endpoint
  */
 export default function RatingButtons({
   itemType,
@@ -69,6 +71,8 @@ export default function RatingButtons({
   size = "md",
   tone = "auto",
   showSummary = false,
+  endpoint = "/api/ratings",
+  votePayload = {},
 }) {
   const [state, setState] = useState(initial);
   const [busy, setBusy] = useState(false);
@@ -76,7 +80,11 @@ export default function RatingButtons({
 
   // Search cards stay mounted when filters change, so follow fresh server data.
   useEffect(() => {
+    // This deliberately mirrors new server-rendered totals into the local
+    // optimistic state when a mounted card receives fresh props.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setState(initial);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initial.likes, initial.dislikes, initial.userVote]);
 
   useEffect(() => {
@@ -99,10 +107,10 @@ export default function RatingButtons({
     setNotice(null);
 
     try {
-      const res = await fetch("/api/ratings", {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itemType, itemId, value: next }),
+        body: JSON.stringify({ itemType, itemId, value: next, ...votePayload }),
       });
       const data = await res.json().catch(() => null);
       if (!res.ok || !data) throw new Error(data?.error || `HTTP ${res.status}`);

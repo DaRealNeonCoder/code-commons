@@ -7,6 +7,7 @@ import { getBuildById } from "@/lib/codingProjects";
 import { mdxComponents, mdxOptions } from "@/lib/mdx-components";
 import CodeWorkspace from "@/components/CodeWorkspace";
 import RatedShell from "@/components/rating/RatedShell";
+import CommentSection from "@/components/comments/CommentSection";
 
 const LANGUAGE_IDS = ["python", "cpp", "rust"];
 const LANGUAGE_LABEL = { python: "python", cpp: "c++", rust: "rust" };
@@ -56,6 +57,7 @@ export default async function BuildPage({ params }) {
       ) : (
         <p className="text-zinc-500">No description yet.</p>
       )}
+      <CommentSection itemType="project" itemId={build.id} />
     </article>
   );
 

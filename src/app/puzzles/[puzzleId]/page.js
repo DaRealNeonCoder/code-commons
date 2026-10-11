@@ -11,6 +11,7 @@ import NextPuzzleLinks from "@/components/NextPuzzleLinks";
 import NextLessonLink from "@/components/NextLessonLink";
 import CourseShell from "@/components/CourseShell";
 import RatedShell from "@/components/rating/RatedShell";
+import CommentSection from "@/components/comments/CommentSection";
 
 export default async function PuzzlePage({ params, searchParams }) {
   const { puzzleId } = await params;
@@ -52,6 +53,7 @@ export default async function PuzzlePage({ params, searchParams }) {
       {/* Pass only the validated course ID, never the raw query value. */}
       <NextPuzzleLinks puzzle={nextPuzzle} lessonId={lessonId} courseId={ctx?.outline.id} />
       {ctx && !nextPuzzle && <NextLessonLink course={ctx.outline} nextLesson={ctx.nextLesson} />}
+      <CommentSection itemType="puzzle" itemId={puzzle.id} />
     </article>
   );
 

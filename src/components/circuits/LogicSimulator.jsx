@@ -730,7 +730,7 @@ export default function LogicSimulator({
           onMouseMove={handleCanvasMouseMove}
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
-          className={`relative flex-1 overflow-hidden bg-zinc-900 ${spaceDown ? "cursor-grab" : ""}`}
+          className={`relative flex-1 select-none overflow-hidden bg-zinc-900 ${spaceDown ? "cursor-grab" : ""}`}
           style={{
             backgroundImage: "radial-gradient(circle, #3f3f4666 1px, transparent 1px)",
             backgroundSize: `${22 * viewport.scale}px ${22 * viewport.scale}px`,

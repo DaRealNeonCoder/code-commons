@@ -5,6 +5,7 @@ import RatedShell from "@/components/rating/RatedShell";
 import { getCircuitById } from "@/lib/circuits/circuits";
 import { parseCircuit, EMPTY_CIRCUIT } from "@/lib/circuits/circuitData";
 import { getPuzzlePorts } from "@/lib/circuits/puzzle";
+import CommentSection from "@/components/comments/CommentSection";
 
 export async function generateMetadata({ params }) {
   const { circuitId } = await params;
@@ -38,7 +39,12 @@ export default async function CircuitDetailPage({ params }) {
         <LogicSimulator
           key={circuit.id}
           lessonTitle={circuit.title}
-          lessonContent={<MdxBody source={circuit.content} />}
+          lessonContent={
+            <>
+              <MdxBody source={circuit.content} />
+              <CommentSection itemType="circuit" itemId={circuit.id} tone="dark" />
+            </>
+          }
           initialCircuit={initialCircuit}
           puzzleId={circuit.id}
           puzzle={puzzle}

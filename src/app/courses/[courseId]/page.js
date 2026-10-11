@@ -6,6 +6,7 @@ import { getCurrentUserId } from "@/lib/session";
 import { getCourseProgress } from "@/lib/courseProgress";
 import { isLessonComplete } from "@/lib/progressUtils";
 import RatedShell from "@/components/rating/RatedShell";
+import CommentSection from "@/components/comments/CommentSection";
 
 export default async function CoursePage({ params }) {
   const { courseId } = await params;
@@ -74,6 +75,7 @@ export default async function CoursePage({ params }) {
               );
             })}
           </ol>
+          <CommentSection itemType="course" itemId={course.id} />
         </div>
       </div>
     </RatedShell>

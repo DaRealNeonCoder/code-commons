@@ -218,6 +218,52 @@ export const ratings = pgTable(
   ]
 );
 
+// ---------- comments ----------
+
+// Comments use the same polymorphic item namespace as ratings so one thread can
+// be attached to any published lesson, puzzle, shader, circuit, course, or
+// coding project. A nullable parent creates the Reddit-style reply tree.
+export const comments = pgTable(
+  "comments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    itemType: text("item_type").notNull(),
+    itemId: text("item_id").notNull(),
+    parentId: uuid("parent_id").references(() => comments.id, { onDelete: "cascade" }),
+    body: text("body").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("comments_item_idx").on(t.itemType, t.itemId, t.createdAt),
+    index("comments_parent_idx").on(t.parentId),
+    index("comments_user_idx").on(t.userId),
+  ]
+);
+
+export const commentVotes = pgTable(
+  "comment_votes",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    commentId: uuid("comment_id")
+      .notNull()
+      .references(() => comments.id, { onDelete: "cascade" }),
+    value: smallint("value").notNull(), // 1 = like, -1 = dislike
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.commentId] }),
+    index("comment_votes_comment_idx").on(t.commentId),
+    check("comment_votes_value_check", sql`${t.value} in (-1, 1)`),
+  ]
+);
+
 // ---------- progress ----------
 
 export const progress = pgTable(

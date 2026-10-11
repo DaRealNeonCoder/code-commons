@@ -12,6 +12,7 @@ import NextLessonLink from "@/components/NextLessonLink";
 import CourseShell from "@/components/CourseShell";
 import CompleteOnView from "@/components/CompleteOnView";
 import RatedShell from "@/components/rating/RatedShell";
+import CommentSection from "@/components/comments/CommentSection";
 
 export default async function LessonPage({ params, searchParams }) {
   const { lessonId } = await params;
@@ -79,6 +80,7 @@ export default async function LessonPage({ params, searchParams }) {
                 {userId && !progress.lessons.includes(lesson.id) && <CompleteOnView lessonId={lesson.id} />}
               </>
             )}
+            <CommentSection itemType="lesson" itemId={lesson.id} />
           </div>
         </div>
       </RatedShell>
