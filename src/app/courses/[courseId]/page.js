@@ -51,50 +51,49 @@ export default async function CoursePage({ params }) {
              ← browse
           </Link>
 
-          <header className="mt-5 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-9">
-            <div className="flex flex-wrap items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">
-              <span>course</span>
-              <span className="text-zinc-300 dark:text-zinc-700">/</span>
-              <span>python</span>
-            </div>
-            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 dark:text-white sm:text-4xl">{course.title}</h1>
-            {course.summary && <p className="mt-3 max-w-2xl text-base leading-7 text-zinc-600 dark:text-zinc-300 sm:text-lg">{course.summary}</p>}
+           <section className="mt-5 overflow-hidden rounded-3xl border border-amber-200 bg-gradient-to-br from-amber-50 via-white to-teal-50 shadow-sm dark:border-amber-900/70 dark:from-amber-950/40 dark:via-zinc-900 dark:to-teal-950/30">
+             <div className="p-6 sm:p-8">
+               <div className="flex flex-wrap items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">
+                 <span>course</span>
+                 <span className="text-zinc-300 dark:text-zinc-700">/</span>
+                 <span>python</span>
+               </div>
+               <h1 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 dark:text-white sm:text-4xl">{course.title}</h1>
+               {course.summary && <p className="mt-3 max-w-2xl text-base leading-7 text-zinc-700 dark:text-zinc-300 sm:text-lg">{course.summary}</p>}
 
-            <div className="mt-7 grid gap-4 border-t border-zinc-100 pt-6 dark:border-zinc-800 sm:grid-cols-[1fr_auto] sm:items-end">
-              <div>
-                <div className="flex items-center justify-between gap-4 text-sm">
-                  <span className="font-medium text-zinc-700 dark:text-zinc-200">Your progress</span>
-                  <span className="font-mono text-xs text-zinc-500">{completedLessons}/{availableLessons.length} lessons</span>
-                </div>
-                <div className="mt-2 h-2 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800" aria-label={`${progressPercent}% complete`} role="progressbar" aria-valuenow={progressPercent} aria-valuemin="0" aria-valuemax="100">
-                  <div className="h-full rounded-full bg-amber-400 transition-[width]" style={{ width: `${progressPercent}%` }} />
-                </div>
-                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs text-zinc-500">
-                  <span>{availableLessons.length} lessons</span>
-                  <span>{puzzleCount} practice puzzles</span>
-                </div>
-              </div>
-              {nextLesson && (
-                <Link
-                  href={`/lessons/${nextLesson.id}?course=${encodeURIComponent(course.id)}`}
-                  className="inline-flex items-center justify-center rounded-xl bg-amber-400 px-4 py-2.5 text-sm font-semibold text-zinc-950 transition-colors hover:bg-amber-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
-                >
-                  {completedLessons > 0 ? "Continue learning" : "Start the first lesson"}
-                  <span aria-hidden="true" className="ml-2 text-base">→</span>
-                </Link>
-              )}
-              {courseComplete && (
-                <span className="inline-flex items-center justify-center rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
-                  Course complete ✓
-                </span>
-              )}
-            </div>
-          </header>
+               <div className="mt-7 grid gap-4 border-t border-amber-200/80 pt-6 dark:border-amber-900/60 sm:grid-cols-[1fr_auto] sm:items-end">
+                 <div>
+                   <div className="flex items-center justify-between gap-4 text-sm">
+                     <span className="font-medium text-zinc-700 dark:text-zinc-200">Your progress</span>
+                     <span className="font-mono text-xs text-zinc-500">{completedLessons}/{availableLessons.length} lessons</span>
+                   </div>
+                   <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/70 dark:bg-zinc-800" aria-label={`${progressPercent}% complete`} role="progressbar" aria-valuenow={progressPercent} aria-valuemin="0" aria-valuemax="100">
+                     <div className="h-full rounded-full bg-amber-400 transition-[width]" style={{ width: `${progressPercent}%` }} />
+                   </div>
+                   <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs text-zinc-500">
+                     <span>{availableLessons.length} lessons</span>
+                     <span>{puzzleCount} practice puzzles</span>
+                   </div>
+                 </div>
+                 {focusLesson && (
+                   <Link
+                     href={`/lessons/${focusLesson.id}?course=${encodeURIComponent(course.id)}`}
+                     className="inline-flex items-center justify-center rounded-xl bg-zinc-950 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-950 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200"
+                   >
+                     {courseComplete ? "Review the first lesson" : focusLessonIsFirst ? "Start learning" : "Continue learning"}
+                     <span aria-hidden="true" className="ml-2 text-base">→</span>
+                   </Link>
+                 )}
+                 {courseComplete && !focusLesson && (
+                   <span className="inline-flex items-center justify-center rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
+                     Course complete ✓
+                   </span>
+                 )}
+               </div>
 
-          {focusLesson && (
-            <section className="mt-6 overflow-hidden rounded-3xl border border-amber-200 bg-gradient-to-br from-amber-50 via-white to-teal-50 shadow-sm dark:border-amber-900/70 dark:from-amber-950/40 dark:via-zinc-900 dark:to-teal-950/30">
-              <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
-                <div>
+               {focusLesson && (
+                 <div className="mt-8 grid gap-6 border-t border-amber-200/80 pt-8 dark:border-amber-900/60 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+                 <div>
                   <p className="font-mono text-xs font-medium uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">
                     {courseComplete ? "nice work" : focusLessonIsFirst ? "your first win" : "keep your momentum"}
                   </p>
@@ -124,14 +123,7 @@ export default async function CoursePage({ params }) {
                     </span>
                   </div>
 
-                  <Link
-                    href={`/lessons/${focusLesson.id}?course=${encodeURIComponent(course.id)}`}
-                    className="mt-6 inline-flex items-center rounded-xl bg-zinc-950 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-950 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200"
-                  >
-                    {courseComplete ? "Review the first lesson" : focusLessonIsFirst ? "Try it now" : "Continue the course"}
-                    <span aria-hidden="true" className="ml-2 text-base">→</span>
-                  </Link>
-                </div>
+                 </div>
 
                 <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 shadow-lg">
                   <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2.5">
@@ -140,9 +132,10 @@ export default async function CoursePage({ params }) {
                   </div>
                   <pre className="overflow-x-auto p-5 font-mono text-sm leading-7"><code><span className="text-amber-300">print</span><span className="text-zinc-400">(</span><span className="text-teal-300">&quot;Hello, World!&quot;</span><span className="text-zinc-400">)</span>{"\n\n"}<span className="text-zinc-500"># output</span>{"\n"}<span className="text-green-400">Hello, World!</span></code></pre>
                 </div>
-              </div>
-            </section>
-          )}
+                 </div>
+               )}
+             </div>
+           </section>
 
           <div className="mt-10 flex items-end justify-between gap-4">
             <div>

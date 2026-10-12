@@ -29,7 +29,7 @@ export async function getUserAvatar(userId) {
       .where(eq(user.id, userId))
       .limit(1),
     db
-      .select({ providerId: account.providerId })
+      .select({ providerId: account.providerId, accountId: account.accountId })
       .from(account)
       .where(eq(account.userId, userId))
       .orderBy(desc(account.updatedAt), desc(account.createdAt))
@@ -39,12 +39,21 @@ export async function getUserAvatar(userId) {
   const row = profile[0];
   if (!row) return null;
 
-  const provider = latestAccount[0]?.providerId || null;
+  const linkedAccount = latestAccount[0];
+  const provider = linkedAccount?.providerId || null;
+  // GitHub exposes a stable avatar endpoint keyed by the provider account ID.
+  // This keeps the sign-in avatar available even for older accounts whose
+  // user.image field was not populated during OAuth sign-in.
+  const providerImage = row.defaultImage || (
+    provider === "github" && linkedAccount?.accountId
+      ? `https://avatars.githubusercontent.com/u/${encodeURIComponent(linkedAccount.accountId)}?v=4`
+      : null
+  );
   return {
     id: row.id,
     name: row.name,
-    image: row.customImage || row.defaultImage || null,
-    defaultImage: row.defaultImage || null,
+    image: row.customImage || providerImage,
+    defaultImage: providerImage,
     provider,
     customImage: row.customImage || null,
     scale: row.customImage ? Number(row.customImageScale || 1) : DEFAULT_AVATAR.scale,

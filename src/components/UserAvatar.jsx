@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 const SIZES = {
   xs: "h-6 w-6 text-[10px]",
   sm: "h-8 w-8 text-xs",
@@ -11,17 +15,25 @@ function initials(name) {
 }
 
 export default function UserAvatar({ image, name, size = "sm", className = "", scale = 1, positionX = 0, positionY = 0 }) {
+  const [failedImage, setFailedImage] = useState(null);
+  const imageSrc = image?.startsWith("http")
+    ? `/api/avatar?url=${encodeURIComponent(image)}`
+    : image;
+
+  const hasImage = Boolean(imageSrc && imageSrc !== failedImage);
+
   return (
     <span
       className={`inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-zinc-700 bg-zinc-800 font-mono font-medium text-zinc-300 ${SIZES[size] || SIZES.sm} ${className}`}
-      aria-hidden={image ? undefined : "true"}
+      aria-hidden={hasImage ? undefined : "true"}
     >
-      {image ? (
+      {hasImage ? (
         <img
-          src={image}
+          src={imageSrc}
           alt={`${name || "User"}'s profile picture`}
           className="h-full w-full object-cover"
           style={{ transform: `scale(${scale})`, objectPosition: `calc(50% + ${positionX}%) calc(50% + ${positionY}%)` }}
+          onError={() => setFailedImage(imageSrc)}
         />
       ) : (
         initials(name)

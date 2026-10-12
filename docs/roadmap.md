@@ -94,4 +94,14 @@ as additional pending items.
 
 ## new stuff
 
+We are gonna do some seo optimization stuff.
+One page per concept, targeting one specific query. “Binary search explained” beats a generic “Algorithms” page. Use the exact phrasing people search for in the title, H1, and URL. (create a new binary search lesson, inside a searching algorithms course (add in red black tree + MCTS + b-trees etc), and use the SEO optimization we talk about on it)
+
+Next.js specifics: use the App Router’s generateMetadata for unique titles/descriptions per page, add a sitemap.ts and robots.ts and fill them up properly, and make sure lessons are statically generated (SSG/ISR) so they load fast and are fully crawlable.  Add Course, Article, or LearningResource JSON-LD schema where you see fit.
+
+Core Web Vitals matter. Vercel Analytics/Speed Insights will show where you’re slow. Lazy-load heavy things like code editors and circuit simulators. (I do believe we already do this, double check tho) 
+
+Internal linking: link every lesson to prerequisites and next steps. It helps both crawling and retention. (we already kinda do this, if you can think of some 
+"non invasive" way to improve this go for it.)
+
 -->
