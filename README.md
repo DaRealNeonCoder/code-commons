@@ -28,5 +28,11 @@ CodeCommons is actively under development. Features, content, and tools are cont
 
 Contributions, feedback, feature suggestions, and educational content are welcome!
 
+## License and attribution
+
+CodeCommons is available under the [MIT License](./LICENSE). Content and
+third-party attribution details are documented in
+[`ATTRIBUTIONS.md`](./ATTRIBUTIONS.md).
+
 # Contributors can find the current private roadmap 
 # in the commented roadmap.md block at docs/roadmap

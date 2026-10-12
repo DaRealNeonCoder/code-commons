@@ -57,8 +57,8 @@ as additional pending items.
 
 - [ ] Rotate credentials currently stored in `.env.local`.
 - [ ] Add `.env.example`.
-- [ ] Remove tracked SQLite databases, WAL files, and SHM files.
-- [ ] Remove unused SQLite dependencies.
+- [x] Remove tracked SQLite databases, WAL files, and SHM files.
+- [x] Remove unused SQLite dependencies.
 - [ ] Decide whether to ignore, vendor, or isolate the Piston checkout.
 - [ ] Add license and content attribution files.
 - [ ] Clean duplicate `.gitignore` entries.
