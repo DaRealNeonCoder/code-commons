@@ -32,7 +32,8 @@ Contributions, feedback, feature suggestions, and educational content are welcom
 
 CodeCommons is available under the [MIT License](./LICENSE). Content and
 third-party attribution details are documented in
-[`ATTRIBUTIONS.md`](./ATTRIBUTIONS.md).
+[`ATTRIBUTIONS.md`](./ATTRIBUTIONS.md), with bundled upstream license notices
+in [`licenses/`](./licenses/).
 
 # Contributors can find the current private roadmap 
 # in the commented roadmap.md block at docs/roadmap

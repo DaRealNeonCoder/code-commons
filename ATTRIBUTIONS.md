@@ -25,6 +25,24 @@ Euler, the Turing School, Chris Pine, or other authors. Those notices and links
 are intentionally kept in the corresponding puzzle files and should travel
 with the content.
 
+The complete upstream MIT notice is preserved in
+[`licenses/EXERCISM-PROBLEM-SPECIFICATIONS-MIT.txt`](./licenses/EXERCISM-PROBLEM-SPECIFICATIONS-MIT.txt).
+
+## HumanEval
+
+Some coding problems and/or test material are adapted from OpenAI's HumanEval
+benchmark. Adapted content should be understood as educational adaptations,
+not a claim that CodeCommons is the original author of the benchmark material.
+
+- Source project: [OpenAI HumanEval](https://github.com/openai/human-eval)
+- License: MIT
+- Copyright notice: OpenAI
+- Included license notice:
+  [`licenses/HUMAN-EVAL-MIT.txt`](./licenses/HUMAN-EVAL-MIT.txt)
+
+Where an individual puzzle is adapted from HumanEval, its content attribution
+should remain alongside the puzzle so it is not separated from the material.
+
 ## Piston
 
 The [`piston/`](./piston/) directory is a separately licensed checkout of

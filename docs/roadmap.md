@@ -11,7 +11,6 @@ as additional pending items.
 
 ## AI assistance
 
-- [ ] Integrate the AI tutor into lessons, puzzles, circuits, shaders, and coding projects with context-aware prompts.
 - [ ] Add progressive hints that use a learner's failed attempts and test output without revealing the answer.
 - [ ] Let lesson authors configure AI objectives, allowed tools, tone, and rubric-specific guidance.
 - [ ] Add AI-generated explanations for compiler errors, circuit traces, shader compile errors, and test failures.
@@ -20,7 +19,7 @@ as additional pending items.
 
 ## Learning experience
 
-- [ ] Add richer progress analytics, streaks, skill maps, and per-topic recommendations.
+
 - [ ] Support saved attempts, replayable solution history, and compare-before/after views for projects.
 - [ ] Add learner-controlled accessibility settings, keyboard shortcuts, reduced motion, and better screen-reader coverage.
 - [ ] Add content versioning so published lessons can evolve without invalidating existing progress.
@@ -37,8 +36,6 @@ as additional pending items.
 
 ## Community and content
 
-- [ ] Add comment editing, deletion, reporting, moderation queues, spam protection, and contributor moderation tools.
-- [ ] Add notifications for replies, mentions, published updates, and course activity.
 - [ ] Add creator profiles, follows, bookmarks, collections, and content revision history.
 - [ ] Add a richer content review workflow with drafts, previews, approvals, and rollback.
 - [ ] Add import/export tools for lessons, courses, puzzles, circuits, shaders, and coding projects.
@@ -49,7 +46,6 @@ as additional pending items.
 - [ ] Add database migrations and a documented production deployment/rollback procedure.
 - [ ] Add request validation, rate limiting, abuse monitoring, audit logs, and stronger authorization tests.
 - [ ] Add observability for code execution, AI requests, publishing, comments, and failed background work.
-- [ ] Improve search with indexing, typo tolerance, related-content ranking, and semantic discovery.
 - [ ] Add caching and pagination for large comment threads, browse results, courses, and creator dashboards.
 - [ ] Add CI checks for linting, builds, migrations, accessibility, dependency vulnerabilities, and content validation.
 
@@ -57,15 +53,11 @@ as additional pending items.
 
 - [ ] Rotate credentials currently stored in `.env.local`.
 - [ ] Add `.env.example`.
-- [x] Remove tracked SQLite databases, WAL files, and SHM files.
-- [x] Remove unused SQLite dependencies.
+
 - [ ] Decide whether to ignore, vendor, or isolate the Piston checkout.
-- [ ] Add license and content attribution files.
-- [ ] Clean duplicate `.gitignore` entries.
 
 ## Current project drift
 
-- [ ] Add or replace the missing `/lessons` and `/puzzles` destinations.
 - [ ] Fix or remove the `/api/projects` circuit Export/Import flow.
 - [ ] Update stale references to old seed and database scripts.
 - [ ] Update stale comments referring to file-based puzzle storage.
@@ -90,7 +82,6 @@ as additional pending items.
 
 - [ ] Add content validation.
 - [ ] Add CI checks.
-- [ ] Add loading, error, and not-found pages.
 - [ ] Add Open Graph metadata.
 - [ ] Add API rate limiting.
 - [ ] Add shared request validation.
