@@ -9,6 +9,7 @@ import { getAllCourses } from "@/lib/courses";
 import { getCourseOutline } from "@/lib/courseNav";
 import { getCourseProgress } from "@/lib/courseProgress";
 import { isLessonComplete } from "@/lib/progressUtils";
+import ProfilePictureEditor from "@/components/ProfilePictureEditor";
 
 const OTHER_AREA = "__other"; // puzzles with no area at all
 const puzzleHref = (id) => `/puzzles/${id}`;
@@ -117,12 +118,18 @@ export default async function ProfilePage() {
           <span className="text-teal-400">~/</span>profile
         </p>
 
-        <h1 className="mt-1 font-mono text-2xl text-white">
-          {user.name || user.email}
-        </h1>
+        <div className="mt-5 rounded-lg border border-zinc-800 bg-zinc-900 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-5">
+            <div>
+              <p className="font-mono text-xs uppercase tracking-wide text-zinc-500">your account</p>
+              <h1 className="mt-1 font-mono text-2xl text-white">{user.name || user.email}</h1>
+            </div>
+            <ProfilePictureEditor initialImage={user.image} name={user.name || user.email} />
+          </div>
+        </div>
 
         {/* Summary */}
-        <section className="mt-8 rounded-lg border border-zinc-800 bg-zinc-900 p-6">
+        <section className="mt-6 rounded-lg border border-zinc-800 bg-zinc-900 p-6">
           <div className="grid gap-5 sm:grid-cols-[1fr_auto] sm:items-start">
             <div>
               <div className="flex items-baseline justify-between">
@@ -176,7 +183,7 @@ export default async function ProfilePage() {
           {orderedAreaIds.length === 0 ? (
             <p className="font-mono text-sm text-zinc-500">
               No puzzles solved yet.{" "}
-              <Link href="/puzzles" className="text-teal-400 hover:underline">
+              <Link href="/browse" className="text-teal-400 hover:underline">
                 Go solve one →
               </Link>
             </p>
@@ -250,7 +257,7 @@ export default async function ProfilePage() {
           {courseRows.length === 0 ? (
             <p className="border-t border-zinc-800 px-4 py-3 font-mono text-sm text-zinc-500">
               No courses started yet.{" "}
-              <Link href="/lessons" className="text-teal-400 hover:underline">
+              <Link href="/browse" className="text-teal-400 hover:underline">
                 Browse courses →
               </Link>
             </p>

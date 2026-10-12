@@ -7,6 +7,7 @@ import { getCourseProgress } from "@/lib/courseProgress";
 import { isLessonComplete } from "@/lib/progressUtils";
 import RatedShell from "@/components/rating/RatedShell";
 import CommentSection from "@/components/comments/CommentSection";
+import ContentAuthor from "@/components/ContentAuthor";
 
 export default async function CoursePage({ params }) {
   const { courseId } = await params;
@@ -46,8 +47,8 @@ export default async function CoursePage({ params }) {
     <RatedShell itemType="course" itemId={course.id}>
       <div className="min-h-0 w-full flex-1 overflow-y-auto bg-zinc-50 px-4 py-8 dark:bg-zinc-950 sm:px-8 sm:py-12">
         <div className="mx-auto max-w-4xl">
-          <Link href="/lessons" className="font-mono text-xs font-medium uppercase tracking-[0.16em] text-amber-700 hover:underline dark:text-amber-400">
-            ← all courses
+           <Link href="/browse" className="font-mono text-xs font-medium uppercase tracking-[0.16em] text-amber-700 hover:underline dark:text-amber-400">
+             ← browse
           </Link>
 
           <header className="mt-5 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-9">
@@ -198,7 +199,8 @@ export default async function CoursePage({ params }) {
               );
             })}
           </ol>
-          <CommentSection itemType="course" itemId={course.id} />
+           <CommentSection itemType="course" itemId={course.id} />
+           <ContentAuthor itemType="course" itemId={course.id} />
         </div>
       </div>
     </RatedShell>

@@ -5,6 +5,7 @@ import RatedShell from "@/components/rating/RatedShell";
 import { getShaderById } from "@/lib/shaders/shaders";
 import { getShaderPuzzle } from "@/lib/shaders/puzzle";
 import CommentSection from "@/components/comments/CommentSection";
+import ContentAuthor from "@/components/ContentAuthor";
 
 export async function generateMetadata({ params }) {
   const { shaderId } = await params;
@@ -38,6 +39,7 @@ export default async function ShaderDetailPage({ params }) {
           <>
             <MdxBody source={shader.content} />
             <CommentSection itemType="shader" itemId={shader.id} tone="dark" />
+            <ContentAuthor itemType="shader" itemId={shader.id} tone="dark" />
           </>
         }
         initialCode={shader.starterCode}

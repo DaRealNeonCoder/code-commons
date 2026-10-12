@@ -4,10 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { authClient, useSession } from "@/lib/auth-client";
 import NotificationBell from "@/components/notifications/NotificationBell";
+import UserAvatar from "@/components/UserAvatar";
 
 export default function AuthControl() {
   const { data: session, isPending } = useSession();
   const [open, setOpen] = useState(false);
+  const [profileImageOverride, setProfileImageOverride] = useState({ active: false, value: null });
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -21,9 +23,14 @@ export default function AuthControl() {
       if (event.key === "Escape") setOpen(false);
     }
     document.addEventListener("keydown", handleEscape);
+    function handleProfileUpdate(event) {
+      setProfileImageOverride({ active: true, value: event.detail?.image || null });
+    }
+    window.addEventListener("profile-updated", handleProfileUpdate);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEscape);
+      window.removeEventListener("profile-updated", handleProfileUpdate);
     };
   }, []);
 
@@ -71,6 +78,7 @@ export default function AuthControl() {
   }
 
   const label = session.user.name?.split(" ")[0]?.toLowerCase() || "account";
+  const profileImage = profileImageOverride.active ? profileImageOverride.value : session.user.image;
 
   return (
     <div className="relative" ref={menuRef}>
@@ -81,7 +89,11 @@ export default function AuthControl() {
         onClick={() => setOpen((o) => !o)}
         className="max-w-32 truncate rounded-md py-2 font-mono text-sm text-zinc-400 transition-colors hover:text-white sm:max-w-none"
       >
-        {label} <span className="text-zinc-600">▾</span>
+        <span className="inline-flex max-w-full items-center gap-2">
+          <UserAvatar image={profileImage} name={label} size="xs" />
+          <span className="truncate">{label}</span>
+          <span className="text-zinc-600">▾</span>
+        </span>
       </button>
       {open && (
         <div className="absolute right-0 z-50 mt-2 w-52 max-w-[calc(100vw-2rem)] rounded-md border border-zinc-800 bg-zinc-950 py-1 shadow-xl">

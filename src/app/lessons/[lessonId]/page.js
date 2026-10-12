@@ -14,6 +14,7 @@ import CompleteOnView from "@/components/CompleteOnView";
 import RatedShell from "@/components/rating/RatedShell";
 import CommentSection from "@/components/comments/CommentSection";
 import AITutor from "@/components/AITutor";
+import ContentAuthor from "@/components/ContentAuthor";
 
 export default async function LessonPage({ params, searchParams }) {
   const { lessonId } = await params;
@@ -53,8 +54,8 @@ export default async function LessonPage({ params, searchParams }) {
         <div className="min-h-0 w-full flex-1 overflow-y-auto bg-zinc-50 px-4 py-8 dark:bg-zinc-950 sm:px-8 sm:py-12">
           <div className="mx-auto max-w-4xl">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">
-              <Link href={course ? `/courses/${course.id}` : "/lessons"} className="text-amber-700 hover:underline dark:text-amber-400">
-                {course ? course.title : "all lessons"}
+              <Link href="/browse" className="text-amber-700 hover:underline dark:text-amber-400">
+                browse
               </Link>
               <span className="text-zinc-300 dark:text-zinc-700">/</span>
               <span>{lessonNumber ? `lesson ${lessonNumber}` : "python lesson"}</span>
@@ -112,6 +113,7 @@ export default async function LessonPage({ params, searchParams }) {
               </>
             )}
             <CommentSection itemType="lesson" itemId={lesson.id} />
+            <ContentAuthor itemType="lesson" itemId={lesson.id} />
           </div>
           <AITutor
             lessonContent={lesson.content}

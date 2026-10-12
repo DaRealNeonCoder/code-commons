@@ -22,7 +22,7 @@ function serializeComment(row, vote = { likes: 0, dislikes: 0, userVote: 0 }) {
     status: row.status,
     editedAt: row.editedAt instanceof Date ? row.editedAt.toISOString() : row.editedAt,
     createdAt: row.createdAt instanceof Date ? row.createdAt.toISOString() : row.createdAt,
-    author: { id: row.authorId, name: row.authorName || "anonymous" },
+    author: { id: row.authorId, name: row.authorName || "anonymous", image: row.authorImage || null },
     ...vote,
   };
 }
@@ -40,6 +40,7 @@ export async function getCommentThread(itemType, itemId, userId = null) {
       createdAt: comments.createdAt,
       authorId: user.id,
       authorName: user.name,
+      authorImage: user.image,
     })
     .from(comments)
     .innerJoin(user, eq(comments.userId, user.id))
@@ -99,6 +100,7 @@ export async function getComment(commentId, userId = null) {
       createdAt: comments.createdAt,
       authorId: user.id,
       authorName: user.name,
+      authorImage: user.image,
     })
     .from(comments)
     .innerJoin(user, eq(comments.userId, user.id))
@@ -220,6 +222,7 @@ export async function getModerationQueue({ itemType = null, itemId = null } = {}
       createdAt: comments.createdAt,
       authorId: user.id,
       authorName: user.name,
+      authorImage: user.image,
     })
     .from(comments)
     .innerJoin(user, eq(comments.userId, user.id))

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import RatingButtons from "@/components/rating/RatingButtons";
+import UserAvatar from "@/components/UserAvatar";
 
 const LIGHT = {
   border: "border-zinc-200 dark:border-zinc-800",
@@ -11,6 +12,7 @@ const LIGHT = {
   text: "text-zinc-800 dark:text-zinc-200",
   input: "border-zinc-300 bg-white dark:border-zinc-700 dark:bg-zinc-900",
   accent: "text-teal-600 dark:text-teal-400",
+  reply: "text-violet-600 dark:text-violet-400",
 };
 const DARK = {
   border: "border-zinc-800",
@@ -19,6 +21,7 @@ const DARK = {
   text: "text-zinc-200",
   input: "border-zinc-700 bg-zinc-900",
   accent: "text-fuchsia-400",
+  reply: "text-amber-400",
 };
 
 function formatDate(value) {
@@ -164,6 +167,7 @@ function CommentItem({ comment, children, depth, itemType, itemId, signedIn, cur
     <div className="mt-3" style={{ marginLeft: `${Math.min(depth, 8) * 16}px` }}>
       <details open className={`rounded border ${colors.border} ${colors.panel}`}>
         <summary className={`cursor-pointer select-none px-3 py-2 text-sm ${colors.text}`}>
+          <UserAvatar image={comment.author.image} name={comment.author.name} size="xs" className="mr-2 align-middle" />
           <span className="font-medium">{comment.author.name}</span>
           <span className={`ml-2 font-mono text-xs ${colors.muted}`}>{formatDate(comment.createdAt)}</span>
           {comment.editedAt && <span className={`ml-2 font-mono text-xs ${colors.muted}`}>(edited)</span>}
@@ -188,7 +192,7 @@ function CommentItem({ comment, children, depth, itemType, itemId, signedIn, cur
             <button
               type="button"
               onClick={() => setReplying((open) => !open)}
-              className={`font-mono text-xs ${colors.accent} hover:underline`}
+               className={`font-mono text-xs ${colors.reply} hover:underline`}
             >
               {replying ? "close reply" : "reply"}
             </button>

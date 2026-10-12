@@ -12,6 +12,7 @@ import NextLessonLink from "@/components/NextLessonLink";
 import CourseShell from "@/components/CourseShell";
 import RatedShell from "@/components/rating/RatedShell";
 import CommentSection from "@/components/comments/CommentSection";
+import ContentAuthor from "@/components/ContentAuthor";
 
 export default async function PuzzlePage({ params, searchParams }) {
   const { puzzleId } = await params;
@@ -59,7 +60,8 @@ export default async function PuzzlePage({ params, searchParams }) {
       {/* Pass only the validated course ID, never the raw query value. */}
       <NextPuzzleLinks puzzle={nextPuzzle} lessonId={lessonId} courseId={ctx?.outline.id} />
       {ctx && !nextPuzzle && <NextLessonLink course={ctx.outline} nextLesson={ctx.nextLesson} />}
-      <CommentSection itemType="puzzle" itemId={puzzle.id} />
+           <CommentSection itemType="puzzle" itemId={puzzle.id} />
+           <ContentAuthor itemType="puzzle" itemId={puzzle.id} />
     </article>
   );
 
@@ -71,8 +73,8 @@ export default async function PuzzlePage({ params, searchParams }) {
           fileBaseName={`${puzzle.id.replace(/-/g, "_")}`}
           starterCode={puzzle.starterCode}
           description={description}
-          backHref="/puzzles"
-          backLabel="all puzzles"
+           backHref="/browse"
+           backLabel="browse"
           itemType="puzzle"
           itemId={puzzle.id}
           aiContext={puzzle.content}
