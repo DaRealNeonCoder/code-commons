@@ -24,15 +24,20 @@ export default function UserAvatar({ image, name, size = "sm", className = "", s
 
   return (
     <span
-      className={`inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-zinc-700 bg-zinc-800 font-mono font-medium text-zinc-300 ${SIZES[size] || SIZES.sm} ${className}`}
+      className={`relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-zinc-700 bg-zinc-800 font-mono font-medium text-zinc-300 ${SIZES[size] || SIZES.sm} ${className}`}
       aria-hidden={hasImage ? undefined : "true"}
     >
       {hasImage ? (
         <img
           src={imageSrc}
           alt={`${name || "User"}'s profile picture`}
-          className="h-full w-full object-cover"
-          style={{ transform: `scale(${scale})`, objectPosition: `calc(50% + ${positionX}%) calc(50% + ${positionY}%)` }}
+          className="absolute h-full w-full object-cover"
+          style={{
+            left: `calc(50% + ${positionX}%)`,
+            top: `calc(50% + ${positionY}%)`,
+            transform: `translate(-50%, -50%) scale(${scale})`,
+            transformOrigin: "center",
+          }}
           onError={() => setFailedImage(imageSrc)}
         />
       ) : (
