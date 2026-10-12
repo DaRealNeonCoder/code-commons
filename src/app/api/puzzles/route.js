@@ -1,5 +1,6 @@
 import { puzzleStore } from "@/lib/db/stores";
 import { readPublishRequest, saveErrorResponse } from "@/lib/publish";
+import { notifyPublished } from "@/lib/notifications";
 
 const MAX_TEST_CASES = 50;
 const MAX_TEST_FIELD_LENGTH = 10_000;
@@ -56,6 +57,7 @@ export async function POST(request) {
     payload: { starterCode, testCases },
   });
   if (!result.ok) return saveErrorResponse(result);
+  await notifyPublished({ actorId: p.user.id, itemType: "puzzle", itemId: result.slug, title: p.title });
 
   return Response.json({ id: result.slug });
 }

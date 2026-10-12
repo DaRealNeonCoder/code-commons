@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AuthControl from "@/components/AuthControl";
+import NotificationBell from "@/components/notifications/NotificationBell";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -38,6 +39,8 @@ export default function Navbar() {
         >
           create
         </Link>
+
+        <NotificationBell />
 
         <div className="border-l border-zinc-800 pl-6">
           <AuthControl />

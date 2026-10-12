@@ -8,6 +8,7 @@ import {
   InvalidPuzzleError,
   validatePuzzleCircuit,
 } from "@/lib/circuits/puzzle";
+import { notifyPublished } from "@/lib/notifications";
 
 const MAX_CIRCUIT_CHARS = 1_000_000;
 const MAX_PUZZLE_CHARS = 1_500_000;
@@ -54,6 +55,7 @@ export async function POST(request) {
     payload: { starterCircuit: circuit, puzzlePorts, testCases },
   });
   if (!result.ok) return saveErrorResponse(result);
+  await notifyPublished({ actorId: p.user.id, itemType: "circuit", itemId: result.slug, title: p.title });
 
   return Response.json({ id: result.slug });
 }

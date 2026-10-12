@@ -3,6 +3,7 @@ import { getProject } from "@/lib/creatorProjects";
 import { findMissingLessonIds } from "@/lib/lessonStore";
 import { saveCourse } from "@/lib/db/courses";
 import { saveErrorResponse } from "@/lib/publish";
+import { notifyPublished } from "@/lib/notifications";
 
 // Publishes a course project to the database. A course is only a title, a
 // summary and an ordered list of lesson ids; nothing is copied. Re-publishing the
@@ -46,6 +47,8 @@ export async function POST(request) {
 
   const result = await saveCourse({ ownerId: user.id, projectId: project.id, title, summary, lessons });
   if (!result.ok) return saveErrorResponse(result);
+
+  await notifyPublished({ actorId: user.id, itemType: "course", itemId: result.slug, title });
 
   return Response.json({ id: result.slug });
 }

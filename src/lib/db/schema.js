@@ -11,6 +11,7 @@ import {
   smallint,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
@@ -241,6 +242,11 @@ export const comments = pgTable(
     itemId: text("item_id").notNull(),
     parentId: uuid("parent_id").references(() => comments.id, { onDelete: "cascade" }),
     body: text("body").notNull(),
+    status: text("status").notNull().default("visible"), // visible | pending | hidden | deleted
+    spamScore: smallint("spam_score").notNull().default(0),
+    moderationReason: text("moderation_reason"),
+    editedAt: timestamp("edited_at", { withTimezone: true }),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -248,6 +254,7 @@ export const comments = pgTable(
     index("comments_item_idx").on(t.itemType, t.itemId, t.createdAt),
     index("comments_parent_idx").on(t.parentId),
     index("comments_user_idx").on(t.userId),
+    index("comments_status_idx").on(t.status, t.createdAt),
   ]
 );
 
@@ -268,6 +275,117 @@ export const commentVotes = pgTable(
     primaryKey({ columns: [t.userId, t.commentId] }),
     index("comment_votes_comment_idx").on(t.commentId),
     check("comment_votes_value_check", sql`${t.value} in (-1, 1)`),
+  ]
+);
+
+export const commentReports = pgTable(
+  "comment_reports",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    commentId: uuid("comment_id")
+      .notNull()
+      .references(() => comments.id, { onDelete: "cascade" }),
+    reporterId: text("reporter_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    reason: text("reason").notNull(),
+    details: text("details").notNull().default(""),
+    status: text("status").notNull().default("open"), // open | dismissed | actioned
+    resolvedBy: text("resolved_by").references(() => user.id, { onDelete: "set null" }),
+    resolvedAt: timestamp("resolved_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("comment_reports_reporter_comment_idx").on(t.reporterId, t.commentId),
+    index("comment_reports_status_idx").on(t.status, t.createdAt),
+    index("comment_reports_comment_idx").on(t.commentId),
+  ]
+);
+
+export const commentModerationActions = pgTable(
+  "comment_moderation_actions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    commentId: uuid("comment_id")
+      .notNull()
+      .references(() => comments.id, { onDelete: "cascade" }),
+    moderatorId: text("moderator_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    action: text("action").notNull(),
+    note: text("note").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("comment_actions_comment_idx").on(t.commentId, t.createdAt)]
+);
+
+// Global moderators and administrators are assigned outside the public UI. A
+// content moderator can additionally be granted permission for one item by its
+// owner or an administrator.
+export const moderationRoles = pgTable(
+  "moderation_roles",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    role: text("role").notNull(), // moderator | admin
+    grantedBy: text("granted_by").references(() => user.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.role] }), index("moderation_roles_role_idx").on(t.role)]
+);
+
+export const contentModerators = pgTable(
+  "content_moderators",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    itemType: text("item_type").notNull(),
+    itemId: text("item_id").notNull(),
+    grantedBy: text("granted_by").references(() => user.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.itemType, t.itemId] }),
+    index("content_moderators_item_idx").on(t.itemType, t.itemId),
+  ]
+);
+
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    recipientId: text("recipient_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    actorId: text("actor_id").references(() => user.id, { onDelete: "set null" }),
+    type: text("type").notNull(), // reply | mention | published | course_activity
+    entityType: text("entity_type"),
+    entityId: text("entity_id"),
+    title: text("title").notNull(),
+    body: text("body").notNull().default(""),
+    href: text("href"),
+    readAt: timestamp("read_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("notifications_recipient_idx").on(t.recipientId, t.createdAt), index("notifications_unread_idx").on(t.recipientId, t.readAt)]
+);
+
+export const contentSubscriptions = pgTable(
+  "content_subscriptions",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    itemType: text("item_type").notNull(),
+    itemId: text("item_id").notNull(),
+    events: text("events").array().notNull().default(sql`'{reply,mention,published,course_activity}'::text[]`),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.itemType, t.itemId] }),
+    index("content_subscriptions_item_idx").on(t.itemType, t.itemId),
   ]
 );
 

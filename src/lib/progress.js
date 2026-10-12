@@ -1,6 +1,7 @@
 import { and, desc, eq } from "drizzle-orm";
 import { db } from "./db";
 import { dailyActivity, progress } from "./db/schema";
+import { notifyCourseActivity } from "./notifications";
 
 function utcDateString(date = new Date()) {
   return date.toISOString().slice(0, 10);
@@ -58,12 +59,15 @@ export async function isCompleted(userId, itemType, itemId) {
 export async function setCompleted(userId, itemType, itemId, completed) {
   if (completed) {
     // Idempotent: re-completing keeps the original completed_at.
-    await db.insert(progress).values({ userId, itemType, itemId }).onConflictDoNothing();
+    const inserted = await db.insert(progress).values({ userId, itemType, itemId }).onConflictDoNothing().returning({ itemId: progress.itemId });
     if (itemType === "puzzle") await recordPuzzleActivity(userId);
+    if (inserted.length) await notifyCourseActivity({ actorId: userId, itemType, itemId });
+    return inserted.length > 0;
   } else {
     await db
       .delete(progress)
       .where(and(eq(progress.userId, userId), eq(progress.itemType, itemType), eq(progress.itemId, itemId)));
+    return false;
   }
 }
 

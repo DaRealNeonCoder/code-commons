@@ -1,6 +1,7 @@
 import { shaderStore } from "@/lib/db/stores";
 import { readPublishRequest, saveErrorResponse } from "@/lib/publish";
 import { getShaderPuzzle, InvalidShaderPuzzleError } from "@/lib/shaders/puzzle";
+import { notifyPublished } from "@/lib/notifications";
 
 const MAX_CODE_LENGTH = 20_000;
 
@@ -33,6 +34,7 @@ const p = await readPublishRequest(request, "shader", "shader", { categorised: f
     payload: { starterCode, puzzleConfig },
   });
   if (!result.ok) return saveErrorResponse(result);
+  await notifyPublished({ actorId: p.user.id, itemType: "shader", itemId: result.slug, title: p.title });
 
   return Response.json({ id: result.slug });
 }

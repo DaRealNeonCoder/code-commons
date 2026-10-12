@@ -80,6 +80,13 @@ export default function AuthControl() {
           >
             profile
           </Link>
+          <Link
+            href="/notifications"
+            onClick={() => setOpen(false)}
+            className="block w-full px-3 py-2 text-left font-mono text-sm text-zinc-100 hover:bg-zinc-900"
+          >
+            notifications
+          </Link>
           <button
             type="button"
             onClick={() => authClient.signOut()}

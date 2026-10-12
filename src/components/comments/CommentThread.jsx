@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import RatingButtons from "@/components/rating/RatingButtons";
 
 const LIGHT = {
@@ -92,10 +93,72 @@ function CommentForm({ itemType, itemId, parentId = null, signedIn, tone, onCrea
   );
 }
 
-function CommentItem({ comment, children, depth, itemType, itemId, signedIn, tone, onCreated }) {
+function SubscriptionButton({ itemType, itemId, signedIn, colors }) {
+  const [subscribed, setSubscribed] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (signedIn) {
+      fetch(`/api/subscriptions?itemType=${encodeURIComponent(itemType)}&itemId=${encodeURIComponent(itemId)}`)
+        .then((response) => response.json())
+        .then((data) => setSubscribed(Boolean(data.subscribed)))
+        .catch(() => {});
+    }
+  }, [itemId, itemType, signedIn]);
+
+  async function toggle() {
+    if (!signedIn || busy) return;
+    setBusy(true);
+    const next = !subscribed;
+    const response = await fetch("/api/subscriptions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ itemType, itemId, subscribed: next }),
+    });
+    if (response.ok) setSubscribed(next);
+    setBusy(false);
+  }
+
+  return (
+    <button type="button" disabled={!signedIn || busy} onClick={toggle} className={`font-mono text-xs ${colors.accent} hover:underline disabled:opacity-40`}>
+      {subscribed ? "following discussion" : "follow discussion"}
+    </button>
+  );
+}
+
+function CommentItem({ comment, children, depth, itemType, itemId, signedIn, currentUserId, tone, onCreated, onUpdated, onDeleted }) {
   const colors = tone === "dark" ? DARK : LIGHT;
   const [replying, setReplying] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [body, setBody] = useState(comment.body);
+  const [busy, setBusy] = useState(false);
   const hasReplies = children.length > 0;
+  const isAuthor = currentUserId && comment.author.id === currentUserId;
+
+  async function edit() {
+    const text = body.trim();
+    if (!text || busy) return;
+    setBusy(true);
+    const response = await fetch("/api/comments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "edit", commentId: comment.id, body: text }) });
+    const data = await response.json().catch(() => null);
+    if (response.ok) { onUpdated(data.comment); setEditing(false); }
+    setBusy(false);
+  }
+
+  async function remove() {
+    if (busy || !window.confirm("Delete this comment?")) return;
+    setBusy(true);
+    const response = await fetch("/api/comments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "delete", commentId: comment.id }) });
+    if (response.ok) onDeleted(comment.id);
+    setBusy(false);
+  }
+
+  async function report() {
+    if (!signedIn) return;
+    const reason = window.prompt("Why are you reporting this comment?", "spam");
+    if (!reason) return;
+    await fetch("/api/comments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "report", commentId: comment.id, reason }) });
+  }
 
   return (
     <div className="mt-3" style={{ marginLeft: `${Math.min(depth, 8) * 16}px` }}>
@@ -103,10 +166,12 @@ function CommentItem({ comment, children, depth, itemType, itemId, signedIn, ton
         <summary className={`cursor-pointer select-none px-3 py-2 text-sm ${colors.text}`}>
           <span className="font-medium">{comment.author.name}</span>
           <span className={`ml-2 font-mono text-xs ${colors.muted}`}>{formatDate(comment.createdAt)}</span>
+          {comment.editedAt && <span className={`ml-2 font-mono text-xs ${colors.muted}`}>(edited)</span>}
         </summary>
 
         <div className={`border-t px-3 pb-3 pt-3 ${colors.border}`}>
-          <p className={`whitespace-pre-wrap text-sm leading-6 ${colors.text}`}>{comment.body}</p>
+          {editing ? <textarea value={body} onChange={(event) => setBody(event.target.value)} maxLength={5000} rows={4} className={`w-full rounded border px-3 py-2 text-sm ${colors.input} ${colors.text}`} /> : <p className={`whitespace-pre-wrap text-sm leading-6 ${colors.text} ${comment.status === "pending" ? "opacity-60" : ""}`}>{comment.body}</p>}
+          {comment.status === "pending" && <p className={`mt-2 text-xs ${colors.muted}`}>awaiting moderation</p>}
           <div className="mt-3 flex flex-wrap items-center gap-3">
             <RatingButtons
               itemType="comment"
@@ -118,6 +183,8 @@ function CommentItem({ comment, children, depth, itemType, itemId, signedIn, ton
               endpoint="/api/comments"
               votePayload={{ action: "vote", commentId: comment.id }}
             />
+            {isAuthor && comment.status === "visible" && (editing ? <><button type="button" disabled={busy} onClick={edit} className={`font-mono text-xs ${colors.accent} hover:underline disabled:opacity-40`}>save</button><button type="button" onClick={() => { setBody(comment.body); setEditing(false); }} className={`font-mono text-xs ${colors.muted} hover:underline`}>cancel</button></> : <><button type="button" onClick={() => setEditing(true)} className={`font-mono text-xs ${colors.accent} hover:underline`}>edit</button><button type="button" onClick={remove} className="font-mono text-xs text-red-500 hover:underline">delete</button></>)}
+            {signedIn && !isAuthor && comment.status === "visible" && <button type="button" onClick={report} className={`font-mono text-xs ${colors.muted} hover:underline`}>report</button>}
             <button
               type="button"
               onClick={() => setReplying((open) => !open)}
@@ -156,7 +223,7 @@ function CommentItem({ comment, children, depth, itemType, itemId, signedIn, ton
   );
 }
 
-export default function CommentThread({ itemType, itemId, initialComments = [], signedIn, tone = "auto" }) {
+export default function CommentThread({ itemType, itemId, initialComments = [], signedIn, currentUserId, canModerate = false, tone = "auto" }) {
   const colors = tone === "dark" ? DARK : LIGHT;
   const [comments, setComments] = useState(initialComments);
 
@@ -174,6 +241,14 @@ export default function CommentThread({ itemType, itemId, initialComments = [], 
     setComments((current) => [...current, comment]);
   }
 
+  function updateComment(comment) {
+    setComments((current) => current.map((item) => (item.id === comment.id ? comment : item)));
+  }
+
+  function removeComment(commentId) {
+    setComments((current) => current.map((item) => (item.id === commentId ? { ...item, body: "[deleted]", status: "deleted" } : item)));
+  }
+
   function renderComments(parentId = null, depth = 0) {
     return (childrenByParent.get(parentId || "root") || []).map((comment) => (
       <CommentItem
@@ -183,8 +258,11 @@ export default function CommentThread({ itemType, itemId, initialComments = [], 
         itemType={itemType}
         itemId={itemId}
         signedIn={signedIn}
+        currentUserId={currentUserId}
         tone={tone}
         onCreated={addComment}
+        onUpdated={updateComment}
+        onDeleted={removeComment}
       >
         {renderComments(comment.id, depth + 1)}
       </CommentItem>
@@ -198,7 +276,13 @@ export default function CommentThread({ itemType, itemId, initialComments = [], 
           comments <span className={`ml-1 text-xs ${colors.muted}`}>({comments.length})</span>
         </summary>
         <div className="pt-3">
-          <CommentForm itemType={itemType} itemId={itemId} signedIn={signedIn} tone={tone} onCreated={addComment} />
+          <div className="flex items-center justify-between gap-3">
+            <CommentForm itemType={itemType} itemId={itemId} signedIn={signedIn} tone={tone} onCreated={addComment} />
+            <div className="flex shrink-0 flex-col items-end gap-1">
+              <SubscriptionButton itemType={itemType} itemId={itemId} signedIn={signedIn} colors={colors} />
+              {canModerate && <Link href={`/moderation?itemType=${encodeURIComponent(itemType)}&itemId=${encodeURIComponent(itemId)}`} className={`font-mono text-xs ${colors.muted} hover:underline`}>moderate comments</Link>}
+            </div>
+          </div>
           {comments.length === 0 ? (
             <p className={`mt-5 text-sm ${colors.muted}`}>No comments yet. Start the discussion.</p>
           ) : (

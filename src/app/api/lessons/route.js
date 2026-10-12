@@ -6,6 +6,7 @@ import { getOfficialLessonIds } from "@/lib/lessonStore";
 import { parseBlocks } from "@/lib/lessonBlocks";
 import { blocksToMarkdown } from "@/lib/blocksToMarkdown";
 import { saveLessonMdx, stringifyLessonMdx } from "@/lib/db/lessonMdx";
+import { notifyPublished } from "@/lib/notifications";
 
 function asArray(value) {
   return Array.isArray(value) ? value.filter((v) => typeof v === "string") : [];
@@ -111,6 +112,8 @@ export async function POST(request) {
     const [status, error] = SAVE_ERRORS[result.error] ?? [400, "Couldn't save the lesson."];
     return Response.json({ error }, { status });
   }
+
+  await notifyPublished({ actorId: user.id, itemType: "lesson", itemId: result.slug, title });
 
   return Response.json({ id: result.slug });
 }

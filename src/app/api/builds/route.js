@@ -1,5 +1,6 @@
 import { buildStore } from "@/lib/db/stores";
 import { readPublishRequest, saveErrorResponse } from "@/lib/publish";
+import { notifyPublished } from "@/lib/notifications";
 
 const LANGUAGE_IDS = ["python", "cpp", "rust"];
 const MAX_CODE_LENGTH = 20_000;
@@ -40,6 +41,7 @@ export async function POST(request) {
     payload: { starterCode },
   });
   if (!result.ok) return saveErrorResponse(result);
+  await notifyPublished({ actorId: p.user.id, itemType: "project", itemId: result.slug, title: p.title });
 
   return Response.json({ id: result.slug });
 }
