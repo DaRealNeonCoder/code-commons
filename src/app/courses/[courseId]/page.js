@@ -85,9 +85,10 @@ export default async function CoursePage({ params }) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(courseSchema)} />
-      <DeferredEngagement itemType="course" itemId={course.id} showComments={false} />
-      <div className="min-h-0 w-full flex-1 overflow-y-auto bg-zinc-50 px-4 py-8 dark:bg-zinc-950 sm:px-8 sm:py-12">
-        <div className="mx-auto max-w-4xl">
+      <div className="flex min-h-0 min-w-0 w-full flex-1 flex-col">
+        <DeferredEngagement itemType="course" itemId={course.id} showComments={false} />
+        <div className="min-h-0 w-full flex-1 overflow-y-auto bg-zinc-50 px-4 py-8 dark:bg-zinc-950 sm:px-8 sm:py-12">
+          <div className="mx-auto max-w-4xl">
            <Link href="/browse" className="font-mono text-xs font-medium uppercase tracking-[0.16em] text-amber-700 hover:underline dark:text-amber-400">
              ← browse
           </Link>
@@ -240,7 +241,8 @@ export default async function CoursePage({ params }) {
             <DeferredEngagement itemType="course" itemId={course.id} showRating={false} />
             <ContentAuthor itemType="course" itemId={course.id} />
          </div>
-       </div>
+          </div>
+      </div>
     </>
   );
 }

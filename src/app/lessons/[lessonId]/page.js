@@ -83,7 +83,8 @@ export default async function LessonPage({ params }) {
 
   return (
     <CourseShell outline={course} progress={progress} lessonId={lesson.id}>
-      <DeferredEngagement itemType="lesson" itemId={lesson.id} showComments={false} />
+      <div className="flex min-h-0 min-w-0 w-full flex-1 flex-col">
+        <DeferredEngagement itemType="lesson" itemId={lesson.id} showComments={false} />
         <div className="min-h-0 w-full flex-1 overflow-y-auto bg-zinc-50 px-4 py-8 dark:bg-zinc-950 sm:px-8 sm:py-12">
           <div className="mx-auto max-w-4xl">
             <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(lessonSchema)} />
@@ -152,6 +153,7 @@ export default async function LessonPage({ params }) {
             contextTitle={lesson.title}
           />
         </div>
+      </div>
     </CourseShell>
   );
 }
