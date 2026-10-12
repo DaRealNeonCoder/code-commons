@@ -10,14 +10,19 @@ function initials(name) {
   return (parts.length > 1 ? `${parts[0][0]}${parts[parts.length - 1][0]}` : parts[0]?.[0] || "?").toUpperCase();
 }
 
-export default function UserAvatar({ image, name, size = "sm", className = "" }) {
+export default function UserAvatar({ image, name, size = "sm", className = "", scale = 1, positionX = 0, positionY = 0 }) {
   return (
     <span
       className={`inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-zinc-700 bg-zinc-800 font-mono font-medium text-zinc-300 ${SIZES[size] || SIZES.sm} ${className}`}
       aria-hidden={image ? undefined : "true"}
     >
       {image ? (
-        <img src={image} alt={`${name || "User"}'s profile picture`} className="h-full w-full object-cover" />
+        <img
+          src={image}
+          alt={`${name || "User"}'s profile picture`}
+          className="h-full w-full object-cover"
+          style={{ transform: `scale(${scale})`, objectPosition: `calc(50% + ${positionX}%) calc(50% + ${positionY}%)` }}
+        />
       ) : (
         initials(name)
       )}

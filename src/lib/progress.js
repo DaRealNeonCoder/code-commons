@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { db } from "./db";
 import { dailyActivity, progress } from "./db/schema";
 import { notifyCourseActivity } from "./notifications";
@@ -77,4 +77,38 @@ export async function getCompletedIds(userId, itemType) {
     .from(progress)
     .where(and(eq(progress.userId, userId), eq(progress.itemType, itemType)));
   return rows.map((row) => row.itemId);
+}
+
+// The profile analytics view needs dates as well as IDs. Keep this separate
+// from getCompletedIds so existing progress consumers stay lightweight.
+export async function getProgressEntries(userId) {
+  return db
+    .select({ itemType: progress.itemType, itemId: progress.itemId, completedAt: progress.completedAt })
+    .from(progress)
+    .where(eq(progress.userId, userId))
+    .orderBy(desc(progress.completedAt));
+}
+
+export async function getActivityDates(userId) {
+  const rows = await db
+    .select({ activityDate: dailyActivity.activityDate })
+    .from(dailyActivity)
+    .where(eq(dailyActivity.userId, userId))
+    .orderBy(asc(dailyActivity.activityDate));
+  return rows.map((row) => row.activityDate);
+}
+
+export function calculateLongestStreak(dates) {
+  if (!dates?.length) return 0;
+  let longest = 1;
+  let current = 1;
+  for (let i = 1; i < dates.length; i += 1) {
+    if (daysBetween(dates[i], dates[i - 1]) === 1) {
+      current += 1;
+      longest = Math.max(longest, current);
+    } else if (dates[i] !== dates[i - 1]) {
+      current = 1;
+    }
+  }
+  return longest;
 }

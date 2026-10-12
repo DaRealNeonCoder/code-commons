@@ -30,6 +30,7 @@ export default function ResultCard({ item, taxonomy, userVote = 0, signedIn = fa
       <span className={TYPE_ACCENT[item.type]}>
         {item.type === "circuit" && item.isPuzzle ? "Circuit Puzzle" : TYPE_LABEL[item.type]}
       </span>
+      {item.discovery && <span className="rounded-full bg-violet-500/10 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-violet-600 dark:text-violet-400">{item.discovery}</span>}
       {difficultyLabel && <span className="text-zinc-400">· {difficultyLabel}</span>}
       {item.type === "course" && (
         <span className="text-zinc-400">

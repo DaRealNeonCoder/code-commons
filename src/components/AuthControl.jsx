@@ -9,7 +9,8 @@ import UserAvatar from "@/components/UserAvatar";
 export default function AuthControl() {
   const { data: session, isPending } = useSession();
   const [open, setOpen] = useState(false);
-  const [profileImageOverride, setProfileImageOverride] = useState({ active: false, value: null });
+  const [profileAvatar, setProfileAvatar] = useState(null);
+  const [profileAvatarOverride, setProfileAvatarOverride] = useState({ active: false, value: null });
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export default function AuthControl() {
     }
     document.addEventListener("keydown", handleEscape);
     function handleProfileUpdate(event) {
-      setProfileImageOverride({ active: true, value: event.detail?.image || null });
+      setProfileAvatarOverride({ active: true, value: event.detail || null });
     }
     window.addEventListener("profile-updated", handleProfileUpdate);
     return () => {
@@ -33,6 +34,20 @@ export default function AuthControl() {
       window.removeEventListener("profile-updated", handleProfileUpdate);
     };
   }, []);
+
+  useEffect(() => {
+    if (!session?.user?.id) return;
+    let cancelled = false;
+    fetch("/api/profile")
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        if (!cancelled && data?.user) setProfileAvatar(data.user);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [session?.user?.id]);
 
   if (isPending) {
     // Reserve the space so the navbar doesn't jump once the session loads.
@@ -78,7 +93,8 @@ export default function AuthControl() {
   }
 
   const label = session.user.name?.split(" ")[0]?.toLowerCase() || "account";
-  const profileImage = profileImageOverride.active ? profileImageOverride.value : session.user.image;
+  const avatar = profileAvatarOverride.active ? profileAvatarOverride.value : profileAvatar;
+  const profileImage = avatar?.image || session.user.image;
 
   return (
     <div className="relative" ref={menuRef}>
@@ -90,7 +106,7 @@ export default function AuthControl() {
         className="max-w-32 truncate rounded-md py-2 font-mono text-sm text-zinc-400 transition-colors hover:text-white sm:max-w-none"
       >
         <span className="inline-flex max-w-full items-center gap-2">
-          <UserAvatar image={profileImage} name={label} size="xs" />
+          <UserAvatar image={profileImage} name={label} size="xs" scale={avatar?.scale} positionX={avatar?.positionX} positionY={avatar?.positionY} />
           <span className="truncate">{label}</span>
           <span className="text-zinc-600">▾</span>
         </span>

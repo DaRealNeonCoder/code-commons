@@ -167,7 +167,7 @@ function CommentItem({ comment, children, depth, itemType, itemId, signedIn, cur
     <div className="mt-3" style={{ marginLeft: `${Math.min(depth, 8) * 16}px` }}>
       <details open className={`rounded border ${colors.border} ${colors.panel}`}>
         <summary className={`cursor-pointer select-none px-3 py-2 text-sm ${colors.text}`}>
-          <UserAvatar image={comment.author.image} name={comment.author.name} size="xs" className="mr-2 align-middle" />
+          <UserAvatar image={comment.author.image} name={comment.author.name} size="xs" scale={comment.author.scale} positionX={comment.author.positionX} positionY={comment.author.positionY} className="mr-2 align-middle" />
           <span className="font-medium">{comment.author.name}</span>
           <span className={`ml-2 font-mono text-xs ${colors.muted}`}>{formatDate(comment.createdAt)}</span>
           {comment.editedAt && <span className={`ml-2 font-mono text-xs ${colors.muted}`}>(edited)</span>}

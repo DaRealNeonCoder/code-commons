@@ -22,7 +22,14 @@ function serializeComment(row, vote = { likes: 0, dislikes: 0, userVote: 0 }) {
     status: row.status,
     editedAt: row.editedAt instanceof Date ? row.editedAt.toISOString() : row.editedAt,
     createdAt: row.createdAt instanceof Date ? row.createdAt.toISOString() : row.createdAt,
-    author: { id: row.authorId, name: row.authorName || "anonymous", image: row.authorImage || null },
+    author: {
+      id: row.authorId,
+      name: row.authorName || "anonymous",
+      image: row.authorCustomImage || row.authorImage || null,
+      scale: row.authorCustomImage ? Number(row.authorImageScale || 1) : 1,
+      positionX: row.authorCustomImage ? Number(row.authorImageX || 0) : 0,
+      positionY: row.authorCustomImage ? Number(row.authorImageY || 0) : 0,
+    },
     ...vote,
   };
 }
@@ -41,6 +48,10 @@ export async function getCommentThread(itemType, itemId, userId = null) {
       authorId: user.id,
       authorName: user.name,
       authorImage: user.image,
+      authorCustomImage: user.customImage,
+      authorImageScale: user.customImageScale,
+      authorImageX: user.customImageX,
+      authorImageY: user.customImageY,
     })
     .from(comments)
     .innerJoin(user, eq(comments.userId, user.id))
@@ -101,6 +112,10 @@ export async function getComment(commentId, userId = null) {
       authorId: user.id,
       authorName: user.name,
       authorImage: user.image,
+      authorCustomImage: user.customImage,
+      authorImageScale: user.customImageScale,
+      authorImageX: user.customImageX,
+      authorImageY: user.customImageY,
     })
     .from(comments)
     .innerJoin(user, eq(comments.userId, user.id))
@@ -223,6 +238,10 @@ export async function getModerationQueue({ itemType = null, itemId = null } = {}
       authorId: user.id,
       authorName: user.name,
       authorImage: user.image,
+      authorCustomImage: user.customImage,
+      authorImageScale: user.customImageScale,
+      authorImageX: user.customImageX,
+      authorImageY: user.customImageY,
     })
     .from(comments)
     .innerJoin(user, eq(comments.userId, user.id))

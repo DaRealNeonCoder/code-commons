@@ -17,10 +17,12 @@ export const auth = betterAuth({
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      overrideUserInfoOnSignIn: true,
     },
     github: {
       clientId: process.env.GITHUB_CLIENT_ID || "",
       clientSecret: process.env.GITHUB_CLIENT_SECRET || "",
+      overrideUserInfoOnSignIn: true,
     },
   },
   // Lets server actions / route handlers set the session cookie for you.

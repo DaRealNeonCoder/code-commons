@@ -4,12 +4,15 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { getAllPuzzles } from "@/lib/puzzles";
 import { getCompletedIds, getCurrentStreak } from "@/lib/progress";
+import { calculateLongestStreak, getActivityDates, getProgressEntries } from "@/lib/progress";
 import { loadTaxonomy, expandTaxonomy, labelFor } from "@/lib/taxonomy";
+import { getAllContent } from "@/lib/content";
 import { getAllCourses } from "@/lib/courses";
 import { getCourseOutline } from "@/lib/courseNav";
 import { getCourseProgress } from "@/lib/courseProgress";
 import { isLessonComplete } from "@/lib/progressUtils";
 import ProfilePictureEditor from "@/components/ProfilePictureEditor";
+import { getUserAvatar } from "@/lib/profile";
 
 const OTHER_AREA = "__other"; // puzzles with no area at all
 const puzzleHref = (id) => `/puzzles/${id}`;
@@ -19,10 +22,16 @@ export default async function ProfilePage() {
   const session = await auth.api.getSession({ headers: await headers() });
   const user = session?.user;
   if (!user) redirect("/");
+  const avatar = await getUserAvatar(user.id);
 
   const taxonomy = loadTaxonomy();
   const completedIds = new Set(await getCompletedIds(user.id, "puzzle"));
   const currentStreak = await getCurrentStreak(user.id);
+  const [progressEntries, activityDates, allContent] = await Promise.all([
+    getProgressEntries(user.id),
+    getActivityDates(user.id),
+    getAllContent(),
+  ]);
 
   // "Coming soon" puzzles aren't playable, so they don't count toward the total.
   const puzzles = (await getAllPuzzles()).filter((p) => p.available);
@@ -111,6 +120,72 @@ export default async function ProfilePage() {
 
   const coursesCompleted = courseRows.filter((c) => c.complete).length;
 
+  const contentByKey = new Map(allContent.map((item) => [`${item.type}:${item.id}`, item]));
+  const availableContent = allContent.filter((item) => item.available !== false);
+  const completedContent = progressEntries
+    .map((entry) => ({ ...entry, item: contentByKey.get(`${entry.itemType}:${entry.itemId}`) }))
+    .filter((entry) => entry.item);
+  const completionPercent = availableContent.length
+    ? Math.round((completedContent.length / availableContent.length) * 100)
+    : 0;
+  const completedByType = new Map();
+  for (const entry of completedContent) {
+    completedByType.set(entry.itemType, (completedByType.get(entry.itemType) || 0) + 1);
+  }
+
+  const topicStats = taxonomy.topics.map((topic) => {
+    const topicPuzzles = puzzles.filter((puzzle) => {
+      const expanded = expandTaxonomy(puzzle, taxonomy);
+      return puzzle.available && expanded.effectiveTopics.includes(topic.id);
+    });
+    const solvedCount = topicPuzzles.filter((puzzle) => completedIds.has(puzzle.id)).length;
+    return {
+      id: topic.id,
+      label: topic.label,
+      total: topicPuzzles.length,
+      solved: solvedCount,
+      percent: topicPuzzles.length ? Math.round((solvedCount / topicPuzzles.length) * 100) : 0,
+    };
+  }).filter((topic) => topic.total > 0);
+
+  const topicById = new Map(topicStats.map((topic) => [topic.id, topic]));
+  const recommendationCandidates = availableContent
+    .filter((item) => !progressEntries.some((entry) => entry.itemType === item.type && entry.itemId === item.id))
+    .map((item) => {
+      const topics = item.effectiveTopics || [];
+      const topicMatches = topics.reduce((count, topicId) => count + (topicById.has(topicId) ? 1 : 0), 0);
+      const practiceNeed = topics.reduce((score, topicId) => {
+        const topic = topicById.get(topicId);
+        return score + (topic ? 1 - topic.percent / 100 : 0);
+      }, 0);
+      return {
+        item,
+        score: topicMatches * 2 + practiceNeed + (item.type === "lesson" ? 0.5 : 0),
+        topicId: topics.find((topicId) => topicById.has(topicId)) || null,
+      };
+    })
+    .sort((a, b) => b.score - a.score || a.item.title.localeCompare(b.item.title));
+  const recommendations = recommendationCandidates.slice(0, 6).map(({ item, topicId }) => ({
+    id: item.id,
+    href: item.href,
+    title: item.title,
+    type: item.type,
+    summary: item.summary,
+    topic: topicId ? topicById.get(topicId)?.label : null,
+  }));
+
+  const today = new Date();
+  const activityCells = Array.from({ length: 84 }, (_, index) => {
+    const date = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - (83 - index)));
+    const key = date.toISOString().slice(0, 10);
+    return { key, active: activityDates.includes(key) };
+  });
+  const activityWeeks = Array.from({ length: 12 }, (_, index) => activityCells.slice(index * 7, index * 7 + 7));
+  const recentActivity = completedContent.slice(0, 5).map((entry) => ({
+    ...entry,
+    date: entry.completedAt instanceof Date ? entry.completedAt.toISOString().slice(0, 10) : String(entry.completedAt).slice(0, 10),
+  }));
+
   return (
     <div className="flex-1 min-h-0 overflow-y-auto bg-zinc-950">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
@@ -124,7 +199,15 @@ export default async function ProfilePage() {
               <p className="font-mono text-xs uppercase tracking-wide text-zinc-500">your account</p>
               <h1 className="mt-1 font-mono text-2xl text-white">{user.name || user.email}</h1>
             </div>
-            <ProfilePictureEditor initialImage={user.image} name={user.name || user.email} />
+            <ProfilePictureEditor
+              initialImage={avatar?.image || user.image}
+              defaultImage={avatar?.defaultImage || user.image}
+              initialCustomImage={avatar?.customImage}
+              initialScale={avatar?.scale}
+              initialPositionX={avatar?.positionX}
+              initialPositionY={avatar?.positionY}
+              name={user.name || user.email}
+            />
           </div>
         </div>
 
@@ -177,6 +260,112 @@ export default async function ProfilePage() {
             ))}
           </div>
         </section>
+
+        {/* Analytics */}
+        <section className="mt-8 rounded-lg border border-zinc-800 bg-zinc-900 p-5 sm:p-6">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="font-mono text-xs uppercase tracking-wide text-teal-400">learning analytics</p>
+              <h2 className="mt-1 text-xl font-semibold text-white">Your momentum</h2>
+            </div>
+            <p className="font-mono text-xs text-zinc-500">{completionPercent}% of the library completed</p>
+          </div>
+
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            {[
+              ["completed", completedContent.length],
+              ["active days", activityDates.length],
+              ["longest streak", `${calculateLongestStreak(activityDates)} days`],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded border border-zinc-800 bg-zinc-950 p-3">
+                <p className="font-mono text-xs text-zinc-500">{label}</p>
+                <p className="mt-1 font-mono text-xl text-white">{value}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
+            <span className="font-mono text-xs text-zinc-500">activity</span>
+            <div className="flex gap-1" aria-label={`${activityDates.length} active days in the last twelve weeks`}>
+              {activityWeeks.map((week, weekIndex) => (
+                <div key={weekIndex} className="grid gap-1">
+                  {week.map((cell) => (
+                    <span
+                      key={cell.key}
+                      title={`${cell.key}${cell.active ? " · active" : ""}`}
+                      className={`h-2.5 w-2.5 rounded-sm ${cell.active ? "bg-teal-400" : "bg-zinc-800"}`}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-2 border-t border-zinc-800 pt-4">
+            {[...completedByType.entries()].map(([type, count]) => (
+              <span key={type} className="rounded-full border border-zinc-700 px-2.5 py-1 font-mono text-xs text-zinc-400">
+                {count} {type}{count === 1 ? "" : "s"}
+              </span>
+            ))}
+            {completedContent.length === 0 && <span className="font-mono text-xs text-zinc-500">Complete a lesson or puzzle to start building your map.</span>}
+          </div>
+        </section>
+
+        <section className="mt-8 grid gap-8 lg:grid-cols-[1fr_1fr]">
+          {/* Skill map */}
+          <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-5 sm:p-6">
+            <p className="font-mono text-xs uppercase tracking-wide text-violet-400">skill map</p>
+            <h2 className="mt-1 text-xl font-semibold text-white">Topic confidence</h2>
+            <div className="mt-5 space-y-4">
+              {topicStats.slice().sort((a, b) => b.total - a.total || a.percent - b.percent).map((topic) => (
+                <div key={topic.id}>
+                  <div className="flex items-center justify-between gap-3 text-sm">
+                    <span className="text-zinc-200">{topic.label}</span>
+                    <span className="font-mono text-xs text-zinc-500">{topic.solved}/{topic.total}</span>
+                  </div>
+                  <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-zinc-800">
+                    <div className="h-full rounded-full bg-violet-400 transition-[width]" style={{ width: `${topic.percent}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Personalized discovery */}
+          <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-5 sm:p-6">
+            <p className="font-mono text-xs uppercase tracking-wide text-amber-400">next up</p>
+            <h2 className="mt-1 text-xl font-semibold text-white">Recommended for you</h2>
+            <div className="mt-4 space-y-2">
+              {recommendations.length ? recommendations.map((item) => (
+                <Link key={`${item.type}:${item.id}`} href={item.href} className="block rounded border border-zinc-800 bg-zinc-950 px-3 py-2.5 transition-colors hover:border-amber-500/60 hover:bg-zinc-900">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="min-w-0 truncate text-sm text-zinc-100">{item.title}</span>
+                    <span className="shrink-0 font-mono text-[10px] uppercase text-zinc-500">{item.type}</span>
+                  </div>
+                  {item.topic && <p className="mt-1 font-mono text-[11px] text-amber-400">practice {item.topic}</p>}
+                </Link>
+              )) : <p className="text-sm text-zinc-500">You have explored everything currently available. Check back for more.</p>}
+            </div>
+          </div>
+        </section>
+
+        {recentActivity.length > 0 && (
+          <section className="mt-8 rounded-lg border border-zinc-800 bg-zinc-900">
+            <div className="px-4 py-3">
+              <h2 className="font-mono text-sm text-zinc-100">Recent progress</h2>
+            </div>
+            <ul className="divide-y divide-zinc-800 border-t border-zinc-800">
+              {recentActivity.map((entry) => (
+                <li key={`${entry.itemType}:${entry.itemId}`}>
+                  <Link href={entry.item.href} className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-zinc-800/50">
+                    <span className="min-w-0 truncate text-sm text-zinc-200">{entry.item.title}</span>
+                    <span className="shrink-0 font-mono text-xs text-zinc-500">{entry.date}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {/* Solved list, grouped by area */}
         <section className="mt-8 space-y-3">

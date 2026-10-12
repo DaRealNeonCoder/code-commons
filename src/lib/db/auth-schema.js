@@ -1,4 +1,4 @@
-import { boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, index, integer, real, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 // better-auth's four core tables, written by hand to match its default schema.
 // The adapter looks tables and fields up by these JS names (user, session,
@@ -10,6 +10,12 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull().default(false),
   image: text("image"),
+  // A user-uploaded avatar is kept separately so removing it falls back to
+  // the image supplied by the OAuth provider.
+  customImage: text("custom_image"),
+  customImageScale: real("custom_image_scale").notNull().default(1),
+  customImageX: integer("custom_image_x").notNull().default(0),
+  customImageY: integer("custom_image_y").notNull().default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
