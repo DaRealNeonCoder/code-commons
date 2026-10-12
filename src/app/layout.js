@@ -7,8 +7,10 @@ export const metadata = {
   title: "CodeCommons — learn Python, solve puzzles",
   description:
     "Interactive Python lessons and coding puzzles, right in your browser.",
+  verification: {
+    google: "zhW1T4uLmKOfPdr6709LF0m9-yXna1dHwLQnoEzfWbQ",
+  },
 };
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

@@ -92,4 +92,6 @@ as additional pending items.
 - [ ] Review React strict mode.
 - [ ] Review the global COOP/COEP headers.
 
+## new stuff
+
 -->
