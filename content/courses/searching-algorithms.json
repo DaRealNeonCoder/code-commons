@@ -1,0 +1,12 @@
+{
+  "title": "Searching Algorithms",
+  "summary": "Learn searching algorithms with Python examples and coding exercises, starting with binary search and binary search trees. Preview balanced trees and game-tree search.",
+  "lessons": [
+    "binary-search-explained",
+    "binary-search-tree-explained",
+    "linear-search-explained",
+    "red-black-tree-explained",
+    "b-trees-explained",
+    "monte-carlo-tree-search-explained"
+  ]
+}

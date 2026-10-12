@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import ShaderPlayground from "@/components/shaders/ShaderPlayground";
+import ShaderPlayground from "@/components/shaders/LazyShaderPlayground";
 import MdxBody from "@/components/mdx/MdxBody";
 import RatedShell from "@/components/rating/RatedShell";
 import { getShaderById } from "@/lib/shaders/shaders";

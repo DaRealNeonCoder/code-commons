@@ -1,14 +1,24 @@
 import "./globals.css";
 import "katex/dist/katex.min.css";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import Navbar from "@/components/Navbar";
+import { SITE_URL } from "@/lib/seo";
 
 export const metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "CodeCommons — learn Python, solve puzzles",
   description:
     "Interactive Python lessons and coding puzzles, right in your browser.",
   verification: {
     google: "zhW1T4uLmKOfPdr6709LF0m9-yXna1dHwLQnoEzfWbQ",
+  },
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "CodeCommons — learn Python, solve puzzles",
+    description: "Interactive Python lessons, searching algorithms, and coding puzzles in your browser.",
+    type: "website",
+    url: "/",
   },
 };
 export default function RootLayout({ children }) {
@@ -18,6 +28,7 @@ export default function RootLayout({ children }) {
         <Navbar />
         <main className="flex flex-1 min-h-0">{children}</main>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

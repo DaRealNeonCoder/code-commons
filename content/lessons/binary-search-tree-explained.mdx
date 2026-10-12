@@ -1,0 +1,105 @@
+---
+title: "Binary Search Tree Explained"
+order: 12
+summary: "Understand binary search trees, search and insertion in Python, tree traversals, and why balanced trees keep operations fast."
+available: true
+areas: ["data-structures"]
+topics: ["trees", "searching"]
+tags: ["binary-search-tree"]
+languages: ["python"]
+difficulty: "intermediate"
+puzzles: ["binary-search-tree"]
+---
+
+A **binary search tree (BST)** stores values in nodes with at most two children. Each node separates smaller values from larger ones. Unlike [binary search on a sorted list](/lessons/binary-search-explained), a BST follows child links rather than calculating a middle index.
+
+## The binary search tree property
+
+In this lesson, values less than or equal to a node go in its left subtree; greater values go in its right subtree. This duplicate rule matches the [Binary Search Tree puzzle](/puzzles/binary-search-tree?lesson=binary-search-tree-explained&course=searching-algorithms). Other implementations reject duplicates or store a count.
+
+Inserting `8, 3, 10, 1, 6` gives:
+
+```text
+       8
+      / \
+     3  10
+    / \
+   1   6
+```
+
+To find `6`, compare with `8` and go left, compare with `3` and go right, then match `6`. If a required child is missing, the value is absent. The ordering property applies to the **whole subtree**, not only the immediate children.
+
+## Search and insertion in Python
+
+This example represents a node with a dictionary so you only need [Python dictionaries](/lessons/python-dictionaries) and [functions](/lessons/python-functions).
+
+```python
+def node(value):
+    return {"value": value, "left": None, "right": None}
+
+
+def insert(root, value):
+    if root is None:
+        return node(value)
+    current = root
+    while True:
+        side = "left" if value <= current["value"] else "right"
+        if current[side] is None:
+            current[side] = node(value)
+            return root
+        current = current[side]
+
+
+def contains(root, value):
+    current = root
+    while current is not None:
+        if current["value"] == value:
+            return True
+        side = "left" if value < current["value"] else "right"
+        current = current[side]
+    return False
+
+
+root = None
+for value in [8, 3, 10, 1, 6]:
+    root = insert(root, value)
+
+print(contains(root, 6))   # True
+print(contains(root, 7))   # False
+print(contains(None, 7))   # False
+```
+
+## Tree traversals
+
+A traversal visits every node. **In-order** visits left subtree, node, right subtree and produces sorted values. **Pre-order** visits node, left subtree, right subtree; the practice puzzle asks for this order.
+
+Here is pre-order without recursion. A stack processes the last item pushed first, so push the right child before the left child:
+
+```python
+def preorder(root):
+    result = []
+    stack = [root] if root is not None else []
+    while stack:
+        current = stack.pop()
+        result.append(current["value"])
+        if current["right"] is not None:
+            stack.append(current["right"])
+        if current["left"] is not None:
+            stack.append(current["left"])
+    return result
+
+
+print(preorder(root))  # [8, 3, 1, 6, 10]
+```
+
+## Why balance matters
+
+Search and insertion take **O(h) time**, where `h` is the tree height. A balanced tree has O(log n) height, but inserting already sorted values into a plain BST can make a chain of height O(n). It is incorrect to promise O(log n) for every BST.
+
+The iterative search uses O(1) extra space. Traversal visits every node in O(n) time; its stack needs up to O(h) space and the returned list uses O(n) space.
+
+Balanced structures address the height problem. The [Searching Algorithms course](/courses/searching-algorithms) includes upcoming lessons on red-black trees and B-trees. Monte Carlo tree search, also on the course roadmap, explores possible decisions using simulations; it is not an ordered dictionary lookup structure.
+
+## Practice
+
+Build a tree and return its pre-order traversal in the [Binary Search Tree puzzle](/puzzles/binary-search-tree?lesson=binary-search-tree-explained&course=searching-algorithms). Check empty input, one value, duplicate values, and increasing values. Revisit [binary search](/lessons/binary-search-explained) to compare searching a sorted array with searching a tree.

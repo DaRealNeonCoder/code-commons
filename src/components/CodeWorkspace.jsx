@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState, useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
-import CodeEditor from "@/components/CodeEditor";
+import dynamic from "next/dynamic";
 import CompletionToggle from "@/components/CompletionToggle";
 import AITutor from "@/components/AITutor";
 import { useSession } from "@/lib/auth-client";
@@ -14,6 +14,11 @@ import {
   subscribePyodideStatus,
 } from "@/lib/pyodideClient";
 import { clip } from "@/lib/compareOutput";
+
+const CodeEditor = dynamic(() => import("@/components/CodeEditor"), {
+  ssr: false,
+  loading: () => <div className="flex h-full items-center justify-center bg-zinc-950 font-mono text-xs text-zinc-500">loading editor…</div>,
+});
 
 const ACCENTS = {
   amber: { dot: "bg-amber-400", link: "text-amber-600 dark:text-amber-400 hover:underline" },

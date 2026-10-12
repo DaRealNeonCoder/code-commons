@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import LogicSimulator from "@/components/circuits/LogicSimulator";
+import LogicSimulator from "@/components/circuits/LazyLogicSimulator";
 import MdxBody from "@/components/mdx/MdxBody";
 import RatedShell from "@/components/rating/RatedShell";
 import { getCircuitById } from "@/lib/circuits/circuits";

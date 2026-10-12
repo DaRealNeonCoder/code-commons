@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import ShaderEditor from "./ShaderEditor";
-import ShaderCanvas from "./ShaderCanvas";
+import dynamic from "next/dynamic";
 import AITutor from "@/components/AITutor";
 import { DEFAULT_SHADER } from "@/lib/shaders/defaultShader";
 import { compareShaderRender } from "@/lib/shaders/puzzle";
 import { renderShaderToDataUrl } from "@/lib/shaders/webgl";
+
+const ShaderEditor = dynamic(() => import("./ShaderEditor"), { ssr: false, loading: () => <div className="h-full bg-zinc-950" /> });
+const ShaderCanvas = dynamic(() => import("./ShaderCanvas"), { ssr: false, loading: () => <div className="h-full bg-black" /> });
 
 const DEBOUNCE_MS = 400;
 

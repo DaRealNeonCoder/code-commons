@@ -94,8 +94,9 @@ as additional pending items.
 
 ## new stuff
 
-We are gonna do some seo optimization stuff.
-One page per concept, targeting one specific query. “Binary search explained” beats a generic “Algorithms” page. Use the exact phrasing people search for in the title, H1, and URL. (create a new binary search lesson, inside a searching algorithms course (add in red black tree + MCTS + b-trees etc), and use the SEO optimization we talk about on it)
+We are gonna do a lot of seo optimization stuff.
+the following text is stuff I took from a conversation, follow it as best as you can.
+One page per concept, targeting one specific query. “Binary search explained” beats a generic “Algorithms” page. Use the exact phrasing people search for in the title, H1, and URL. (create a new binary search lesson, inside a searching algorithms course (add in red black tree + MCTS + b-trees etc, (you can leave em as stubs for now, but make sure the binary search lesson is fully working, im 90% sure you can also just link an existing binary search tree lesson we have, otherwise make a binary search tree lesson and link it)), and use the SEO optimization we talk about on it)
 
 Next.js specifics: use the App Router’s generateMetadata for unique titles/descriptions per page, add a sitemap.ts and robots.ts and fill them up properly, and make sure lessons are statically generated (SSG/ISR) so they load fast and are fully crawlable.  Add Course, Article, or LearningResource JSON-LD schema where you see fit.
 
@@ -103,5 +104,7 @@ Core Web Vitals matter. Vercel Analytics/Speed Insights will show where you’re
 
 Internal linking: link every lesson to prerequisites and next steps. It helps both crawling and retention. (we already kinda do this, if you can think of some 
 "non invasive" way to improve this go for it.)
+
+make sure the first intro python course, and this new searching algorithms course does all the SEO stuff we mentioned. 
 
 -->

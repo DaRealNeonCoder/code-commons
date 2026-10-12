@@ -16,7 +16,7 @@ export default function NextLessonLink({ course, nextLesson, heading = "Up next"
             <p className="font-mono text-xs font-medium uppercase tracking-[0.14em] text-amber-700 dark:text-amber-400">{heading}</p>
             <h2 className="mt-2 text-lg font-semibold text-zinc-950 dark:text-white">{nextLesson.title}</h2>
             {nextLesson.summary && <p className="mt-1 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{nextLesson.summary}</p>}
-            <Link href={`/lessons/${nextLesson.id}`} className={BUTTON}>
+            <Link href={`/lessons/${nextLesson.id}?course=${encodeURIComponent(course.id)}`} className={BUTTON}>
               Next lesson <span aria-hidden="true" className="ml-2 text-base">→</span>
             </Link>
         </>

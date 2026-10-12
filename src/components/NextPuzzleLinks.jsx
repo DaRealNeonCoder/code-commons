@@ -12,6 +12,7 @@ const ACCENTS = {
 export default function NextPuzzleLinks({
   puzzle,
   lessonId,
+  courseId,
   heading = "Up next",
   buttonLabel = "$ next puzzle",
   accent = "teal",
@@ -20,7 +21,11 @@ export default function NextPuzzleLinks({
 
   // The lesson ID rides along in the URL so the next puzzle page can find its
   // place in the chain. The lesson's `puzzles` array is the only source of truth.
-  const href = `/puzzles/${puzzle.id}${lessonId ? `?lesson=${encodeURIComponent(lessonId)}` : ""}`;
+  const params = new URLSearchParams();
+  if (lessonId) params.set("lesson", lessonId);
+  if (courseId) params.set("course", courseId);
+  const query = params.toString();
+  const href = `/puzzles/${puzzle.id}${query ? `?${query}` : ""}`;
 
   return (
     <section className="mt-10 rounded-2xl border border-amber-200 bg-amber-50/70 p-5 dark:border-amber-900 dark:bg-amber-950/30 sm:p-6" aria-label={heading}>

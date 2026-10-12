@@ -1,13 +1,31 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCourseById } from "@/lib/courses";
+import { getAllCourses, getCourseById } from "@/lib/courses";
 import { getCourseOutline } from "@/lib/courseNav";
-import { getCurrentUserId } from "@/lib/session";
-import { getCourseProgress } from "@/lib/courseProgress";
 import { isLessonComplete } from "@/lib/progressUtils";
-import RatedShell from "@/components/rating/RatedShell";
-import CommentSection from "@/components/comments/CommentSection";
 import ContentAuthor from "@/components/ContentAuthor";
+import DeferredEngagement from "@/components/DeferredEngagement";
+import { absoluteUrl, jsonLd, pageDescription } from "@/lib/seo";
+
+export const revalidate = 3600;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  return (await getAllCourses()).map((course) => ({ courseId: course.id }));
+}
+
+export async function generateMetadata({ params }) {
+  const { courseId } = await params;
+  const course = await getCourseById(courseId);
+  if (!course) return {};
+  const description = pageDescription(course.summary, `${course.title} course on CodeCommons.`);
+  return {
+    title: `${course.title} | CodeCommons`,
+    description,
+    alternates: { canonical: absoluteUrl(`/courses/${course.id}`) },
+    openGraph: { title: course.title, description, type: "website", url: absoluteUrl(`/courses/${course.id}`) },
+  };
+}
 
 export default async function CoursePage({ params }) {
   const { courseId } = await params;
@@ -15,9 +33,9 @@ export default async function CoursePage({ params }) {
   const outline = await getCourseOutline(courseId);
   if (!course || !outline) notFound();
 
-  const userId = await getCurrentUserId();
-  const raw = await getCourseProgress(userId, outline);
-  const progress = { puzzles: new Set(raw.puzzles), lessons: new Set(raw.lessons) };
+  // Progress is personalized, so the public course shell starts with an empty
+  // snapshot and updates from client events without making the page dynamic.
+  const progress = { puzzles: new Set(), lessons: new Set() };
   const availableLessons = outline.lessons.filter((lesson) => lesson.available);
   const puzzleCount = availableLessons.reduce(
     (total, lesson) => total + lesson.puzzles.filter((puzzle) => puzzle.available).length,
@@ -42,9 +60,32 @@ export default async function CoursePage({ params }) {
   const progressPercent = availableLessons.length
     ? Math.round((completedLessons / availableLessons.length) * 100)
     : 0;
+  const isSearchingCourse = course.id === "searching-algorithms";
+
+  const courseSchema = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: course.title,
+    description: course.summary,
+    url: absoluteUrl(`/courses/${course.id}`),
+    provider: { "@type": "Organization", name: "CodeCommons", url: absoluteUrl("/") },
+    hasCourseInstance: {
+      "@type": "CourseInstance",
+      courseMode: "online",
+      courseWorkload: `${availableLessons.length} lessons`,
+    },
+    hasPart: availableLessons.map((lesson) => ({
+      "@type": "LearningResource",
+      name: lesson.title,
+      url: absoluteUrl(`/lessons/${lesson.id}`),
+      description: lesson.summary,
+    })),
+  };
 
   return (
-    <RatedShell itemType="course" itemId={course.id}>
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(courseSchema)} />
+      <DeferredEngagement itemType="course" itemId={course.id} showComments={false} />
       <div className="min-h-0 w-full flex-1 overflow-y-auto bg-zinc-50 px-4 py-8 dark:bg-zinc-950 sm:px-8 sm:py-12">
         <div className="mx-auto max-w-4xl">
            <Link href="/browse" className="font-mono text-xs font-medium uppercase tracking-[0.16em] text-amber-700 hover:underline dark:text-amber-400">
@@ -56,7 +97,7 @@ export default async function CoursePage({ params }) {
                <div className="flex flex-wrap items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">
                  <span>course</span>
                  <span className="text-zinc-300 dark:text-zinc-700">/</span>
-                 <span>python</span>
+                  <span>{course.id === "searching-algorithms" ? "algorithms" : "python"}</span>
                </div>
                <h1 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 dark:text-white sm:text-4xl">{course.title}</h1>
                {course.summary && <p className="mt-3 max-w-2xl text-base leading-7 text-zinc-700 dark:text-zinc-300 sm:text-lg">{course.summary}</p>}
@@ -101,14 +142,18 @@ export default async function CoursePage({ params }) {
                     {courseComplete
                       ? "You made it through the course."
                       : focusLessonIsFirst
-                        ? "Make your first Python program."
+                         ? isSearchingCourse
+                           ? "Find your first target in a sorted list."
+                           : "Make your first Python program."
                         : `Next up: ${focusLesson.title}`}
                   </h2>
                   <p className="mt-3 max-w-xl leading-7 text-zinc-700 dark:text-zinc-300">
                     {courseComplete
                       ? "Revisit any lesson, or start another pass to sharpen what you learned."
-                      : focusLessonIsFirst
-                        ? "Run one line of code, see the result immediately, and turn that first success into a tiny challenge."
+                       : focusLessonIsFirst
+                        ? isSearchingCourse
+                          ? "Trace the middle of a sorted list, implement binary search, and test it against hidden cases."
+                          : "Run one line of code, see the result immediately, and turn that first success into a tiny challenge."
                         : focusLesson.summary || "Pick up where you left off with the next short lesson."}
                   </p>
 
@@ -127,10 +172,10 @@ export default async function CoursePage({ params }) {
 
                 <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 shadow-lg">
                   <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2.5">
-                    <span className="font-mono text-xs text-zinc-400">{focusLessonIsFirst ? "first_program.py" : "next_step.py"}</span>
+                     <span className="font-mono text-xs text-zinc-400">{focusLessonIsFirst ? (isSearchingCourse ? "binary_search.py" : "first_program.py") : "next_step.py"}</span>
                     <span className="font-mono text-[10px] uppercase tracking-wide text-teal-400">ready</span>
                   </div>
-                  <pre className="overflow-x-auto p-5 font-mono text-sm leading-7"><code><span className="text-amber-300">print</span><span className="text-zinc-400">(</span><span className="text-teal-300">&quot;Hello, World!&quot;</span><span className="text-zinc-400">)</span>{"\n\n"}<span className="text-zinc-500"># output</span>{"\n"}<span className="text-green-400">Hello, World!</span></code></pre>
+                   <pre className="overflow-x-auto p-5 font-mono text-sm leading-7"><code>{isSearchingCourse ? <><span className="text-amber-300">mid</span><span className="text-zinc-400"> = </span><span className="text-teal-300">(low + high) // 2</span>{"\n"}<span className="text-amber-300">if</span><span className="text-zinc-400"> array[mid] == target:</span>{"\n  "}<span className="text-green-400">return mid</span></> : <><span className="text-amber-300">print</span><span className="text-zinc-400">(</span><span className="text-teal-300">&quot;Hello, World!&quot;</span><span className="text-zinc-400">)</span>{"\n\n"}<span className="text-zinc-500"># output</span>{"\n"}<span className="text-green-400">Hello, World!</span></>}</code></pre>
                 </div>
                  </div>
                )}
@@ -192,10 +237,10 @@ export default async function CoursePage({ params }) {
               );
             })}
           </ol>
-           <CommentSection itemType="course" itemId={course.id} />
-           <ContentAuthor itemType="course" itemId={course.id} />
-        </div>
-      </div>
-    </RatedShell>
+            <DeferredEngagement itemType="course" itemId={course.id} showRating={false} />
+            <ContentAuthor itemType="course" itemId={course.id} />
+         </div>
+       </div>
+    </>
   );
 }

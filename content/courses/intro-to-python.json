@@ -1,6 +1,6 @@
 {
   "title": "Intro to Python",
-  "summary": "Start from zero and learn the basics of Python, one short lesson at a time.",
+  "summary": "Learn Python for beginners with free lessons and browser-based coding puzzles. Start with Hello World, then learn variables, loops, lists, and functions.",
   "lessons": [
     "hello-world",
     "variables-and-types",
