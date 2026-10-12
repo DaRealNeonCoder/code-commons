@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { authClient, useSession } from "@/lib/auth-client";
+import NotificationBell from "@/components/notifications/NotificationBell";
 
 export default function AuthControl() {
   const { data: session, isPending } = useSession();
@@ -16,7 +17,14 @@ export default function AuthControl() {
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    function handleEscape(event) {
+      if (event.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, []);
 
   if (isPending) {
@@ -29,8 +37,10 @@ export default function AuthControl() {
       <div className="relative" ref={menuRef}>
         <button
           type="button"
+          aria-expanded={open}
+          aria-haspopup="menu"
           onClick={() => setOpen((o) => !o)}
-          className="font-mono text-sm text-zinc-400 transition-colors hover:text-white"
+          className="rounded-md py-2 font-mono text-sm text-zinc-400 transition-colors hover:text-white"
         >
           sign in <span className="text-zinc-600">▾</span>
         </button>
@@ -66,13 +76,15 @@ export default function AuthControl() {
     <div className="relative" ref={menuRef}>
       <button
         type="button"
+        aria-expanded={open}
+        aria-haspopup="menu"
         onClick={() => setOpen((o) => !o)}
-        className="font-mono text-sm text-zinc-400 transition-colors hover:text-white"
+        className="max-w-32 truncate rounded-md py-2 font-mono text-sm text-zinc-400 transition-colors hover:text-white sm:max-w-none"
       >
         {label} <span className="text-zinc-600">▾</span>
       </button>
       {open && (
-        <div className="absolute right-0 z-10 mt-3 w-40 rounded-md border border-zinc-800 bg-zinc-950 py-1 shadow-xl">
+        <div className="absolute right-0 z-50 mt-2 w-52 max-w-[calc(100vw-2rem)] rounded-md border border-zinc-800 bg-zinc-950 py-1 shadow-xl">
           <Link
             href="/profile"
             onClick={() => setOpen(false)}
@@ -80,13 +92,10 @@ export default function AuthControl() {
           >
             profile
           </Link>
-          <Link
-            href="/notifications"
+          <NotificationBell
             onClick={() => setOpen(false)}
-            className="block w-full px-3 py-2 text-left font-mono text-sm text-zinc-100 hover:bg-zinc-900"
-          >
-            notifications
-          </Link>
+            className="flex w-full items-center justify-between px-3 py-2 text-left font-mono text-sm text-zinc-100 hover:bg-zinc-900"
+          />
           <button
             type="button"
             onClick={() => authClient.signOut()}

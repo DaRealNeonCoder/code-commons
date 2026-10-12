@@ -34,7 +34,7 @@ export default async function CircuitDetailPage({ params }) {
   const puzzle = circuit.puzzlePorts ? getPuzzlePorts(circuit.puzzlePorts, initialCircuit) : null;
 
   return (
-    <main className="flex min-h-[calc(100vh-56px)] flex-1 flex-col bg-zinc-950">
+    <main className="flex min-h-0 flex-1 flex-col bg-zinc-950">
       <RatedShell itemType="circuit" itemId={circuit.id} variant="dark">
         <LogicSimulator
           key={circuit.id}

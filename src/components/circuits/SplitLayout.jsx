@@ -90,7 +90,7 @@ export default function SplitLayout({ title, lessonContent, children }) {
   const editorClass = mode === "lesson" ? "hidden" : "flex min-h-0 min-w-0 flex-1 flex-col";
 
   return (
-    <div className="flex h-[calc(100vh-56px)] min-h-[600px] flex-col bg-zinc-950">
+    <div className="flex min-h-0 flex-1 flex-col bg-zinc-950">
       <div className="flex h-10 shrink-0 items-center justify-between gap-3 border-b border-zinc-800 px-4">
         <span className="truncate text-sm text-zinc-300">{mode === "circuit" ? title : ""}</span>
         <div role="group" aria-label="Page layout" className="flex shrink-0 rounded-md border border-zinc-800 p-0.5">
@@ -155,5 +155,5 @@ export default function SplitLayout({ title, lessonContent, children }) {
 
 /** Used when the editor is embedded in a bigger page (`compact`): no lesson pane. */
 export function CompactShell({ children }) {
-  return <div className="flex h-full flex-col bg-zinc-950">{children}</div>;
+  return <div className="flex min-h-0 flex-1 flex-col bg-zinc-950">{children}</div>;
 }

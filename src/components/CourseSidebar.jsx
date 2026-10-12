@@ -45,23 +45,21 @@ const [collapsed, setCollapsed] = useState(false);
   return (
     <aside
       aria-label={`${outline.title} navigation`}
-      className={`flex min-h-0 shrink-0 flex-col border-r border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 ${
-        collapsed ? "w-11" : "w-72"
+      className={`flex min-h-0 shrink-0 flex-col border-b border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 md:border-b-0 md:border-r ${
+        collapsed ? "w-full md:w-11" : "w-full md:w-72"
       }`}
     >
       <div
         className={`flex items-center gap-2 border-b border-zinc-200 px-4 py-3 dark:border-zinc-800 ${
-          collapsed ? "justify-center" : "justify-between"
+          collapsed ? "justify-between md:justify-center" : "justify-between"
         }`}
       >
-        {!collapsed && (
-          <Link
-            href={`/courses/${outline.id}`}
-            className="truncate font-mono text-xs font-medium uppercase tracking-[0.12em] text-amber-700 hover:underline dark:text-amber-400"
-          >
-            {outline.title}
-          </Link>
-        )}
+        <Link
+          href={`/courses/${outline.id}`}
+          className={`truncate font-mono text-xs font-medium uppercase tracking-[0.12em] text-amber-700 hover:underline dark:text-amber-400 ${collapsed ? "md:hidden" : ""}`}
+        >
+          {outline.title}
+        </Link>
         <button
           type="button"
           onClick={toggle}
@@ -74,7 +72,7 @@ const [collapsed, setCollapsed] = useState(false);
       </div>
 
       {!collapsed && (
-        <nav className="min-h-0 flex-1 overflow-y-auto py-2">
+        <nav className="min-h-0 max-h-72 flex-1 overflow-y-auto py-2 md:max-h-none">
           <div className="mx-3 mb-3 rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
             <div className="flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-wide text-zinc-500">
               <span>Progress</span>

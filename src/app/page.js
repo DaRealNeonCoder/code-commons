@@ -49,14 +49,14 @@ export default function Home() {
     <div className="w-full h-full overflow-y-auto"> 
  
       {/* Hero */} 
-      <section className="bg-zinc-950 px-6 py-20 sm:py-28"> 
+      <section className="bg-zinc-950 px-4 py-14 sm:px-6 sm:py-28">
         <div className="mx-auto grid max-w-5xl gap-12 lg:grid-cols-2 lg:items-center"> 
           <div> 
             <p className="font-mono text-sm text-teal-400"> 
               # interactive coding, right in your browser 
             </p> 
  
-            <h1 className="mt-4 font-mono text-4xl font-medium leading-tight text-white sm:text-5xl"> 
+            <h1 className="mt-4 font-mono text-3xl font-medium leading-tight text-white sm:text-5xl">
               build real things, 
               <br /> 
               one line at a time. 
@@ -123,10 +123,10 @@ export default function Home() {
       </section> 
  
       {/* Divider + What you can do */} 
-      <section className="mx-auto max-w-5xl px-6"> 
+      <section className="mx-auto max-w-5xl px-4 sm:px-6">
  
         {/* Space before the divider */} 
-        <div className="mt-48 border-t border-zinc-800" /> 
+        <div className="mt-32 border-t border-zinc-800 sm:mt-48" />
  
         {/* What you can do — hidden until scrolled into view */} 
         <div 

@@ -50,7 +50,7 @@ export default async function CreateDashboardPage() {
   const published = await getPublishedForProjects(projects);
 
   return (
-    <div className="w-full h-full overflow-y-auto px-6 py-12">
+    <div className="h-full w-full overflow-y-auto px-4 py-8 sm:px-6 sm:py-12">
       <div className="mx-auto max-w-2xl">
         <p className="font-mono text-sm text-violet-600 dark:text-violet-400">/create</p>
         <div className="mt-1 flex items-center justify-between gap-4">

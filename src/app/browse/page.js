@@ -89,7 +89,7 @@ export default async function SearchPage({ searchParams }) {
   const userVotes = await getUserVotes(userId);
 
   return (
-    <div className="w-full h-full overflow-y-auto px-6 py-12">
+    <div className="h-full w-full overflow-y-auto px-4 py-8 sm:px-6 sm:py-12">
       <div className="mx-auto max-w-3xl">
         <p className="font-mono text-sm text-amber-600 dark:text-amber-400">/browse</p>
 

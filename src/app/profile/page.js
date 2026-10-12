@@ -112,7 +112,7 @@ export default async function ProfilePage() {
 
   return (
     <div className="flex-1 min-h-0 overflow-y-auto bg-zinc-950">
-      <div className="mx-auto max-w-3xl px-6 py-12">
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
         <p className="font-mono text-sm text-zinc-500">
           <span className="text-teal-400">~/</span>profile
         </p>

@@ -9,7 +9,7 @@ export default async function CircuitsIndexPage() {
   const circuits = await getAllCircuits();
 
   return (
-    <div className="w-full h-full overflow-y-auto bg-zinc-950 px-6 py-12">
+    <div className="h-full w-full overflow-y-auto bg-zinc-950 px-4 py-8 sm:px-6 sm:py-12">
       <div className="mx-auto max-w-2xl">
         <p className="font-mono text-sm text-violet-400">/circuits</p>
         <h1 className="mt-1 text-2xl font-semibold text-white">Logic Simulator</h1>

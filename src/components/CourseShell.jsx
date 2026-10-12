@@ -4,7 +4,7 @@ export default function CourseShell({ outline, progress, lessonId, puzzleId = nu
   if (!outline) return children;
 
   return (
-    <div className="flex min-h-0 min-w-0 flex-1">
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col md:flex-row">
       <CourseSidebar
         outline={outline}
         progress={progress}

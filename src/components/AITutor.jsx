@@ -52,7 +52,7 @@ export default function AITutor({
       <button
         onClick={() => setOpen(true)}
         aria-label="Ask the AI tutor"
-        className="fixed bottom-6 right-6 z-40 h-24 w-24 overflow-hidden rounded-lg shadow-lg transition hover:scale-105 hover:shadow-xl"
+        className="fixed bottom-4 right-4 z-40 h-16 w-16 overflow-hidden rounded-lg shadow-lg transition hover:scale-105 hover:shadow-xl sm:bottom-6 sm:right-6 sm:h-24 sm:w-24"
       >
         <Image
           src="/character.webp"
@@ -67,11 +67,11 @@ export default function AITutor({
 
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-end bg-black/20 p-6"
+          className="fixed inset-0 z-50 flex items-end justify-end bg-black/20 p-3 sm:p-6"
           onClick={() => setOpen(false)}
         >
           <div
-            className="flex h-[28rem] w-96 max-w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-xl bg-white shadow-2xl dark:bg-zinc-900"
+            className="flex h-[calc(100vh-1.5rem)] max-h-[28rem] w-full max-w-[24rem] flex-col overflow-hidden rounded-xl bg-white shadow-2xl dark:bg-zinc-900"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-3 dark:border-zinc-800">

@@ -11,7 +11,7 @@ export default async function ShadersIndexPage() {
   const shaders = await getAllShaders();
 
   return (
-    <div className="w-full h-full overflow-y-auto px-6 py-12">
+    <div className="h-full w-full overflow-y-auto px-4 py-8 sm:px-6 sm:py-12">
       <div className="mx-auto max-w-2xl">
         <p className="font-mono text-sm text-fuchsia-600 dark:text-fuchsia-400">/shaders</p>
         <h1 className="mt-1 text-2xl font-semibold">Shader Playground</h1>

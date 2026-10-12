@@ -533,7 +533,7 @@ export default function CodeWorkspace({
   };
 
   return (
-    <div className="flex flex-1 min-h-0 w-full flex-col">
+    <div className="flex min-h-0 w-full flex-1 flex-col overflow-y-auto lg:overflow-hidden">
       {/* Layout switcher (only when layoutToggle is on) */}
       {layoutToggle && (
         <div className="flex items-center justify-end gap-2 border-b border-zinc-800 bg-zinc-950 px-4 py-1.5">

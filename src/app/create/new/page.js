@@ -10,7 +10,7 @@ export default async function NewProjectPage() {
   if (!session?.user) redirect("/");
 
   return (
-    <div className="w-full h-full overflow-y-auto px-6 py-12">
+    <div className="h-full w-full overflow-y-auto px-4 py-8 sm:px-6 sm:py-12">
       <div className="mx-auto max-w-2xl">
         <Link href="/create" className="font-mono text-sm text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
           ← /create
