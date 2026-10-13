@@ -1,21 +1,9 @@
 /* 
-        TODO LIST 
- 
-- Create system for circuits  
-- Create system for shaders  
-- Create system for Puzzles  
-- Actual puzzles with actual testing. 
-- Comment system? 
-- UI Overhaul 
-- Actual progress stats in profile.  
-- shader lessonify 
-- digital logic lessonify 
- 
- 
-interesting stuff: 
--cloudflare r2. 
--run python client side for now (pyiode or whatever). 
--vercel sandbox 
+ Add moderator tools. Certain users with moderator privelages may delete content, comments etc. other uses make.
+additionally moderators may ban users (but not other moderators) from commenting/creating content and restrict them only to viewing.
+
+there will also be the owner (me) who will be allowed to everything a moderator can, AND ban moderators. 
+you may add other rules, or priverallages to the one owner and the many moderators as you see fit.
  */ 
  
 "use client"; 

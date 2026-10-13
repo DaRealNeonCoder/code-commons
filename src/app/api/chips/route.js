@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { listVisibleChips, saveChip, setChipVisibility } from "@/lib/db/chips";
+import { deleteChip, listVisibleChips, saveChip, setChipVisibility } from "@/lib/db/chips";
 
 // Chip ids are client-generated; only allow plain slug characters.
 const VALID_ID = /^[A-Za-z0-9_-]{1,100}$/;
@@ -96,5 +96,29 @@ export async function PATCH(request) {
   } catch (err) {
     console.error("PATCH /api/chips failed:", err);
     return NextResponse.json({ ok: false, error: "Failed to update chip" }, { status: 500 });
+  }
+}
+
+// DELETE /api/chips  { id }: owner only. This removes the server listing;
+// projects that already imported the chip keep their embedded copy.
+export async function DELETE(request) {
+  const user = await getSessionUser(request);
+  if (!user) return NextResponse.json({ ok: false, error: "Sign in to delete chips." }, { status: 401 });
+
+  const body = await request.json().catch(() => null);
+  if (!VALID_ID.test(body?.id ?? "")) {
+    return NextResponse.json({ ok: false, error: "A valid chip id is required." }, { status: 400 });
+  }
+
+  try {
+    const outcome = await deleteChip({ id: body.id, ownerId: user.id });
+    if (outcome === "not_found") return NextResponse.json({ ok: false, error: "Chip not found." }, { status: 404 });
+    if (outcome === "forbidden") {
+      return NextResponse.json({ ok: false, error: "You can only delete your own chips." }, { status: 403 });
+    }
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error("DELETE /api/chips failed:", err);
+    return NextResponse.json({ ok: false, error: "Failed to delete chip" }, { status: 500 });
   }
 }

@@ -280,3 +280,26 @@ export function compileCircuitToChip(components, connections, chips, name, color
     outputSources,
   };
 }
+
+/**
+ * Remove a chip from one editor's local library without leaving broken CHIP
+ * components behind. Imported chips are already embedded in the circuit, so
+ * this operation only affects the current circuit's local copy.
+ */
+export function removeChipFromCircuit(circuit, chipId) {
+  const removedComponentIds = new Set(
+    circuit.components.filter((component) => component.kind === "CHIP" && component.chipId === chipId).map((component) => component.id)
+  );
+  const chips = { ...circuit.chips };
+  delete chips[chipId];
+
+  return {
+    components: circuit.components.filter((component) => !removedComponentIds.has(component.id)),
+    connections: circuit.connections.filter(
+      (connection) =>
+        !removedComponentIds.has(connection.from.componentId) && !removedComponentIds.has(connection.to.componentId)
+    ),
+    chips,
+    removedComponentCount: removedComponentIds.size,
+  };
+}

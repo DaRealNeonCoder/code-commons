@@ -48,3 +48,14 @@ export async function setChipVisibility({ id, ownerId, visibility }) {
   const [exists] = await db.select({ id: chips.id }).from(chips).where(eq(chips.id, id)).limit(1);
   return exists ? "forbidden" : "not_found";
 }
+
+// "ok" | "not_found" | "forbidden"
+export async function deleteChip({ id, ownerId }) {
+  const rows = await db
+    .delete(chips)
+    .where(and(eq(chips.id, id), eq(chips.ownerId, ownerId)))
+    .returning({ id: chips.id });
+  if (rows.length > 0) return "ok";
+  const [exists] = await db.select({ id: chips.id }).from(chips).where(eq(chips.id, id)).limit(1);
+  return exists ? "forbidden" : "not_found";
+}

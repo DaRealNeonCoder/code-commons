@@ -8,6 +8,7 @@ import {
   findConnectionTo,
   genId,
   getPortCounts,
+  removeChipFromCircuit,
 } from "@/lib/circuits/engine";
 import SplitLayout, { CompactShell } from "@/components/circuits/SplitLayout";
 import AITutor from "@/components/AITutor";
@@ -131,7 +132,10 @@ export default function LogicSimulator({
   // The simulation is recomputed from plain data whenever the circuit
   // changes — it never inspects React instances or the DOM.
   const sim = useMemo(() => computeSimulation(components, connections, chips), [components, connections, chips]);
-  const chipIds = useMemo(() => new Set(Object.keys(chips)), [chips]);
+  const chipIds = useMemo(
+    () => new Set([...Object.keys(chips), ...Object.values(chips).map((chip) => chip.sourceId).filter(Boolean)]),
+    [chips]
+  );
 
   // Notifies a host page of the current circuit, debounced so we're not
   // firing on every mousemove while something is mid-drag or mid-wiring.
@@ -551,6 +555,24 @@ export default function LogicSimulator({
     showToast("success", `Imported "${chip.name}"`);
   }
 
+  function handleRemoveChip(chipId) {
+    const chip = chips[chipId];
+    if (!chip) return;
+    const next = removeChipFromCircuit({ components, connections, chips }, chipId);
+    pushHistory();
+    setComponents(next.components);
+    setConnections(next.connections);
+    setChips(next.chips);
+    setSelected(null);
+    setPending(null);
+    showToast(
+      "success",
+      next.removedComponentCount > 0
+        ? `Removed "${chip.name}" and ${next.removedComponentCount} local instance${next.removedComponentCount === 1 ? "" : "s"}`
+        : `Removed "${chip.name}" locally`
+    );
+  }
+
   async function handleExportProject() {
     setExporting(true);
     setToast(null);
@@ -675,6 +697,8 @@ export default function LogicSimulator({
               label={chip.name}
               style={{ backgroundColor: chip.color, color: "#fff" }}
               onDragStart={(e) => handleDragStart(e, { kind: "CHIP", chipId: chip.id })}
+              onRemove={() => handleRemoveChip(chip.id)}
+              removeLabel={`Remove ${chip.name} locally`}
             />
           ))}
 
@@ -953,18 +977,38 @@ export default function LogicSimulator({
   );
 }
 
-function PaletteSwatch({ label, className, style, onDragStart, draggable = true, title }) {
-  return (
+function PaletteSwatch({ label, className, style, onDragStart, draggable = true, title, onRemove, removeLabel }) {
+  const swatch = (
     <div
       draggable={draggable}
       onDragStart={onDragStart}
       title={title}
       className={`flex h-9 shrink-0 min-w-[3.25rem] items-center justify-center rounded-md px-2 font-mono text-[11px] font-semibold ${
         draggable ? "cursor-grab active:cursor-grabbing" : "cursor-not-allowed opacity-50"
-      } ${className ?? ""}`}
+      } ${onRemove ? "pr-7" : ""} ${className ?? ""}`}
       style={style}
     >
       {label}
+    </div>
+  );
+
+  if (!onRemove) return swatch;
+  return (
+    <div className="group relative shrink-0">
+      {swatch}
+      <button
+        type="button"
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+          onRemove();
+        }}
+        aria-label={removeLabel}
+        title={removeLabel}
+        className="absolute right-0.5 top-0.5 h-4 w-4 rounded bg-black/40 text-[11px] leading-4 text-white opacity-70 hover:bg-black/70 hover:opacity-100"
+      >
+        ×
+      </button>
     </div>
   );
 }
