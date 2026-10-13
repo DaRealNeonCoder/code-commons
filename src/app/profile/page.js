@@ -13,6 +13,9 @@ import { getCourseProgress } from "@/lib/courseProgress";
 import { isLessonComplete } from "@/lib/progressUtils";
 import ProfilePictureEditor from "@/components/ProfilePictureEditor";
 import { getUserAvatar } from "@/lib/profile";
+import { getOwnedProjectSummaries } from "@/lib/publicProfiles";
+import ProfileProjects from "@/components/ProfileProjects";
+import { ProfileProgressiveSections } from "@/components/ProfileProgressiveSections";
 
 const OTHER_AREA = "__other"; // puzzles with no area at all
 const puzzleHref = (id) => `/puzzles/${id}`;
@@ -32,6 +35,7 @@ export default async function ProfilePage() {
     getActivityDates(user.id),
     getAllContent(),
   ]);
+  const projects = await getOwnedProjectSummaries(user.id);
 
   // "Coming soon" puzzles aren't playable, so they don't count toward the total.
   const puzzles = (await getAllPuzzles()).filter((p) => p.available);
@@ -124,7 +128,7 @@ export default async function ProfilePage() {
   const availableContent = allContent.filter((item) => item.available !== false);
   const completedContent = progressEntries
     .map((entry) => ({ ...entry, item: contentByKey.get(`${entry.itemType}:${entry.itemId}`) }))
-    .filter((entry) => entry.item);
+    .filter((entry) => entry.item && entry.item.available !== false);
   const completionPercent = availableContent.length
     ? Math.round((completedContent.length / availableContent.length) * 100)
     : 0;
@@ -165,7 +169,7 @@ export default async function ProfilePage() {
       };
     })
     .sort((a, b) => b.score - a.score || a.item.title.localeCompare(b.item.title));
-  const recommendations = recommendationCandidates.slice(0, 6).map(({ item, topicId }) => ({
+  const recommendations = recommendationCandidates.slice(0, 30).map(({ item, topicId }) => ({
     id: item.id,
     href: item.href,
     title: item.title,
@@ -311,43 +315,9 @@ export default async function ProfilePage() {
           </div>
         </section>
 
-        <section className="mt-8 grid gap-8 lg:grid-cols-[1fr_1fr]">
-          {/* Skill map */}
-          <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-5 sm:p-6">
-            <p className="font-mono text-xs uppercase tracking-wide text-violet-400">skill map</p>
-            <h2 className="mt-1 text-xl font-semibold text-white">Topic confidence</h2>
-            <div className="mt-5 space-y-4">
-              {topicStats.slice().sort((a, b) => b.total - a.total || a.percent - b.percent).map((topic) => (
-                <div key={topic.id}>
-                  <div className="flex items-center justify-between gap-3 text-sm">
-                    <span className="text-zinc-200">{topic.label}</span>
-                    <span className="font-mono text-xs text-zinc-500">{topic.solved}/{topic.total}</span>
-                  </div>
-                  <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-zinc-800">
-                    <div className="h-full rounded-full bg-violet-400 transition-[width]" style={{ width: `${topic.percent}%` }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        <ProfileProjects projects={projects} own />
 
-          {/* Personalized discovery */}
-          <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-5 sm:p-6">
-            <p className="font-mono text-xs uppercase tracking-wide text-amber-400">next up</p>
-            <h2 className="mt-1 text-xl font-semibold text-white">Recommended for you</h2>
-            <div className="mt-4 space-y-2">
-              {recommendations.length ? recommendations.map((item) => (
-                <Link key={`${item.type}:${item.id}`} href={item.href} className="block rounded border border-zinc-800 bg-zinc-950 px-3 py-2.5 transition-colors hover:border-amber-500/60 hover:bg-zinc-900">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="min-w-0 truncate text-sm text-zinc-100">{item.title}</span>
-                    <span className="shrink-0 font-mono text-[10px] uppercase text-zinc-500">{item.type}</span>
-                  </div>
-                  {item.topic && <p className="mt-1 font-mono text-[11px] text-amber-400">practice {item.topic}</p>}
-                </Link>
-              )) : <p className="text-sm text-zinc-500">You have explored everything currently available. Check back for more.</p>}
-            </div>
-          </div>
-        </section>
+        <ProfileProgressiveSections topics={topicStats} recommendations={recommendations} />
 
         {recentActivity.length > 0 && (
           <section className="mt-8 rounded-lg border border-zinc-800 bg-zinc-900">

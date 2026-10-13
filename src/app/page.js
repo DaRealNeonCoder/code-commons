@@ -1,12 +1,5 @@
 /* 
 
-Add the ability to view your own projects created from the profile page, like a summary, show the proj + stars. not like the full create page obvs.
-
-profile page skill map is way too big, truncate past a certain threshold, with progressive show mores. the next up show more seems to grow at the 
-same size as the skill map which looks ugly because the rest of the next up  is empty, fix this.
-
-Add the ability to view other peoples profiles, you may view another persons profile through , show the puzzles + lessons they have done, projects they made, etc.
-
  */ 
  
 "use client"; 
