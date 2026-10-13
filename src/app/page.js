@@ -1,9 +1,12 @@
 /* 
- Add moderator tools. Certain users with moderator privelages may delete content, comments etc. other uses make.
-additionally moderators may ban users (but not other moderators) from commenting/creating content and restrict them only to viewing.
 
-there will also be the owner (me) who will be allowed to everything a moderator can, AND ban moderators. 
-you may add other rules, or priverallages to the one owner and the many moderators as you see fit.
+Add the ability to view your own projects created from the profile page, show the proj + stars. not like the full create page obvs.
+
+profile page skill map is way too big, truncate past a certain threshold, with progressive show mores. the next up show more seems to grow at the 
+same size as the skill map which looks ugly because the rest of the next up  is empty, fix this.
+
+Add the ability to view other peoples profiles, show the puzzles + lessons they have done, projects they made, etc.
+
  */ 
  
 "use client"; 
