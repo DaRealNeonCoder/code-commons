@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { auth } from "@/lib/auth";
+import { getRequestAccess } from "@/lib/access";
 import { db } from "@/lib/db";
 import { user } from "@/lib/db/schema";
 import { getUserAvatar } from "@/lib/profile";
@@ -8,8 +8,7 @@ const MAX_PROFILE_IMAGE_BYTES = 512 * 1024;
 const IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp", "image/gif"]);
 
 async function getUser(request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  return session?.user ?? null;
+  return (await getRequestAccess(request)).user;
 }
 
 export async function GET(request) {
@@ -19,8 +18,10 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const currentUser = await getUser(request);
+  const access = await getRequestAccess(request);
+  const currentUser = access.user;
   if (!currentUser) return Response.json({ error: "Not signed in." }, { status: 401 });
+  if (access.ban) return Response.json({ error: "Your account is restricted from interacting." }, { status: 403 });
 
   const form = await request.formData().catch(() => null);
   if (!form) return Response.json({ error: "A valid image upload is required." }, { status: 400 });

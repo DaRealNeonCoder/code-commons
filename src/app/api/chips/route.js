@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { getRequestAccess } from "@/lib/access";
 import { deleteChip, listVisibleChips, saveChip, setChipVisibility } from "@/lib/db/chips";
 
 // Chip ids are client-generated; only allow plain slug characters.
@@ -10,8 +10,7 @@ const MAX_CHIP_CHARS = 500_000;
 export const dynamic = "force-dynamic"; // the response depends on who is signed in
 
 async function getSessionUser(request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  return session?.user ?? null;
+  return (await getRequestAccess(request)).user;
 }
 
 // GET /api/chips -> { ok: true, chips: [...] }
@@ -29,8 +28,10 @@ export async function GET(request) {
 // POST /api/chips  <CompiledChip & { visibility }>. Requires sign-in.
 // Visibility defaults to private when missing or invalid.
 export async function POST(request) {
-  const user = await getSessionUser(request);
+  const access = await getRequestAccess(request);
+  const user = access.user;
   if (!user) return NextResponse.json({ ok: false, error: "Sign in to save chips." }, { status: 401 });
+  if (access.ban) return NextResponse.json({ ok: false, error: "Your account is restricted from creating content." }, { status: 403 });
 
   const body = await request.json().catch(() => null);
   if (!body || typeof body !== "object") {
@@ -75,8 +76,10 @@ export async function POST(request) {
 
 // PATCH /api/chips  { id, visibility }: owner only.
 export async function PATCH(request) {
-  const user = await getSessionUser(request);
+  const access = await getRequestAccess(request);
+  const user = access.user;
   if (!user) return NextResponse.json({ ok: false, error: "Sign in to change a chip." }, { status: 401 });
+  if (access.ban) return NextResponse.json({ ok: false, error: "Your account is restricted from creating content." }, { status: 403 });
 
   const body = await request.json().catch(() => null);
   if (!VALID_ID.test(body?.id ?? "") || !VISIBILITIES.includes(body?.visibility)) {
@@ -102,8 +105,10 @@ export async function PATCH(request) {
 // DELETE /api/chips  { id }: owner only. This removes the server listing;
 // projects that already imported the chip keep their embedded copy.
 export async function DELETE(request) {
-  const user = await getSessionUser(request);
+  const access = await getRequestAccess(request);
+  const user = access.user;
   if (!user) return NextResponse.json({ ok: false, error: "Sign in to delete chips." }, { status: 401 });
+  if (access.ban) return NextResponse.json({ ok: false, error: "Your account is restricted from creating content." }, { status: 403 });
 
   const body = await request.json().catch(() => null);
   if (!VALID_ID.test(body?.id ?? "")) {

@@ -1,13 +1,13 @@
-import { auth } from "@/lib/auth";
+import { getRequestAccess } from "@/lib/access";
 import { listNotifications, markNotificationsRead, unreadNotificationCount } from "@/lib/notifications";
 
 async function userId(request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  return session?.user?.id || null;
+  return getRequestAccess(request);
 }
 
 export async function GET(request) {
-  const id = await userId(request);
+  const access = await userId(request);
+  const id = access.user?.id || null;
   if (!id) return Response.json({ error: "Not signed in." }, { status: 401 });
   const { searchParams } = new URL(request.url);
   const unreadOnly = searchParams.get("unreadOnly") === "true";
@@ -15,8 +15,10 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const id = await userId(request);
+  const access = await userId(request);
+  const id = access.user?.id || null;
   if (!id) return Response.json({ error: "Not signed in." }, { status: 401 });
+  if (access.ban) return Response.json({ error: "Your account is restricted from interacting." }, { status: 403 });
   const body = await request.json().catch(() => null);
   const ids = Array.isArray(body?.ids) ? body.ids.filter((value) => typeof value === "string") : [];
   await markNotificationsRead(id, ids);

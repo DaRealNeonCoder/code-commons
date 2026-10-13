@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { stringifyFrontmatter } from "@/lib/frontmatter";
 import { loadTaxonomy, isValidSelection } from "@/lib/taxonomy";
+import { getRequestAccess } from "@/lib/access";
 
 const PUZZLES_DIR = path.join(process.cwd(), "content/puzzles");
 
@@ -56,6 +57,9 @@ function parseTestCases(value) {
 }
 
 export async function POST(request) {
+  const access = await getRequestAccess(request);
+  if (!access.user) return Response.json({ error: "Sign in required." }, { status: 401 });
+  if (access.ban) return Response.json({ error: "Your account is restricted from creating content." }, { status: 403 });
   const body = await request.json().catch(() => null);
 
   if (!body?.title || typeof body.title !== "string" || !body.title.trim()) {

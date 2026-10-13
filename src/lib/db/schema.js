@@ -156,6 +156,7 @@ export const courses = pgTable(
     projectId: text("project_id").unique(),
     title: text("title").notNull(),
     summary: text("summary").notNull().default(""),
+    available: boolean("available").notNull().default(true),
     // Ordered lesson slugs. A course points at lessons, it never copies them.
     lessonIds: text("lesson_ids").array().notNull().default(emptyTextArray),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -333,6 +334,27 @@ export const moderationRoles = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [primaryKey({ columns: [t.userId, t.role] }), index("moderation_roles_role_idx").on(t.role)]
+);
+
+// Current user restrictions. A revoked row is retained as the last action;
+// expired rows are treated as inactive by the moderation service.
+export const userBans = pgTable(
+  "user_bans",
+  {
+    userId: text("user_id")
+      .primaryKey()
+      .references(() => user.id, { onDelete: "cascade" }),
+    bannedBy: text("banned_by")
+      .notNull()
+      .references(() => user.id, { onDelete: "restrict" }),
+    reason: text("reason").notNull().default(""),
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
+    revokedAt: timestamp("revoked_at", { withTimezone: true }),
+    revokedBy: text("revoked_by").references(() => user.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("user_bans_active_idx").on(t.revokedAt, t.expiresAt)]
 );
 
 export const contentModerators = pgTable(

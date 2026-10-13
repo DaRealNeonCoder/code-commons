@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { getRequestAccess } from "@/lib/access";
 import { getProject } from "@/lib/creatorProjects";
 import { loadTaxonomy, isValidSelection } from "@/lib/taxonomy";
 import { parseBlocks } from "@/lib/lessonBlocks";
@@ -29,9 +29,10 @@ export async function readPublishRequest(
   noun,
   { categorised = true } = {}
 ) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  const user = session?.user;
+  const access = await getRequestAccess(request);
+  const user = access.user;
   if (!user) return fail("Sign in required.", 401);
+  if (access.ban) return fail("Your account is restricted from creating content.", 403);
 
   const body = await request.json().catch(() => null);
   if (!body || typeof body !== "object") return fail("Invalid request.", 400);

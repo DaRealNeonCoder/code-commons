@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { getRequestAccess } from "@/lib/access";
 import { getProject } from "@/lib/creatorProjects";
 import { loadTaxonomy, isValidSelection } from "@/lib/taxonomy";
 import { normalizePuzzleIds, findMissingPuzzleIds } from "@/lib/lessonPuzzles";
@@ -34,8 +34,8 @@ const SAVE_ERRORS = {
 // lesson the caller owns, and the update only applies to a row whose owner
 // matches the session.
 export async function POST(request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  const user = session?.user;
+  const access = await getRequestAccess(request);
+  const user = access.user;
   if (!user) {
     return Response.json({ error: "Sign in required." }, { status: 401 });
   }
@@ -112,6 +112,7 @@ export async function POST(request) {
     const [status, error] = SAVE_ERRORS[result.error] ?? [400, "Couldn't save the lesson."];
     return Response.json({ error }, { status });
   }
+  if (access.ban) return Response.json({ error: "Your account is restricted from creating content." }, { status: 403 });
 
   await notifyPublished({ actorId: user.id, itemType: "lesson", itemId: result.slug, title });
 

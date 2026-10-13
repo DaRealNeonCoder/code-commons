@@ -1,18 +1,19 @@
-import { auth } from "@/lib/auth";
+import { getRequestAccess } from "@/lib/access";
 import { updateProject, deleteProject } from "@/lib/creatorProjects";
 
 const MAX_DATA_CHARS = 2_000_000;
 
 async function getUser(request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  return session?.user ?? null;
+  return getRequestAccess(request);
 }
 
 export async function PUT(request, { params }) {
-  const user = await getUser(request);
+  const access = await getUser(request);
+  const user = access.user;
   if (!user) {
     return Response.json({ error: "Sign in to save projects." }, { status: 401 });
   }
+  if (access.ban) return Response.json({ error: "Your account is restricted from creating content." }, { status: 403 });
 
   const { id } = await params;
   const body = await request.json().catch(() => null);
@@ -42,10 +43,12 @@ export async function PUT(request, { params }) {
 
 // DELETE /api/creator-projects/:id
 export async function DELETE(request, { params }) {
-  const user = await getUser(request);
+  const access = await getUser(request);
+  const user = access.user;
   if (!user) {
     return Response.json({ error: "Sign in to delete projects." }, { status: 401 });
   }
+  if (access.ban) return Response.json({ error: "Your account is restricted from creating content." }, { status: 403 });
 
   const { id } = await params;
   if (!(await deleteProject(id, user.id))) {

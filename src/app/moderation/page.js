@@ -1,15 +1,18 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { canModerateItem, getModerationRole } from "@/lib/moderation";
+import { canModerateItem, getActiveBan, getEffectiveRole, isGlobalModeratorRole } from "@/lib/moderation";
 import ModerationQueue from "@/components/moderation/ModerationQueue";
+import ModerationTools from "@/components/moderation/ModerationTools";
 
 export default async function ModerationPage({ searchParams }) {
   const session = await auth.api.getSession({ headers: await headers() });
   const params = await searchParams;
   const itemType = params?.itemType || null;
   const itemId = params?.itemId || null;
-  const allowed = session?.user && (await getModerationRole(session.user.id) || (itemType && itemId && await canModerateItem(session.user.id, itemType, itemId)));
+  const role = session?.user ? await getEffectiveRole(session.user) : null;
+  const banned = session?.user ? await getActiveBan(session.user.id) : null;
+  const allowed = session?.user && !banned && (isGlobalModeratorRole(role) || (itemType && itemId && await canModerateItem(session.user.id, itemType, itemId)));
   if (!allowed) redirect("/");
   const query = itemType && itemId ? `?itemType=${encodeURIComponent(itemType)}&itemId=${encodeURIComponent(itemId)}` : "";
   return (
@@ -19,6 +22,7 @@ export default async function ModerationPage({ searchParams }) {
         <h1 className="mt-2 font-mono text-2xl text-white">Comment moderation</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">Review spam-filtered comments and community reports. Contributors can also receive moderation access for individual published items.</p>
         <ModerationQueue query={query} />
+        {isGlobalModeratorRole(role) && <ModerationTools role={role} />}
       </div>
     </main>
   );

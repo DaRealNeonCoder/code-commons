@@ -1,14 +1,14 @@
-import { auth } from "@/lib/auth";
+import { getRequestAccess } from "@/lib/access";
 import { isCommentItemType } from "@/lib/comments";
 import { isSubscribed, setSubscription } from "@/lib/notifications";
 
 async function userId(request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  return session?.user?.id || null;
+  return getRequestAccess(request);
 }
 
 export async function GET(request) {
-  const id = await userId(request);
+  const access = await userId(request);
+  const id = access.user?.id || null;
   if (!id) return Response.json({ error: "Not signed in." }, { status: 401 });
   const { searchParams } = new URL(request.url);
   const itemType = searchParams.get("itemType");
@@ -18,8 +18,10 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const id = await userId(request);
+  const access = await userId(request);
+  const id = access.user?.id || null;
   if (!id) return Response.json({ error: "Not signed in." }, { status: 401 });
+  if (access.ban) return Response.json({ error: "Your account is restricted from interacting." }, { status: 403 });
   const body = await request.json().catch(() => null);
   if (!isCommentItemType(body?.itemType) || typeof body?.itemId !== "string" || typeof body?.subscribed !== "boolean") {
     return Response.json({ error: "itemType, itemId and subscribed are required." }, { status: 400 });

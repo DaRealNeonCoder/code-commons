@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { getRequestAccess } from "@/lib/access";
 import { getProject } from "@/lib/creatorProjects";
 import { findMissingLessonIds } from "@/lib/lessonStore";
 import { saveCourse } from "@/lib/db/courses";
@@ -10,11 +10,12 @@ import { notifyPublished } from "@/lib/notifications";
 // same project updates the same course. Ownership comes from the project, and the
 // update only applies to a row owned by the session user.
 export async function POST(request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  const user = session?.user;
+  const access = await getRequestAccess(request);
+  const user = access.user;
   if (!user) {
     return Response.json({ error: "Sign in to publish a course." }, { status: 401 });
   }
+  if (access.ban) return Response.json({ error: "Your account is restricted from creating content." }, { status: 403 });
 
   const body = await request.json().catch(() => null);
 

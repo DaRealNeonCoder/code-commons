@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { getRequestAccess } from "@/lib/access";
 import {
   COMMENT_MAX_LENGTH,
   createComment,
@@ -13,15 +13,15 @@ import {
 } from "@/lib/comments";
 
 async function getUserId(request) {
-  const session = await auth.api.getSession({ headers: request.headers });
-  return session?.user?.id ?? null;
+  return getRequestAccess(request);
 }
 
 const validKey = (value) => typeof value === "string" && value.length > 0 && value.length <= 200;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export async function GET(request) {
-  const userId = await getUserId(request);
+  const access = await getUserId(request);
+  const userId = access.user?.id ?? null;
   const { searchParams } = new URL(request.url);
   const itemType = searchParams.get("itemType");
   const itemId = searchParams.get("itemId");
@@ -34,8 +34,10 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const userId = await getUserId(request);
+  const access = await getUserId(request);
+  const userId = access.user?.id ?? null;
   if (!userId) return Response.json({ error: "Not signed in." }, { status: 401 });
+  if (access.ban) return Response.json({ error: "Your account is restricted from commenting." }, { status: 403 });
 
   const body = await request.json().catch(() => null);
 

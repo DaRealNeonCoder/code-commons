@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { getRequestAccess } from "@/lib/access";
 import { headers } from "next/headers";
 import { setCompleted, isCompleted } from "@/lib/progress";
 const VALID_TYPES = ["lesson", "puzzle"];
@@ -40,10 +41,11 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
-    const session = await getCurrentSession();
-    if (!session) {
+    const access = await getRequestAccess(request);
+    if (!access.user) {
       return Response.json({ error: "Sign in to track progress." }, { status: 401 });
     }
+    if (access.ban) return Response.json({ error: "Your account is restricted from interacting." }, { status: 403 });
 
     const body = await request.json().catch(() => null);
     const itemType = body?.itemType;
@@ -54,7 +56,7 @@ export async function POST(request) {
       return Response.json({ error: "Invalid itemType or itemId." }, { status: 400 });
     }
 
-    await setCompleted(session.user.id, itemType, itemId, Boolean(completed));
+    await setCompleted(access.user.id, itemType, itemId, Boolean(completed));
 
     return Response.json({ completed: Boolean(completed) });
   } catch (err) {
