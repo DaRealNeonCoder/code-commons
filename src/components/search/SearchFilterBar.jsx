@@ -58,6 +58,9 @@ export default function SearchFilterBar({ taxonomy, showTypeFilter = true }) {
 
   // Keep local state in sync when the URL changes after a search.
   useEffect(() => {
+    // The URL is the external source of truth for this form. These setters
+    // intentionally mirror it after navigation.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setQueryInput(searchParams.get("q") || "");
     setTypes(parseList(searchParams.get("type")));
     setAreas(parseList(searchParams.get("area")));
@@ -72,7 +75,9 @@ export default function SearchFilterBar({ taxonomy, showTypeFilter = true }) {
 
     const updates = {
       q: queryInput,
-      type: types,
+      // On /browse the type tabs live above this form. Keep that tab selected
+      // when the hidden type filter is cleared or the form is submitted.
+      type: showTypeFilter ? types : parseList(searchParams.get("type")),
       area: areas,
       topic: topics,
       tag: tags,

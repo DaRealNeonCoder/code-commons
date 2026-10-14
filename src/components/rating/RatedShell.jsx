@@ -12,7 +12,7 @@ import { getCurrentUserId } from "@/lib/session";
  */
 export default async function RatedShell({ itemType, itemId, variant = "auto", children }) {
   const userId = await getCurrentUserId();
-  const initial = getRatingSummary(itemType, itemId, userId);
+  const initial = await getRatingSummary(itemType, itemId, userId);
 
   const barClasses =
     variant === "dark"

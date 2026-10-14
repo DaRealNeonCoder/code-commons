@@ -11,20 +11,46 @@ difficulty: "intermediate"
 puzzles: ["binary-search", "first-occurrence"]
 ---
 
-**Binary search finds a target in a sorted sequence by repeatedly discarding half of the remaining candidates.** Instead of checking every item, compare the target with the middle item and keep only the half that could contain it.
+Binary search is a way to find something quickly in an **already sorted** list.
+Imagine looking for a word in a dictionary: you would not start at the first
+page and read every page. You would open near the middle, decide whether to go
+left or right, and throw away the half you know cannot contain the word.
 
-Before starting, you should be comfortable with [Python lists](/lessons/lists), [Python loops](/lessons/loops), and [Python functions](/lessons/functions). New to programming? Start with [Intro to Python](/courses/intro-to-python).
+**Binary search does the same thing with a list of values.** It compares the
+target with the middle value and keeps only the half that could contain it.
+That one idea is the whole algorithm; the rest of this lesson turns it into
+careful Python code.
+
+This is an algorithms lesson, so it helps to already know [Python lists](/lessons/lists),
+[Python loops](/lessons/loops), and [Python functions](/lessons/functions). If
+this is your first programming lesson, that is completely fine: start with
+[Intro to Python](/courses/intro-to-python) and come back here when lists,
+loops, and functions feel familiar. You do not need to memorize the code
+before continuing.
+
+## The problem in plain language
+
+We will search a list such as `[4, 8, 12, 16, 23, 28, 32]` for one target
+number. The answer is the target's **index**, which is its position in the
+list. Python starts counting positions at zero, so `4` is at index `0` and
+`23` is at index `4`. If the target is not there, we return `-1`.
+
+The list must be sorted from smallest to largest. Without that promise, we
+cannot safely throw away half of the list.
 
 ## How binary search works
 
-For an ascending list, keep two inclusive indices: `low` and `high`.
+For an ascending list, keep two indices: `low` and `high`. They mark the part
+of the list we are still willing to search. Both ends are included, which is
+why these are called **inclusive** bounds.
 
 1. Start with `low = 0` and `high = len(array) - 1`.
 2. Find the middle index with `mid = low + (high - low) // 2`.
 3. If `array[mid]` equals the target, return `mid`.
 4. If the middle value is too small, set `low = mid + 1`.
 5. If the middle value is too large, set `high = mid - 1`.
-6. Repeat while `low <= high`. If the interval becomes empty, return `-1`.
+6. Repeat while `low <= high`. If `low` moves past `high`, the search area is
+   empty, so return `-1`.
 
 The list **must already be sorted using the same ordering as the comparisons**. On unsorted input, discarding a half could discard the target.
 
@@ -38,11 +64,15 @@ Find `23` in `[4, 8, 12, 16, 23, 28, 32]`. Indices start at zero.
 | 2 | 4 | 6 | 5 | 28 | 23 is smaller: move high to 4 |
 | 3 | 4 | 4 | 4 | 23 | Found at index 4 |
 
-If the target were `24`, the third comparison would move `low` to `5`. Now `low > high`, so the result would be `-1`.
+If the target were `24`, the third comparison would move `low` to `5`. Now
+`low > high`, so the search area is empty and the result would be `-1`.
 
 ## Binary search in Python
 
-This iterative implementation returns an index, not the value. It does not change or copy the input list.
+This implementation returns an index, not the value. It does not change or
+copy the input list. Read the comments as a map of the code: `low` and `high`
+describe where to look, `mid` points at the next value to check, and `return`
+ends the function as soon as the answer is known.
 
 ```python
 def binary_search(array, value):
@@ -67,19 +97,30 @@ print(binary_search(numbers, 24))  # -1
 print(binary_search([], 23))      # -1
 ```
 
-The invariant is: **if the target exists and has not been found, it is between `low` and `high`, inclusive**. Each comparison preserves that rule. The `+ 1` and `- 1` also guarantee that the interval shrinks, so the loop terminates.
+The key promise we maintain is: **if the target exists and has not been found,
+it is between `low` and `high`, inclusive**. Each comparison preserves that
+promise. The `+ 1` and `- 1` also guarantee that the search area shrinks, so
+the loop eventually ends.
 
 ## Time and space complexity
 
-After one unsuccessful comparison, at most half the candidates remain. After two, at most a quarter remain. Repeated halving takes **O(log n) time** in the worst case and **O(1) time** in the best case when the first middle item matches. An empty list needs no comparisons.
+Each unsuccessful comparison removes about half of the remaining candidates.
+After two comparisons, at most a quarter remain. Repeatedly halving is why
+binary search is fast: it takes **O(log n) time** in the worst case. The `log`
+is just a compact way to describe repeated halving; you do not need to
+calculate it by hand for the puzzle. An empty list needs no comparisons.
 
-For a nonempty list of `n` items, at most `floor(log2(n)) + 1` middle-item checks are needed. Even a million items need at most 20 checks. The iterative version uses **O(1) auxiliary space** because it stores only a few indices.
+For a nonempty list of `n` items, at most `floor(log2(n)) + 1` middle-item
+checks are needed. Even a million items need at most 20 checks. The iterative
+version uses **O(1) extra space** because it stores only a few indices instead
+of making another list.
 
 These bounds assume constant-time indexing, as Python lists provide. A linked list cannot jump directly to its middle. Sorting an unsorted list first usually costs O(n log n), so for a single lookup, a linear scan may be cheaper. Binary search is especially useful for repeated lookups in data that is already sorted.
 
 ## Edge cases and common mistakes
 
-Try these checks after defining the function:
+These small examples are useful while learning. Try them after defining the
+function, then change one value and predict the result before running them:
 
 ```python
 assert binary_search([], 5) == -1
@@ -99,7 +140,10 @@ assert binary_search([-9, -2, 0, 6], -2) == 1
 
 ## What if the list contains duplicates?
 
-The implementation returns **a** matching index, not necessarily the first. For `[2, 2, 2]`, it returns `1`. To find the first occurrence, record the matching index and continue searching to its left instead of returning immediately.
+The implementation returns **a** matching index, not necessarily the first. For
+`[2, 2, 2]`, it might return `1`. To find the first occurrence, record the
+matching index and continue searching to its left instead of returning
+immediately. That is the idea you will practice in the second puzzle.
 
 Python's standard library already provides insertion-point search. `bisect_left` gives the first position where the target could be inserted, so you still need to check for equality:
 
@@ -115,6 +159,10 @@ print(found)  # 1
 
 ## Practice and next steps
 
-Implement the algorithm in the [Binary Search puzzle](/puzzles/binary-search?lesson=binary-search-explained&course=searching-algorithms), then adapt it in [First Occurrence](/puzzles/first-occurrence?lesson=binary-search-explained&course=searching-algorithms). The first puzzle uses distinct integers and expects the zero-based index or `-1`.
+Start with the [Binary Search puzzle](/puzzles/binary-search?lesson=binary-search-explained&course=searching-algorithms).
+The starter code already reads the list and target; your job is to fill in the
+function. The puzzle uses distinct integers and expects the zero-based index or
+`-1`. Then adapt your idea in [First Occurrence](/puzzles/first-occurrence?lesson=binary-search-explained&course=searching-algorithms),
+where duplicates are allowed.
 
 Next, read [Binary Search Tree Explained](/lessons/binary-search-tree-explained). A binary search tree stores ordered values in linked nodes; binary search is an algorithm over a search interval. They share an ordering idea, but are different concepts.

@@ -101,7 +101,7 @@ function toContentItem(raw, type, taxonomy, course = null) {
 
 // Everything now comes from the database (lessons also still merge in the
 // official .mdx files). The search snapshot is cached separately below so the
-// index can be reused while the content list remains a simple DB read.
+// index can be reused while ratings remain a fresh read for each request.
 export async function getAllContent() {
   const taxonomy = loadTaxonomy();
   const [rawLessons, rawPuzzles, rawShaders, rawCircuits, rawProjects, rawCourses] = await Promise.all([
@@ -226,9 +226,8 @@ async function getSearchSnapshot() {
     return searchIndexCache;
   }
 
-  const [totals, content] = await Promise.all([getRatingTotals(), getAllContent()]);
-  const items = content.map((item) => withRating(item, totals));
-  searchIndexCache = { createdAt: Date.now(), items, index: buildSearchIndex(items) };
+  const content = await getAllContent();
+  searchIndexCache = { createdAt: Date.now(), content, index: buildSearchIndex(content) };
   return searchIndexCache;
 }
 
@@ -250,7 +249,11 @@ export async function searchContent({
   difficulty = [],
   sort = "relevance",
 } = {}) {
-  const { items, index } = await getSearchSnapshot();
+  const [{ content, index }, totals] = await Promise.all([getSearchSnapshot(), getRatingTotals()]);
+  // Content and the MiniSearch index can be cached, but rating totals must not
+  // be. A vote can happen between two browse requests while the index is still
+  // warm, so apply the current totals after loading the cached snapshot.
+  const items = content.map((item) => withRating(item, totals));
   const filters = { types, areas, topics, tags, languages, difficulty };
   const trimmedQuery = (query || "").trim();
 
