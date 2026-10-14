@@ -279,7 +279,7 @@ export default function ShaderPlayground({
                 className="h-auto w-full max-w-xs rounded border border-zinc-800 bg-black"
               />
               <p className="mt-2 text-xs text-zinc-500">
-                Check uses a {puzzle.width}×{puzzle.height} frame at time 0 with mouse input set to zero.
+                Check uses a {puzzle.width}×{puzzle.height} frame at time 0 with mouse input set to zero and the camera at (0, 0, 1).
                 At least {puzzle.requiredMatch * 100}% of pixels must match within {puzzle.tolerance * 100}% per-channel tolerance.
               </p>
             </div>
@@ -295,6 +295,10 @@ export default function ShaderPlayground({
             className={`relative min-h-0 min-w-0 flex-1 overflow-hidden bg-black ${showOutput ? "" : "hidden"}`}
           >
             <ShaderCanvas fragmentSource={debouncedCode} onError={setError} onCompiled={() => setError(null)} />
+
+            <div className="pointer-events-none absolute bottom-2 left-2 max-w-[calc(100%-1rem)] rounded border border-zinc-700/70 bg-black/70 px-2 py-1 font-mono text-[10px] leading-relaxed text-zinc-400 backdrop-blur-sm">
+              shift-drag / middle-drag: pan · wheel: zoom · click preview, then WASD / arrows: move · +/-: zoom · 0: reset (shaders using iCamera)
+            </div>
 
             <button
               type="button"

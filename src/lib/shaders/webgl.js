@@ -3,6 +3,14 @@
 // canvas that knows how to (re)compile a user fragment shader and render
 // it every frame. Nothing here is a general-purpose graphics engine.
 
+import {
+  DEFAULT_CAMERA,
+  clampCameraZoom,
+  moveCameraByWorld,
+  panCameraByPixels,
+  zoomCameraAt,
+} from "./camera.js";
+
 const INTERNAL_VERTEX_SOURCE_GL2 = `#version 300 es
 in vec2 a_position;
 void main() {
@@ -21,6 +29,7 @@ uniform float iTime;
 uniform float iTimeDelta;
 uniform int iFrame;
 uniform vec4 iMouse;
+uniform vec3 iCamera;
 `;
 
 // A fullscreen triangle, deliberately oversized so it gets clipped to
@@ -159,6 +168,7 @@ export class ShaderRuntime {
     this.lastFrameTime = this.startTime;
     this.frame = 0;
     this.mouse = { x: 0, y: 0, clickX: 0, clickY: 0 };
+    this.camera = { ...DEFAULT_CAMERA };
     this.resolution = { width: canvas.width, height: canvas.height };
   }
 
@@ -205,6 +215,30 @@ export class ShaderRuntime {
     this.mouse = { x, y, clickX, clickY };
   }
 
+  updateCamera({ x = this.camera.x, y = this.camera.y, zoom = this.camera.zoom } = {}) {
+    this.camera = { x, y, zoom: clampCameraZoom(zoom) };
+  }
+
+  panCameraByPixels(deltaX, deltaY, viewportHeight) {
+    this.camera = panCameraByPixels(this.camera, deltaX, deltaY, viewportHeight);
+  }
+
+  moveCameraByWorld(deltaX, deltaY) {
+    this.camera = moveCameraByWorld(this.camera, deltaX, deltaY);
+  }
+
+  zoomCamera(factor) {
+    this.camera = { ...this.camera, zoom: clampCameraZoom(this.camera.zoom * factor) };
+  }
+
+  zoomCameraAt(factor, x, y, width, height) {
+    this.camera = zoomCameraAt(this.camera, factor, x, y, width, height);
+  }
+
+  resetCamera() {
+    this.camera = { ...DEFAULT_CAMERA };
+  }
+
   render(nowMs) {
     const gl = this.gl;
     if (!this.program) return; // nothing has ever compiled successfully yet
@@ -220,6 +254,7 @@ export class ShaderRuntime {
     if (u.iTimeDelta) gl.uniform1f(u.iTimeDelta, deltaSeconds);
     if (u.iFrame) gl.uniform1i(u.iFrame, this.frame);
     if (u.iMouse) gl.uniform4f(u.iMouse, this.mouse.x, this.mouse.y, this.mouse.clickX, this.mouse.clickY);
+    if (u.iCamera) gl.uniform3f(u.iCamera, this.camera.x, this.camera.y, this.camera.zoom);
 
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     this.frame += 1;
@@ -272,6 +307,7 @@ function locateUniforms(gl, program) {
     iTimeDelta: gl.getUniformLocation(program, "iTimeDelta"),
     iFrame: gl.getUniformLocation(program, "iFrame"),
     iMouse: gl.getUniformLocation(program, "iMouse"),
+    iCamera: gl.getUniformLocation(program, "iCamera"),
   };
 }
 

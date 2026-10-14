@@ -1,0 +1,78 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Shader camera WebGL smoke test</title>
+<style>
+  body { background: #080812; color: #dce7ff; font: 14px monospace; }
+  canvas { width: 640px; max-width: 100%; }
+</style>
+<h1>Shader camera WebGL smoke test</h1>
+<p>Serve the repository locally and open this file in a WebGL-capable browser.</p>
+<pre id="results">Running…</pre>
+<script type="module">
+  import { ShaderRuntime, renderShaderToDataUrl } from "../src/lib/shaders/webgl.js";
+  import { DEFAULT_SHADER } from "../src/lib/shaders/defaultShader.js";
+
+  const results = document.querySelector("#results");
+  const lines = [];
+  function check(condition, message) {
+    if (!condition) throw new Error(message);
+    lines.push(`PASS: ${message}`);
+    results.textContent = lines.join("\n");
+  }
+  function pixels(runtime) {
+    const data = new Uint8Array(640 * 400 * 4);
+    runtime.gl.readPixels(0, 0, 640, 400, runtime.gl.RGBA, runtime.gl.UNSIGNED_BYTE, data);
+    return data;
+  }
+  function same(a, b) {
+    return a.every((value, index) => value === b[index]);
+  }
+
+  try {
+    const lesson = await fetch("../content/shaders/neon-camera-cathedral.mdx").then(r => r.text()).then(text => text.replace(/\r\n/g, "\n"));
+    const demo = lesson.split("starterCode: |\n")[1].split("\nareas:")[0]
+      .split("\n").map(line => line.replace(/^  /, "")).join("\n");
+    for (const version of [2, 1]) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 640;
+      canvas.height = 400;
+      document.body.append(canvas);
+      // Force the fallback path without changing the runtime's context logic.
+      const target = version === 2 ? canvas : {
+        width: canvas.width, height: canvas.height,
+        getContext: (kind, options) => kind === "webgl2" ? null : canvas.getContext(kind, options),
+      };
+      const runtime = new ShaderRuntime(target);
+      check(runtime.isWebGL2 === (version === 2), `WebGL ${version} context initialized`);
+      runtime.resize(canvas.width, canvas.height);
+      runtime.gl.disable(runtime.gl.DITHER);
+      for (const [name, source] of [["default", DEFAULT_SHADER], ["cathedral", demo]]) {
+        runtime.resetCamera();
+        const compilation = runtime.setFragmentSource(source);
+        check(compilation.success, `WebGL ${version}: ${name} compiles: ${compilation.message || "OK"}`);
+        runtime.render(runtime.startTime);
+        const initial = pixels(runtime);
+        check(initial.some((value, index) => index % 4 !== 3 && value > 30), `${name}: non-black output`);
+        runtime.panCameraByPixels(80, 40, 400);
+        runtime.zoomCameraAt(2, 320, 200, 640, 400);
+        runtime.render(runtime.startTime);
+        check(!same(initial, pixels(runtime)), `${name}: pan/zoom changes rendered pixels`);
+        runtime.resetCamera();
+        runtime.render(runtime.startTime);
+        check(same(initial, pixels(runtime)), `${name}: resetting camera restores the original view`);
+        check(!runtime.setFragmentSource("invalid shader").success, `${name}: invalid compile rejected`);
+        runtime.render(runtime.startTime);
+        check(same(initial, pixels(runtime)), `${name}: failed compile preserves the last good shader`);
+        check(runtime.gl.getError() === runtime.gl.NO_ERROR, `${name}: no GL errors`);
+      }
+      // Leave the visual demo drawn for manual inspection.
+      runtime.render(runtime.startTime + 2000);
+    }
+    check(renderShaderToDataUrl(DEFAULT_SHADER, 64, 64) === renderShaderToDataUrl(DEFAULT_SHADER, 64, 64),
+      "puzzle capture stays deterministic with default input/camera state");
+    document.body.dataset.testStatus = "passed";
+  } catch (error) {
+    results.textContent += `\nFAIL: ${error.stack}`;
+    document.body.dataset.testStatus = "failed";
+  }
+</script>

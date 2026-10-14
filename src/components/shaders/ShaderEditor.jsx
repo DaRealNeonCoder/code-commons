@@ -24,7 +24,7 @@ function registerGlslLanguage(monaco) {
       "sampler2D", "samplerCube",
     ],
     builtins: [
-      "iResolution", "iTime", "iTimeDelta", "iFrame", "iMouse",
+      "iResolution", "iTime", "iTimeDelta", "iFrame", "iMouse", "iCamera",
       "gl_FragCoord", "gl_FragColor", "fragColor",
       "sin", "cos", "tan", "abs", "floor", "ceil", "fract", "mod",
       "min", "max", "clamp", "mix", "step", "smoothstep", "length",
