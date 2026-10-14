@@ -1,11 +1,11 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>Shader camera WebGL smoke test</title>
+<title>Shader WebGL smoke test</title>
 <style>
   body { background: #080812; color: #dce7ff; font: 14px monospace; }
   canvas { width: 640px; max-width: 100%; }
 </style>
-<h1>Shader camera WebGL smoke test</h1>
+<h1>Shader WebGL smoke test</h1>
 <p>Serve the repository locally and open this file in a WebGL-capable browser.</p>
 <pre id="results">Running…</pre>
 <script type="module">
@@ -29,9 +29,15 @@
   }
 
   try {
-    const lesson = await fetch("../content/shaders/neon-camera-cathedral.mdx").then(r => r.text()).then(text => text.replace(/\r\n/g, "\n"));
-    const demo = lesson.split("starterCode: |\n")[1].split("\nareas:")[0]
-      .split("\n").map(line => line.replace(/^  /, "")).join("\n");
+    async function readDemo(file) {
+      const lesson = await fetch(`../content/shaders/${file}.mdx`).then(r => r.text()).then(text => text.replace(/\r\n/g, "\n"));
+      return lesson.split("starterCode: |\n")[1].split("\nareas:")[0]
+        .split("\n").map(line => line.replace(/^  /, "")).join("\n");
+    }
+    const shaders = [
+      ["cathedral", await readDemo("neon-camera-cathedral")],
+      ["ray-marched-cube-sphere", await readDemo("ray-marched-cube-sphere")],
+    ];
     for (const version of [2, 1]) {
       const canvas = document.createElement("canvas");
       canvas.width = 640;
@@ -46,7 +52,7 @@
       check(runtime.isWebGL2 === (version === 2), `WebGL ${version} context initialized`);
       runtime.resize(canvas.width, canvas.height);
       runtime.gl.disable(runtime.gl.DITHER);
-      for (const [name, source] of [["default", DEFAULT_SHADER], ["cathedral", demo]]) {
+      for (const [name, source] of [["default", DEFAULT_SHADER], ...shaders]) {
         runtime.resetCamera();
         const compilation = runtime.setFragmentSource(source);
         check(compilation.success, `WebGL ${version}: ${name} compiles: ${compilation.message || "OK"}`);

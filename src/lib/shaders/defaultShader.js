@@ -19,3 +19,4 @@ void main() {
     fragColor = vec4(uv.x, uv.y, 0.5, 1.0);
 }
 `;
+

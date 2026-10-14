@@ -1,0 +1,136 @@
+---
+title: Ray-Marched Cube and Sphere
+summary: Ray march a colored cube floor and a bouncing sphere with a smooth signed-distance blend.
+order: 7
+available: true
+starterCode: |
+  float sdBox(vec3 point, vec3 bounds) {
+      vec3 offset = abs(point) - bounds;
+      return length(max(offset, vec3(0.0))) + min(max(offset.x, max(offset.y, offset.z)), 0.0);
+  }
+
+  float smoothUnionFactor(float first, float second, float blend) {
+      float mixAmount = clamp(0.5 + 0.5 * (second - first) / blend, 0.0, 1.0);
+      return mixAmount;
+  }
+
+  float smoothUnion(float first, float second, float blend) {
+      float mixAmount = smoothUnionFactor(first, second, blend);
+      return mix(second, first, mixAmount) - blend * mixAmount * (1.0 - mixAmount);
+  }
+
+  vec3 sphereCenter() {
+      return vec3(0.0, 0.5 + 1.1 * sin(iTime * 1.55), 0.0);
+  }
+
+  float cubeDistance(vec3 point) {
+      return sdBox(point - vec3(0.0, -1.0, 0.0), vec3(2.6, 0.35, 2.2));
+  }
+
+  float sphereDistance(vec3 point) {
+      return length(point - sphereCenter()) - 0.5;
+  }
+
+  float sceneDistance(vec3 point) {
+      return smoothUnion(cubeDistance(point), sphereDistance(point), 0.4);
+  }
+
+  float sphereMaterial(vec3 point) {
+      return 1.0 - smoothUnionFactor(cubeDistance(point), sphereDistance(point), 0.4);
+  }
+
+  float rayMarch(vec3 rayOrigin, vec3 rayDirection) {
+      float distanceAlongRay = 0.0;
+      for (int step = 0; step < 96; step++) {
+          vec3 point = rayOrigin + rayDirection * distanceAlongRay;
+          float distanceToScene = sceneDistance(point);
+          if (distanceToScene < 0.001) return distanceAlongRay;
+          distanceAlongRay += distanceToScene;
+          if (distanceAlongRay > 14.0) break;
+      }
+      return -1.0;
+  }
+
+  vec3 sceneNormal(vec3 point) {
+      vec2 epsilon = vec2(0.0015, 0.0);
+      return normalize(vec3(
+          sceneDistance(point + epsilon.xyy) - sceneDistance(point - epsilon.xyy),
+          sceneDistance(point + epsilon.yxy) - sceneDistance(point - epsilon.yxy),
+          sceneDistance(point + epsilon.yyx) - sceneDistance(point - epsilon.yyx)
+      ));
+  }
+
+  float softShadow(vec3 point, vec3 lightDirection) {
+      float visibility = 1.0;
+      float distanceAlongRay = 0.03;
+      for (int step = 0; step < 32; step++) {
+          float distanceToScene = sceneDistance(point + lightDirection * distanceAlongRay);
+          visibility = min(visibility, 12.0 * distanceToScene / distanceAlongRay);
+          distanceAlongRay += clamp(distanceToScene, 0.02, 0.2);
+          if (distanceToScene < 0.001 || distanceAlongRay > 8.0) break;
+      }
+      return clamp(visibility, 0.0, 1.0);
+  }
+
+  void main() {
+      vec2 screenPoint = (2.0 * gl_FragCoord.xy - iResolution.xy) / iResolution.y;
+      vec2 pointer = iMouse.xy / max(iResolution.xy, vec2(1.0));
+      vec2 orbit = pointer - 0.5;
+
+      float yaw = -0.45 + orbit.x * 0.75;
+      float pitch = 0.18 + orbit.y * 0.3;
+      float cameraDistance = 5.4;
+      vec3 target = vec3(iCamera.x * 0.35, -0.3 + iCamera.y * 0.35, 0.0);
+      vec3 rayOrigin = target + vec3(
+          sin(yaw) * cos(pitch),
+          sin(pitch),
+          cos(yaw) * cos(pitch)
+      ) * cameraDistance;
+
+      vec3 forward = normalize(target - rayOrigin);
+      vec3 cameraRight = normalize(cross(forward, vec3(0.0, 1.0, 0.0)));
+      vec3 cameraUp = cross(cameraRight, forward);
+      float fieldOfView = 0.78 / max(iCamera.z, 0.2);
+      vec3 rayDirection = normalize(forward + screenPoint.x * cameraRight * fieldOfView + screenPoint.y * cameraUp * fieldOfView);
+
+      vec3 background = vec3(0.008, 0.012, 0.035) + vec3(0.025, 0.04, 0.09) * (1.0 - screenPoint.y * 0.35);
+      float hitDistance = rayMarch(rayOrigin, rayDirection);
+      vec3 color = background;
+
+      if (hitDistance > 0.0) {
+          vec3 point = rayOrigin + rayDirection * hitDistance;
+          vec3 normal = sceneNormal(point);
+          vec3 lightPosition = vec3(-3.5, 5.0, 4.0);
+          vec3 lightDirection = normalize(lightPosition - point);
+          float diffuse = max(dot(normal, lightDirection), 0.0);
+          float shadow = softShadow(point + normal * 0.008, lightDirection);
+          float rim = pow(1.0 - max(dot(normal, -rayDirection), 0.0), 2.0);
+          float specular = pow(max(dot(reflect(-lightDirection, normal), -rayDirection), 0.0), 32.0);
+
+          float sphereAmount = sphereMaterial(point);
+          vec3 cubeColor = vec3(0.08, 0.38, 0.9);
+          vec3 sphereColor = vec3(1.0, 0.2, 0.08);
+          vec3 surfaceColor = mix(cubeColor, sphereColor, sphereAmount);
+          color = surfaceColor * (0.16 + diffuse * shadow * 0.9);
+          color += vec3(0.16, 0.35, 0.9) * rim * 0.35;
+          color += vec3(1.0, 0.75, 0.55) * specular * 0.5;
+          color = mix(background, color, exp(-0.035 * hitDistance * hitDistance));
+      }
+
+      color = 1.0 - exp(-color * 1.35);
+      fragColor = vec4(color, 1.0);
+  }
+areas: []
+topics: ["ray-marching", "distance-fields", "animation"]
+tags: ["3d", "cube", "sphere", "smooth-union", "lighting"]
+languages: []
+difficulty: intermediate
+---
+
+# **Ray-Marched Cube and Sphere**
+
+Ray marching renders a scene by repeatedly stepping a ray through space. The step size comes from a signed distance function (SDF), so the ray can move quickly through empty space and slow down near the surface.
+
+The floor is an axis-aligned box and the orange sphere moves with `sin(iTime)`. `smoothUnion` replaces a hard minimum between their distances with a rounded union. When the sphere approaches the blue cube, the shared distance field creates a continuous bridge instead of two intersecting silhouettes. The material uses the same two distances to blend the colors across that bridge.
+
+Move the pointer over the preview to orbit the view. Shift-drag or middle-drag to pan, use the wheel to zoom, and press **0** to reset the camera. Try changing the union blend value, sphere radius, or bounce speed.
