@@ -21,6 +21,9 @@ async function handleCheck(request, { params }) {
   if (!puzzle.available) {
     return Response.json({ error: "This puzzle isn't available yet." }, { status: 404 });
   }
+  if (puzzle.kind === "math-quiz") {
+    return Response.json({ error: "Use the Math Quiz answer checker for this puzzle." }, { status: 400 });
+  }
   if (puzzle.testCases.length === 0) {
     console.warn(
       `[puzzle check] "${id}" loaded with 0 test cases. Frontmatter keys: ${Object.keys(puzzle).join(", ")}`
