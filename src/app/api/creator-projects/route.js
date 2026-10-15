@@ -15,6 +15,13 @@ export async function POST(request) {
     return Response.json({ error: "Unknown project type." }, { status: 400 });
   }
 
-  const id = await createProject(user.id, body.type);
+  // Menu presets may seed a new project, but the server owns the allowed
+  // values so a client cannot store arbitrary draft data in this endpoint.
+  const initialData =
+    body.type === "puzzle" && body.initialData?.kind === "math-quiz"
+      ? { kind: "math-quiz" }
+      : {};
+
+  const id = await createProject(user.id, body.type, initialData);
   return Response.json({ id });
 }

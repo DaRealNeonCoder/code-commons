@@ -14,10 +14,24 @@ export const PROJECT_TYPES = [
     id: "puzzle",
     label: "Puzzle",
     path: "02_puzzle/",
-    description: "A coding puzzle or Math Quiz inside a category.",
+    description: "A coding puzzle with starter code, tests, and explanations.",
     accent: "text-teal-600 dark:text-teal-400",
     hoverBorder: "hover:border-teal-400",
     badge: "border-teal-500/40 bg-teal-500/10 text-teal-600 dark:text-teal-400",
+  },
+  {
+    // This is a puzzle project with a math-quiz editor preset. Keeping the
+    // stored project type as "puzzle" means it uses the same editor and
+    // publishing flow as other puzzles.
+    id: "math-puzzle",
+    projectType: "puzzle",
+    initialData: { kind: "math-quiz" },
+    label: "Math puzzle",
+    path: "02_puzzle/math/",
+    description: "A plain-text math quiz with multiple-choice or numeric answers.",
+    accent: "text-cyan-600 dark:text-cyan-400",
+    hoverBorder: "hover:border-cyan-400",
+    badge: "border-cyan-500/40 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400",
   },
   {
     id: "shader",
@@ -57,8 +71,10 @@ export const PROJECT_TYPES = [
   },
 ];
 
-export const TYPE_IDS = PROJECT_TYPES.map((t) => t.id);
+// `projectType` allows menu presets (such as Math puzzle) to reuse the
+// persisted project type and its editor without adding a second backend type.
+export const TYPE_IDS = [...new Set(PROJECT_TYPES.map((t) => t.projectType ?? t.id))];
 
 export function getType(id) {
-  return PROJECT_TYPES.find((t) => t.id === id) ?? null;
+  return PROJECT_TYPES.find((t) => t.id === id || (t.projectType ?? t.id) === id) ?? null;
 }

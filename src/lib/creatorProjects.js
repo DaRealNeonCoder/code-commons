@@ -47,9 +47,9 @@ export async function getProject(id) {
   };
 }
 
-export async function createProject(userId, type) {
+export async function createProject(userId, type, data = {}) {
   const id = randomUUID();
-  await db.insert(creatorProjects).values({ id, userId, type });
+  await db.insert(creatorProjects).values({ id, userId, type, data });
   return id;
 }
 

@@ -15,11 +15,14 @@ export default function NewProjectCard({ type }) {
       const res = await fetch("/api/creator-projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: type.id }),
+        body: JSON.stringify({
+          type: type.projectType ?? type.id,
+          initialData: type.initialData,
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Couldn't create the project.");
-      router.push(`/create/${type.id}/${data.id}`);
+      router.push(`/create/${type.projectType ?? type.id}/${data.id}`);
     } catch (err) {
       setError(err.message);
       setBusy(false);
