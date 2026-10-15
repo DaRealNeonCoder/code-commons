@@ -635,6 +635,16 @@ export default function LogicSimulator({
         return;
       }
       showToast(data?.solved ? "success" : "error", data?.solved ? "Puzzle solved!" : "Not quite — keep experimenting");
+      if (data?.solved) {
+        const progress = await fetch("/api/progress", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ itemType: "circuit", itemId: puzzleId, completed: true }),
+        });
+        if (progress.ok) {
+          window.dispatchEvent(new CustomEvent("progress-changed", { detail: { itemType: "circuit", itemId: puzzleId, completed: true } }));
+        }
+      }
     } catch (error) {
       showToast("error", error.message || "The circuit could not be checked");
     } finally {

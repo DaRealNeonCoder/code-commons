@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { puzzleHref } from "@/lib/puzzleRefs";
 
 // Full class strings so Tailwind can see them at build time.
 const ACCENTS = {
@@ -25,12 +26,14 @@ export default function NextPuzzleLinks({
   if (lessonId) params.set("lesson", lessonId);
   if (courseId) params.set("course", courseId);
   const query = params.toString();
-  const href = `/puzzles/${puzzle.id}${query ? `?${query}` : ""}`;
+  const href = puzzleHref(puzzle.ref ?? `${puzzle.type ?? "puzzle"}:${puzzle.id}`, query);
+  if (!href) return null;
 
   return (
     <section className="mt-10 rounded-2xl border border-amber-200 bg-amber-50/70 p-5 dark:border-amber-900 dark:bg-amber-950/30 sm:p-6" aria-label={heading}>
       <p className="font-mono text-xs font-medium uppercase tracking-[0.14em] text-amber-700 dark:text-amber-400">{heading}</p>
       <h2 className="mt-2 text-lg font-semibold text-zinc-950 dark:text-white">{puzzle.title}</h2>
+      {puzzle.typeLabel && <p className="mt-1 font-mono text-xs uppercase tracking-wide text-zinc-500">{puzzle.typeLabel}</p>}
       {puzzle.summary && <p className="mt-1 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{puzzle.summary}</p>}
       <Link
         href={href}

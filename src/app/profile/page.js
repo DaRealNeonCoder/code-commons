@@ -98,7 +98,7 @@ export default async function ProfilePage() {
 
         const lessons = outline.lessons.filter((l) => l.available);
         const availableIdsFor = (l) =>
-          l.puzzles.filter((p) => p.available).map((p) => p.id);
+          l.puzzles.filter((p) => p.available).map((p) => p.ref);
         const totalPuzzles = new Set(lessons.flatMap(availableIdsFor)).size;
         const solvedPuzzles = progress.puzzles.size;
 

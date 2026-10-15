@@ -43,7 +43,7 @@ export default async function CoursePage({ params }) {
   );
   const lessonStates = outline.lessons.map((lesson) => ({
     lesson,
-    availablePuzzleIds: lesson.puzzles.filter((puzzle) => puzzle.available).map((puzzle) => puzzle.id),
+    availablePuzzleIds: lesson.puzzles.filter((puzzle) => puzzle.available).map((puzzle) => puzzle.ref),
   }));
   const completedLessons = lessonStates.filter(({ lesson, availablePuzzleIds }) =>
     lesson.available && isLessonComplete(progress, lesson.id, availablePuzzleIds)

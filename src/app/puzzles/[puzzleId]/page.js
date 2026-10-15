@@ -38,13 +38,13 @@ export default async function PuzzlePage({ params, searchParams }) {
 
   const lessonId = typeof query?.lesson === "string" ? query.lesson : null;
   const requestedCourseId = typeof query?.course === "string" ? query.course : null;
-  const nextPuzzle = lessonId ? await getNextPuzzleInChain(lessonId, puzzle.id) : null;
+  const nextPuzzle = lessonId ? await getNextPuzzleInChain(lessonId, puzzle.id, "puzzle") : null;
 
   // Non-null only when the lesson is in a course AND this puzzle is really in
   // its chain. No next puzzle means end of chain, so the next step is the next lesson.
   // ?course= picks which course when the lesson is in several; it's ignored
   // unless that course really contains the lesson.
-  const ctx = lessonId ? await getCourseContext(lessonId, puzzle.id, requestedCourseId) : null;
+  const ctx = lessonId ? await getCourseContext(lessonId, puzzle.id, requestedCourseId, "puzzle") : null;
   const userId = ctx ? await getCurrentUserId() : null;
   const progress = ctx ? await getCourseProgress(userId, ctx.outline) : null;
 
@@ -78,7 +78,7 @@ export default async function PuzzlePage({ params, searchParams }) {
   };
 
   return (
-    <CourseShell outline={ctx?.outline} progress={progress} lessonId={lessonId} puzzleId={puzzle.id}>
+    <CourseShell outline={ctx?.outline} progress={progress} lessonId={lessonId} puzzleId={puzzle.id} puzzleType="puzzle">
       <RatedShell itemType="puzzle" itemId={puzzle.id}>
         {puzzle.kind === "math-quiz" ? (
           <MathQuizWorkspace {...workspaceProps} questions={mathQuiz.questions} />

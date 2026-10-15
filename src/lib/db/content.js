@@ -1,4 +1,4 @@
-import { and, desc, eq, getTableColumns, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, getTableColumns, ilike, inArray, or, sql } from "drizzle-orm";
 import { db } from "./index";
 
 export const LIMITS = { title: 200, summary: 500, body: 100_000 };
@@ -118,13 +118,17 @@ export function createContentStore(table, { fallback, heavy = [], listExtra = {}
     },
 
     // Light rows. ownerId is stripped so it can't leak to the browser.
-    async list({ ownerId, onlyAvailable = true, limit = 1000, offset = 0 } = {}) {
+    async list({ ownerId, onlyAvailable = true, query = "", limit = 1000, offset = 0 } = {}) {
+      const search = typeof query === "string" ? query.trim() : "";
       const rows = await db
         .select(listSelect)
         .from(table)
         .where(
           and(
             onlyAvailable ? eq(table.available, true) : undefined,
+            search
+              ? or(ilike(table.title, `%${search}%`), ilike(table.summary, `%${search}%`), ilike(table.slug, `%${search}%`))
+              : undefined,
             ownerId ? eq(table.ownerId, ownerId) : undefined
           )
         )

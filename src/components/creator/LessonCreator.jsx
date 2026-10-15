@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import TextBlockEditor, { newTextBlock } from "@/components/creator/TextBlockEditor";
 import { blocksToMarkdown } from "@/lib/blocksToMarkdown";
@@ -8,12 +8,13 @@ import FilterFields from "@/components/filters/FilterFields";
 import useProjectAutosave from "@/components/creator/useProjectAutosave";
 import usePublishState from "@/components/creator/usePublishState";
 import ProjectBar from "@/components/creator/ProjectBar";
+import { normalizePuzzleRefs } from "@/lib/puzzleRefs";
 
 const smallButton =
   "rounded border border-zinc-300 px-2.5 py-1.5 font-mono text-sm text-zinc-500 hover:text-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 disabled:opacity-40 dark:border-zinc-700 dark:hover:text-zinc-200";
 
-// `puzzles` (every puzzle, anyone's) and `publishedId` (the lesson this project
-// was last saved as) are computed on the server in the editor page.
+// `puzzles` contains the first page of typed puzzle choices. Further searches
+// go through /api/puzzle-choices so the whole catalog is not sent to the page.
 export default function LessonCreator({
   project,
   puzzles = [],
@@ -26,13 +27,11 @@ export default function LessonCreator({
   const [summary, setSummary] = useState(saved.summary ?? "");
 
   // Older projects stored a list with one blank row; drop blanks and duplicates.
-  const [puzzleIds, setPuzzleIds] = useState(() =>
-    Array.isArray(saved.puzzleIds)
-      ? [...new Set(saved.puzzleIds.filter((id) => typeof id === "string" && id.trim()).map((id) => id.trim()))]
-      : []
-  );
+  const [puzzleIds, setPuzzleIds] = useState(() => normalizePuzzleRefs(saved.puzzleIds));
 
   const [query, setQuery] = useState("");
+  const [choices, setChoices] = useState(puzzles);
+  const [loadingChoices, setLoadingChoices] = useState(false);
   const [publishedId, setPublishedId] = useState(initialPublishedId);
 
   const [blocks, setBlocks] = useState(
@@ -51,15 +50,34 @@ export default function LessonCreator({
 
   const markdown = useMemo(() => blocksToMarkdown(blocks), [blocks]);
 
-  const puzzlesById = useMemo(() => new Map(puzzles.map((p) => [p.id, p])), [puzzles]);
+  const puzzlesById = useMemo(() => new Map(choices.map((p) => [p.ref, p])), [choices]);
   const chosen = useMemo(() => new Set(puzzleIds), [puzzleIds]);
 
-  const matches = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return puzzles.filter(
-      (p) => !chosen.has(p.id) && (!q || `${p.title} ${p.summary} ${p.id} ${p.difficulty}`.toLowerCase().includes(q))
-    );
-  }, [puzzles, chosen, query]);
+  useEffect(() => {
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      setLoadingChoices(true);
+      try {
+        const params = new URLSearchParams();
+        if (query.trim()) params.set("q", query.trim());
+        for (const ref of puzzleIds) params.append("selected", ref);
+        const response = await fetch(`/api/puzzle-choices?${params}`, { signal: controller.signal });
+        if (!response.ok) throw new Error("Could not load puzzle choices.");
+        const data = await response.json();
+        if (Array.isArray(data.puzzles)) setChoices(data.puzzles);
+      } catch (error) {
+        if (error.name !== "AbortError") console.error(error);
+      } finally {
+        if (!controller.signal.aborted) setLoadingChoices(false);
+      }
+    }, 180);
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+    };
+  }, [query, puzzleIds]);
+
+  const matches = choices.filter((puzzle) => !chosen.has(puzzle.ref));
 
   // Linked puzzles that no longer exist.
   const hasMissing = puzzleIds.some((id) => !puzzlesById.has(id));
@@ -87,8 +105,8 @@ export default function LessonCreator({
     snapshot: JSON.stringify({ title, data: draftData }),
   });
 
-  function addPuzzle(id) {
-    setPuzzleIds((ids) => (ids.includes(id) ? ids : [...ids, id]));
+  function addPuzzle(ref) {
+    setPuzzleIds((ids) => (ids.includes(ref) ? ids : [...ids, ref]));
   }
 
   function removePuzzle(index) {
@@ -226,6 +244,9 @@ export default function LessonCreator({
                         {puzzle ? (
                           <p className="truncate text-sm font-medium">
                             {puzzle.title}
+                            {puzzle.typeLabel && (
+                              <span className="ml-2 font-mono text-xs text-zinc-400"># {puzzle.typeLabel}</span>
+                            )}
                             {puzzle.difficulty && (
                               <span className="ml-2 font-mono text-xs text-zinc-400"># {puzzle.difficulty}</span>
                             )}
@@ -278,8 +299,8 @@ export default function LessonCreator({
           <section className="mt-6 rounded-md border border-zinc-200 p-5 dark:border-zinc-800">
             <h2 className="font-mono text-sm text-zinc-500">add puzzles</h2>
             <p className="mt-1 mb-3 text-sm text-zinc-600 dark:text-zinc-400">
-              Every puzzle is listed here, including puzzles written by other people. A puzzle can be linked from more
-              than one lesson.
+              Search across coding, math, shader, and circuit puzzles. Results start with 10 matches and update as you
+              search; a puzzle can be linked from more than one lesson.
             </p>
 
             <input
@@ -290,9 +311,11 @@ export default function LessonCreator({
               className="mb-3 w-full rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
             />
 
-            {matches.length === 0 ? (
+            {loadingChoices && matches.length === 0 ? (
+              <p className="text-sm text-zinc-500">Loading puzzle choices...</p>
+            ) : matches.length === 0 ? (
               <p className="text-sm text-zinc-500">
-                {puzzles.length === 0
+                {choices.length === 0
                   ? "There are no puzzles yet."
                   : query.trim()
                     ? "No puzzles match your search."
@@ -301,10 +324,13 @@ export default function LessonCreator({
             ) : (
               <ul className="max-h-80 divide-y divide-zinc-200 overflow-y-auto rounded border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
                 {matches.map((puzzle) => (
-                  <li key={puzzle.id} className="flex items-center gap-3 px-3 py-2.5">
+                  <li key={puzzle.ref} className="flex items-center gap-3 px-3 py-2.5">
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">
                         {puzzle.title}
+                        {puzzle.typeLabel && (
+                          <span className="ml-2 font-mono text-xs text-zinc-400"># {puzzle.typeLabel}</span>
+                        )}
                         {puzzle.difficulty && (
                           <span className="ml-2 font-mono text-xs text-zinc-400"># {puzzle.difficulty}</span>
                         )}
@@ -317,7 +343,7 @@ export default function LessonCreator({
 
                     <button
                       type="button"
-                      onClick={() => addPuzzle(puzzle.id)}
+                      onClick={() => addPuzzle(puzzle.ref)}
                       aria-label={`Add ${puzzle.title}`}
                       className="font-mono text-sm text-amber-600 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 dark:text-amber-400"
                     >

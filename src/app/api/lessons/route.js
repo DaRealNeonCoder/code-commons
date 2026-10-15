@@ -80,14 +80,13 @@ export async function POST(request) {
     return Response.json({ error: "One or more areas/topics/tags/language/difficulty is not recognized." }, { status: 400 });
   }
 
-  // Lessons reference existing puzzles by ID instead of copying them. Every ID
-  // must be a safe slug that points at a real puzzle file. Any puzzle is
-  // allowed; ownership is enforced on the lesson, not on the puzzle.
-  const puzzles = normalizePuzzleIds(body.puzzles);
-  const missing = await findMissingPuzzleIds(puzzles);
-  if (missing.length > 0) {
-    return Response.json({ error: `No puzzle found with ID: ${missing.join(", ")}.` }, { status: 400 });
-  }
+   // Lessons reference existing puzzles by namespaced ref instead of copying
+   // them. Legacy unprefixed IDs are normalized to puzzle:<id>.
+   const puzzles = normalizePuzzleIds(body.puzzles);
+   const missing = await findMissingPuzzleIds(puzzles);
+   if (missing.length > 0) {
+     return Response.json({ error: `No linked puzzle found: ${missing.join(", ")}.` }, { status: 400 });
+   }
 
   // Assemble the MDX file on the server. stringifyLessonMdx uses a real YAML
   // serializer, so titles/summaries with quotes, colons, etc. can't break or

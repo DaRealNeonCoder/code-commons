@@ -4,7 +4,8 @@ import { auth } from "@/lib/auth";
 import { getProject } from "@/lib/creatorProjects";
 import { getAllCourses } from "@/lib/courses";
 import { getLessons, getLessonByProjectId } from "@/lib/lessonStore";
-import { getAllPuzzles } from "@/lib/puzzles";
+import { getPuzzleChoices } from "@/lib/puzzleChoices";
+import { normalizePuzzleRefs, parsePuzzleRef, PUZZLE_TYPE_LABELS } from "@/lib/puzzleRefs";
 import LessonCreator from "@/components/creator/LessonCreator";
 import PuzzleCreator from "@/components/creator/PuzzleCreator";
 import ShaderCreator from "@/components/creator/ShaderCreator";
@@ -46,32 +47,27 @@ async function getCourseEditorProps(projectId) {
       summary: lesson.summary || "",
       available: Boolean(lesson.available),
       alsoIn: others.map((c) => c.title),
+      puzzleCount: normalizePuzzleRefs(lesson.puzzles).length,
+      puzzleTypes: [...new Set(normalizePuzzleRefs(lesson.puzzles).map((ref) => parsePuzzleRef(ref)?.type).filter(Boolean))]
+        .map((type) => PUZZLE_TYPE_LABELS[type]),
     };
   });
 
   return { lessons, publishedId: published?.id ?? null };
 }
 
-// Everything the lesson editor needs: every puzzle (any puzzle can be linked),
-// plus the lesson this project was already published as, if any. Only display
-// fields are sent to the browser (getAllPuzzles never selects test cases).
-async function getLessonEditorProps(projectId) {
+// The initial lesson-editor payload is deliberately capped. Search requests
+// fetch more matches from the server instead of shipping the whole catalog.
+async function getLessonEditorProps(projectId, projectData = {}) {
   const published = await getLessonByProjectId(projectId);
-
-  const puzzles = (await getAllPuzzles()).map((puzzle) => ({
-    id: puzzle.id,
-    title: puzzle.title || puzzle.id,
-    summary: puzzle.summary || "",
-    difficulty: puzzle.difficulty || "",
-    available: Boolean(puzzle.available),
-  }));
+  const puzzles = await getPuzzleChoices({ selectedRefs: projectData.puzzleIds, limit: 10 });
 
   return { puzzles, publishedId: published?.id ?? null };
 }
 
-async function getExtraProps(type, projectId) {
+async function getExtraProps(type, projectId, projectData) {
   if (type === "course") return getCourseEditorProps(projectId);
-  if (type === "lesson") return getLessonEditorProps(projectId);
+  if (type === "lesson") return getLessonEditorProps(projectId, projectData);
   return {};
 }
 
@@ -86,7 +82,7 @@ export default async function ProjectEditorPage({ params }) {
   const canEdit = session?.user?.id === project.userId;
 
   const Editor = EDITORS[type];
-  const extraProps = await getExtraProps(type, project.id);
+  const extraProps = await getExtraProps(type, project.id, project.data);
   const editorData =
     type === "circuit" && !canEdit
       ? {

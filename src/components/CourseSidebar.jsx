@@ -8,18 +8,21 @@ import { isLessonComplete } from "@/lib/progressUtils";
 const COLLAPSE_KEY = "codecommons:course-sidebar-collapsed";
 const DONE = "text-green-600 dark:text-green-400";
 
-export default function CourseSidebar({ outline, progress: initialProgress, currentLessonId, currentPuzzleId }) {
+export default function CourseSidebar({ outline, progress: initialProgress, currentLessonId, currentPuzzleId, currentPuzzleType = "puzzle" }) {
 
 const progress = useLiveProgress(initialProgress);
 const [collapsed, setCollapsed] = useState(false);
 
   // Restore the saved preference; with none saved, start collapsed on narrow screens.
   useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(COLLAPSE_KEY);
-      if (saved !== null) setCollapsed(saved === "1");
-      else if (window.innerWidth < 768) setCollapsed(true);
-    } catch {}
+    const restore = window.setTimeout(() => {
+      try {
+        const saved = window.localStorage.getItem(COLLAPSE_KEY);
+        if (saved !== null) setCollapsed(saved === "1");
+        else if (window.innerWidth < 768) setCollapsed(true);
+      } catch {}
+    }, 0);
+    return () => window.clearTimeout(restore);
   }, []);
 
   function toggle() {
@@ -31,11 +34,11 @@ const [collapsed, setCollapsed] = useState(false);
   }
 
   const lessonStates = outline.lessons.map((lesson) => {
-    const availableIds = lesson.puzzles.filter((p) => p.available).map((p) => p.id);
+       const availableIds = lesson.puzzles.filter((p) => p.available).map((p) => p.ref);
     return {
       lesson,
       done: isLessonComplete(progress, lesson.id, availableIds),
-      puzzlesDone: availableIds.filter((id) => progress.puzzles.has(id)).length,
+       puzzlesDone: availableIds.filter((ref) => progress.puzzles.has(ref)).length,
       puzzlesTotal: availableIds.length,
     };
   });
@@ -130,14 +133,14 @@ const [collapsed, setCollapsed] = useState(false);
                   {isCurrentLesson && lesson.puzzles.length > 0 && (
                     <ul className="ml-6 border-l border-zinc-200 dark:border-zinc-800">
                       {lesson.puzzles.map((puzzle) => {
-                        const isCurrentPuzzle = puzzle.id === currentPuzzleId;
-                        const puzzleDone = progress.puzzles.has(puzzle.id);
+                         const isCurrentPuzzle = puzzle.id === currentPuzzleId && puzzle.type === currentPuzzleType;
+                         const puzzleDone = progress.puzzles.has(puzzle.ref);
                         const pMarker = puzzleDone ? "✓" : isCurrentPuzzle ? "▸" : "○";
 
                         if (!puzzle.available) {
                           return (
                             <li
-                              key={puzzle.id}
+                              key={puzzle.ref}
                               className="flex items-baseline gap-2 px-3 py-1.5 text-xs text-zinc-400 dark:text-zinc-600"
                             >
                               <span className="font-mono">○</span>
@@ -148,9 +151,9 @@ const [collapsed, setCollapsed] = useState(false);
                         }
 
                         return (
-                          <li key={puzzle.id}>
+                          <li key={puzzle.ref}>
                             <Link
-                              href={`/puzzles/${puzzle.id}?lesson=${encodeURIComponent(lesson.id)}`}
+                               href={`${puzzle.href ?? `/${puzzle.type === "shader" ? "shaders" : puzzle.type === "circuit" ? "circuits" : "puzzles"}/${encodeURIComponent(puzzle.id)}`}?lesson=${encodeURIComponent(lesson.id)}`}
                               aria-current={isCurrentPuzzle ? "page" : undefined}
                               className={`mr-2 flex items-baseline gap-2 rounded-r-lg px-3 py-1.5 text-xs transition-colors hover:bg-white dark:hover:bg-zinc-900 ${
                                 isCurrentPuzzle

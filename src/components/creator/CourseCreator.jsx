@@ -165,6 +165,12 @@ export default function CourseCreator({
                                 <span className="ml-2 font-mono text-xs text-zinc-400"># coming soon</span>
                               )}
                             </p>
+                            {lesson.puzzleCount > 0 && (
+                              <p className="mt-1 truncate text-xs text-zinc-500">
+                                {lesson.puzzleCount} puzzle{lesson.puzzleCount === 1 ? "" : "s"}
+                                {lesson.puzzleTypes?.length > 0 && ` · ${lesson.puzzleTypes.join(" · ")}`}
+                              </p>
+                            )}
                           </>
                         ) : (
                           <p className="truncate text-sm text-red-600 dark:text-red-400">
@@ -242,6 +248,12 @@ export default function CourseCreator({
                         )}
                       </p>
                       {lesson.summary && <p className="truncate text-xs text-zinc-500">{lesson.summary}</p>}
+                      {lesson.puzzleCount > 0 && (
+                        <p className="truncate text-xs text-zinc-500">
+                          {lesson.puzzleCount} puzzle{lesson.puzzleCount === 1 ? "" : "s"}
+                          {lesson.puzzleTypes?.length > 0 && ` · ${lesson.puzzleTypes.join(" · ")}`}
+                        </p>
+                      )}
                       {lesson.alsoIn?.length > 0 && (
                         <p className="truncate text-xs text-zinc-500">
                           Also in {lesson.alsoIn.map((t) => `\u201C${t}\u201D`).join(", ")}
