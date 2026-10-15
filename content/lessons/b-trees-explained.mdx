@@ -1,12 +1,70 @@
 ---
 title: "B Trees Explained"
-order: 15
-summary: "Coming soon: learn how B-trees store multiple keys per node to support efficient searching in databases and storage systems."
-available: false
+order: 16
+summary: "Learn how B-trees store multiple sorted keys per node, split full nodes, and reduce storage reads during search."
+available: true
+areas: ["data-structures"]
 topics: ["trees", "searching"]
+tags: ["b-tree"]
 languages: ["python"]
 difficulty: "advanced"
-puzzles: []
+puzzles: ["b-tree-search"]
 ---
 
-This lesson is coming soon. It will cover multi-key nodes, splitting, and why wide trees reduce storage reads.
+A B-tree is a balanced search tree whose nodes contain multiple sorted keys and multiple children. Binary search trees branch at every key; a B-tree groups many comparisons into one node so a lookup can make good use of a disk page or database block.
+
+## Nodes and ranges
+
+If a node contains keys `[10, 20]`, it has up to three child ranges:
+
+```text
+          [10 | 20]
+         /    |     \
+     < 10  10..20   > 20
+```
+
+Keys inside a node are sorted. Every key in the first child is less than `10`, every key in the middle child is between `10` and `20`, and every key in the last child is greater than `20`. A node with `k` keys has `k + 1` children when it is internal.
+
+The exact minimum and maximum number of keys depend on the tree's order. A common definition uses minimum degree `t`: every non-root node has at least `t - 1` keys and at most `2t - 1` keys. The root may have fewer keys, but it still has to obey the ordering rules.
+
+## Searching a B-tree
+
+At each node, compare the target with its keys. If one matches, return it. Otherwise choose the child range between the neighboring keys and repeat. The following pseudocode shows the decision:
+
+```python
+def find(node, target):
+    index = 0
+    while index < len(node.keys) and target > node.keys[index]:
+        index += 1
+    if index < len(node.keys) and target == node.keys[index]:
+        return True
+    if node.is_leaf:
+        return False
+    return find(node.children[index], target)
+```
+
+Searching within a node can use a short linear scan or binary search. The important operation is selecting exactly one child instead of scanning every node in the tree. With a high branching factor, a B-tree has small height, so a lookup takes **O(log n)** node visits.
+
+## Splitting during insertion
+
+When insertion reaches a full node, split it before descending. For a full node with keys `[5, 10, 15, 20, 25]`, the middle key can move up to the parent while the remaining keys form two nodes:
+
+```text
+          [15]
+         /    \
+     [5, 10] [20, 25]
+```
+
+Child pointers split in the same way. Splitting may make the parent full, so the repair can continue toward the root. If the root is full, split it first and create a new root; this is the only operation that increases the tree height. Because all leaves remain at the same depth, B-trees stay balanced automatically.
+
+Deletion uses borrowing from a sibling or merging neighboring nodes when a node would fall below its minimum occupancy. Those operations preserve sorted ranges and equal leaf depth, but are more involved than search.
+
+## Why storage systems use B-trees
+
+Disk and SSD access is much slower than comparing values already in memory. A binary tree can require one storage read per level, even though each node contains only one key. A B-tree packs many keys and child pointers into a block, reducing the number of block reads. B+ trees go further by keeping records in linked leaf nodes, which makes ordered range scans efficient; many database indexes use a B+ tree variant.
+
+The trade-off is that a B-tree node is more complex to update than a binary node, and in-memory workloads may prefer a simpler structure. Choose the structure based on where the data lives and whether you need range queries.
+
+## Practice and next steps
+
+Try the [B-Tree Search puzzle](/puzzles/b-tree-search?lesson=b-trees-explained&course=searching-algorithms). Its level-by-level encoding makes child selection visible without requiring a full mutable B-tree implementation. For a different kind of tree search, continue to [Monte Carlo Tree Search Explained](/lessons/monte-carlo-tree-search-explained).

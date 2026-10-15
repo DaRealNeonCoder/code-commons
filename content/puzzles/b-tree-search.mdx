@@ -1,0 +1,66 @@
+---
+title: "B-Tree Search"
+order: 129
+available: true
+areas: []
+topics: ["searching", "trees"]
+tags: ["b-tree", "tree-search"]
+languages: []
+difficulty: "advanced"
+starterCode: |
+  def btree_search(levels, target):
+      # TODO: return True if target is stored in the B-tree, otherwise False
+      pass
+
+  level_count = int(input())
+  levels = []
+  for _ in range(level_count):
+      nodes = []
+      for encoded_node in input().split(";"):
+          nodes.append(list(map(int, encoded_node.split(","))))
+      levels.append(nodes)
+
+  target = int(input())
+  print("found" if btree_search(levels, target) else "missing")
+testCases:
+  - input: "3\n10,20\n2,4;12,15;25,30\n0,1;3;5,7;11;13,14;16,18;21,22;27;31,35\n14"
+    expected: "found"
+    hidden: false
+  - input: "3\n10,20\n2,4;12,15;25,30\n0,1;3;5,7;11;13,14;16,18;21,22;27;31,35\n10"
+    expected: "found"
+    hidden: true
+  - input: "3\n10,20\n2,4;12,15;25,30\n0,1;3;5,7;11;13,14;16,18;21,22;27;31,35\n31"
+    expected: "found"
+    hidden: true
+  - input: "3\n10,20\n2,4;12,15;25,30\n0,1;3;5,7;11;13,14;16,18;21,22;27;31,35\n6"
+    expected: "missing"
+    hidden: true
+  - input: "3\n10,20\n2,4;12,15;25,30\n0,1;3;5,7;11;13,14;16,18;21,22;27;31,35\n36"
+    expected: "missing"
+    hidden: true
+---
+
+Search for a key in a small B-tree. A B-tree keeps several sorted keys in each node, so one comparison can choose which child to visit.
+
+## Input encoding
+
+The first line contains `L`, the number of levels, including the root and the leaf level. The next `L` lines describe those levels from top to bottom:
+
+- Nodes on one level are separated by semicolons (`;`).
+- Keys inside one node are sorted integers separated by commas (`,`).
+- Nodes on every level are listed from left to right.
+
+For an internal node with `k` keys, its `k + 1` children are the consecutive nodes on the next level. For example, this describes a three-level B-tree:
+
+```text
+3
+10,20
+2,4;12,15;25,30
+0,1;3;5,7;11;13,14;16,18;21,22;27;31,35
+```
+
+The input is a valid B-tree encoding: keys are ordered, and every internal node has the required consecutive children. The final line contains the integer to search for.
+
+## Output
+
+Print `found` if the target is one of the keys, or `missing` otherwise. Follow the comparisons at each node to select one child; scanning every key in every level is unnecessary.

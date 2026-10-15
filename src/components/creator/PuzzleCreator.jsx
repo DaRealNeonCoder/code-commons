@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import TextBlockEditor, { newTextBlock } from "@/components/creator/TextBlockEditor";
 import TestCaseEditor, { newTestCase } from "@/components/creator/TestCaseEditor";
+import MathQuizEditor, { newMathQuestion } from "@/components/creator/MathQuizEditor";
 import { blocksToMarkdown } from "@/lib/blocksToMarkdown";
 import FilterFields from "@/components/filters/FilterFields";
 import useProjectAutosave from "@/components/creator/useProjectAutosave";
@@ -20,6 +21,7 @@ export default function PuzzleCreator({
   const saved = project.data ?? {};
 
   const [title, setTitle] = useState(project.title ?? "");
+  const [kind, setKind] = useState(saved.kind === "math-quiz" ? "math-quiz" : "coding");
   const [starterCode, setStarterCode] = useState(saved.starterCode ?? "");
   const [blocks, setBlocks] = useState(
     Array.isArray(saved.blocks) ? saved.blocks : [newTextBlock({ size: "title", bold: true })]
@@ -39,6 +41,11 @@ export default function PuzzleCreator({
         )
       : []
   );
+  const [mathQuestions, setMathQuestions] = useState(
+    Array.isArray(saved.mathQuiz?.questions) && saved.mathQuiz.questions.length > 0
+      ? saved.mathQuiz.questions
+      : [newMathQuestion()]
+  );
   const [status, setStatus] = useState(null);
   const [publishedId, setPublishedId] = useState(initialPublishedId);
 
@@ -50,11 +57,26 @@ export default function PuzzleCreator({
   const [difficulty, setDifficulty] = useState(saved.difficulty ?? "");
 
   const markdown = useMemo(() => blocksToMarkdown(blocks), [blocks]);
-  const hasIncompleteTest = testCases.some((t) => !t.expected.trim());
+  const hasIncompleteTest = kind === "coding" && testCases.some((t) => !t.expected.trim());
+  const hasIncompleteMath = kind === "math-quiz" && mathQuestions.some((question) =>
+    !question.prompt.trim() || !question.answer.trim() ||
+    (question.type === "choice" && (question.choices.length < 2 || question.choices.some((choice) => !choice.label.trim())))
+  );
   // Drop the client-only row key.
   const cleanTestCases = testCases.map(({ input, expected, hidden }) => ({ input, expected, hidden }));
 
-  const draftData = { starterCode, blocks, testCases: cleanTestCases, areas, topics, tags, languages, difficulty };
+  const draftData = {
+    kind,
+    starterCode,
+    blocks,
+    testCases: cleanTestCases,
+    mathQuiz: { version: 1, questions: mathQuestions },
+    areas,
+    topics,
+    tags,
+    languages,
+    difficulty,
+  };
 
   const saveState = useProjectAutosave({
     projectId: project.id,
@@ -79,6 +101,7 @@ export default function PuzzleCreator({
           projectId: project.id,
           title,
           difficulty,
+          kind,
           areas,
           topics,
           tags,
@@ -86,6 +109,7 @@ export default function PuzzleCreator({
           starterCode,
           blocks,
           testCases: cleanTestCases,
+          mathQuiz: { version: 1, questions: mathQuestions },
         }),
       });
       const data = await res.json();
@@ -112,8 +136,8 @@ export default function PuzzleCreator({
           canEdit={project.canEdit}
         />
         <h1 className="mt-1 text-2xl font-semibold">Create a puzzle</h1>
-        <p className="mt-1 text-zinc-600 dark:text-zinc-400">
-          Same block editor as lessons, plus difficulty, topic filters and test cases.
+           <p className="mt-1 text-zinc-600 dark:text-zinc-400">
+           Create a coding puzzle or a Math Quiz with the same description and publishing flow.
         </p>
 
         <fieldset disabled={!project.canEdit} className="m-0 min-w-0 border-0 p-0">
@@ -131,6 +155,12 @@ export default function PuzzleCreator({
               className={`mb-4 ${fieldClass}`}
             />
 
+            <label className="block text-sm font-medium" htmlFor="puzzle-kind">Puzzle type</label>
+            <select id="puzzle-kind" value={kind} onChange={(event) => setKind(event.target.value)} className={`mb-4 ${fieldClass}`}>
+              <option value="coding">Coding puzzle</option>
+              <option value="math-quiz">Math Quiz</option>
+            </select>
+
             <div className="mb-4">
               <FilterFields
                 areas={areas}
@@ -147,25 +177,20 @@ export default function PuzzleCreator({
               />
             </div>
 
-            <label className="block text-sm font-medium" htmlFor="puzzle-starter">
-              Starter code
-            </label>
-            <p className="text-xs text-zinc-500">
-              Tests feed stdin, so include the input-reading scaffold and let the learner fill in the function.
-            </p>
-            <textarea
-              id="puzzle-starter"
-              value={starterCode}
-              onChange={(e) => setStarterCode(e.target.value)}
-              rows={6}
-              placeholder={"def solution(n):\n    pass\n\nn = int(input())\nprint(solution(n))\n"}
-              className={`${fieldClass} bg-zinc-950 font-mono text-green-400`}
-            />
+            {kind === "coding" ? (
+              <>
+                <label className="block text-sm font-medium" htmlFor="puzzle-starter">Starter code</label>
+                <p className="text-xs text-zinc-500">Tests feed stdin, so include the input-reading scaffold and let the learner fill in the function.</p>
+                <textarea id="puzzle-starter" value={starterCode} onChange={(e) => setStarterCode(e.target.value)} rows={6} placeholder={"def solution(n):\n    pass\n\nn = int(input())\nprint(solution(n))\n"} className={`${fieldClass} bg-zinc-950 font-mono text-green-400`} />
+              </>
+            ) : (
+              <p className="rounded border border-teal-500/30 bg-teal-50 p-3 text-sm text-teal-800 dark:bg-teal-950/20 dark:text-teal-300">Math Quiz questions use plain text only: learners choose an option or enter a number or variable.</p>
+            )}
           </section>
 
           <TextBlockEditor blocks={blocks} onChange={setBlocks} accent="teal" />
 
-          <TestCaseEditor testCases={testCases} onChange={setTestCases} />
+          {kind === "coding" ? <TestCaseEditor testCases={testCases} onChange={setTestCases} /> : <MathQuizEditor questions={mathQuestions} onChange={setMathQuestions} />}
 
           <details className="mt-6 rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
             <summary className="cursor-pointer select-none font-mono text-sm text-zinc-500">
@@ -180,7 +205,7 @@ export default function PuzzleCreator({
             <button
               type="button"
               onClick={handlePublish}
-              disabled={status === "saving" || !title.trim() || !difficulty || hasIncompleteTest}
+               disabled={status === "saving" || !title.trim() || !difficulty || hasIncompleteTest || hasIncompleteMath}
               className="rounded-md bg-teal-600 px-5 py-2.5 font-mono text-sm font-medium text-white transition-colors hover:bg-teal-700 disabled:opacity-50"
             >
               {status === "saving" ? "publishing..." : publishState === "draft" ? "$ publish puzzle" : "$ update puzzle"}
@@ -191,6 +216,7 @@ export default function PuzzleCreator({
                 Every test case needs an expected output (or remove it).
               </p>
             )}
+            {hasIncompleteMath && <p className="text-sm text-amber-600 dark:text-amber-400">Every Math Quiz question needs a prompt, a correct answer, and complete choices.</p>}
             {publishedId && status !== "saving" && !status?.error && (
               <p className={`text-sm ${publishState === "edited" ? "text-amber-600 dark:text-amber-400" : "text-teal-600 dark:text-teal-400"}`}>
                 {publishState === "edited" ? "Published, with unpublished edits." : "Published."}{" "}

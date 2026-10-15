@@ -1,12 +1,85 @@
 ---
 title: "Red Black Tree Explained"
-order: 14
-summary: "Coming soon: understand how red-black trees use color rules and rotations to keep search, insertion, and deletion logarithmic."
-available: false
+order: 15
+summary: "Understand how red-black trees use color invariants and rotations to keep search, insertion, and deletion logarithmic."
+available: true
+areas: ["data-structures"]
 topics: ["trees", "searching"]
+tags: ["red-black-tree"]
 languages: ["python"]
 difficulty: "advanced"
-puzzles: []
+puzzles: ["red-black-tree-invariants"]
 ---
 
-This lesson is coming soon. It will cover red-black invariants, rotations, and balanced binary search trees.
+A red-black tree is a binary search tree that stores one extra bit of information per node: a color, red or black. The colors do not make search faster at an individual node. Instead, they constrain the shape of the tree so that a long one-sided chain cannot form.
+
+## Why an ordinary BST needs help
+
+Search, insertion, and deletion in a binary search tree take **O(h)** time, where `h` is the tree height. Inserting `1, 2, 3, 4, 5` into a plain BST creates a chain, making `h = O(n)`. A balanced tree keeps `h = O(log n)`, which preserves fast operations even when insertion order is unfavorable.
+
+Red-black trees use local repairs after updates rather than rebuilding the whole tree. The result is not perfectly minimal height, but it is guaranteed to stay within a constant factor of logarithmic height.
+
+## The five invariants
+
+The usual definition uses these rules:
+
+1. Every node is red or black.
+2. The root is black.
+3. Every missing child is treated as a black NIL leaf.
+4. A red node cannot have a red child.
+5. Every path from a node to a descendant NIL leaf contains the same number of black nodes.
+
+The last quantity is called **black height**. A red node can add height without adding black height, but rule 4 prevents red nodes from appearing consecutively. Together, these rules imply that the longest root-to-leaf path is at most about twice the shortest one, and therefore `h <= 2 log2(n + 1)`.
+
+The tree still has the ordinary BST ordering rule: values in the left subtree are smaller and values in the right subtree are larger. Color rules control balance; ordering rules control search.
+
+## Rotations preserve ordering
+
+A rotation changes the shape of a small part of the tree while preserving its in-order sequence. A right rotation around `y` moves its left child `x` up:
+
+```text
+        y                 x
+       / \               / \
+      x   C      ->      A   y
+     / \                   / \
+    A   B                 B   C
+```
+
+Every value in `A` is less than `x`, every value in `B` lies between `x` and `y`, and every value in `C` is greater than `y`. A left rotation is the mirror image. Because the sorted order is unchanged, rotations are safe repairs for a search tree.
+
+## Insertion repair
+
+Insert a new value as in a normal BST, then color the new node red. Starting red avoids increasing the black height of every path immediately. A violation can only happen when the new node and its parent are both red.
+
+The fix-up considers the node's uncle:
+
+- If the uncle is red, recolor the parent and uncle black, recolor the grandparent red, and continue upward.
+- If the uncle is black and the node forms a zig-zag, rotate at the parent to make a straight line.
+- If the uncle is black and the node forms a straight line, rotate at the grandparent and swap the relevant colors.
+
+Finally, force the root to black. Each iteration moves upward or performs a rotation, so insertion remains **O(log n)**.
+
+## Deletion repair
+
+Deletion first uses the usual BST operation. A node with two children can be replaced by its in-order successor, reducing the structural deletion to a node with at most one child. Removing a red node is harmless to the black-height count. Removing a black node may leave one path short by one black node, often described as a “double black” problem.
+
+Deletion fix-up uses the sibling's color and the sibling's child colors. It may recolor the sibling, rotate around the parent, or move the deficit upward. The cases are more numerous than insertion, but each repair preserves ordering and eventually restores all invariants. Search remains a simple root-to-leaf walk.
+
+## Python representation
+
+Production libraries usually hide rotations and sentinel NIL nodes behind a class. A useful mental model is:
+
+```python
+class Node:
+    def __init__(self, value, color="red", left=None, right=None):
+        self.value = value
+        self.color = color
+        self.left = left
+        self.right = right
+```
+
+Do not confuse a red-black tree with a heap: the root is not necessarily the smallest or largest value. It is an ordered search tree whose balance metadata is maintained during updates.
+
+## Practice and next steps
+
+Use the [Red-Black Tree Invariants puzzle](/puzzles/red-black-tree-invariants?lesson=red-black-tree-explained&course=searching-algorithms) to validate colors, ordering, and black height. Then read [B Trees Explained](/lessons/b-trees-explained) to see a different balanced search structure designed for storage systems, followed by [Monte Carlo Tree Search Explained](/lessons/monte-carlo-tree-search-explained) for a non-dictionary use of trees.

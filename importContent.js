@@ -19,6 +19,7 @@ import { getProject } from "./src/lib/creatorProjects";
 import { parseCircuit, EMPTY_CIRCUIT } from "./src/lib/circuits/circuitData";
 import { getPuzzlePorts, getPuzzleTests, validatePuzzleCircuit } from "./src/lib/circuits/puzzle";
 import { getShaderPuzzle } from "./src/lib/shaders/puzzle";
+import { normalizeMathQuiz } from "./src/lib/mathQuiz";
 
 const ROOT = process.cwd();
 const str = (v) => (typeof v === "string" ? v : "");
@@ -62,19 +63,41 @@ function report(kind, file, result) {
 async function importMdx(kind, dir, store, payloadFor) {
   for (const { file, path: p } of listFiles(dir, ".mdx")) {
     const { data, content } = parseFrontmatter(fs.readFileSync(p, "utf8"));
-    const result = await store.save({ ...common(data, content, file), payload: payloadFor(data) });
+    let payload;
+    try {
+      payload = payloadFor(data);
+    } catch (error) {
+      report(kind, file, { ok: false, error: error.message });
+      continue;
+    }
+    const result = await store.save({ ...common(data, content, file), payload });
     report(kind, file, result);
   }
+}
+
+function puzzlePayload(data) {
+  const kind = data.kind == null ? "coding" : data.kind;
+  if (kind === "coding") {
+    return {
+      kind,
+      starterCode: str(data.starterCode),
+      testCases: normalizeTestCases(data.testCases),
+      quizConfig: null,
+    };
+  }
+  if (kind === "math-quiz") {
+    const quizConfig = normalizeMathQuiz(data.mathQuiz);
+    if (!quizConfig) throw new Error("invalid math quiz configuration");
+    return { kind, starterCode: "", testCases: [], quizConfig };
+  }
+  throw new Error(`unsupported puzzle kind: ${kind}`);
 }
 
 async function main() {
   console.log("-- lessons");
   for (const r of await importLessonsDir()) report("lesson", r.file, r);
 
-  await importMdx("puzzle", "content/puzzles", puzzleStore, (d) => ({
-    starterCode: str(d.starterCode),
-    testCases: normalizeTestCases(d.testCases),
-  }));
+  await importMdx("puzzle", "content/puzzles", puzzleStore, puzzlePayload);
 
   await importMdx("shader", "content/shaders", shaderStore, (d) => ({
     starterCode: str(d.starterCode),

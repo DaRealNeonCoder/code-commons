@@ -1,0 +1,54 @@
+---
+title: "Linear Search"
+order: 127
+available: true
+areas: []
+topics: ["searching", "arrays"]
+tags: ["linear-search"]
+languages: []
+difficulty: "beginner"
+starterCode: |
+  def linear_search(numbers, target):
+      # TODO: return the index of the first target, or -1 if it is missing
+      pass
+
+  numbers = list(map(int, input().split()))
+  target = int(input())
+  print(linear_search(numbers, target))
+testCases:
+  - input: "8 3 11 3 9\n3"
+    expected: "1"
+    hidden: false
+  - input: "4 8 15 16 23 42\n42"
+    expected: "5"
+    hidden: true
+  - input: "4 8 15 16 23 42\n5"
+    expected: "-1"
+    hidden: true
+  - input: "7 7 7 7\n7"
+    expected: "0"
+    hidden: true
+  - input: "-9 -3 0 4 -3 8\n-3"
+    expected: "1"
+    hidden: true
+  - input: "1 2 3\n0"
+    expected: "-1"
+    hidden: true
+---
+
+Search an unsorted list one item at a time.
+
+Write a function `linear_search(numbers, target)` that returns the **zero-based index of the first occurrence** of `target`, or `-1` when the target is not present. The list is not sorted, so you must inspect its elements from left to right. For example, searching for `3` in `[8, 3, 11, 3, 9]` returns `1`, not `3`.
+
+## Input
+
+The first line contains space-separated integers. The second line contains the integer to find. The list may be unsorted and may contain duplicates.
+
+## Output
+
+Print the index of the first matching element, or `-1` if there is no match.
+
+> [!TIP]
+> As soon as you find the target, you can return its index. Continuing to scan would risk returning a later duplicate instead.
+
+Linear search takes `O(n)` time in the worst case and does not require the input to be sorted.

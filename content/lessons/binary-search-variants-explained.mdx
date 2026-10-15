@@ -1,0 +1,91 @@
+---
+title: "Binary Search Variants Explained"
+order: 13
+summary: "Learn how to adapt binary search for boundaries, rotated sorted arrays, and numeric answer spaces instead of only exact matches."
+available: true
+areas: ["algorithms"]
+topics: ["searching", "arrays"]
+tags: ["binary-search"]
+languages: ["python"]
+difficulty: "intermediate"
+puzzles: ["rotation-count", "square-root"]
+---
+
+Binary search is more than an exact-match function. Its reusable idea is to maintain a search interval and remove the half that cannot contain the answer. The answer might be an index, a boundary, or a number in a range.
+
+This lesson assumes you know the inclusive `low`/`high` pattern from [Binary Search Explained](/lessons/binary-search-explained).
+
+## Search for a boundary
+
+When a sorted list contains duplicates, “find a match” does not say which copy to return. A boundary search asks a more precise question. For example, the first position where `target` could be inserted is the smallest index whose value is at least `target`:
+
+```python
+def lower_bound(numbers, target):
+    low, high = 0, len(numbers)
+
+    while low < high:
+        mid = low + (high - low) // 2
+        if numbers[mid] < target:
+            low = mid + 1
+        else:
+            high = mid
+
+    return low
+```
+
+This version uses a half-open interval `[low, high)`. When `numbers[mid]` is large enough, `mid` might itself be the answer, so set `high = mid` rather than `mid - 1`. After the loop, `low` is the first valid position. It may equal `len(numbers)` when every value is smaller than the target; check that position before indexing.
+
+For `[1, 2, 2, 4]`, `lower_bound(numbers, 2)` is `1`, and `lower_bound(numbers, 3)` is `3`. The [First Occurrence puzzle](/puzzles/first-occurrence?lesson=binary-search-explained&course=searching-algorithms) applies the same idea while returning `-1` for a missing target.
+
+## Search a rotated sorted array
+
+Rotating a sorted list moves a suffix to the front, producing two sorted runs. In `[15, 18, 2, 3, 6, 12]`, the smallest value is at index `2`, so the original list was rotated right by two positions. At each step, compare the middle value with the last value:
+
+```python
+def rotation_count(numbers):
+    low, high = 0, len(numbers) - 1
+
+    while low < high:
+        mid = low + (high - low) // 2
+        if numbers[mid] > numbers[high]:
+            low = mid + 1
+        else:
+            high = mid
+
+    return low
+```
+
+If the middle value is greater than the final value, the drop and the minimum are to the right of `mid`. Otherwise the minimum is at `mid` or to its left. This assumes distinct values, as does the [Rotation Count puzzle](/puzzles/rotation-count?lesson=binary-search-variants-explained&course=searching-algorithms).
+
+## Search an answer space
+
+The candidates do not have to be array indices. For a perfect square `n`, the answer `root` lies between `0` and `n`. The predicate “`guess * guess` is at least `n`” changes from false to true exactly once, so binary search can find the first true value:
+
+```python
+def integer_sqrt(n):
+    low, high = 0, n
+    while low < high:
+        mid = low + (high - low) // 2
+        if mid * mid < n:
+            low = mid + 1
+        else:
+            high = mid
+    return low
+```
+
+For a perfect square this returns its square root. The [Square Root puzzle](/puzzles/square-root?lesson=binary-search-variants-explained&course=searching-algorithms) asks you to implement this kind of numeric search without a math library. The same pattern solves “minimum capacity that works” or “earliest time a condition becomes true” when the predicate is monotonic.
+
+## A checklist for variants
+
+Before writing a new binary search, make four decisions:
+
+1. What does the interval contain: candidates at both ends, or a half-open range?
+2. What predicate is monotonic across the interval?
+3. When `mid` satisfies the predicate, could it still be the answer? If so, keep it with `high = mid`.
+4. What should an empty range or an answer just outside the input return?
+
+Most off-by-one bugs come from mixing inclusive and half-open bounds. State the interval invariant in a sentence, and make every update preserve it.
+
+## Next steps
+
+Return to [Binary Search Explained](/lessons/binary-search-explained) for exact lookup, then continue to [Binary Search Tree Explained](/lessons/binary-search-tree-explained). Arrays use indices and contiguous order; trees use links and a branching invariant.

@@ -98,9 +98,12 @@ export const puzzles = pgTable(
   "puzzles",
   {
     ...contentColumns(),
+    kind: text("kind").notNull().default("coding"),
     starterCode: text("starter_code").notNull().default(""),
     // [{ input, expected, hidden }]. SERVER ONLY: never select this for client props.
     testCases: jsonb("test_cases").notNull().default(sql`'[]'::jsonb`),
+    // Math Quiz questions and answer keys. SERVER ONLY: sanitize before client props.
+    quizConfig: jsonb("quiz_config"),
   },
   (t) => contentIndexes("puzzles", t)
 );

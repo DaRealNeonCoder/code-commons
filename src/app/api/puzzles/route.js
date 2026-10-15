@@ -1,6 +1,7 @@
 import { puzzleStore } from "@/lib/db/stores";
 import { readPublishRequest, saveErrorResponse } from "@/lib/publish";
 import { notifyPublished } from "@/lib/notifications";
+import { normalizeMathQuiz } from "@/lib/mathQuiz";
 
 const MAX_TEST_CASES = 50;
 const MAX_TEST_FIELD_LENGTH = 10_000;
@@ -34,17 +35,30 @@ export async function POST(request) {
   const p = await readPublishRequest(request, "puzzle", "puzzle");
   if (p.response) return p.response;
 
-  const testCases = parseTestCases(p.body.testCases);
-  if (testCases === null) {
-    return Response.json(
-      { error: `Each test case needs an expected output (max ${MAX_TEST_CASES} cases).` },
-      { status: 400 }
-    );
+  const kind = p.body.kind == null ? "coding" : p.body.kind;
+  if (kind !== "coding" && kind !== "math-quiz") {
+    return Response.json({ error: "Unsupported puzzle type." }, { status: 400 });
   }
 
-  const starterCode = typeof p.body.starterCode === "string" ? p.body.starterCode : "";
-  if (starterCode.length > MAX_CODE_LENGTH) {
-    return Response.json({ error: "Starter code is too long." }, { status: 400 });
+  let payload;
+  if (kind === "math-quiz") {
+    const quizConfig = normalizeMathQuiz(p.body.mathQuiz);
+    if (!quizConfig) return Response.json({ error: "Add at least one valid math quiz question." }, { status: 400 });
+    payload = { kind, starterCode: "", testCases: [], quizConfig };
+  } else {
+    const testCases = parseTestCases(p.body.testCases);
+    if (testCases === null) {
+      return Response.json(
+        { error: `Each test case needs an expected output (max ${MAX_TEST_CASES} cases).` },
+        { status: 400 }
+      );
+    }
+
+    const starterCode = typeof p.body.starterCode === "string" ? p.body.starterCode : "";
+    if (starterCode.length > MAX_CODE_LENGTH) {
+      return Response.json({ error: "Starter code is too long." }, { status: 400 });
+    }
+    payload = { kind, starterCode, testCases, quizConfig: null };
   }
 
   const result = await puzzleStore.save({
@@ -54,7 +68,7 @@ export async function POST(request) {
     summary: p.summary,
     body: p.markdown,
     ...p.selection,
-    payload: { starterCode, testCases },
+    payload,
   });
   if (!result.ok) return saveErrorResponse(result);
   await notifyPublished({ actorId: p.user.id, itemType: "puzzle", itemId: result.slug, title: p.title });

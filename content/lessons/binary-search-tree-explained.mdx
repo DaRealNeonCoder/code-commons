@@ -1,6 +1,6 @@
 ---
 title: "Binary Search Tree Explained"
-order: 12
+order: 14
 summary: "Understand binary search trees, search and insertion in Python, tree traversals, and why balanced trees keep operations fast."
 available: true
 areas: ["data-structures"]
@@ -31,7 +31,7 @@ To find `6`, compare with `8` and go left, compare with `3` and go right, then m
 
 ## Search and insertion in Python
 
-This example represents a node with a dictionary so you only need [Python dictionaries](/lessons/python-dictionaries) and [functions](/lessons/python-functions).
+This example represents a node with a dictionary so you only need [Python dictionaries](/lessons/dictionaries) and [functions](/lessons/functions).
 
 ```python
 def node(value):
@@ -98,7 +98,7 @@ Search and insertion take **O(h) time**, where `h` is the tree height. A balance
 
 The iterative search uses O(1) extra space. Traversal visits every node in O(n) time; its stack needs up to O(h) space and the returned list uses O(n) space.
 
-Balanced structures address the height problem. The [Searching Algorithms course](/courses/searching-algorithms) includes upcoming lessons on red-black trees and B-trees. Monte Carlo tree search, also on the course roadmap, explores possible decisions using simulations; it is not an ordered dictionary lookup structure.
+Balanced structures address the height problem. The [Searching Algorithms course](/courses/searching-algorithms) continues with [red-black trees](/lessons/red-black-tree-explained) and [B-trees](/lessons/b-trees-explained). [Monte Carlo tree search](/lessons/monte-carlo-tree-search-explained) explores possible decisions using simulations; it is not an ordered dictionary lookup structure.
 
 ## Practice
 

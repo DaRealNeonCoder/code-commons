@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { getPuzzleById, getClientTestInfo } from "@/lib/puzzles";
+import { getPuzzleById, getClientTestInfo, getClientMathQuizInfo } from "@/lib/puzzles";
 import { getNextPuzzleInChain } from "@/lib/lessonPuzzles";
 import { getCourseContext } from "@/lib/courseNav";
 import { getCurrentUserId } from "@/lib/session";
 import { getCourseProgress } from "@/lib/courseProgress";
 import { mdxComponents, mdxOptions } from "@/lib/mdx-components";
 import CodeWorkspace from "@/components/CodeWorkspace";
+import MathQuizWorkspace from "@/components/MathQuizWorkspace";
 import NextPuzzleLinks from "@/components/NextPuzzleLinks";
 import NextLessonLink from "@/components/NextLessonLink";
 import CourseShell from "@/components/CourseShell";
@@ -32,6 +33,8 @@ export default async function PuzzlePage({ params, searchParams }) {
   }
 
   const { checkable, sampleTests, hiddenTestCount } = getClientTestInfo(puzzle);
+  const mathQuiz = puzzle.kind === "math-quiz" ? getClientMathQuizInfo(puzzle.quizConfig) : null;
+  if (puzzle.kind === "math-quiz" && !mathQuiz) notFound();
 
   const lessonId = typeof query?.lesson === "string" ? query.lesson : null;
   const requestedCourseId = typeof query?.course === "string" ? query.course : null;
@@ -65,25 +68,38 @@ export default async function PuzzlePage({ params, searchParams }) {
     </article>
   );
 
+  const workspaceProps = {
+    description,
+    backHref: "/browse",
+    backLabel: "browse",
+    itemId: puzzle.id,
+    aiContext: puzzle.content,
+    aiContextTitle: puzzle.title,
+  };
+
   return (
     <CourseShell outline={ctx?.outline} progress={progress} lessonId={lessonId} puzzleId={puzzle.id}>
       <RatedShell itemType="puzzle" itemId={puzzle.id}>
-        <CodeWorkspace
-          accent="teal"
-          fileBaseName={`${puzzle.id.replace(/-/g, "_")}`}
-          starterCode={puzzle.starterCode}
-          description={description}
-           backHref="/browse"
-           backLabel="browse"
-          itemType="puzzle"
-          itemId={puzzle.id}
-          aiContext={puzzle.content}
-          aiContextType="puzzle"
-          aiContextTitle={puzzle.title}
-          checkPuzzleId={checkable ? puzzle.id : undefined}
-          sampleTests={sampleTests}
-          hiddenTestCount={hiddenTestCount}
-        />
+        {puzzle.kind === "math-quiz" ? (
+          <MathQuizWorkspace {...workspaceProps} questions={mathQuiz.questions} />
+        ) : (
+          <CodeWorkspace
+            accent="teal"
+            fileBaseName={`${puzzle.id.replace(/-/g, "_")}`}
+            starterCode={puzzle.starterCode}
+            description={description}
+            backHref="/browse"
+            backLabel="browse"
+            itemType="puzzle"
+            itemId={puzzle.id}
+            aiContext={puzzle.content}
+            aiContextType="puzzle"
+            aiContextTitle={puzzle.title}
+            checkPuzzleId={checkable ? puzzle.id : undefined}
+            sampleTests={sampleTests}
+            hiddenTestCount={hiddenTestCount}
+          />
+        )}
       </RatedShell>
     </CourseShell>
   );

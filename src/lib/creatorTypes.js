@@ -14,7 +14,7 @@ export const PROJECT_TYPES = [
     id: "puzzle",
     label: "Puzzle",
     path: "02_puzzle/",
-    description: "A coding puzzle inside a category.",
+    description: "A coding puzzle or Math Quiz inside a category.",
     accent: "text-teal-600 dark:text-teal-400",
     hoverBorder: "hover:border-teal-400",
     badge: "border-teal-500/40 bg-teal-500/10 text-teal-600 dark:text-teal-400",

@@ -1,12 +1,63 @@
 ---
 title: "Linear Search Explained"
-order: 13
-summary: "Coming soon: scan a sequence one item at a time and compare linear search with binary search."
-available: false
+order: 11
+summary: "Learn how to scan an unsorted sequence, stop at the first match, and decide when a linear search is better than sorting first."
+available: true
+areas: ["algorithms"]
 topics: ["searching", "arrays"]
+tags: ["linear-search"]
 languages: ["python"]
 difficulty: "beginner"
-puzzles: []
+puzzles: ["linear-search"]
 ---
 
-This lesson is coming soon. It will cover sequential lookup, O(n) time, and when an unsorted list makes linear search a sensible choice.
+Linear search checks candidates one at a time until it finds the target or reaches the end. It is the natural default when data is unsorted, when the collection is small, or when you only need one lookup and sorting would cost more than scanning.
+
+## The basic idea
+
+Suppose we want to find `23` in `[8, 3, 11, 23, 5]`. Start at index `0` and compare each value with the target:
+
+| Index | Value | Decision |
+| --- | --- | --- |
+| 0 | 8 | Continue |
+| 1 | 3 | Continue |
+| 2 | 11 | Continue |
+| 3 | 23 | Return `3` |
+
+Unlike [binary search](/lessons/binary-search-explained), linear search does not assume any ordering. You cannot discard the rest of the list after seeing a value that is too small or too large, because a match can appear anywhere later.
+
+## A Python implementation
+
+Return the first matching index so duplicate values have predictable behavior:
+
+```python
+def linear_search(numbers, target):
+    for index, number in enumerate(numbers):
+        if number == target:
+            return index
+    return -1
+
+
+print(linear_search([8, 3, 11, 23, 5], 23))  # 3
+print(linear_search([8, 3, 11, 23, 5], 7))   # -1
+print(linear_search([4, 4, 9], 4))            # 0
+```
+
+The `return` inside the loop is important. It stops at the first match instead of continuing and accidentally returning a later duplicate. If the loop finishes, every item has been checked and `-1` communicates that the target is absent.
+
+## Complexity and when to use it
+
+For a list of `n` values, the best case is **O(1)** when the first item matches. The worst case is **O(n)** when the target is last or missing. The average case is also linear. The algorithm uses **O(1) extra space** because it keeps only an index and the target; it does not copy or sort the list.
+
+Comparison-based sorting typically costs **O(n log n)** and only pays off when you will perform enough later searches to reuse the sorted order. A linear scan is often the right choice for one lookup in data that arrives unsorted. If the data is already sorted and you need many lookups, binary search is a better fit.
+
+## Edge cases
+
+- An empty list has no match, so return `-1` without entering the loop.
+- A one-item list returns `0` when it matches and `-1` otherwise.
+- Duplicates return the first index by the contract above.
+- Negative values and zero are ordinary values; do not use truthiness to test a match.
+
+## Practice
+
+Try the [Linear Search puzzle](/puzzles/linear-search?lesson=linear-search-explained&course=searching-algorithms). Then continue to [Binary Search Explained](/lessons/binary-search-explained) to see how a sorted input allows an algorithm to eliminate half of the remaining candidates at a time.

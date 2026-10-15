@@ -1,0 +1,58 @@
+---
+title: "MCTS Selection"
+order: 130
+available: true
+areas: []
+topics: ["searching", "trees"]
+tags: ["monte-carlo-tree-search", "ucb1"]
+languages: []
+difficulty: "advanced"
+starterCode: |
+  import math
+
+  def mcts_select(children, exploration_constant):
+      # TODO: return the index of the child with the highest UCB1 score
+      pass
+
+  child_count = int(input())
+  children = [tuple(map(int, input().split())) for _ in range(child_count)]
+  exploration_constant = float(input())
+  print(mcts_select(children, exploration_constant))
+testCases:
+  - input: "3\n10 6\n20 12\n5 4\n1.4142135623730951"
+    expected: "2"
+    hidden: false
+  - input: "2\n0 0\n12 8\n1.4"
+    expected: "0"
+    hidden: true
+  - input: "4\n4 2\n4 2\n4 2\n4 2\n0"
+    expected: "0"
+    hidden: true
+  - input: "2\n90 81\n10 0\n1.4142135623730951"
+    expected: "0"
+    hidden: true
+  - input: "3\n10 5\n10 5\n10 1\n0"
+    expected: "0"
+    hidden: true
+  - input: "1\n7 3\n2"
+    expected: "0"
+    hidden: true
+---
+
+Choose the next child during the **selection** phase of Monte Carlo Tree Search (MCTS).
+
+## Input
+
+The first line contains the number of children, `n`. Each of the next `n` lines contains two non-negative integers: `visits` and `wins` for one child, in child-index order. The final line contains the exploration constant `c` as a real number.
+
+The parent visit count is defined to be the sum of all child visit counts. For a visited child, calculate its UCB1 score as:
+
+```text
+wins / visits + c * sqrt(ln(parent_visits) / visits)
+```
+
+An unvisited child (`visits == 0`) has an infinite score, so it is preferred to every visited child. If multiple children have the same highest score, choose the one with the smallest index. The test data keeps wins between zero and visits.
+
+## Output
+
+Print the zero-based index of the selected child. The exploration term rewards children that have been visited less often, while the wins term rewards children that have performed well.

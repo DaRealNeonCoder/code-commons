@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { puzzleStore } from "./db/stores";
+import { getClientMathQuizInfo, normalizeMathQuiz } from "./mathQuiz";
 
 const SLUG = /^[a-z0-9][a-z0-9_-]*$/i;
 
@@ -29,7 +30,11 @@ export const getPuzzleById = cache(async (id) => {
   if (typeof id !== "string" || !SLUG.test(id)) return null;
   const row = await puzzleStore.getBySlug(id);
   if (!row) return null;
-  return { ...row, testCases: normalizeTestCases(row.testCases) };
+  return {
+    ...row,
+    testCases: normalizeTestCases(row.testCases),
+    quizConfig: row.kind === "math-quiz" ? normalizeMathQuiz(row.quizConfig) : null,
+  };
 });
 
 // Display-only puzzles for many ids in one query -> Map(id -> puzzle).
@@ -51,3 +56,5 @@ export function getClientTestInfo(puzzle) {
     hiddenTestCount: puzzle.testCases.length - sampleTests.length,
   };
 }
+
+export { getClientMathQuizInfo };

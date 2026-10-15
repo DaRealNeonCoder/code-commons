@@ -1,0 +1,65 @@
+---
+title: "Red-Black Tree Invariants"
+order: 128
+available: true
+areas: []
+topics: ["searching", "trees"]
+tags: ["red-black-tree", "tree-invariants"]
+languages: []
+difficulty: "advanced"
+starterCode: |
+  def valid_red_black_tree(tokens):
+      # TODO: return True when the preorder tree satisfies every invariant
+      pass
+
+  tokens = input().split()
+  print("valid" if valid_red_black_tree(tokens) else "invalid")
+testCases:
+  - input: "10B 5R # # 15R # #"
+    expected: "valid"
+    hidden: false
+  - input: "#"
+    expected: "valid"
+    hidden: true
+  - input: "7B # #"
+    expected: "valid"
+    hidden: true
+  - input: "10R # #"
+    expected: "invalid"
+    hidden: true
+  - input: "10B 5R 2R # # # #"
+    expected: "invalid"
+    hidden: true
+  - input: "10B 5B # # 15B 12B # # #"
+    expected: "invalid"
+    hidden: true
+  - input: "10B 12B # # 5B # #"
+    expected: "invalid"
+    hidden: true
+  - input: "0B -4R # # 8R # #"
+    expected: "valid"
+    hidden: true
+---
+
+Check whether a compact binary search tree obeys the red-black tree rules.
+
+## Input encoding
+
+The input is one line of space-separated tokens describing a tree in **preorder**: node, left subtree, right subtree. A node token is an integer followed by its color, such as `10B` or `-4R`. The token `#` represents an empty (NIL) child. For example:
+
+```text
+10B 5R # # 15R # #
+```
+
+describes a black root with two red leaf children. All keys in the tests are distinct.
+
+## Output
+
+Print `valid` exactly when all of these rules hold:
+
+- The root is black, unless the tree is empty.
+- Every red node has black children.
+- Every path from a node to a descendant NIL child contains the same number of black nodes.
+- The keys follow binary-search-tree ordering: smaller keys are on the left and larger keys are on the right.
+
+Print `invalid` when any rule is broken. NIL children count as black nodes for the black-height rule. The encoding is structurally well formed, so you only need to check the tree represented by the tokens.

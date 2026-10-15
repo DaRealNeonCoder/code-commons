@@ -1,12 +1,90 @@
 ---
 title: "Monte Carlo Tree Search Explained"
-order: 16
-summary: "Coming soon: explore MCTS selection, expansion, simulation, and backpropagation for game-playing and decision-making."
-available: false
+order: 17
+summary: "Learn the four phases of Monte Carlo tree search and how repeated simulations balance exploration with promising game moves."
+available: true
+areas: ["algorithms"]
 topics: ["trees", "searching"]
+tags: ["monte-carlo-tree-search"]
 languages: ["python"]
 difficulty: "advanced"
-puzzles: []
+puzzles: ["mcts-selection"]
 ---
 
-This lesson is coming soon. It will explain how Monte Carlo tree search samples possible futures and balances exploration with exploitation.
+Monte Carlo tree search (MCTS) chooses an action by repeatedly sampling possible futures. It is useful when a decision tree is too large to explore completely, such as in board games, planning, and simulations. Unlike a binary search tree, an MCTS tree is not an ordered dictionary: its branches represent possible decisions and outcomes.
+
+## The four phases
+
+One MCTS iteration starts at the root and performs four steps:
+
+1. **Selection:** follow the most promising child according to a score that balances exploitation and exploration.
+2. **Expansion:** when the selected state has unexplored actions, add one or more child nodes.
+3. **Simulation:** play out the position, often with a simple random or heuristic policy, until a terminal result or rollout limit.
+4. **Backpropagation:** send the result back through the visited path, updating visit and win statistics.
+
+Repeat these iterations for a time or simulation budget. Finally, choose a root child, commonly the one with the most visits rather than the one with the highest average win rate. More simulations usually make the estimate more reliable, but MCTS is still an approximate decision method.
+
+## Selection: exploration versus exploitation
+
+For a child `i`, a common UCB1 score is:
+
+```text
+wins_i / visits_i + c * sqrt(ln(parent_visits) / visits_i)
+```
+
+The first term is **exploitation**: prefer moves that have produced good results. The second is **exploration**: prefer moves that have not been tried as often. `c` controls the trade-off. A child with zero visits is assigned an infinite score so every legal action is explored at least once.
+
+The [MCTS Selection puzzle](/puzzles/mcts-selection?lesson=monte-carlo-tree-search-explained&course=searching-algorithms) isolates this phase. It gives you visit and win totals and asks you to choose the child with the highest score. In a real tree, the parent visit count is updated as simulations pass through it.
+
+## A small state model
+
+An implementation needs a state, the action that led to it, and statistics:
+
+```python
+class Node:
+    def __init__(self, state, parent=None, action=None):
+        self.state = state
+        self.parent = parent
+        self.action = action
+        self.children = []
+        self.untried_actions = legal_actions(state)
+        self.visits = 0
+        self.wins = 0
+```
+
+The state must be copied or transitioned safely during expansion and simulation. For a two-player game, decide whether `wins` is measured from the root player's perspective or the player whose turn it is; mixing those perspectives can make a good move look bad during backpropagation.
+
+## Pseudocode for an iteration
+
+```python
+def search(root, budget):
+    for _ in range(budget):
+        node = root
+
+        while node.untried_actions == [] and node.children:
+            node = max(node.children, key=ucb1)
+
+        if node.untried_actions:
+            action = node.untried_actions.pop()
+            node = expand(node, action)
+
+        result = simulate(node.state)
+        while node is not None:
+            node.visits += 1
+            node.wins += result_for(node, result)
+            node = node.parent
+
+    return max(root.children, key=lambda child: child.visits)
+```
+
+This pseudocode leaves game-specific functions such as `legal_actions`, `expand`, and `simulate` abstract. The tree grows only along states the simulations reach, which is the central advantage over building the entire game tree first.
+
+## Strengths and limitations
+
+MCTS works well when legal actions are easy to generate, simulations give a useful signal, and there is no simple exact search over the whole tree. It can focus computation on promising branches and does not need a handcrafted evaluation function as precise as minimax often does.
+
+It also has costs. Random rollouts can be noisy, simulations can be expensive, and a poor rollout policy can bias results. Tactics requiring deep, precise calculation may be missed if the simulation budget is too small. Parallel implementations must also update shared statistics carefully.
+
+## Next steps
+
+Start with the [MCTS Selection puzzle](/puzzles/mcts-selection?lesson=monte-carlo-tree-search-explained&course=searching-algorithms), then revisit [Binary Search Tree Explained](/lessons/binary-search-tree-explained) to compare a deterministic ordered tree with a probabilistic game tree. The course's [B-Tree lesson](/lessons/b-trees-explained) shows yet another tree optimized for a different workload: storage access rather than game decisions.
