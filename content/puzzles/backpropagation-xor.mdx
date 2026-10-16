@@ -1,0 +1,146 @@
+---
+title: "Backpropagation: Train XOR"
+order: 211
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "arrays"]
+tags: ["backpropagation", "gradient-checking", "xor"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  import math
+
+  def sigmoid(value):
+      return 1 / (1 + math.exp(-value))
+
+  def initial_parameters():
+      # Fixed values make every run reproducible. The two hidden neurons
+      # start differently so they can learn different features.
+      return {
+          "W1": [[-0.5, -0.5], [-0.5, -0.5]],
+          "b1": [0.5, 1.5],
+          "W2": [1.0, -1.0],
+          "b2": 0.5,
+      }
+
+  def forward(parameters, inputs):
+      z1 = []
+      hidden = []
+      for row, bias in zip(parameters["W1"], parameters["b1"]):
+          value = row[0] * inputs[0] + row[1] * inputs[1] + bias
+          z1.append(value)
+          hidden.append(sigmoid(value))
+      z2 = parameters["W2"][0] * hidden[0]
+      z2 += parameters["W2"][1] * hidden[1] + parameters["b2"]
+      return z1, hidden, sigmoid(z2)
+
+  def loss(parameters, inputs, target):
+      prediction = forward(parameters, inputs)[2]
+      prediction = min(max(prediction, 1e-12), 1 - 1e-12)
+      return -(target * math.log(prediction) +
+               (1 - target) * math.log(1 - prediction))
+
+  def backprop(parameters, inputs, target):
+      # TODO: return gradients with keys W1, b1, W2, and b2
+      # Use the sigmoid output and the chain rule from right to left.
+      pass
+
+  def copy_parameters(parameters):
+      return {
+          "W1": [row[:] for row in parameters["W1"]],
+          "b1": parameters["b1"][:],
+          "W2": parameters["W2"][:],
+          "b2": parameters["b2"],
+      }
+
+  def numerical_gradients(parameters, inputs, target):
+      step = 0.00001
+      gradients = {"W1": [[0.0, 0.0], [0.0, 0.0]],
+                   "b1": [0.0, 0.0], "W2": [0.0, 0.0], "b2": 0.0}
+
+      for group in ("W1", "b1", "W2", "b2"):
+          size = 1 if group == "b2" else len(parameters[group])
+          for i in range(size):
+              width = 1 if group in ("b1", "W2", "b2") else len(parameters[group][i])
+              for j in range(width):
+                  plus = copy_parameters(parameters)
+                  minus = copy_parameters(parameters)
+                  if group == "b2":
+                      plus[group] += step
+                      minus[group] -= step
+                  elif group == "b1" or group == "W2":
+                      plus[group][i] += step
+                      minus[group][i] -= step
+                  else:
+                      plus[group][i][j] += step
+                      minus[group][i][j] -= step
+                  value = (loss(plus, inputs, target) -
+                           loss(minus, inputs, target)) / (2 * step)
+                  if group == "b2":
+                      gradients[group] = value
+                  elif group == "b1" or group == "W2":
+                      gradients[group][i] = value
+                  else:
+                      gradients[group][i][j] = value
+      return gradients
+
+  def close_enough(left, right):
+      if isinstance(left, dict):
+          return all(close_enough(left[key], right[key]) for key in left)
+      if isinstance(left, list):
+          return all(close_enough(a, b) for a, b in zip(left, right))
+      return abs(left - right) < 0.0001
+
+  def update(parameters, gradients, rate):
+      for i in range(2):
+          for j in range(2):
+              parameters["W1"][i][j] -= rate * gradients["W1"][i][j]
+          parameters["b1"][i] -= rate * gradients["b1"][i]
+          parameters["W2"][i] -= rate * gradients["W2"][i]
+      parameters["b2"] -= rate * gradients["b2"]
+
+  def train(epochs, rate):
+      parameters = initial_parameters()
+      examples = [([0.0, 0.0], 0.0), ([0.0, 1.0], 1.0),
+                  ([1.0, 0.0], 1.0), ([1.0, 1.0], 0.0)]
+      for _ in range(epochs):
+          for inputs, target in examples:
+              update(parameters, backprop(parameters, inputs, target), rate)
+      return parameters
+
+  epochs, rate = input().split()
+  epochs = int(epochs)
+  rate = float(rate)
+  parameters = initial_parameters()
+  analytic = backprop(parameters, [1.0, 0.0], 1.0)
+  numeric = numerical_gradients(parameters, [1.0, 0.0], 1.0)
+  checked = close_enough(analytic, numeric)
+
+  trained = train(epochs, rate)
+  examples = [([0.0, 0.0], 0), ([0.0, 1.0], 1),
+              ([1.0, 0.0], 1), ([1.0, 1.0], 0)]
+  correct = 0
+  for inputs, target in examples:
+      guess = 1 if forward(trained, inputs)[2] > 0.5 else 0
+      correct += guess == target
+  print("pass" if checked and correct == 4 else "try again")
+testCases:
+  - input: "6000 1.0"
+    expected: "pass"
+    hidden: false
+  - input: "10000 0.5"
+    expected: "pass"
+    hidden: true
+  - input: "8000 0.75"
+    expected: "pass"
+    hidden: true
+---
+
+Implement `backprop(parameters, inputs, target)`. Return a dictionary with the same four groups as the parameters: `W1`, `b1`, `W2`, and `b2`.
+
+The output layer uses binary cross-entropy with sigmoid, so its error starts with `prediction - target`. Send that error backward through `W2`, then multiply each hidden error by `hidden * (1 - hidden)`. A weight gradient is the error at its destination multiplied by the value at its source; a bias gradient is the destination error itself.
+
+The checker compares your result with a centered numerical gradient. After that check, the training loop visits all four XOR examples and subtracts `rate * gradient` from every parameter. The final result must classify all four rows correctly.
+
+> [!TIP]
+> `forward` returns `z1`, `hidden`, and the prediction. Reuse those values instead of recalculating them. Work out the output neuron first, then one hidden neuron at a time.

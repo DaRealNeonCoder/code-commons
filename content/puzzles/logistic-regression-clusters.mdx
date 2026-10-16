@@ -1,0 +1,60 @@
+---
+title: "Logistic Regression: Clusters"
+order: 208
+available: true
+areas: ["algorithms"]
+topics: ["math", "probability"]
+tags: ["logistic-regression", "sigmoid", "classification"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  import math
+
+  def sigmoid(z):
+      # TODO: turn a score into a value between 0 and 1
+      pass
+
+  def binary_cross_entropy(rows, weights, bias):
+      # TODO: average -[y log(p) + (1-y) log(1-p)]
+      pass
+
+  def train(rows, learning_rate, epochs):
+      # TODO: update weights with average (probability - label) * feature
+      pass
+
+  rows = [([-2, -1], 0), ([-1, -2], 0), ([-2, 1], 0),
+          ([-1, 1], 0), ([1, 1], 1), ([2, 1], 1),
+          ([1, 2], 1), ([2, 2], 1)]
+  learning_rate, epochs = input().split()
+  weights, bias = train(rows, float(learning_rate), int(epochs))
+  correct = 0
+  for features, label in rows:
+      score = sum(value * weight for value, weight in zip(features, weights)) + bias
+      correct += (1 if sigmoid(score) >= 0.5 else 0) == label
+  accuracy = correct / len(rows)
+  print("pass" if accuracy >= 0.95 else "try again")
+testCases:
+  - input: "0.5 200"
+    expected: "pass"
+    hidden: false
+  - input: "0.2 400"
+    expected: "pass"
+    hidden: true
+  - input: "1.0 150"
+    expected: "pass"
+    hidden: true
+---
+
+Complete `sigmoid`, `binary_cross_entropy`, and `train`. The fixed data contains two linearly separable clusters. The input supplies a learning rate and an epoch count.
+
+Start weights and the bias at zero. For each epoch, calculate probabilities with the sigmoid, then update using the classification gradient:
+
+```text
+gradient_w[j] = average((probability - label) × feature[j])
+gradient_b    = average(probability - label)
+```
+
+Print `pass` when the trained classifier reaches at least 95% accuracy. `binary_cross_entropy` is included so you can inspect the loss while debugging. Clamp a probability to a tiny interval such as `[1e-15, 1 - 1e-15]` before using `math.log`.
+
+> [!TIP]
+> The score is `dot(features, weights) + bias`. Apply the sigmoid to that score. For label `1`, a high probability is good; for label `0`, a low probability is good.

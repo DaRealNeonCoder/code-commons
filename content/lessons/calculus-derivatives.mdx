@@ -1,0 +1,81 @@
+---
+title: "Calculus I: Derivatives"
+order: 203
+summary: "Read a derivative as a slope, estimate it with nearby points, and walk toward the bottom of a simple curve."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math"]
+tags: ["derivatives", "calculus"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["numerical-derivative"]
+---
+
+Calculus helps us describe change. The first useful idea is the **derivative**: the slope of a function at one point.
+
+If a graph is a hill, the derivative tells you which way the hill is leaning and how steep it is:
+
+- positive derivative: the graph rises as you move right;
+- negative derivative: the graph falls;
+- zero derivative: the graph is flat at that point.
+
+The same idea describes speed. If position changes over time, its derivative is speed.
+
+## A nearby-points estimate
+
+For a small step `h`, look just to the right of `x`:
+
+```text
+derivative ≈ (f(x + h) - f(x)) / h
+```
+
+This is the slope of a short line between two points. As `h` gets smaller, the estimate usually gets closer to the exact slope. This “getting closer” is the limit intuition behind calculus; you can use the idea without doing anything mysterious with infinity.
+
+In Python:
+
+```python
+def numerical_derivative(f, x, h=0.00001):
+    return (f(x + h) - f(x)) / h
+```
+
+For the parabola `f(x) = x²`, the derivative at `x = 3` is about `6`.
+
+## Three rules worth knowing
+
+You can often find derivatives without estimating:
+
+| Rule | Example |
+| --- | --- |
+| Power rule | `d(xⁿ)/dx = n × xⁿ⁻¹` |
+| Sum rule | derivative of `f + g` is `f' + g'` |
+| Product rule | derivative of `f × g` is `f' × g + f × g'` |
+
+The power rule says the derivative of `x²` is `2x`. At `x = 3`, that is `6`, matching the nearby-points estimate.
+
+## Walking downhill
+
+Suppose our curve is:
+
+```python
+def bowl(x):
+    return (x - 3) ** 2 + 2
+```
+
+Its lowest point is at `x = 3`. If we are somewhere else, subtracting a small amount of the derivative moves us downhill:
+
+```python
+x = x - learning_rate * numerical_derivative(bowl, x)
+```
+
+The `learning_rate` is the size of each step. Small steps are safe but slow. Very large steps can jump over the bottom.
+
+> [!TIP]
+> A derivative is a direction hint, not a destination. Repeating small updates is what gets us near the minimum.
+
+## A quick math puzzle
+
+For `f(x) = (x - 3)² + 2`, which starting point has a negative slope: `x = 1`, `x = 3`, or `x = 5`? The answer is `x = 1`, because the curve is falling as it heads toward the bottom.
+
+## Practice
+
+In the [Numerical Derivative puzzle](/puzzles/numerical-derivative?lesson=calculus-derivatives&course=intro-to-ai-machine-learning), implement `numerical_derivative` and use it to take a few downhill steps on the parabola. The puzzle keeps the function fixed so you can focus on the derivative idea.

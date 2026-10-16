@@ -1,0 +1,77 @@
+---
+title: "Multivariable Calculus: Partial Derivatives and Gradients"
+order: 205
+summary: "Measure change one input at a time and combine those slopes into a direction that points uphill."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "matrices"]
+tags: ["gradients", "partial-derivatives"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["numerical-gradient"]
+---
+
+So far our functions had one input. A model usually has many inputs: pixel values, sizes, temperatures, or other features.
+
+Consider:
+
+```text
+f(x, y) = x² + 2y²
+```
+
+Changing `x` and changing `y` can affect the answer by different amounts.
+
+## Partial derivatives
+
+A **partial derivative** changes one input while pretending the others are frozen:
+
+- `∂f/∂x` asks, “What happens if I nudge `x`?”
+- `∂f/∂y` asks, “What happens if I nudge `y`?”
+
+For the example above:
+
+```text
+∂f/∂x = 2x
+∂f/∂y = 4y
+```
+
+You can estimate either one with the same nearby-points idea. Change only one coordinate:
+
+```python
+def partial_x(f, x, y, h=0.00001):
+    return (f(x + h, y) - f(x, y)) / h
+```
+
+## The gradient
+
+Put all the partial derivatives into a vector:
+
+```text
+gradient(f)(x, y) = [∂f/∂x, ∂f/∂y]
+```
+
+For `f(x, y) = x² + 2y²`, the gradient at `(1, -2)` is `[2, -8]`.
+
+This vector points in the direction where the function rises fastest. To go downhill, move in the opposite direction. That is the bridge from calculus to machine learning.
+
+## Contour maps
+
+A contour map draws lines where a function has the same height, like lines on a hiking map. Close lines mean a steep slope; wide lines mean a gentle slope. Gradient arrows cross contour lines at right angles and point toward higher values.
+
+We are keeping this course friendly to a browser code runner, so the puzzle checks the arrows' numbers instead of asking you to install a plotting library. You can sketch the bowl on paper: the farther from `(0, 0)`, the higher it is, and the gradient points away from the center.
+
+## A direction puzzle
+
+At `(1, -2)`, the gradient `[2, -8]` says:
+
+- increase `x` to go uphill in the `x` direction;
+- decrease `y` to go uphill in the `y` direction.
+
+Which direction is downhill? Reverse the arrow: `[-2, 8]`.
+
+> [!TIP]
+> “Partial” means one input at a time. “Gradient” means all those one-input slopes collected together.
+
+## Practice
+
+In the [Numerical Gradient puzzle](/puzzles/numerical-gradient?lesson=gradients-and-partial-derivatives&course=intro-to-ai-machine-learning), implement a gradient solver that works for any function represented as `f(point)`. The sample function is a small bowl, and the output lets you check that your arrow points uphill.

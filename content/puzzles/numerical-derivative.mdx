@@ -1,0 +1,47 @@
+---
+title: "Numerical Derivative"
+order: 203
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math"]
+tags: ["derivatives"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def bowl(x):
+      return (x - 3) ** 2 + 2
+
+  def numerical_derivative(f, x, h=0.00001):
+      # TODO: estimate the slope using two nearby points
+      pass
+
+  def walk_downhill(x, learning_rate, steps):
+      for _ in range(steps):
+          slope = numerical_derivative(bowl, x)
+          x = x - learning_rate * slope
+      return x
+
+  start, learning_rate, steps = input().split()
+  x = walk_downhill(float(start), float(learning_rate), int(steps))
+  print(f"{x:.3f} {bowl(x):.3f}")
+testCases:
+  - input: "0 0.5 1"
+    expected: "3.000 2.000"
+    hidden: false
+  - input: "0 0.25 2"
+    expected: "2.250 2.562"
+    hidden: true
+  - input: "6 0.5 1"
+    expected: "3.000 2.000"
+    hidden: true
+  - input: "0 0.1 10"
+    expected: "2.678 2.104"
+    hidden: true
+---
+
+Implement `numerical_derivative(f, x)`. Estimate the slope by comparing `f(x + h)` and `f(x)`, where `h` is a very small step.
+
+The rest of the starter code uses your slope to walk downhill on `f(x) = (x - 3)² + 2`. Print the final position and function value. They are rounded to three decimal places so tiny floating-point differences are not a problem.
+
+> [!TIP]
+> The estimate is `(f(x + h) - f(x)) / h`. Do not forget to divide by `h`.

@@ -3,12 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import TextBlockEditor, { newTextBlock } from "@/components/creator/TextBlockEditor";
+import ReactDemoEditor, { withReactDemoIds } from "@/components/creator/ReactDemoEditor";
 import { blocksToMarkdown } from "@/lib/blocksToMarkdown";
 import FilterFields from "@/components/filters/FilterFields";
 import useProjectAutosave from "@/components/creator/useProjectAutosave";
 import usePublishState from "@/components/creator/usePublishState";
 import ProjectBar from "@/components/creator/ProjectBar";
 import { normalizePuzzleRefs } from "@/lib/puzzleRefs";
+import { hasReactDemoCode, normalizeReactDemos, REACT_DEMO_PUBLISH_ERROR } from "@/lib/reactDemo";
 
 const smallButton =
   "rounded border border-zinc-300 px-2.5 py-1.5 font-mono text-sm text-zinc-500 hover:text-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 disabled:opacity-40 dark:border-zinc-700 dark:hover:text-zinc-200";
@@ -39,6 +41,7 @@ export default function LessonCreator({
       ? saved.blocks
       : [newTextBlock({ size: "title", bold: true }), newTextBlock({ size: "normal" })]
   );
+  const [reactDemos, setReactDemos] = useState(() => withReactDemoIds(normalizeReactDemos(saved.reactDemos)));
 
   const [status, setStatus] = useState(null); // null | "saving" | { ok } | { error }
 
@@ -91,6 +94,7 @@ export default function LessonCreator({
     tags,
     languages,
     difficulty,
+    reactDemos,
   };
 
   const saveState = useProjectAutosave({
@@ -125,6 +129,10 @@ export default function LessonCreator({
 
   async function handlePublish() {
     const snap = JSON.stringify({ title, data: draftData });
+    if (hasReactDemoCode(reactDemos)) {
+      setStatus({ error: REACT_DEMO_PUBLISH_ERROR });
+      return;
+    }
     setStatus("saving");
 
     try {
@@ -142,6 +150,7 @@ export default function LessonCreator({
           languages,
           puzzles: puzzleIds,
           blocks,
+          reactDemos,
         }),
       });
 
@@ -356,6 +365,8 @@ export default function LessonCreator({
           </section>
 
           <TextBlockEditor blocks={blocks} onChange={setBlocks} accent="amber" />
+
+          <ReactDemoEditor demos={reactDemos} onChange={setReactDemos} accent="amber" />
 
           <details className="mt-6 rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
             <summary className="cursor-pointer select-none font-mono text-sm text-zinc-500">

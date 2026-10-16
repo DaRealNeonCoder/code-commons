@@ -1,0 +1,49 @@
+---
+title: "Gradient Descent: Tune the Knob"
+order: 206
+available: true
+areas: ["algorithms"]
+topics: ["math"]
+tags: ["gradient-descent", "learning-rate"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def bowl(w):
+      return (w - 4) ** 2
+
+  def gradient(w):
+      # TODO: return the slope of the bowl at w
+      pass
+
+  def descend(start, learning_rate, steps):
+      w = start
+      for _ in range(steps):
+          w = w - learning_rate * gradient(w)
+      return w
+
+  start, learning_rate, steps = input().split()
+  w = descend(float(start), float(learning_rate), int(steps))
+  print(f"{w:.3f} {bowl(w):.3f}")
+testCases:
+  - input: "0 0.5 1"
+    expected: "4.000 0.000"
+    hidden: false
+  - input: "0 0.25 4"
+    expected: "3.750 0.062"
+    hidden: true
+  - input: "0 0.75 2"
+    expected: "3.000 1.000"
+    hidden: true
+  - input: "8 0.5 1"
+    expected: "4.000 0.000"
+    hidden: true
+---
+
+Complete `gradient(w)` for the bowl `f(w) = (w - 4)²`, then use the update loop already provided.
+
+The input is a starting point, a learning rate, and a number of steps. Print the final point and its bowl value, rounded to three decimal places.
+
+Try changing the learning rate after the tests pass. A very small rate crawls. A rate above `1` can overshoot back and forth. The goal is not to memorize `0.5`; it is to learn how to tune the knob for a surface.
+
+> [!TIP]
+> The derivative of `(w - 4)²` is `2 × (w - 4)`. At `w = 4`, the slope is zero, so there is no reason to move.

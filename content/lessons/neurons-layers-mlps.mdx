@@ -1,0 +1,75 @@
+---
+title: "Neurons, Layers, and MLPs"
+order: 210
+summary: "Build a small neural network from weighted sums, biases, and simple activation functions."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "arrays"]
+tags: ["neurons", "mlp", "activations", "xor"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["xor-and-mlp-forward-pass"]
+---
+
+A **neuron** is a small function that turns several input numbers into one output number. It starts by giving each input a weight:
+
+```text
+z = (x₁ × w₁) + (x₂ × w₂) + ... + b
+```
+
+The value `b` is the **bias**. It lets the neuron move its decision point even when all inputs are zero. The weighted sum `z` is sometimes called the neuron's pre-activation.
+
+## Activations
+
+An activation function changes the weighted sum before it is passed on. Two common choices are:
+
+```python
+import math
+
+def sigmoid(z):
+    return 1 / (1 + math.exp(-z))
+
+def relu(z):
+    return max(0, z)
+```
+
+**Sigmoid** turns any number into a value between `0` and `1`, which is useful for a probability-like output. **ReLU** keeps positive values and replaces negative values with zero. ReLU is simple and helps hidden layers represent bends and corners.
+
+## Layers and matrices
+
+One neuron makes one output. A **layer** is a group of neurons, so it can be written as a matrix of weights and a vector of biases:
+
+```text
+hidden = activation(W × input + bias)
+```
+
+For each row in `W`, take a dot product with the input and add the matching bias. The output of one layer becomes the input of the next layer. A network with an input layer, one or more hidden layers, and an output layer is often called a **multi-layer perceptron**, or **MLP**.
+
+The calculation happens from left to right. This is the **forward pass**:
+
+1. Compute each hidden neuron's weighted sum.
+2. Apply the hidden activation, such as ReLU.
+3. Compute the output neuron's weighted sum from the hidden values.
+4. Apply the output activation, such as sigmoid.
+
+Keeping these steps separate makes the shapes easier to check. If the input has length 2 and a layer has 2 neurons, its weight matrix has 2 rows and 2 columns.
+
+## Why XOR needs a hidden layer
+
+The XOR rule is `1` when exactly one input is `1`:
+
+| Input | XOR |
+| --- | ---: |
+| `0, 0` | 0 |
+| `0, 1` | 1 |
+| `1, 0` | 1 |
+| `1, 1` | 0 |
+
+A single straight-line neuron cannot separate the two `1` rows from the two `0` rows. Two hidden neurons can make intermediate features, such as “at least one input is on” and “both inputs are on.” The output neuron can combine those features to make XOR.
+
+> [!TIP]
+> A neural network is a sequence of small, inspectable calculations. When a prediction looks wrong, print the weighted sums and activations one layer at a time.
+
+## Practice
+
+In the [XOR and MLP Forward Pass puzzle](/puzzles/xor-and-mlp-forward-pass?lesson=neurons-layers-mlps&course=intro-to-ai-machine-learning), implement a weighted sum and matrix-vector pass. The fixed network uses ReLU in its hidden layer and sigmoid at the output, then classifies the four XOR inputs.

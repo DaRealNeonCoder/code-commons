@@ -1,0 +1,108 @@
+---
+title: "Matrices and Matrix Multiplication"
+order: 202
+summary: "Treat tables of numbers as data and transformations, then multiply them with simple loops."
+available: true
+areas: ["data-structures"]
+topics: ["math", "matrices", "arrays"]
+tags: ["matrix-multiplication", "transpose"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["matrix-multiplication-basics"]
+---
+
+A **matrix** is a table of numbers. A spreadsheet, a grayscale image, and a batch of measurements can all be stored as matrices.
+
+```text
+1  2  3
+4  5  6
+```
+
+This matrix has 2 rows and 3 columns, so its **shape** is `(2, 3)`. In Python, it is a list of rows:
+
+```python
+table = [[1, 2, 3], [4, 5, 6]]
+```
+
+## Matrix-vector multiplication
+
+Multiplying a matrix by a vector applies each row to the vector with a dot product. For example:
+
+```text
+[1  2]   [10]   [1×10 + 2×20]   [50]
+[3  4] × [20] = [3×10 + 4×20] = [110]
+```
+
+The `(2, 2)` matrix turns a length-2 vector into another length-2 vector. This is one reason matrices are useful in machine learning: a matrix can transform many numbers at once.
+
+## Matrix multiplication
+
+For `A × B`, the **inside** dimensions must match:
+
+```text
+(rows, columns) × (rows, columns)
+       (2, 3)   ×   (3, 2)     works
+```
+
+The result keeps the **outside** dimensions, `(2, 2)`. Each result cell is one dot product: take a row from `A` and a column from `B`.
+
+```python
+def matmul(a, b):
+    result = []
+    for row in a:
+        new_row = []
+        for column in range(len(b[0])):
+            total = 0
+            for inner in range(len(b)):
+                total += row[inner] * b[inner][column]
+            new_row.append(total)
+        result.append(new_row)
+    return result
+```
+
+The middle loop is the important one: it walks across a row and down a column, multiplying matching values.
+
+## Transpose
+
+The **transpose** swaps rows and columns:
+
+```text
+1  2  3        1  4
+4  5  6   →    2  5
+               3  6
+```
+
+In symbols, `Aᵀ` is read “A transpose.” Transposing is a handy way to turn the columns of a matrix into rows.
+
+## NumPy and broadcasting
+
+NumPy provides a fast version of these operations:
+
+```python
+import numpy as np
+
+A = np.array([[1, 2, 3], [4, 5, 6]])
+B = np.array([[7, 8], [9, 10], [11, 12]])
+print(A @ B)       # matrix multiplication
+print(A + 10)      # add 10 to every cell
+print(A + [10, 20, 30])  # add by column: broadcasting
+```
+
+**Broadcasting** lets NumPy reuse a smaller shape when the shapes line up. It is convenient, but it does not remove the shape rules. `A + [10, 20]` is not valid for this `(2, 3)` matrix because the widths disagree.
+
+## Shape detective
+
+When a pipeline breaks, read the shapes from left to right. Here are three common bugs:
+
+1. `(2, 3) @ (2, 2)` fails: the inside values `3` and `2` differ.
+2. `(2, 3) + (2,)` fails: a length-2 row cannot be broadcast across 3 columns.
+3. `(3, 2) @ (3,)` fails: a `(3, 2)` matrix expects a length-2 vector.
+
+The fixes are to reshape or transpose the data so the inside dimensions match, and to make the broadcasted vector match the dimension being repeated. This is a useful habit: write the shape next to every intermediate value.
+
+> [!TIP]
+> Matrix multiplication is not “multiply every cell by every other cell.” It is a collection of row-by-column dot products.
+
+## Practice
+
+In the [Matrix Multiplication Basics puzzle](/puzzles/matrix-multiplication-basics?lesson=matrices-and-multiplication&course=intro-to-ai-machine-learning), write `matmul` with plain loops. The input contains two matrices, and your output should contain their product. The shape detective examples above are the math puzzle for this lesson.

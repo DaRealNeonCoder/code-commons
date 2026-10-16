@@ -1,0 +1,62 @@
+---
+title: "Gradient Descent"
+order: 206
+summary: "Use a gradient, a learning rate, and repeated updates to find a low point."
+available: true
+areas: ["algorithms"]
+topics: ["math"]
+tags: ["gradient-descent", "learning-rate"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["gradient-descent-tune-the-knob"]
+---
+
+**Gradient descent** is a repeatable way to search for a low value. Imagine standing on a smooth hill in the fog. You can feel which way is uphill, so you take a small step in the opposite direction.
+
+For one number `w`, the update is:
+
+```text
+w = w - learning_rate × gradient
+```
+
+For many numbers, `w` is a vector and `gradient` is a gradient vector. The rule is the same.
+
+## The learning rate
+
+The **learning rate** controls the step size:
+
+- too small: safe, but many steps;
+- just right: moves quickly toward the bottom;
+- too large: jumps past the bottom, or can bounce forever.
+
+Try the bowl `f(w) = (w - 4)²`. Its bottom is at `w = 4`. Starting at `0`, a learning rate of `0.25` moves close to the bottom in a few updates.
+
+## Convergence
+
+When the updates become tiny and the function value stops improving, we say the process **converged**. It may not land on the exact answer because we usually stop after a fixed number of steps or when the change is small enough.
+
+```python
+for step in range(20):
+    w = w - learning_rate * gradient(w)
+```
+
+In a real model, the “function value” is called a **loss**. Training tries to make the loss smaller by changing the model's weights.
+
+## Local minima and bumpy surfaces
+
+A smooth bowl has one clear lowest point. A bumpy function can have several low points. Gradient descent may settle in a nearby **local minimum** rather than the absolute lowest point. Different starting points and learning rates can lead to different paths.
+
+We will not build a full plotting tool in this first section. Instead, use a number line as a mini surface: write down `w`, its gradient, and the next `w` after each step. Watch whether the distance to the target shrinks.
+
+## Tune-the-knob math puzzle
+
+Start at `w = 0` for `f(w) = (w - 4)²`. Which learning rate reaches the lowest value in under 20 steps?
+
+Try these by hand or in the puzzle: `0.01`, `0.25`, `0.5`, and `1.1`. A rate can be too cautious or too jumpy. There is not one magic rate for every surface; tuning is part of using an optimizer.
+
+> [!TIP]
+> Gradient descent is not guessing a new answer from scratch. It makes a small correction based on the slope it can see right now.
+
+## Practice
+
+In the [Gradient Descent: Tune the Knob puzzle](/puzzles/gradient-descent-tune-the-knob?lesson=gradient-descent&course=intro-to-ai-machine-learning), implement the update loop for the bowl and print where you end. Try more than one learning rate after your submission. The bumpy-surface discussion is a paper experiment for now; we will use it again when the course reaches models.

@@ -1,0 +1,94 @@
+---
+title: "Vectors and Dot Products"
+order: 201
+summary: "Use short lists of numbers to describe things, compare them, and find a similar song."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "arrays"]
+tags: ["vectors", "dot-product"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["vectors-and-similarity"]
+---
+
+A **vector** is a list of numbers. That is all it is at first.
+
+The list `[3, 1, 4]` might describe a song with 3 minutes of length, 1 loudness unit, and 4 dance units. It could also describe a row of pixels or a house with three measurements. The meaning comes from what each position represents.
+
+## Length and direction
+
+The number of items is the vector's **length** (also called its dimension). `[3, 1, 4]` has length 3.
+
+You can picture a vector as an arrow. Its numbers tell us how far the arrow moves along each axis. You do not need to draw the arrow to use it in code:
+
+```python
+song = [3, 1, 4]
+print(len(song))  # 3
+```
+
+## The dot product
+
+The **dot product** combines two vectors by multiplying matching positions and adding the results:
+
+```text
+[2, 3] · [4, 5] = (2 × 4) + (3 × 5) = 23
+```
+
+In Python, a loop makes the matching easy to see:
+
+```python
+def dot(a, b):
+    total = 0
+    for left, right in zip(a, b):
+        total += left * right
+    return total
+```
+
+Both vectors need the same length. If one describes three features and the other describes four, there is no matching partner for one of the numbers.
+
+## Cosine similarity
+
+The dot product grows when vectors point in a similar direction, but a longer vector can also make it larger. **Cosine similarity** focuses on direction instead of size:
+
+```text
+cosine_similarity(a, b) = dot(a, b) / (length(a) × length(b))
+```
+
+For a vector `[x, y]`, its length is `sqrt(x² + y²)`. In Python:
+
+```python
+import math
+
+def cosine_similarity(a, b):
+    denominator = math.sqrt(dot(a, a) * dot(b, b))
+    if denominator == 0:
+        return 0
+    return dot(a, b) / denominator
+```
+
+The result is usually between `-1` and `1`:
+
+- `1` means the arrows point the same way.
+- `0` means they have no direction in common.
+- `-1` means they point in opposite directions.
+
+This is useful for recommendations. A song can be represented by features such as calmness, energy, and acoustic sound. Compare a listener's favorite-song vector with each song vector, then choose the largest cosine similarity.
+
+> [!TIP]
+> The dot product is a “matching score.” Cosine similarity is the same idea with a correction for vector size.
+
+## A small paper puzzle
+
+Before coding, compare `[1, 1, 0]` with these feature vectors:
+
+| Song | Features |
+| --- | --- |
+| Rain | `[1, 0, 0]` |
+| Sun | `[1, 1, 0]` |
+| Night | `[0, 0, 1]` |
+
+Which song points in the same direction as the listener's vector? The answer should be **Sun**. The coding puzzle asks your functions to make that choice.
+
+## Practice
+
+In the [Vectors and Similarity puzzle](/puzzles/vectors-and-similarity?lesson=vectors-and-dot-products&course=intro-to-ai-machine-learning), implement `dot` and `cosine_similarity`, then use them to choose the most similar song. The puzzle uses plain Python lists, so no library is needed yet.

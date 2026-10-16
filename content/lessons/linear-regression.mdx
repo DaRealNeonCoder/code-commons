@@ -1,0 +1,83 @@
+---
+title: "Linear Regression"
+order: 207
+summary: "Use a line, mean squared error, and feature scaling to predict a number."
+available: true
+areas: ["algorithms"]
+topics: ["math", "arrays"]
+tags: ["linear-regression", "mse", "feature-scaling"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["linear-regression-bike-prices"]
+---
+
+**Linear regression** predicts a number by combining input features with weights. For one feature, the model is a line:
+
+```text
+prediction = weight × feature + bias
+```
+
+The **bias** moves the line up or down. The **weight** controls how much the feature changes the prediction. For example, a small bike might have a price estimated from its age and distance ridden.
+
+## Measuring the miss
+
+The difference between a prediction and the real value is an **error**. A common loss for regression is **mean squared error (MSE)**:
+
+```text
+MSE = (error₁² + error₂² + ... + errorₙ²) / n
+```
+
+Squaring makes every miss positive and makes large misses matter more. An MSE of `0` means every prediction matched its target in the examples being measured.
+
+## Several features at once
+
+With several features, a row of data is a vector `x` and the weights are another vector `w`. The model uses a dot product:
+
+```text
+prediction = x · w + bias
+```
+
+For a whole table, this is often written in vectorized form:
+
+```text
+predictions = Xw + b
+```
+
+Here `X` is the feature table, `w` is the weight vector, and `b` is the bias. “Vectorized” means describing the operation for the whole collection instead of writing a separate formula for each row. A Python loop can still implement the same idea clearly.
+
+## The gradient of the loss
+
+For one row, call the prediction error `e = prediction - target`. Since MSE squares that error, the useful slopes are:
+
+```text
+gradient_w[j] = 2 × average(e × feature[j])
+gradient_b    = 2 × average(e)
+```
+
+Each feature gets more blame when it is large and the prediction is far from the target. The bias gets the average blame. Gradient descent then updates every parameter in the downhill direction:
+
+```text
+w[j] = w[j] - learning_rate × gradient_w[j]
+b    = b    - learning_rate × gradient_b
+```
+
+This is the same recipe as the bowl from Part A, now applied to a table of examples.
+
+## A scaling bug
+
+Suppose one feature is bike weight in kilograms, usually between `8` and `20`, and another is distance in meters, often between `1` and `10,000`. During training, the large-number feature can produce much larger gradients. The model may spend its updates reacting to distance while barely learning from weight.
+
+**Feature scaling** puts features on more similar ranges. A simple option is:
+
+```text
+scaled value = (value - mean) / standard deviation
+```
+
+Calculate the mean and standard deviation from the training data, then use those same values for later data. Scaling does not change the underlying information; it helps the optimizer take balanced steps. Forgetting to scale new data with the training values is another common bug.
+
+> [!TIP]
+> A prediction is a dot product plus a bias. MSE tells you how far predictions are from the targets. Scaling helps training pay attention to each feature fairly.
+
+## Practice
+
+In the [Linear Regression: Bike Prices puzzle](/puzzles/linear-regression-bike-prices?lesson=linear-regression&course=intro-to-ai-machine-learning), train weights with gradient descent and compare the result with the predict-the-average baseline. After it passes, inspect which feature would dominate if one bike measurement were recorded in much larger units.

@@ -1,0 +1,55 @@
+---
+title: "Tune MLP Hyperparameters"
+order: 213
+available: true
+areas: ["algorithms"]
+topics: ["math", "arrays"]
+tags: ["hyperparameters", "regularization", "mlp", "overfitting"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def objective(model, alpha):
+      # Each model is (name, hidden_units, learning_rate, epochs,
+      #                train_loss, validation_loss).
+      # TODO: add alpha times hidden_units to validation_loss.
+      pass
+
+  def choose_model(models, alpha):
+      # TODO: return the name with the smallest objective.
+      # If objectives tie, choose the alphabetically first name.
+      pass
+
+  alpha, count = input().split()
+  models = []
+  for _ in range(int(count)):
+      name, hidden, rate, epochs, train_loss, validation_loss = input().split()
+      models.append((name, int(hidden), float(rate), int(epochs),
+                     float(train_loss), float(validation_loss)))
+
+  print(choose_model(models, float(alpha)))
+testCases:
+  - input: "0.02 3\nsmall 2 0.01 100 0.40 0.30\nwide 8 0.01 100 0.18 0.18\nmedium 4 0.02 80 0.22 0.23"
+    expected: "medium"
+    hidden: false
+  - input: "0.05 3\ntiny 2 0.01 60 0.48 0.45\nbalanced 4 0.02 100 0.30 0.27\nlarge 8 0.01 200 0.12 0.15"
+    expected: "balanced"
+    hidden: true
+  - input: "0.00 2\nalpha 3 0.01 50 0.20 0.25\nbeta 6 0.10 20 0.30 0.25"
+    expected: "alpha"
+    hidden: true
+---
+
+Complete `objective` and `choose_model`. The first input value is the regularization strength `alpha`. Each following row describes one already-evaluated candidate: its name, hidden-unit count, learning rate, epoch count, training loss, and validation loss.
+
+Use this score:
+
+```text
+validation_loss + alpha × hidden_units
+```
+
+Choose the smallest score. If two scores tie, choose the alphabetically first name so the answer is deterministic. The learning rate, epochs, and training loss are included to make the hyperparameter comparison visible; the supplied validation loss already reflects those choices.
+
+This is a tiny stand-in for comparing `MLPClassifier` configurations. It uses a validation result and a complexity penalty rather than importing scikit-learn, plotting a graph, or using random training.
+
+> [!TIP]
+> A model with the lowest training loss is not automatically the best model. The validation loss estimates how well a choice works on examples it did not train on.

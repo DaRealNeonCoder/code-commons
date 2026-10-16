@@ -1,0 +1,30 @@
+---
+title: "React Demo Test Lesson"
+order: 216
+summary: "A small test lesson showing an interactive React component inside lesson content."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+puzzles: []
+---
+
+# React demos
+
+This lesson is a small integration test for interactive lesson examples. The component below runs inside a restricted preview frame, so clicking it changes the demo without changing the lesson page.
+
+<ReactDemo
+  title="A stateful counter"
+  code={`function Demo() {
+  const [count, setCount] = React.useState(0);
+  return React.createElement(
+    "button",
+    { onClick: () => setCount(count + 1) },
+    "Clicked " + count + " times"
+  );
+}`}
+/>
+
+The creator can save the same kind of code in a draft and preview it. Publishing creator-authored React demos is intentionally disabled until the execution boundary has completed security validation.

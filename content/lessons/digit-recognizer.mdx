@@ -1,0 +1,74 @@
+---
+title: "A Tiny Digit Recognizer"
+order: 212
+summary: "Represent 8×8 images as pixels, train a softmax classifier in mini-batches, and measure its accuracy."
+available: true
+areas: ["algorithms"]
+topics: ["arrays", "math", "probability"]
+tags: ["pixels", "softmax", "mini-batches", "classification"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["digit-recognizer-8x8"]
+---
+
+An image can be a matrix of pixel brightness values. For a small grayscale digit, each pixel can be a number from `0` (dark) to `1` (bright). An `8 × 8` image has 64 values. A simple classifier can store those values in one flat list:
+
+```python
+pixels = [0, 1, 1, 0, ...]  # 64 values, row by row
+label = 2
+```
+
+The **label** is the answer we want the model to learn. Training examples contain both pixels and labels. A test example keeps its label hidden while the model makes a prediction.
+
+## Scores and softmax
+
+For three possible digits, a linear layer makes three raw scores, or **logits**:
+
+```text
+logit[c] = (weights[c] · pixels) + bias[c]
+```
+
+The largest logit is a useful first guess, but logits are not probabilities. **Softmax** turns all of them into non-negative values that add to `1`:
+
+```text
+softmax(zᵢ) = exp(zᵢ) / sum(exp(zⱼ))
+```
+
+Subtract the largest logit before calling `exp`. Every probability stays the same, but this makes large values safer for a computer:
+
+```python
+largest = max(logits)
+values = [math.exp(value - largest) for value in logits]
+total = sum(values)
+probabilities = [value / total for value in values]
+```
+
+The predicted digit is the index of the largest probability. With a one-hot label, the training signal for class `c` is `probability[c] - 1` for the correct class and `probability[c]` for the others.
+
+## Mini-batches
+
+Updating after every one example can make the path noisy. Updating after the entire dataset can use more memory and can react slowly to new data. A **mini-batch** is a small group of examples:
+
+1. Start gradient totals at zero.
+2. Add each example's gradient to the totals.
+3. Divide by the batch size.
+4. Update the weights and biases once.
+
+Repeat this for each batch and for several **epochs**. An epoch is one pass through the training examples. The puzzle uses a tiny, fixed data set and plain Python lists so the process is visible in the browser.
+
+## Evaluation
+
+Accuracy is:
+
+```text
+correct predictions / total test examples
+```
+
+It is important to evaluate on examples that were not used for the updates. A score above 90% on a small test set is encouraging, but it is not proof that a recognizer will work on every handwriting style. More varied data and a separate validation set would be needed for a real system.
+
+> [!TIP]
+> Keep the data roles clear: pixels are inputs, labels are answers, logits are raw model scores, and softmax probabilities are the model's class guesses.
+
+## Practice
+
+In the [8×8 Digit Recognizer puzzle](/puzzles/digit-recognizer-8x8?lesson=digit-recognizer&course=intro-to-ai-machine-learning), implement stable softmax and the gradient totals for a mini-batch. The checker trains a deterministic three-class model and requires at least 90% test accuracy.

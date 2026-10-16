@@ -1,0 +1,64 @@
+---
+title: "XOR and an MLP Forward Pass"
+order: 210
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "arrays"]
+tags: ["neurons", "mlp", "forward-pass", "xor"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  import math
+
+  def weighted_sum(inputs, weights, bias):
+      # TODO: multiply matching values, add them, then add the bias
+      pass
+
+  def relu(value):
+      # TODO: return value when it is positive, otherwise return 0
+      pass
+
+  def sigmoid(value):
+      return 1 / (1 + math.exp(-value))
+
+  def matvec(matrix, vector, biases):
+      # TODO: return one weighted_sum result for each row of matrix
+      pass
+
+  def forward(inputs):
+      # The two rows make two useful hidden features:
+      # "at least one input" and "both inputs".
+      weights_hidden = [[1, 1], [1, 1]]
+      bias_hidden = [0, -1]
+      hidden_linear = matvec(weights_hidden, inputs, bias_hidden)
+      hidden = [relu(value) for value in hidden_linear]
+
+      output_linear = weighted_sum(hidden, [1, -2], -0.5)
+      return sigmoid(output_linear)
+
+  first, second = map(float, input().split())
+  probability = forward([first, second])
+  print(1 if probability > 0.5 else 0)
+testCases:
+  - input: "0 0"
+    expected: "0"
+    hidden: false
+  - input: "0 1"
+    expected: "1"
+    hidden: true
+  - input: "1 0"
+    expected: "1"
+    hidden: true
+  - input: "1 1"
+    expected: "0"
+    hidden: true
+---
+
+Complete `weighted_sum`, `relu`, and `matvec`. The network is already wired together; your job is to perform its forward pass.
+
+For each row of a matrix, multiply matching positions in the row and input, add the products, and then add that row's bias. Apply ReLU to the two hidden results. The output layer uses weights `[1, -2]`, bias `-0.5`, and sigmoid.
+
+Print `1` when the final probability is greater than `0.5`, otherwise print `0`. The four cases are the XOR truth table. No library is needed.
+
+> [!TIP]
+> `matvec` can call `weighted_sum` once per row. The two hidden rows have the same weights but different biases, so the bias is part of what gives them different jobs.

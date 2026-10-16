@@ -1,0 +1,48 @@
+---
+title: "Numerical Gradient"
+order: 205
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "arrays"]
+tags: ["gradients", "partial-derivatives"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def bowl(point):
+      x, y = point
+      return x * x + 2 * y * y
+
+  def numerical_gradient(f, point, h=0.00001):
+      # TODO: return one partial derivative for each coordinate
+      pass
+
+  x, y = map(float, input().split())
+  gradient = numerical_gradient(bowl, [x, y])
+  print(f"{gradient[0]:.3f} {gradient[1]:.3f}")
+testCases:
+  - input: "1 -2"
+    expected: "2.000 -8.000"
+    hidden: false
+  - input: "0 0"
+    expected: "0.000 0.000"
+    hidden: true
+  - input: "3 1"
+    expected: "6.000 4.000"
+    hidden: true
+  - input: "-2 -0.5"
+    expected: "-4.000 -2.000"
+    hidden: true
+---
+
+Implement `numerical_gradient(f, point)`. Return a list with one partial derivative for every coordinate in `point`.
+
+For each coordinate, make a copy of the point, add a tiny `h` to that coordinate, and use:
+
+```text
+(f(changed_point) - f(point)) / h
+```
+
+The sample function is `f(x, y) = x² + 2y²`. The two printed numbers are the gradient arrow. A positive number means “uphill when this coordinate increases.”
+
+> [!TIP]
+> Change one coordinate at a time. If you change both at once, you are measuring a diagonal direction instead of a partial derivative.

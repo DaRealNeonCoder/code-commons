@@ -1,0 +1,101 @@
+---
+title: "Digit Recognizer: 8×8 Pixels"
+order: 212
+available: true
+areas: ["algorithms"]
+topics: ["arrays", "math", "probability"]
+tags: ["pixels", "softmax", "mini-batches", "classification"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  import math
+
+  # Each string is one row of an 8x8 black-and-white digit.
+  DIGITS = {
+      0: ["01111110", "11000011", "11000011", "11000011",
+          "11000011", "11000011", "11000011", "01111110"],
+      1: ["00011000", "00111000", "00011000", "00011000",
+          "00011000", "00011000", "00011000", "01111110"],
+      2: ["01111110", "00000011", "00000110", "00001100",
+          "00011000", "00110000", "01100000", "11111111"],
+  }
+
+  def pixels(rows):
+      return [int(value) for row in rows for value in row]
+
+  def changed_pixel(rows, position):
+      values = pixels(rows)
+      values[position] = 1 - values[position]
+      return values
+
+  # The small variations make the test different from the training rows,
+  # while keeping the exercise deterministic and dependency-free.
+  TRAIN = []
+  TEST = []
+  for label, rows in DIGITS.items():
+      base = pixels(rows)
+      TRAIN.append((base, label))
+      TRAIN.append((changed_pixel(rows, 3 + label), label))
+      TRAIN.append((changed_pixel(rows, 40 + label), label))
+      TEST.append((base, label))
+      TEST.append((changed_pixel(rows, 20 + label), label))
+
+  def softmax(logits):
+      # TODO: return probabilities that add to 1
+      # Subtract max(logits) before using math.exp for stability.
+      pass
+
+  def scores(weights, biases, image):
+      return [sum(weight * pixel for weight, pixel in zip(row, image)) + bias
+              for row, bias in zip(weights, biases)]
+
+  def batch_gradients(weights, biases, batch):
+      # TODO: return (weight_gradients, bias_gradients) for this mini-batch
+      # Use probability - one_hot_label as the error for each class.
+      pass
+
+  def train(epochs, rate, batch_size):
+      weights = [[0.0] * 64 for _ in range(3)]
+      biases = [0.0, 0.0, 0.0]
+      for _ in range(epochs):
+          for start in range(0, len(TRAIN), batch_size):
+              batch = TRAIN[start:start + batch_size]
+              weight_grad, bias_grad = batch_gradients(weights, biases, batch)
+              scale = rate / len(batch)
+              for label in range(3):
+                  for pixel in range(64):
+                      weights[label][pixel] -= scale * weight_grad[label][pixel]
+                  biases[label] -= scale * bias_grad[label]
+      return weights, biases
+
+  def accuracy(weights, biases):
+      correct = 0
+      for image, label in TEST:
+          probabilities = softmax(scores(weights, biases, image))
+          guess = max(range(3), key=lambda index: probabilities[index])
+          correct += guess == label
+      return correct / len(TEST)
+
+  epochs, rate, batch_size = input().split()
+  weights, biases = train(int(epochs), float(rate), int(batch_size))
+  print("pass" if accuracy(weights, biases) >= 0.90 else "try again")
+testCases:
+  - input: "300 0.2 3"
+    expected: "pass"
+    hidden: false
+  - input: "500 0.1 2"
+    expected: "pass"
+    hidden: true
+  - input: "250 0.3 1"
+    expected: "pass"
+    hidden: true
+---
+
+Complete `softmax` and `batch_gradients`. The input images are 64-number lists made by flattening 8 rows of 8 pixels. Each pair in `batch` is `(image, label)`.
+
+`softmax(logits)` should subtract the largest logit, exponentiate the shifted values, and divide each by their total. In `batch_gradients`, calculate probabilities from `scores`, then use `probability - one_hot_label` as the error for each class. Add `error * pixel` to a weight gradient and `error` to its bias gradient.
+
+The provided training loop applies one update per mini-batch. It evaluates on six deterministic test images and prints `pass` when accuracy is at least 90%. Use plain Python only; no NumPy or image library is needed.
+
+> [!TIP]
+> There are three output classes and 64 input pixels. Start the gradient arrays with the same shapes as `weights`: three rows of 64 zeros, plus three bias totals.

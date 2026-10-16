@@ -1,0 +1,60 @@
+---
+title: "Evaluating Models Honestly"
+order: 209
+summary: "Use a clean test set and several classification metrics to find out how a model really performs."
+available: true
+areas: ["algorithms"]
+topics: ["math", "probability"]
+tags: ["train-test", "overfitting", "classification-metrics"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["data-detective-model-evaluation"]
+---
+
+A model can look good on the data it has already seen and still fail on new examples. Honest evaluation asks how well it works on data that was not used to choose its weights.
+
+## Train and test
+
+Split labeled data into a **training set** and a **test set**. Use the training set to fit the model. Keep the test set untouched until the end, then use it once to estimate performance on future data.
+
+If the test set influences model choices, it is no longer a fair test. For a small data set, the exact split matters, so keep the split deterministic and record how it was made. In larger projects, a validation set can help choose settings while the test set stays reserved for the final check.
+
+## Underfitting and overfitting
+
+An **underfit** model is too simple to capture the useful pattern. It performs poorly on both training and test data. An **overfit** model memorizes details or noise in the training examples. It performs very well on training data but poorly on the test set.
+
+The goal is not to make the training score as large as possible. The goal is to learn a pattern that continues to work on unseen examples. Comparing training and test scores helps reveal the difference.
+
+## A confusion matrix
+
+For binary classification, compare each predicted label with its true label:
+
+|  | Predicted 0 | Predicted 1 |
+| --- | ---: | ---: |
+| **Actual 0** | true negative (TN) | false positive (FP) |
+| **Actual 1** | false negative (FN) | true positive (TP) |
+
+From these four counts:
+
+```text
+accuracy  = (TP + TN) / all examples
+precision = TP / (TP + FP)
+recall    = TP / (TP + FN)
+```
+
+**Accuracy** is the overall fraction that is correct. **Precision** asks, “When the model predicts positive, how often is it right?” **Recall** asks, “Of the real positives, how many did it find?” If a denominator is zero, report that metric as `0` in this beginner exercise rather than dividing by zero.
+
+Accuracy can hide a problem when one class is much more common. Precision and recall show different kinds of mistakes, so choose the metric that matches the cost of the errors.
+
+## The leaked-feature trap
+
+Sometimes a model receives a feature that would not be known at prediction time, or that was created using the answer. This is **target leakage**. A leaked feature can make test results look excellent because the model is being handed a clue from the future.
+
+For example, predicting whether a customer will cancel should not use a “cancellation processed” field. Remove the leaked feature, rebuild the split, and evaluate again. A high score is useful only when the inputs could really exist when the prediction is made.
+
+> [!TIP]
+> Ask two questions: “Was this example kept out of training?” and “Would every feature be available at prediction time?”
+
+## Practice
+
+In the [Data Detective: Model Evaluation puzzle](/puzzles/data-detective-model-evaluation?lesson=evaluating-models-honestly&course=intro-to-ai-machine-learning), calculate a confusion matrix, accuracy, precision, and recall. Then inspect a feature and report whether it exactly repeats the label, a strong clue that it leaked the answer.

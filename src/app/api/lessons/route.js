@@ -7,6 +7,7 @@ import { parseBlocks } from "@/lib/lessonBlocks";
 import { blocksToMarkdown } from "@/lib/blocksToMarkdown";
 import { saveLessonMdx, stringifyLessonMdx } from "@/lib/db/lessonMdx";
 import { notifyPublished } from "@/lib/notifications";
+import { hasReactDemoCode, REACT_DEMO_PUBLISH_ERROR } from "@/lib/reactDemo";
 
 function asArray(value) {
   return Array.isArray(value) ? value.filter((v) => typeof v === "string") : [];
@@ -45,6 +46,10 @@ export async function POST(request) {
   const project = typeof body?.projectId === "string" ? await getProject(body.projectId) : null;
   if (!project || project.type !== "lesson" || project.userId !== user.id) {
     return Response.json({ error: "That lesson project isn't yours." }, { status: 403 });
+  }
+
+  if (hasReactDemoCode(body?.reactDemos)) {
+    return Response.json({ error: REACT_DEMO_PUBLISH_ERROR }, { status: 400 });
   }
 
   const title = typeof body.title === "string" ? body.title.trim().slice(0, 200) : "";

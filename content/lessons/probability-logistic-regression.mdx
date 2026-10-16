@@ -1,0 +1,69 @@
+---
+title: "Probability and Logistic Regression"
+order: 208
+summary: "Turn a weighted score into a probability and use it for binary classification."
+available: true
+areas: ["algorithms"]
+topics: ["math", "probability"]
+tags: ["logistic-regression", "sigmoid", "classification"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["logistic-regression-clusters"]
+---
+
+Linear regression predicts any number. For a yes-or-no question, such as “does this bike belong to the commuter cluster?”, we want a value between `0` and `1` that can be read as a probability. **Logistic regression** starts with a weighted score and passes it through the sigmoid function.
+
+## The sigmoid
+
+First calculate a score called a **logit**:
+
+```text
+z = x · w + b
+```
+
+Then use:
+
+```text
+sigmoid(z) = 1 / (1 + e⁻ᶻ)
+```
+
+The sigmoid maps every score to a value strictly between `0` and `1`:
+
+- a very negative score is close to `0`;
+- a score of `0` becomes `0.5`;
+- a very positive score is close to `1`.
+
+To make a class prediction, choose a threshold. The usual beginner-friendly choice is `0.5`: probability at least `0.5` becomes class `1`, and a smaller probability becomes class `0`.
+
+## Cross-entropy
+
+For classification, **binary cross-entropy** is a useful loss:
+
+```text
+loss = -[y log(p) + (1 - y) log(1 - p)]
+```
+
+Here `y` is the correct label (`0` or `1`) and `p` is the predicted probability. A confident correct prediction has a small loss. A confident wrong prediction has a large loss, so the model is encouraged to avoid being confidently wrong.
+
+When coding, keep probabilities away from exactly `0` and `1` before calling `log`. That prevents a mathematical error from a value such as `log(0)`. This small clamp does not change the idea of the loss.
+
+## Classification is a boundary
+
+The point where `z = 0` has probability `0.5`. The weights and bias create a boundary: points on one side tend toward class `0`, and points on the other side tend toward class `1`. With two features, the boundary is a line; with more features, it is a flat surface in a higher-dimensional space.
+
+Logistic regression is still a weighted sum followed by a function. The sigmoid gives the sum a probability meaning, and the cross-entropy loss tells training how helpful each prediction was.
+
+For sigmoid plus cross-entropy, the two parts simplify nicely. The error used for an update is:
+
+```text
+probability - label
+```
+
+So for one feature, the weight gradient is `(probability - label) × feature`, and the bias gradient is `probability - label`. Average those values over the training examples, then move the weights downhill. This is why a classifier can learn a boundary instead of only scoring points.
+
+> [!TIP]
+> Keep the three steps separate: calculate `z`, apply sigmoid to get `p`, then compare `p` with a threshold to choose a class.
+
+## Practice
+
+In the [Logistic Regression: Clusters puzzle](/puzzles/logistic-regression-clusters?lesson=probability-logistic-regression&course=intro-to-ai-machine-learning), implement sigmoid, cross-entropy, and the small gradient-descent training loop. The fixed clusters make it possible to check that the learned boundary reaches 95% accuracy without adding a library.

@@ -1,0 +1,90 @@
+---
+title: "The Chain Rule and Computational Graphs"
+order: 204
+summary: "Break a calculation into small steps, then pass derivative information backward with the chain rule."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math"]
+tags: ["chain-rule", "computational-graphs"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["chain-rule-gradient-check"]
+---
+
+Many useful formulas are built by putting functions inside other functions. For example:
+
+```text
+x → square → sine → exponential
+```
+
+In code, this is:
+
+```python
+value = math.exp(math.sin(x * x))
+```
+
+This is a **composition**: one function's output becomes the next function's input.
+
+## The chain rule
+
+The **chain rule** says to multiply the slopes along the path. If `y = f(g(x))`, then:
+
+```text
+dy/dx = f'(g(x)) × g'(x)
+```
+
+For our three-step example, name the middle values:
+
+```text
+a = x²
+b = sin(a)
+y = exp(b)
+```
+
+Then:
+
+```text
+dy/dx = (dy/db) × (db/da) × (da/dx)
+       = exp(b) × cos(a) × 2x
+```
+
+The order is important: each local slope tells us how a small change travels through the next step.
+
+## A computational graph
+
+A **computational graph** is a picture or list of these small steps:
+
+```text
+       square       sine       exponential
+x  ─────────────>  a  ──────>  b  ─────────>  y
+      2x             cos(a)     exp(b)
+```
+
+There are two passes:
+
+1. **Forward pass:** calculate values from left to right (`x`, `a`, `b`, `y`).
+2. **Backward pass:** start with a change in `y` and multiply slopes right to left.
+
+Neural networks use this same pattern. Their graphs are longer, but the individual steps are still simple.
+
+## Checking our work
+
+It is easy to drop a factor or use the wrong intermediate value. We can compare the hand-written derivative with a numerical estimate:
+
+```python
+def numerical_derivative(f, x, h=0.00001):
+    return (f(x + h) - f(x)) / h
+```
+
+If the two values are very close at several `x` values, our chain-rule code is probably right. This is called a **gradient check**. It is a test, not a replacement for understanding the formula.
+
+> [!TIP]
+> On the backward pass, each step answers one small question: “If this value changes a little, how much does the final answer change?”
+
+## Paper puzzle
+
+For `y = 3(x²)`, the local slopes are `3` and `2x`, so the full slope is `3 × 2x = 6x`. At `x = 2`, the derivative is `12`. Try tracing the two arrows backward before opening the code puzzle.
+
+## Practice
+
+In the [Chain Rule Gradient Check puzzle](/puzzles/chain-rule-gradient-check?lesson=chain-rule-computational-graphs&course=intro-to-ai-machine-learning), hand-code the derivative of `exp(sin(x²))`. The checker compares your answer with a nearby-points estimate and reports whether they agree.

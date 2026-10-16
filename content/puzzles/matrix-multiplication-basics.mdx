@@ -1,0 +1,44 @@
+---
+title: "Matrix Multiplication Basics"
+order: 202
+available: true
+areas: ["data-structures"]
+topics: ["math", "matrices", "arrays"]
+tags: ["matrix-multiplication"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def matmul(a, b):
+      # TODO: return the product of matrices a and b using loops
+      pass
+
+  def read_matrix():
+      rows, columns = map(int, input().split())
+      matrix = [list(map(int, input().split())) for _ in range(rows)]
+      return matrix
+
+  first = read_matrix()
+  second = read_matrix()
+  for row in matmul(first, second):
+      print(*row)
+testCases:
+  - input: "2 3\n1 2 3\n4 5 6\n3 2\n7 8\n9 10\n11 12"
+    expected: "58 64\n139 154"
+    hidden: false
+  - input: "1 1\n5\n1 1\n4"
+    expected: "20"
+    hidden: true
+  - input: "3 2\n1 0\n0 1\n2 3\n2 3\n4 5 6\n7 8 9"
+    expected: "4 5 6\n7 8 9\n29 34 39"
+    hidden: true
+  - input: "2 2\n1 2\n3 4\n2 2\n2 0\n1 2"
+    expected: "4 4\n10 8"
+    hidden: true
+---
+
+Implement `matmul(a, b)` with plain Python loops. Do not use NumPy for this puzzle. The matrices are always valid for multiplication: the number of columns in `a` equals the number of rows in `b`.
+
+For each output cell, multiply one row from `a` by one column from `b`, then add the products. Print the resulting matrix one row per line.
+
+> [!TIP]
+> If `a` has shape `(rows, middle)` and `b` has shape `(middle, columns)`, the result has shape `(rows, columns)`. That tells you how many times each loop should run.

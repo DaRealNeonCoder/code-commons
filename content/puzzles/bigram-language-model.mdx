@@ -1,0 +1,53 @@
+---
+title: "Bigram Language Model"
+order: 215
+available: true
+areas: ["algorithms"]
+topics: ["probability", "arrays"]
+tags: ["language-models", "tokens", "bigrams", "next-word"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def bigram_counts(words):
+      # TODO: return a dictionary mapping each token to its next-token counts.
+      pass
+
+  def choose_next(counts, current, temperature):
+      # TODO: sort candidates by decreasing count, then alphabetically.
+      # Clamp temperature to [0, 1] and use it to choose a rank.
+      pass
+
+  temperature = float(input())
+  current = input().strip()
+  words = input().split()
+  counts = bigram_counts(words)
+  print(choose_next(counts, current, temperature))
+testCases:
+  - input: "0\ncat\nthe cat sat the cat sat the cat slept"
+    expected: "sat"
+    hidden: false
+  - input: "1\ncat\nthe cat sat the cat sat the cat slept"
+    expected: "slept"
+    hidden: true
+  - input: "0.5\nblue\nred blue green blue green blue yellow"
+    expected: "green"
+    hidden: true
+  - input: "0\nunknown\nthe cat sleeps"
+    expected: "<END>"
+    hidden: true
+---
+
+Complete `bigram_counts` and `choose_next`. The input contains a temperature-like value, a current token, and one space-separated training sentence. Count every neighboring pair in the sentence.
+
+Sort the possible next tokens by descending count. Break equal-count ties alphabetically. Clamp the temperature to the range `0` through `1`, then choose this rank:
+
+```text
+rank = int(temperature × (number_of_choices - 1))
+```
+
+Print the token at that rank. A temperature of `0` selects the most frequent continuation; a temperature of `1` selects the least frequent one. If the current token has no next token, print `<END>`.
+
+This is a deterministic bigram baseline. Real language models use token IDs, learned embeddings, and a probability distribution over a much larger vocabulary, but the counting idea is the same. Use only dictionaries and lists here—no tokenizer, plotting library, or third-party package is required.
+
+> [!TIP]
+> When processing `words[index]`, the next token is `words[index + 1]`. The final token has no following pair.

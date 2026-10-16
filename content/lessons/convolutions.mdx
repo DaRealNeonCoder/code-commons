@@ -1,0 +1,49 @@
+---
+title: "Convolutions and Edge Filters"
+order: 214
+summary: "Slide small kernels across a grid to detect vertical edges and sharpen simple images."
+available: true
+areas: ["algorithms"]
+topics: ["arrays", "math"]
+tags: ["convolution", "kernels", "images", "computer-vision"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["convolution-edge-filters"]
+---
+
+An image can be represented as a grid of numbers. A black-and-white pixel might be `0` for dark and `1` for bright. A **kernel**, also called a filter, is a small grid of weights that looks for a local pattern.
+
+## Sliding a 3×3 kernel
+
+Place a 3×3 kernel over a 3×3 patch of the image. Multiply matching cells, add all nine products, and write that one number to the output. Slide the kernel one column or row at a time. If we only keep positions where the whole kernel fits, the output is smaller; this is called a **valid** convolution.
+
+A vertical edge has a change from left to right. This kernel responds to that change:
+
+```text
+-1  0  1
+-1  0  1
+-1  0  1
+```
+
+The left column is subtracted and the right column is added. A large positive result means the patch becomes brighter toward the right. A reversed kernel detects the opposite direction.
+
+## Sharpening
+
+Sharpening keeps the center pixel strong while subtracting its neighbors:
+
+```text
+ 0 -1  0
+-1  5 -1
+ 0 -1  0
+```
+
+Flat regions can cancel to a similar value, while a sudden change is emphasized. Real image libraries provide optimized convolution operations, but the nested loops are useful for seeing exactly what a filter does. No plot is needed for this exercise: print the output grid and inspect its numbers.
+
+In a convolutional neural network, the kernels are usually learned from examples instead of chosen by hand. Early learned filters often resemble edge detectors, and later layers combine them into larger features.
+
+> [!TIP]
+> Keep the row and column loops separate from the three-by-three multiplication loops. That makes the output shape and each local calculation easier to check.
+
+## Practice
+
+In the [Convolution Edge Filters puzzle](/puzzles/convolution-edge-filters?lesson=convolutions&course=intro-to-ai-machine-learning), implement valid convolution for a fixed 3×3 vertical-edge or sharpening kernel.

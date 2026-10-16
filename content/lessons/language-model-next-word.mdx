@@ -1,0 +1,49 @@
+---
+title: "Language Models and the Next Word"
+order: 215
+summary: "Represent text as tokens, use embeddings as learned vectors, and predict a next word with bigram counts."
+available: true
+areas: ["algorithms"]
+topics: ["probability", "arrays"]
+tags: ["language-models", "tokens", "embeddings", "bigrams"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["bigram-language-model"]
+---
+
+A language model assigns scores or probabilities to sequences of tokens. A **token** is a small piece of text: it might be a word, punctuation mark, or part of a word. A simple tokenizer can split a sentence on spaces:
+
+```python
+tokens = "the small fox runs".split()
+```
+
+The model can map each distinct token to an integer ID. A neural language model then looks up an **embedding** for that ID. An embedding is a learned vector such as `[0.2, -0.7, 0.4]`; tokens used in similar contexts often end up near one another in this vector space. The numbers are learned, not hand-written definitions.
+
+## Bigram prediction
+
+A **bigram** is a pair of neighboring tokens. From:
+
+```text
+the cat sleeps the cat plays
+```
+
+we can count what follows `the` and `cat`. The next-token probability for a token `b` after `a` is:
+
+```text
+P(b | a) = count(a, b) / count(a)
+```
+
+The most frequent continuation is a useful baseline. It needs no neural network and makes the connection between data and prediction easy to inspect. It also has limits: it only sees one token of context and cannot understand a new word that was absent from its tiny training text.
+
+## Temperature
+
+Neural language models usually turn output scores into probabilities with softmax. A **temperature** changes how concentrated those probabilities are: lower temperature favors the highest score, while higher temperature makes lower-ranked choices more possible. Random sampling is common when generating text.
+
+The practice puzzle uses a deterministic teaching version instead. It sorts possible next words by count and uses a temperature-like dial from `0` to `1` to select a rank. Zero always chooses the most frequent word; one chooses the least frequent available word. This is not random generation, so the same input always has the same answer, which makes browser tests easy to verify.
+
+> [!TIP]
+> Count pairs in order. `cat dog` is a different bigram from `dog cat`, and the current token is the key used to find the next-word candidates.
+
+## Practice
+
+In the [Bigram Language Model puzzle](/puzzles/bigram-language-model?lesson=language-model-next-word&course=intro-to-ai-machine-learning), count neighboring tokens and make a deterministic, temperature-like next-word choice.

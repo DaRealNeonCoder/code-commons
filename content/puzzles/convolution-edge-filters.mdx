@@ -1,0 +1,53 @@
+---
+title: "Convolution Edge Filters"
+order: 214
+available: true
+areas: ["algorithms"]
+topics: ["arrays", "math"]
+tags: ["convolution", "kernels", "images", "computer-vision"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  VERTICAL_EDGE = [
+      [-1, 0, 1],
+      [-1, 0, 1],
+      [-1, 0, 1],
+  ]
+  SHARPEN = [
+      [0, -1, 0],
+      [-1, 5, -1],
+      [0, -1, 0],
+  ]
+
+  def convolve(image, kernel):
+      # TODO: slide the 3x3 kernel over every valid position.
+      # Multiply matching cells and add the nine products.
+      pass
+
+  mode = input().strip()
+  height, width = map(int, input().split())
+  image = [list(map(int, input().split())) for _ in range(height)]
+  kernel = VERTICAL_EDGE if mode == "edge" else SHARPEN
+
+  for row in convolve(image, kernel):
+      print(" ".join(map(str, row)))
+testCases:
+  - input: "edge\n3 3\n0 0 1\n0 0 1\n0 0 1"
+    expected: "3"
+    hidden: false
+  - input: "edge\n5 5\n0 0 1 1 1\n0 0 1 1 1\n0 0 1 1 1\n0 0 1 1 1\n0 0 1 1 1"
+    expected: "3 3 0\n3 3 0\n3 3 0"
+    hidden: true
+  - input: "sharpen\n3 3\n1 1 1\n1 5 1\n1 1 1"
+    expected: "21"
+    hidden: true
+---
+
+Complete `convolve`. The input begins with `edge` or `sharpen`, followed by the image height and width and then its integer rows. Use the matching 3×3 kernel supplied above.
+
+Only produce positions where the entire kernel fits. For each position, multiply all nine matching cells and add the products. Print each output row with spaces between numbers. A 5×5 image therefore produces a 3×3 output.
+
+This is the arithmetic used by a small hand-built image filter. It is intentionally plain Python: no NumPy, image package, or plotting window is needed.
+
+> [!TIP]
+> At output position `(row, column)`, the top-left image cell is `(row, column)`. The kernel's row and column offsets run from `0` through `2`.

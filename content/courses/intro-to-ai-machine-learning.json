@@ -1,0 +1,21 @@
+{
+  "title": "Intro to AI & Machine Learning",
+  "summary": "A beginner-friendly, code-first path from vectors and gradients to regression, neural networks, an 8×8 digit recognizer, convolutions, and a tiny language model.",
+  "lessons": [
+    "vectors-and-dot-products",
+    "matrices-and-multiplication",
+    "calculus-derivatives",
+    "chain-rule-computational-graphs",
+    "gradients-and-partial-derivatives",
+    "gradient-descent",
+    "linear-regression",
+    "probability-logistic-regression",
+    "evaluating-models-honestly",
+    "neurons-layers-mlps",
+    "backpropagation",
+    "digit-recognizer",
+    "tuning-and-scikit-learn",
+    "convolutions",
+    "language-model-next-word"
+  ]
+}

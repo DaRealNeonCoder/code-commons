@@ -1,0 +1,55 @@
+---
+title: "Vectors and Similarity"
+order: 201
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "arrays"]
+tags: ["vectors", "dot-product"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  import math
+
+  def dot(a, b):
+      # TODO: multiply matching values and add the products
+      pass
+
+  def cosine_similarity(a, b):
+      # TODO: return a score from -1 to 1
+      # A zero vector has similarity 0 with every vector.
+      pass
+
+  def most_similar(query, songs):
+      return max(songs, key=lambda song: cosine_similarity(query, song[1]))[0]
+
+  query = list(map(float, input().split()))
+  song_count = int(input())
+  songs = []
+  for _ in range(song_count):
+      parts = input().split()
+      songs.append((parts[0], list(map(float, parts[1:]))))
+
+  print(most_similar(query, songs))
+testCases:
+  - input: "1 1 0\n3\nrain 1 0 0\nsun 1 1 0\nnight 0 0 1"
+    expected: "sun"
+    hidden: false
+  - input: "0 0 1\n3\nrain 1 0 0\nsun 1 1 0\nnight 0 0 1"
+    expected: "night"
+    hidden: true
+  - input: "2 0 1\n3\ncalm 1 0 0\nenergy 2 0 1\nnoise 0 1 0"
+    expected: "energy"
+    hidden: true
+  - input: "0 0 0\n2\nquiet 1 0 0\nbright 0 1 0"
+    expected: "quiet"
+    hidden: true
+---
+
+Complete `dot(a, b)` and `cosine_similarity(a, b)`. Then the supplied code will use your functions to choose the song whose feature vector points most like the query vector.
+
+The input starts with the query vector. Each following song line has a one-word name followed by its feature values. Print only the name of the most similar song.
+
+For a zero vector, return a cosine similarity of `0` rather than dividing by zero. If all songs tie, `max` keeps the first one.
+
+> [!TIP]
+> First get `dot` working. You can use it three times in cosine similarity: once for the numerator and twice to find the two vector lengths.

@@ -275,7 +275,7 @@ export default function CommentThread({ itemType, itemId, initialComments = [], 
 
   return (
     <section className={`mt-10 border-t pt-6 ${colors.border}`} aria-label="Comments">
-      <details open>
+      <details>
         <summary className={`cursor-pointer select-none font-mono text-sm ${colors.text}`}>
           comments <span className={`ml-1 text-xs ${colors.muted}`}>({comments.length})</span>
         </summary>

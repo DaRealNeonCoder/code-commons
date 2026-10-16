@@ -1,0 +1,48 @@
+---
+title: "Tuning MLP Hyperparameters"
+order: 213
+summary: "Choose neural-network settings with validation data and use regularization to control overfitting."
+available: true
+areas: ["algorithms"]
+topics: ["math", "arrays"]
+tags: ["hyperparameters", "regularization", "mlp", "overfitting"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["tune-mlp-hyperparameters"]
+---
+
+Training learns a model's **parameters**, such as weights and biases. A **hyperparameter** is a setting we choose before training. Common MLP settings include the number of hidden units, the learning rate, and the number of training epochs.
+
+## A fair tuning loop
+
+Use the training data to update weights. Use a separate **validation set** to compare hyperparameter choices:
+
+1. Pick a few reasonable configurations.
+2. Train each one on the training set.
+3. Measure each one on the validation set.
+4. Keep the configuration with the best validation result.
+
+The validation set helps us choose settings. Keep a final test set untouched until all choices are finished. Otherwise, the test score becomes another training signal and is too optimistic.
+
+More hidden units can represent more complicated patterns, but they can also memorize a small data set. A learning rate that is too small makes slow progress; one that is too large can jump over good settings. More epochs are not always better for the same reason: a model can start fitting noise.
+
+## Regularization
+
+**Regularization** adds a cost for overly complex models. A simple L2 version adds the squared weights to the loss:
+
+```text
+regularized_loss = validation_loss + α × (w₁² + w₂² + ...)
+```
+
+The symbol `α` is another hyperparameter. A larger `α` pushes weights toward zero and usually prefers simpler solutions. It should not be so large that the model cannot learn the useful pattern. In a small browser-friendly exercise, we can use the number of hidden units as a simple stand-in for model complexity.
+
+## How this relates to scikit-learn
+
+`sklearn.neural_network.MLPClassifier` performs the same broad workflow with a ready-made MLP. Its `hidden_layer_sizes`, `learning_rate_init`, and `max_iter` correspond to the settings above. Its `alpha` controls L2 regularization. A real project can use validation or cross-validation to compare configurations; the code puzzle below uses fixed numbers and plain Python so the result is deterministic and needs no installation or plot.
+
+> [!TIP]
+> Compare validation results, not just training results. A slightly worse training score can be a better choice if it generalizes to unseen data.
+
+## Practice
+
+In the [Tune MLP Hyperparameters puzzle](/puzzles/tune-mlp-hyperparameters?lesson=tuning-and-scikit-learn&course=intro-to-ai-machine-learning), rank fixed candidate configurations with a small complexity penalty and choose the one that should generalize best.

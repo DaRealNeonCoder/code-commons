@@ -1,0 +1,66 @@
+---
+title: "Linear Regression: Bike Prices"
+order: 207
+available: true
+areas: ["algorithms"]
+topics: ["math", "arrays"]
+tags: ["linear-regression", "mse", "feature-scaling"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def dot(features, weights):
+      # TODO: multiply matching values and add the products
+      pass
+
+  def predict(features, weights, bias):
+      # TODO: use the vectorized form x · w + bias for one row
+      pass
+
+  def mean_squared_error(rows, weights, bias):
+      # TODO: average the squared prediction errors
+      pass
+
+  def train(rows, learning_rate, epochs):
+      # TODO: start weights and bias at zero, then use MSE gradients
+      # to improve them for every epoch.
+      pass
+
+  count = int(input())
+  rows = []
+  for _ in range(count):
+      parts = input().split()
+      rows.append((list(map(float, parts[:-1])), float(parts[-1])))
+  learning_rate, epochs = input().split()
+  weights, bias = train(rows, float(learning_rate), int(epochs))
+
+  average = sum(target for _, target in rows) / len(rows)
+  model_loss = mean_squared_error(rows, weights, bias)
+  baseline_loss = sum((target - average) ** 2 for _, target in rows) / len(rows)
+  print("beat" if model_loss < baseline_loss else "try again")
+testCases:
+  - input: "4\n1 1 10\n2 1 12\n1 2 13\n2 2 15\n0.05 500"
+    expected: "beat"
+    hidden: false
+  - input: "5\n0 1 5\n1 1 7\n0 2 8\n1 2 10\n2 1 9\n0.03 700"
+    expected: "beat"
+    hidden: true
+  - input: "3\n2 1 9\n3 2 14\n4 1 13\n0.02 800"
+    expected: "beat"
+    hidden: true
+---
+
+Complete `dot`, `predict`, `mean_squared_error`, and `train`. Each data row contains its feature values followed by the real used-bike price. The final line contains a learning rate and an epoch count.
+
+Start every weight and the bias at zero. For each epoch, calculate the prediction error for every row, then use these MSE gradients to update the parameters:
+
+```text
+gradient_w[j] = 2 × average(error × feature[j])
+gradient_b   = 2 × average(error)
+```
+
+At the end, print `beat` only when your model's MSE is smaller than the baseline that always predicts the average bike price. Use plain Python lists and loops; the dot product is the small, readable version of `Xw` for one row at a time.
+
+Keep the feature order unchanged. If a model was trained with weight in kilograms and distance in kilometers, silently replacing kilometers with meters changes the scale and can make its predictions wrong. That is the scaling bug to watch for when you work with real data.
+
+> [!TIP]
+> For a row `[a, b]` and weights `[u, v]`, the model is `a × u + b × v + bias`. MSE is the average of the squared differences between that result and each target.

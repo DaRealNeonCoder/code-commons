@@ -1,0 +1,60 @@
+---
+title: "Data Detective: Model Evaluation"
+order: 209
+available: true
+areas: ["algorithms"]
+topics: ["math", "probability"]
+tags: ["train-test", "overfitting", "classification-metrics"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def confusion_matrix(actual, predicted):
+      # TODO: return (true negatives, false positives, false negatives, true positives)
+      pass
+
+  def safe_ratio(numerator, denominator):
+      # TODO: return 0 when the denominator is zero
+      pass
+
+  def is_leaked_feature(actual, feature):
+      # TODO: a feature is suspicious when it exactly copies every label
+      pass
+
+  count = int(input())
+  actual = []
+  predicted = []
+  feature = []
+  for _ in range(count):
+      label, guess, value = map(int, input().split())
+      actual.append(label)
+      predicted.append(guess)
+      feature.append(value)
+
+  tn, fp, fn, tp = confusion_matrix(actual, predicted)
+  total = tn + fp + fn + tp
+  accuracy = safe_ratio(tp + tn, total)
+  precision = safe_ratio(tp, tp + fp)
+  recall = safe_ratio(tp, tp + fn)
+  print(f"{accuracy:.3f} {precision:.3f} {recall:.3f}")
+  print(f"{tn} {fp} {fn} {tp}")
+  print("leaked" if is_leaked_feature(actual, feature) else "okay")
+testCases:
+  - input: "4\n1 1 0\n1 0 1\n0 1 0\n0 0 0"
+    expected: "0.500 0.500 0.500\n1 1 1 1\nokay"
+    hidden: false
+  - input: "5\n1 1 1\n1 1 1\n0 1 0\n0 0 0\n1 1 1"
+    expected: "0.800 0.750 1.000\n1 1 0 3\nleaked"
+    hidden: true
+  - input: "2\n1 0 0\n0 0 0"
+    expected: "0.500 0.000 0.000\n1 0 1 0\nokay"
+    hidden: true
+---
+
+Complete the three functions. Each input row contains the true label, the model’s predicted label, and one feature value. The feature is suspicious if it copies the true label for every row; report that as `leaked`.
+
+Print accuracy, precision, and recall on the first line, each rounded to three decimal places. Print `TN FP FN TP` on the second line, then print either `leaked` or `okay` on the third line. Use `0` for a metric whose denominator is zero.
+
+This is an evaluation exercise, not a training exercise: the predictions are supplied so you can focus on what the errors mean. In a real project, calculate these metrics on a test set that was not used to fit the model, and check that every feature would be available at prediction time.
+
+> [!TIP]
+> Count the matrix first. Accuracy uses TN and TP, precision uses TP and FP, and recall uses TP and FN.

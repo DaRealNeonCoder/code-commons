@@ -1,0 +1,77 @@
+---
+title: "Backpropagation and Training Loops"
+order: 211
+summary: "Use the chain rule to send error backward through a neural network and improve its weights."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "arrays"]
+tags: ["backpropagation", "gradients", "gradient-checking"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["backpropagation-xor"]
+---
+
+A forward pass gives a prediction. **Backpropagation** tells us how each weight and bias contributed to the error in that prediction.
+
+## Forward, loss, backward
+
+Suppose a network produces `ŷ` and the correct label is `y`. A loss function turns the difference into one number. For a binary prediction, one useful loss is:
+
+```text
+loss = -[y × log(ŷ) + (1 - y) × log(1 - ŷ)]
+```
+
+The forward pass stores intermediate values such as weighted sums and activations. During the backward pass, the chain rule starts with the loss and travels from the output layer toward the input:
+
+1. Find how much the output changes the loss.
+2. Multiply by the local slope of the output activation.
+3. Pass that effect to each hidden neuron through its weight.
+4. Multiply by the hidden activation's slope.
+5. Use the resulting values to find a gradient for every weight and bias.
+
+For sigmoid, the local slope can be written using its output `s`:
+
+```text
+sigmoid'(z) = s × (1 - s)
+```
+
+For ReLU, the slope is `0` below zero and `1` above zero. At exactly zero, small implementations usually choose `0`.
+
+## From gradients to learning
+
+Once we have a gradient, update each parameter in the downhill direction:
+
+```text
+parameter = parameter - learning_rate × gradient
+```
+
+The **learning rate** is a small step size. A rate that is too small takes a long time; a rate that is too large can jump past a useful solution.
+
+A training loop repeats these actions:
+
+```text
+repeat for several epochs:
+    for each training example:
+        prediction, saved_values = forward(example)
+        gradients = backward(saved_values, label)
+        update all parameters
+```
+
+The XOR problem is a small demonstration. Start with fixed, slightly different weights, visit all four rows, and the loss can fall until the network predicts all four labels correctly.
+
+## Gradient checking
+
+Backpropagation has many small multiplications, so one missing factor can be hard to spot. A **numerical gradient** provides a check:
+
+```text
+gradient ≈ [loss(parameter + h) - loss(parameter - h)] / (2 × h)
+```
+
+Here `h` is tiny, such as `0.00001`. Compare this estimate with the backpropagated gradient for several parameters. They do not need to match forever—after the check, use backpropagation because it is much faster than changing every parameter twice.
+
+> [!TIP]
+> First check one example and one parameter. Once that works, check every weight and bias before starting a long training run.
+
+## Practice
+
+In the [Backpropagation XOR puzzle](/puzzles/backpropagation-xor?lesson=backpropagation&course=intro-to-ai-machine-learning), fill in the gradients for a tiny sigmoid network. The supplied code numerically checks your gradients, then uses the same function in a deterministic training loop.

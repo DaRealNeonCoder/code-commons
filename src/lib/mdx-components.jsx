@@ -11,6 +11,7 @@ import Details from "@/components/mdx/Details";
 import Mermaid from "@/components/mdx/Mermaid";
 import DemoPlayer from "@/components/mdx/DemoPlayer";
 import Video from "@/components/mdx/Video";
+import ReactDemo from "@/components/mdx/ReactDemo";
 
 // Pass this into <MDXRemote options={{ mdxOptions }} /> anywhere content is
 // rendered — lessons, puzzles, or any new section you add later.
@@ -29,6 +30,7 @@ export const mdxComponents = {
   Mermaid,
   DemoPlayer,
   Video,
+  ReactDemo,
 
   h1: (props) => <h1 {...props} className="mt-8 mb-4 text-2xl font-semibold first:mt-0" />,
   h2: (props) => <h2 {...props} className="mt-8 mb-3 text-xl font-semibold first:mt-0" />,

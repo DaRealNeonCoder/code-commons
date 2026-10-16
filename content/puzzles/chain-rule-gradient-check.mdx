@@ -1,0 +1,58 @@
+---
+title: "Chain Rule Gradient Check"
+order: 204
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math"]
+tags: ["chain-rule"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  import math
+
+  def composed(x):
+      # x -> x squared -> sine -> exponential
+      return math.exp(math.sin(x * x))
+
+  def hand_derivative(x):
+      # TODO: multiply the three local slopes in reverse order
+      pass
+
+  def numerical_derivative(f, x, h=0.00001):
+      return (f(x + h) - f(x)) / h
+
+  x = float(input())
+  answer = hand_derivative(x)
+  check = numerical_derivative(composed, x)
+  print("pass" if abs(answer - check) < 0.0001 else "try again")
+testCases:
+  - input: "1"
+    expected: "pass"
+    hidden: false
+  - input: "0.5"
+    expected: "pass"
+    hidden: true
+  - input: "-1.5"
+    expected: "pass"
+    hidden: true
+  - input: "2"
+    expected: "pass"
+    hidden: true
+---
+
+Complete `hand_derivative(x)` for:
+
+```text
+y = exp(sin(x²))
+```
+
+The three local slopes are:
+
+```text
+dy/d(sin) = exp(sin(x²))
+```
+
+Multiply them together. The checker uses a nearby-points estimate and accepts your answer when the two slopes are close.
+
+> [!TIP]
+> Save intermediate values in variables if the full expression feels crowded. Start with `inside = x * x`.
