@@ -7,7 +7,8 @@ import { parseBlocks } from "@/lib/lessonBlocks";
 import { blocksToMarkdown } from "@/lib/blocksToMarkdown";
 import { saveLessonMdx, stringifyLessonMdx } from "@/lib/db/lessonMdx";
 import { notifyPublished } from "@/lib/notifications";
-import { hasReactDemoCode, REACT_DEMO_PUBLISH_ERROR } from "@/lib/reactDemo";
+import { buildReactDemoDataMarkup } from "@/lib/reactDemo";
+import { validateReactDemos } from "@/lib/reactDemoServer";
 
 function asArray(value) {
   return Array.isArray(value) ? value.filter((v) => typeof v === "string") : [];
@@ -48,9 +49,8 @@ export async function POST(request) {
     return Response.json({ error: "That lesson project isn't yours." }, { status: 403 });
   }
 
-  if (hasReactDemoCode(body?.reactDemos)) {
-    return Response.json({ error: REACT_DEMO_PUBLISH_ERROR }, { status: 400 });
-  }
+  const validatedDemos = await validateReactDemos(body?.reactDemos);
+  if (!validatedDemos.ok) return Response.json({ error: validatedDemos.error }, { status: 400 });
 
   const title = typeof body.title === "string" ? body.title.trim().slice(0, 200) : "";
   if (!title) {
@@ -64,10 +64,11 @@ export async function POST(request) {
   if (!blocks) {
     return Response.json({ error: "The lesson content is invalid." }, { status: 400 });
   }
-  const markdown = blocksToMarkdown(blocks);
-  if (markdown.trim() === "") {
+  const textMarkdown = blocksToMarkdown(blocks);
+  if (textMarkdown.trim() === "") {
     return Response.json({ error: "Add at least one text block." }, { status: 400 });
   }
+  const markdown = `${textMarkdown}${buildReactDemoDataMarkup(validatedDemos.artifacts)}`;
 
   const selection = {
     areas: asArray(body.areas),

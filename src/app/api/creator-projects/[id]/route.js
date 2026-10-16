@@ -1,5 +1,6 @@
 import { getRequestAccess } from "@/lib/access";
 import { updateProject, deleteProject } from "@/lib/creatorProjects";
+import { validateReactDemoDrafts } from "@/lib/reactDemo";
 
 const MAX_DATA_CHARS = 2_000_000;
 
@@ -26,6 +27,8 @@ export async function PUT(request, { params }) {
   if (JSON.stringify(body.data).length > MAX_DATA_CHARS) {
     return Response.json({ error: "Project is too large to save." }, { status: 413 });
   }
+  const demoError = validateReactDemoDrafts(body.data.reactDemos);
+  if (demoError) return Response.json({ error: demoError }, { status: 400 });
 
   try {
     // The WHERE clause includes user_id, so you can only ever write to your own projects.

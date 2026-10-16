@@ -11,7 +11,7 @@ import useProjectAutosave from "@/components/creator/useProjectAutosave";
 import usePublishState from "@/components/creator/usePublishState";
 import PublishBadge from "@/components/creator/PublishBadge";
 import { normalizePuzzleRefs } from "@/lib/puzzleRefs";
-import { hasReactDemoCode, normalizeReactDemos, REACT_DEMO_PUBLISH_ERROR } from "@/lib/reactDemo";
+import { normalizeReactDemos } from "@/lib/reactDemo";
 
 const smallButton =
   "rounded border border-zinc-300 px-2.5 py-1.5 font-mono text-sm text-zinc-500 hover:text-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 disabled:opacity-40 dark:border-zinc-700 dark:hover:text-zinc-200";
@@ -164,10 +164,6 @@ export default function LessonCreator({
 
   async function handlePublish() {
     const snap = JSON.stringify({ title, data: draftData });
-    if (hasReactDemoCode(reactDemos)) {
-      setStatus({ error: REACT_DEMO_PUBLISH_ERROR });
-      return;
-    }
     setStatus("saving");
 
     try {

@@ -1,36 +1,66 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  buildReactDemoDocument,
-  hasReactDemoCode,
-  normalizeReactDemos,
+  buildReactDemoDataMarkup,
+  createReactDemoNonce,
+  deserializeReactDemoArtifacts,
+  isValidRunnerMessage,
+  MAX_ACTIVE_REACT_DEMOS,
+  MAX_REACT_DEMO_CODE,
+  MAX_REACT_DEMO_COMPILED,
+  MAX_REACT_DEMO_LESSON_PAYLOAD,
+  MAX_REACT_DEMOS,
   REACT_DEMO_IFRAME_SANDBOX,
-  REACT_DEMO_RUNTIME_VERSION,
-  REACT_DEMO_PUBLISH_ERROR,
+  REACT_DEMO_RENDER_TIMEOUT_MS,
+  REACT_DEMO_RUNNER_ORIGIN,
+  serializeReactDemoArtifacts,
+  validateReactDemoDrafts,
 } from "../src/lib/reactDemo.js";
+import { compileReactDemo } from "../ccreact/src/compiler.js";
 
-test("React demo code is detected for the publication guard", () => {
-  assert.equal(hasReactDemoCode([]), false);
-  assert.equal(hasReactDemoCode([{ title: "empty", code: "  " }]), false);
-  assert.equal(hasReactDemoCode([{ title: "counter", code: "function Demo() {}" }]), true);
+test("published React demo data is serialized without executable MDX", () => {
+  const data = serializeReactDemoArtifacts([{ title: "counter", compiled: "globalThis.__CCREACT_DEMO__ = function Demo() {};" }]);
+  const markup = buildReactDemoDataMarkup([{ title: "counter", compiled: "globalThis.__CCREACT_DEMO__ = function Demo() {};" }]);
+  assert.match(markup, /^\n\n<ReactDemo data="[A-Za-z0-9_-]+" \/>$/);
+  assert.deepEqual(deserializeReactDemoArtifacts(data), [{ title: "counter", compiled: "globalThis.__CCREACT_DEMO__ = function Demo() {};" }]);
+  assert.deepEqual(deserializeReactDemoArtifacts("not-json"), []);
 });
 
-test("React demo drafts are normalized and capped", () => {
-  const demos = normalizeReactDemos([{ title: 42, code: "x".repeat(25_000) }]);
-  assert.deepEqual(demos, [{ title: "", code: "x".repeat(20_000) }]);
+test("draft limits are enforced independently of editor controls", () => {
+  assert.equal(validateReactDemoDrafts([{ title: "x", code: "function Demo() {}" }]), null);
+  assert.match(validateReactDemoDrafts([{ title: "x", code: "x".repeat(MAX_REACT_DEMO_CODE + 1) }]), /too large/i);
+  assert.match(validateReactDemoDrafts(Array.from({ length: MAX_REACT_DEMOS + 1 }, () => ({ title: "", code: "" }))), /too many/i);
 });
 
-test("sandbox document escapes script-breaking demo text and advertises its boundary", () => {
-  const source = buildReactDemoDocument('function Demo() { return "</script>"; }');
+test("server compiler rejects imports outside the pinned allowlist", async () => {
+  const options = { maxSourceChars: MAX_REACT_DEMO_CODE, maxCompiledChars: MAX_REACT_DEMO_COMPILED };
+  await compileReactDemo('import React from "react"; function Demo() { return <button>ok</button>; }', options);
+  for (const specifier of ["./local.js", "/absolute.js", "https://evil.example/x.js", "node:fs", "fs", "some-package"]) {
+    await assert.rejects(() => compileReactDemo(`import value from ${JSON.stringify(specifier)}; function Demo() { return value; }`, options), /not allowed/i);
+  }
+});
+
+test("server compiler enforces source, compiled, and component validation", async () => {
+  await assert.rejects(() => compileReactDemo("x".repeat(MAX_REACT_DEMO_CODE + 1), { maxSourceChars: MAX_REACT_DEMO_CODE }), /too large/i);
+  await assert.rejects(() => compileReactDemo("const value = 1;", { maxSourceChars: MAX_REACT_DEMO_CODE }), /Demo \(or App\)/);
+  await assert.rejects(() => compileReactDemo("function Demo() {}", { maxSourceChars: MAX_REACT_DEMO_CODE, maxCompiledChars: 1 }), /too large/i);
+});
+
+test("runner boundary has explicit limits and sandbox", () => {
   assert.equal(REACT_DEMO_IFRAME_SANDBOX, "allow-scripts");
-  assert.match(source, new RegExp(`react@${REACT_DEMO_RUNTIME_VERSION}/umd/react\\.development\\.js`));
-  assert.match(source, new RegExp(`react-dom@${REACT_DEMO_RUNTIME_VERSION}/umd/react-dom\\.development\\.js`));
-  assert.match(source, /connect-src 'none'/);
-  assert.doesNotMatch(source, /<\/script>"/);
-  assert.equal(source.includes("\\u003c/script\\u003e"), true);
+  assert.equal(REACT_DEMO_RUNNER_ORIGIN, "https://code-commons-ccreact.vercel.app");
+  assert.equal(MAX_REACT_DEMOS, 20);
+  assert.equal(MAX_ACTIVE_REACT_DEMOS, 6);
+  assert.equal(REACT_DEMO_RENDER_TIMEOUT_MS > 0, true);
+  assert.equal(MAX_REACT_DEMO_LESSON_PAYLOAD > MAX_REACT_DEMO_COMPILED, true);
 });
 
-test("publication explanation is explicit", () => {
-  assert.match(REACT_DEMO_PUBLISH_ERROR, /not yet supported in published lessons/);
-  assert.match(REACT_DEMO_PUBLISH_ERROR, /security validation/);
+test("runner messages require the exact frame and nonce", () => {
+  const frame = {};
+  const nonce = createReactDemoNonce();
+  const valid = { source: frame, origin: "null", data: { type: "react-demo:rendered", nonce } };
+  assert.equal(isValidRunnerMessage(valid, frame, nonce), true);
+  assert.equal(isValidRunnerMessage({ ...valid, source: {} }, frame, nonce), false);
+  assert.equal(isValidRunnerMessage({ ...valid, origin: "https://evil.example" }, frame, nonce), false);
+  assert.equal(isValidRunnerMessage({ ...valid, data: { ...valid.data, nonce: "wrong" } }, frame, nonce), false);
 });

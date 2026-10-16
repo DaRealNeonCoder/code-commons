@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "node --test tests/*.test.mjs src/lib/*.test.mjs src/lib/circuits/*.test.mjs ccreact/test/*.test.mjs",
     "db:push": "drizzle-kit push"
   },
   "overrides": {
@@ -27,6 +28,7 @@
     "@vercel/speed-insights": "^2.0.0",
     "better-auth": "^1.7.5",
     "drizzle-orm": "^0.45.3",
+    "esbuild": "0.25.12",
     "gray-matter": "^4.0.3",
     "js-yaml": "^4.3.2",
     "katex": "^0.18.7",

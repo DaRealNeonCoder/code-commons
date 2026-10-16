@@ -54,11 +54,11 @@ export default function ReactDemoEditor({ demos, onChange, accent = "amber" }) {
         <div>
           <h2 className="font-mono text-sm text-zinc-500">React demos</h2>
           <p className="mt-1 max-w-2xl text-sm text-zinc-600 dark:text-zinc-400">
-            Add an interactive component for your draft. Define a component named <code>Demo</code> (or <code>App</code>); React and JSX are available in the preview.
+            Add an interactive component for your draft. Define a component named <code>Demo</code> (or <code>App</code>); React and JSX are available after server validation.
           </p>
         </div>
         <span className="rounded border border-amber-300 bg-amber-50 px-2 py-1 font-mono text-xs text-amber-700 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
-          draft preview only
+           validated preview
         </span>
       </div>
 
@@ -98,7 +98,7 @@ export default function ReactDemoEditor({ demos, onChange, accent = "amber" }) {
               <p className="mt-2 font-mono text-[11px] text-zinc-500">{demo.code.length.toLocaleString()} / {MAX_REACT_DEMO_CODE.toLocaleString()} characters</p>
               <div className="mt-4">
                 <p className="mb-2 font-mono text-xs text-zinc-500">preview</p>
-                <ReactDemo code={demo.code} title={demo.title || `Demo ${index + 1}`} />
+                <ReactDemo allowValidation code={demo.code} title={demo.title || `Demo ${index + 1}`} />
               </div>
             </div>
           ))
@@ -111,7 +111,7 @@ export default function ReactDemoEditor({ demos, onChange, accent = "amber" }) {
 
       {demos.some((demo) => demo.code.trim()) && (
         <p className="mt-4 rounded border border-red-200 bg-red-50 p-3 text-sm leading-6 text-red-700 dark:border-red-950 dark:bg-red-950/30 dark:text-red-300">
-          React demos can be saved in drafts and previewed here, but this lesson cannot be submitted or published yet. React demos are not yet supported in published lessons pending security validation.
+          React demos are compiled and checked on the server before this lesson is published. Imports are limited to the bundled React runtime.
         </p>
       )}
     </section>
