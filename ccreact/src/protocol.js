@@ -1,5 +1,12 @@
 export const RUNNER_ORIGIN = "https://code-commons-ccreact.vercel.app";
 export const MAIN_APP_ORIGIN = "https://code-commons.vercel.app";
+// These are explicit local development origins, not wildcard origins. The
+// deployed runner still has a fixed frame-ancestors list below.
+export const MAIN_APP_ORIGINS = Object.freeze([
+  MAIN_APP_ORIGIN,
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+]);
 export const MAX_COMPILED_DEMO_CHARS = 120_000;
 
 export function isObject(value) {
@@ -10,7 +17,7 @@ export function isValidInitMessage(event, parentWindow, expectedNonce) {
   const data = event?.data;
   return (
     event?.source === parentWindow &&
-    event?.origin === MAIN_APP_ORIGIN &&
+    MAIN_APP_ORIGINS.includes(event?.origin) &&
     isObject(data) &&
     data.type === "react-demo:init" &&
     typeof data.nonce === "string" &&

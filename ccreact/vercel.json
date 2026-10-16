@@ -8,7 +8,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'none'; script-src 'self' blob:; style-src 'self'; img-src 'none'; connect-src 'none'; worker-src 'none'; object-src 'none'; frame-src 'none'; child-src 'none'; form-action 'none'; base-uri 'none'; navigate-to 'none'; frame-ancestors https://code-commons.vercel.app;"
+          "value": "default-src 'none'; script-src 'self' blob:; style-src 'self'; img-src 'none'; connect-src 'none'; worker-src 'none'; object-src 'none'; frame-src 'none'; child-src 'none'; form-action 'none'; base-uri 'none'; navigate-to 'none'; frame-ancestors https://code-commons.vercel.app http://localhost:3000 http://127.0.0.1:3000;"
         },
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "Referrer-Policy", "value": "no-referrer" },

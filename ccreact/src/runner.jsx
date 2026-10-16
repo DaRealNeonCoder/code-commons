@@ -3,12 +3,15 @@ import { createRoot } from "react-dom/client";
 import * as ReactDOM from "react-dom";
 import * as jsxRuntime from "react/jsx-runtime";
 import * as jsxDevRuntime from "react/jsx-dev-runtime";
-import { isValidInitMessage, MAIN_APP_ORIGIN, MAX_COMPILED_DEMO_CHARS } from "./protocol.js";
+import { isValidInitMessage, MAX_COMPILED_DEMO_CHARS } from "./protocol.js";
 
 const RENDER_TIMEOUT_MS = 1_500;
 
 function message(type, nonce, extra = {}) {
-  window.parent.postMessage({ type, nonce, ...extra }, MAIN_APP_ORIGIN);
+  // The parent may be localhost during development. The parent validates the
+  // source window, opaque runner origin, message shape, and nonce, so a
+  // wildcard target does not weaken the protocol.
+  window.parent.postMessage({ type, nonce, ...extra }, "*");
 }
 
 function Runner() {

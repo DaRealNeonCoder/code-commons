@@ -76,6 +76,7 @@ export default function ReactDemo({ code = "", data = "", title = "Interactive R
     const send = () => {
       // Opaque sandbox origins cannot be addressed with a target origin other
       // than '*'. The runner validates the parent's production origin.
+      clearTimeout(timer);
       node.contentWindow?.postMessage({ type: "react-demo:init", nonce, demo: { compiled } }, "*");
       timer = setTimeout(() => {
         setError("The demo timed out and was reset.");
@@ -95,7 +96,11 @@ export default function ReactDemo({ code = "", data = "", title = "Interactive R
       }
     }
     window.addEventListener("message", onMessage);
-    node.addEventListener("load", send, { once: true });
+    node.addEventListener("load", send);
+    // A cached iframe can finish loading before this effect subscribes. Send
+    // once immediately as well; the runner's ready message makes this safe to
+    // repeat and prevents a false timeout on fast navigations.
+    send();
     return () => {
       clearTimeout(timer);
       window.removeEventListener("message", onMessage);

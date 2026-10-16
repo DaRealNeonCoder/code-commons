@@ -9,6 +9,7 @@ const frame = {};
 test("protocol requires source, production origin, shape, and nonce", () => {
   const event = { source: parent, origin: MAIN_APP_ORIGIN, data: { type: "react-demo:init", nonce, demo: { compiled: "x" } } };
   assert.equal(isValidInitMessage(event, parent, nonce), true);
+  assert.equal(isValidInitMessage({ ...event, origin: "http://localhost:3000" }, parent, nonce), true);
   assert.equal(isValidInitMessage({ ...event, source: {} }, parent, nonce), false);
   assert.equal(isValidInitMessage({ ...event, origin: "https://evil.example" }, parent, nonce), false);
   assert.equal(isValidInitMessage({ ...event, data: { ...event.data, nonce: "wrong" } }, parent, nonce), false);
