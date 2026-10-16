@@ -241,7 +241,7 @@ export default function LessonCreator({
               Live preview of the lesson markdown. Edit the content in the markdown tab.
             </p>
             <article className="mt-8 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-10">
-              {hasText ? <LessonPreview source={markdown} /> : <p className="text-sm text-zinc-500">Nothing to preview yet. Add text in the markdown tab.</p>}
+              {hasText ? <LessonPreview source={markdown} reactDemos={reactDemos} /> : <p className="text-sm text-zinc-500">Nothing to preview yet. Add text in the markdown tab.</p>}
             </article>
             <button
               type="button"

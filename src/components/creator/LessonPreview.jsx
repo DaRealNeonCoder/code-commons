@@ -5,11 +5,12 @@ import { renderMdxPreview } from "@/lib/renderMdxPreview";
 
 const DEBOUNCE_MS = 250;
 const CACHE_LIMIT = 4;
+const EMPTY_REACT_DEMOS = Object.freeze([]);
 
 // The workspace is remounted each time you switch back to it. Remembering the
 // last few renders means an unchanged lesson appears instantly instead of
 // flashing "rendering..." every time.
-const cache = new Map(); // markdown source -> rendered element
+const cache = new Map(); // source + demo draft -> rendered element
 
 function remember(source, node) {
   if (cache.size >= CACHE_LIMIT) cache.delete(cache.keys().next().value);
@@ -41,9 +42,11 @@ class PreviewBoundary extends Component {
   }
 }
 
-export default function LessonPreview({ source }) {
+export default function LessonPreview({ source, reactDemos = EMPTY_REACT_DEMOS }) {
   const text = source ?? "";
-  const [node, setNode] = useState(() => cache.get(text) ?? null);
+  const demosKey = JSON.stringify(reactDemos);
+  const cacheKey = `${text}\u0000${demosKey}`;
+  const [node, setNode] = useState(() => cache.get(cacheKey) ?? null);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
@@ -53,8 +56,8 @@ export default function LessonPreview({ source }) {
       return;
     }
 
-    if (cache.has(text)) {
-      setNode(cache.get(text));
+    if (cache.has(cacheKey)) {
+      setNode(cache.get(cacheKey));
       setFailed(false);
       return;
     }
@@ -62,9 +65,9 @@ export default function LessonPreview({ source }) {
     let cancelled = false;
     const timer = setTimeout(async () => {
       try {
-        const next = await renderMdxPreview(text);
+        const next = await renderMdxPreview(text, reactDemos);
         if (cancelled) return;
-        remember(text, next);
+        remember(cacheKey, next);
         setNode(next);
         setFailed(false);
       } catch {
@@ -76,7 +79,7 @@ export default function LessonPreview({ source }) {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [text]);
+  }, [cacheKey, reactDemos, text]);
 
   if (!text.trim()) {
     return <p className="text-sm text-zinc-500">Nothing to preview yet. Add text in the markdown tab.</p>;
@@ -84,5 +87,5 @@ export default function LessonPreview({ source }) {
   if (failed) return <p className="text-sm text-red-500">Couldn&apos;t render the preview. Try again.</p>;
   if (!node) return <p className="text-sm text-zinc-500">Rendering preview...</p>;
 
-  return <PreviewBoundary resetKey={text}>{node}</PreviewBoundary>;
+  return <PreviewBoundary resetKey={cacheKey}>{node}</PreviewBoundary>;
 }
