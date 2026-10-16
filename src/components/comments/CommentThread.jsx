@@ -165,7 +165,7 @@ function CommentItem({ comment, children, depth, itemType, itemId, signedIn, cur
 
   return (
     <div className="mt-3" style={{ marginLeft: `${Math.min(depth, 8) * 16}px` }}>
-      <details open className={`rounded border ${colors.border} ${colors.panel}`}>
+      <details className={`rounded border ${colors.border} ${colors.panel}`}>
         <summary className={`cursor-pointer select-none px-3 py-2 text-sm ${colors.text}`}>
           {comment.author.id ? <Link href={`/profile/${comment.author.id}`} onClick={(event) => event.stopPropagation()}><UserAvatar image={comment.author.image} name={comment.author.name} size="xs" scale={comment.author.scale} positionX={comment.author.positionX} positionY={comment.author.positionY} className="mr-2 align-middle" /></Link> : <UserAvatar image={comment.author.image} name={comment.author.name} size="xs" scale={comment.author.scale} positionX={comment.author.positionX} positionY={comment.author.positionY} className="mr-2 align-middle" />}
           {comment.author.id ? <Link href={`/profile/${comment.author.id}`} onClick={(event) => event.stopPropagation()} className="font-medium hover:underline">{comment.author.name}</Link> : <span className="font-medium">{comment.author.name}</span>}
@@ -214,7 +214,7 @@ function CommentItem({ comment, children, depth, itemType, itemId, signedIn, cur
           )}
 
           {hasReplies && (
-            <details open className={`mt-3 border-l-2 pl-3 ${colors.border}`}>
+            <details className={`mt-3 border-l-2 pl-3 ${colors.border}`}>
               <summary className={`cursor-pointer select-none font-mono text-xs ${colors.muted}`}>
                 {children.length} {children.length === 1 ? "reply" : "replies"}
               </summary>

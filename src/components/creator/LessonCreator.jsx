@@ -4,16 +4,42 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import TextBlockEditor, { newTextBlock } from "@/components/creator/TextBlockEditor";
 import ReactDemoEditor, { withReactDemoIds } from "@/components/creator/ReactDemoEditor";
+import LessonPreview from "@/components/creator/LessonPreview";
 import { blocksToMarkdown } from "@/lib/blocksToMarkdown";
 import FilterFields from "@/components/filters/FilterFields";
 import useProjectAutosave from "@/components/creator/useProjectAutosave";
 import usePublishState from "@/components/creator/usePublishState";
-import ProjectBar from "@/components/creator/ProjectBar";
+import PublishBadge from "@/components/creator/PublishBadge";
 import { normalizePuzzleRefs } from "@/lib/puzzleRefs";
 import { hasReactDemoCode, normalizeReactDemos, REACT_DEMO_PUBLISH_ERROR } from "@/lib/reactDemo";
 
 const smallButton =
   "rounded border border-zinc-300 px-2.5 py-1.5 font-mono text-sm text-zinc-500 hover:text-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 disabled:opacity-40 dark:border-zinc-700 dark:hover:text-zinc-200";
+
+const STATUS_TEXT = {
+  saved: "draft saved",
+  dirty: "unsaved changes",
+  saving: "saving...",
+  error: "couldn't save",
+};
+
+function ViewTab({ label, active, onClick }) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={`rounded border px-3 py-1 font-mono text-xs transition-colors ${
+        active
+          ? "border-amber-400 text-amber-400"
+          : "border-zinc-700 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
 
 // `puzzles` contains the first page of typed puzzle choices. Further searches
 // go through /api/puzzle-choices so the whole catalog is not sent to the page.
@@ -24,6 +50,10 @@ export default function LessonCreator({
   publishState: initialPublishState = "draft",
 }) {
   const saved = project.data ?? {};
+
+  // The lesson preview is the default view; authoring controls live in the
+  // markdown tab, matching the circuit and shader creators.
+  const [view, setView] = useState("workspace");
 
   const [title, setTitle] = useState(project.title ?? "");
   const [summary, setSummary] = useState(saved.summary ?? "");
@@ -52,6 +82,7 @@ export default function LessonCreator({
   const [difficulty, setDifficulty] = useState(saved.difficulty ?? "");
 
   const markdown = useMemo(() => blocksToMarkdown(blocks), [blocks]);
+  const hasText = markdown.trim() !== "";
 
   const puzzlesById = useMemo(() => new Map(choices.map((p) => [p.ref, p])), [choices]);
   const chosen = useMemo(() => new Set(puzzleIds), [puzzleIds]);
@@ -108,6 +139,10 @@ export default function LessonCreator({
     initial: initialPublishState,
     snapshot: JSON.stringify({ title, data: draftData }),
   });
+
+  function changeView(next) {
+    setView(next);
+  }
 
   function addPuzzle(ref) {
     setPuzzleIds((ids) => (ids.includes(ref) ? ids : [...ids, ref]));
@@ -166,24 +201,68 @@ export default function LessonCreator({
   }
 
   return (
-    <div className="w-full h-full overflow-y-auto px-6 py-12">
-      <div className="mx-auto max-w-3xl">
-        <Link href="/create" className="font-mono text-sm text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
+    <div className="flex h-full w-full flex-col">
+      {!project.canEdit && (
+        <p className="shrink-0 border-b border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm text-amber-700 dark:text-amber-400">
+          You&apos;re viewing someone else&apos;s project. It&apos;s read-only, and nothing you do here is saved.
+        </p>
+      )}
+
+      <div className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 border-b border-zinc-800 bg-zinc-950 px-4 py-2">
+        <Link href="/create" className="font-mono text-sm text-zinc-400 hover:text-zinc-200">
           ← /create
         </Link>
 
-        <ProjectBar
-          label="/create/lesson"
-          accentClass="text-amber-600 dark:text-amber-400"
-          saveState={saveState}
-          publishState={publishState}
-          canEdit={project.canEdit}
-        />
+        <span className="flex items-center gap-2 font-mono text-sm text-zinc-100">
+          <span className="h-2 w-2 rounded-full bg-amber-400" />
+          /create/lesson
+        </span>
 
-        <h1 className="mt-1 text-2xl font-semibold">Create a lesson</h1>
-        <p className="mt-1 text-zinc-600 dark:text-zinc-400">
-          Write a lesson from text blocks — no Markdown syntax required. Link existing puzzles for readers to practice.
-        </p>
+        <div role="tablist" aria-label="Project view" className="flex items-center gap-1.5">
+          <ViewTab label="workspace" active={view === "workspace"} onClick={() => changeView("workspace")} />
+          <ViewTab label="markdown" active={view === "markdown"} onClick={() => changeView("markdown")} />
+        </div>
+
+        {project.canEdit && (
+          <>
+            <PublishBadge state={publishState} />
+            <span
+              role="status"
+              aria-live="polite"
+              className={`font-mono text-xs ${saveState === "error" ? "text-red-400" : "text-zinc-500"}`}
+            >
+              {STATUS_TEXT[saveState]}
+            </span>
+          </>
+        )}
+      </div>
+
+      {view === "workspace" ? (
+        <div className="min-h-0 flex-1 overflow-y-auto bg-zinc-50 px-6 py-8 dark:bg-zinc-950">
+          <div className="mx-auto max-w-3xl">
+            <h1 className="text-2xl font-semibold">{title.trim() || "Untitled lesson"}</h1>
+            <p className="mt-1 text-zinc-600 dark:text-zinc-400">
+              Live preview of the lesson markdown. Edit the content in the markdown tab.
+            </p>
+            <article className="mt-8 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-10">
+              {hasText ? <LessonPreview source={markdown} /> : <p className="text-sm text-zinc-500">Nothing to preview yet. Add text in the markdown tab.</p>}
+            </article>
+            <button
+              type="button"
+              onClick={() => changeView("markdown")}
+              className="mt-6 font-mono text-sm text-amber-600 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-500 dark:text-amber-400"
+            >
+              open markdown editor
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-8">
+          <div className="mx-auto max-w-3xl">
+            <h1 className="text-2xl font-semibold">Create a lesson</h1>
+            <p className="mt-1 text-zinc-600 dark:text-zinc-400">
+              Write a lesson from text blocks — no Markdown syntax required. Link existing puzzles for readers to practice.
+            </p>
 
         {/* A disabled fieldset turns off every native input/button inside it for non-owners. */}
         <fieldset disabled={!project.canEdit} className="m-0 min-w-0 border-0 p-0">
@@ -412,6 +491,8 @@ export default function LessonCreator({
           </div>
         </fieldset>
       </div>
+        </div>
+      )}
     </div>
   );
 }
