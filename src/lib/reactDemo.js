@@ -10,6 +10,10 @@ export const MAX_REACT_DEMO_LESSON_PAYLOAD = 200_000;
 export const MAX_ACTIVE_REACT_DEMOS = 6;
 export const REACT_DEMO_RENDER_TIMEOUT_MS = 2_500;
 export const REACT_DEMO_IFRAME_SANDBOX = "allow-scripts";
+// The main app is cross-origin isolated for Pyodide's SharedArrayBuffer use.
+// A credentialless iframe is allowed through that COEP boundary without
+// granting the untrusted demo access to cookies or other ambient credentials.
+export const REACT_DEMO_IFRAME_CREDENTIALLESS = true;
 export const REACT_DEMO_RUNNER_ORIGIN = "https://code-commons-ccreact.vercel.app";
 export const REACT_DEMO_MAIN_APP_ORIGIN = "https://code-commons.vercel.app";
 export const REACT_DEMO_PUBLISH_ERROR = "One or more React demos could not be validated for publication.";

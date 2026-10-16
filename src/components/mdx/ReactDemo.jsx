@@ -8,6 +8,7 @@ import {
   MAX_ACTIVE_REACT_DEMOS,
   MAX_REACT_DEMO_CODE,
   MAX_REACT_DEMO_COMPILED,
+  REACT_DEMO_IFRAME_CREDENTIALLESS,
   REACT_DEMO_IFRAME_SANDBOX,
   REACT_DEMO_RENDER_TIMEOUT_MS,
   REACT_DEMO_RUNNER_ORIGIN,
@@ -140,6 +141,7 @@ export default function ReactDemo({ code = "", data = "", title = "Interactive R
           title={title || artifact?.title || "Interactive React demo"}
           src={runnerUrl}
           sandbox={REACT_DEMO_IFRAME_SANDBOX}
+          credentialless={REACT_DEMO_IFRAME_CREDENTIALLESS}
           loading="lazy"
           referrerPolicy="no-referrer"
           className="block h-56 w-full border-0 bg-white dark:bg-zinc-900"

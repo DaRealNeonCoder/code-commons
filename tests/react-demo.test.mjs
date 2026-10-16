@@ -10,6 +10,7 @@ import {
   MAX_REACT_DEMO_COMPILED,
   MAX_REACT_DEMO_LESSON_PAYLOAD,
   MAX_REACT_DEMOS,
+  REACT_DEMO_IFRAME_CREDENTIALLESS,
   REACT_DEMO_IFRAME_SANDBOX,
   REACT_DEMO_RENDER_TIMEOUT_MS,
   REACT_DEMO_RUNNER_ORIGIN,
@@ -48,6 +49,7 @@ test("server compiler enforces source, compiled, and component validation", asyn
 
 test("runner boundary has explicit limits and sandbox", () => {
   assert.equal(REACT_DEMO_IFRAME_SANDBOX, "allow-scripts");
+  assert.equal(REACT_DEMO_IFRAME_CREDENTIALLESS, true);
   assert.equal(REACT_DEMO_RUNNER_ORIGIN, "https://code-commons-ccreact.vercel.app");
   assert.equal(MAX_REACT_DEMOS, 20);
   assert.equal(MAX_ACTIVE_REACT_DEMOS, 6);
