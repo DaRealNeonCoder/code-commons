@@ -5,6 +5,7 @@ import {
   hasReactDemoCode,
   normalizeReactDemos,
   REACT_DEMO_IFRAME_SANDBOX,
+  REACT_DEMO_RUNTIME_VERSION,
   REACT_DEMO_PUBLISH_ERROR,
 } from "../src/lib/reactDemo.js";
 
@@ -22,6 +23,8 @@ test("React demo drafts are normalized and capped", () => {
 test("sandbox document escapes script-breaking demo text and advertises its boundary", () => {
   const source = buildReactDemoDocument('function Demo() { return "</script>"; }');
   assert.equal(REACT_DEMO_IFRAME_SANDBOX, "allow-scripts");
+  assert.match(source, new RegExp(`react@${REACT_DEMO_RUNTIME_VERSION}/umd/react\\.development\\.js`));
+  assert.match(source, new RegExp(`react-dom@${REACT_DEMO_RUNTIME_VERSION}/umd/react-dom\\.development\\.js`));
   assert.match(source, /connect-src 'none'/);
   assert.doesNotMatch(source, /<\/script>"/);
   assert.equal(source.includes("\\u003c/script\\u003e"), true);

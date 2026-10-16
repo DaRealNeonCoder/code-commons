@@ -6,6 +6,10 @@ export const MAX_REACT_DEMOS = 20;
 export const MAX_REACT_DEMO_CODE = 20_000;
 export const MAX_REACT_DEMO_TITLE = 120;
 export const REACT_DEMO_IFRAME_SANDBOX = "allow-scripts";
+// React 19 no longer publishes the UMD files used by this iframe runtime.
+// Keep the preview on the latest React 18 UMD build, which still exposes the
+// global ReactDOM.createRoot API.
+export const REACT_DEMO_RUNTIME_VERSION = "18.3.1";
 
 export const REACT_DEMO_PUBLISH_ERROR =
   "React demos are not yet supported in published lessons pending security validation. Remove the React demo code to publish this lesson.";
@@ -63,8 +67,8 @@ export function buildReactDemoDocument(code) {
   <body>
     <div id="root"></div>
     <div id="error" role="alert"></div>
-    <script src="https://unpkg.com/react@19.2.8/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@19.2.8/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/react@${REACT_DEMO_RUNTIME_VERSION}/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@${REACT_DEMO_RUNTIME_VERSION}/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone@7.26.9/babel.min.js"></script>
     <script>
       (() => {
@@ -82,6 +86,9 @@ export function buildReactDemoDocument(code) {
 
         try {
           if (!userCode.trim()) throw new Error("Add a React component to preview it.");
+          if (!window.React || !window.ReactDOM || typeof window.ReactDOM.createRoot !== "function" || !window.Babel) {
+            throw new Error("The React preview runtime could not load. Check network access to unpkg.com and reload.");
+          }
           const transformed = Babel.transform(userCode, { presets: ["react"] }).code;
           const getComponent = new Function("React", transformed + "\\n; return typeof Demo === \\"function\\" ? Demo : typeof App === \\"function\\" ? App : null;");
           const Component = getComponent(window.React);
