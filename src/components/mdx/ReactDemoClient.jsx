@@ -132,8 +132,8 @@ export default function ReactDemo({ code = "", data = "", title = "Interactive R
   }
   const runnerUrl = `${REACT_DEMO_RUNNER_ORIGIN}/?nonce=${encodeURIComponent(nonce)}`;
   return (
-    <figure ref={mountRef} className="my-6 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
-      <figcaption className="border-b border-zinc-200 px-4 py-2 font-mono text-xs text-zinc-500 dark:border-zinc-800">{title || artifact?.title || "Interactive React demo"}</figcaption>
+    <figure ref={mountRef} className="my-6">
+      <figcaption className="mb-2 font-mono text-xs text-zinc-500 dark:text-zinc-400">{title || artifact?.title || "Interactive React demo"}</figcaption>
       {hasSlot ? (
         <iframe
           key={frameKey}
@@ -144,12 +144,12 @@ export default function ReactDemo({ code = "", data = "", title = "Interactive R
           credentialless={REACT_DEMO_IFRAME_CREDENTIALLESS}
           loading="lazy"
           referrerPolicy="no-referrer"
-          className="block h-56 w-full border-0 bg-white dark:bg-zinc-900"
+          className="block h-56 w-full border-0 bg-transparent"
         />
       ) : (
         <div className="flex h-56 items-center justify-center p-4 text-sm text-zinc-500" aria-busy="true">Scroll to load this interactive demo.</div>
       )}
-      {error && <p className="border-t border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700 dark:border-red-950 dark:bg-red-950/30 dark:text-red-300">Demo error: {error}</p>}
+      {error && <p className="mt-2 text-sm text-red-700 dark:text-red-300">Demo error: {error}</p>}
     </figure>
   );
 }

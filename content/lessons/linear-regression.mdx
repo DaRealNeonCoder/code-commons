@@ -29,6 +29,35 @@ MSE = (error₁² + error₂² + ... + errorₙ²) / n
 
 Squaring makes every miss positive and makes large misses matter more. An MSE of `0` means every prediction matched its target in the examples being measured.
 
+<ReactDemo
+  title="Fit a line and watch its MSE"
+  code={`function Demo() {
+  const [weight, setWeight] = React.useState(1);
+  const [bias, setBias] = React.useState(1);
+  const points = [[-2, 1], [-1, 2], [0, 2.2], [1, 4], [2, 4.8]];
+  const predict = x => weight * x + bias;
+  const mse = points.reduce((sum, point) => sum + (predict(point[0]) - point[1]) ** 2, 0) / points.length;
+  const sx = x => 30 + (x + 2) * 55;
+  const sy = y => 155 - y * 25;
+  const line = "M " + sx(-2) + " " + sy(predict(-2)) + " L " + sx(3) + " " + sy(predict(3));
+  const reset = () => { setWeight(1); setBias(1); };
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "#172033" }}>
+    <p style={{ marginTop: 0 }}><strong>prediction = weight × feature + bias</strong></p>
+    <label style={{ display: "block" }}>weight = {weight.toFixed(1)} <input type="range" min="-1" max="3" step="0.1" value={weight} onChange={e => setWeight(+e.target.value)} /></label>
+    <label style={{ display: "block" }}>bias = {bias.toFixed(1)} <input type="range" min="0" max="5" step="0.1" value={bias} onChange={e => setBias(+e.target.value)} /></label>
+    <button onClick={reset} style={{ padding: "5px 10px", marginTop: 6 }}>reset line</button>
+    <svg viewBox="0 0 330 175" style={{ display: "block", width: "100%", maxWidth: 360, marginTop: 8, background: "#f8fafc", borderRadius: 8 }}>
+      <line x1="30" y1="155" x2="305" y2="155" stroke="#94a3b8" />
+      <line x1="30" y1="5" x2="30" y2="155" stroke="#94a3b8" />
+      <path d={line} stroke="#4f46e5" strokeWidth="3" fill="none" />
+      {points.map(point => <circle key={point[0]} cx={sx(point[0])} cy={sy(point[1])} r="4" fill="#e11d48" />)}
+    </svg>
+    <p style={{ marginBottom: 4 }}>MSE = {mse.toFixed(2)}</p>
+    <small>Red dots are targets; the blue line gives predictions. Large vertical misses raise MSE more because they are squared.</small>
+  </div>;
+}`}
+/>
+
 ## Several features at once
 
 With several features, a row of data is a vector `x` and the weights are another vector `w`. The model uses a dot product:

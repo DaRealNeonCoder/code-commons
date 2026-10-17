@@ -35,6 +35,34 @@ The sigmoid maps every score to a value strictly between `0` and `1`:
 
 To make a class prediction, choose a threshold. The usual beginner-friendly choice is `0.5`: probability at least `0.5` becomes class `1`, and a smaller probability becomes class `0`.
 
+<ReactDemo
+  title="Turn a logit into a probability"
+  code={`function Demo() {
+  const [z, setZ] = React.useState(0);
+  const [threshold, setThreshold] = React.useState(0.5);
+  const sigmoid = value => 1 / (1 + Math.exp(-value));
+  const probability = sigmoid(z);
+  const sx = value => 20 + (value + 6) * 25;
+  const sy = value => 148 - value * 110;
+  const curve = Array.from({ length: 25 }, (_, index) => {
+    const value = -6 + index * 0.5;
+    return (index === 0 ? "M " : " L ") + sx(value) + " " + sy(sigmoid(value));
+  }).join("");
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "#172033" }}>
+    <p style={{ marginTop: 0 }}><strong>sigmoid(z) = 1 / (1 + e⁻ᶻ)</strong></p>
+    <label style={{ display: "block" }}>logit z = {z.toFixed(1)} <input type="range" min="-6" max="6" step="0.1" value={z} onChange={e => setZ(+e.target.value)} /></label>
+    <label style={{ display: "block" }}>threshold = {threshold.toFixed(2)} <input type="range" min="0.2" max="0.8" step="0.05" value={threshold} onChange={e => setThreshold(+e.target.value)} /></label>
+    <svg viewBox="0 0 320 165" style={{ display: "block", width: "100%", maxWidth: 350, marginTop: 8, background: "#f8fafc", borderRadius: 8 }}>
+      <line x1="20" y1={sy(threshold)} x2="320" y2={sy(threshold)} stroke="#f59e0b" strokeDasharray="4 3" />
+      <path d={curve} stroke="#4f46e5" strokeWidth="3" fill="none" />
+      <circle cx={sx(z)} cy={sy(probability)} r="6" fill="#e11d48" />
+    </svg>
+    <p style={{ marginBottom: 4 }}>probability p = {probability.toFixed(3)} · predicted class = {probability >= threshold ? 1 : 0}</p>
+    <small>The blue curve is the sigmoid. The red point is the current z; the dashed line is the chosen decision threshold.</small>
+  </div>;
+}`}
+/>
+
 ## Cross-entropy
 
 For classification, **binary cross-entropy** is a useful loss:

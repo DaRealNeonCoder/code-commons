@@ -41,6 +41,28 @@ Neural language models usually turn output scores into probabilities with softma
 
 The practice puzzle uses a deterministic teaching version instead. It sorts possible next words by count and uses a temperature-like dial from `0` to `1` to select a rank. Zero always chooses the most frequent word; one chooses the least frequent available word. This is not random generation, so the same input always has the same answer, which makes browser tests easy to verify.
 
+<ReactDemo
+  title="Choose the next word from bigram counts"
+  code={`function Demo() {
+  const corpus = "the cat sleeps . the cat plays . the dog sleeps . the dog runs . the cat runs .".split(" ");
+  const counts = {};
+  corpus.slice(0, -1).forEach((token, i) => { const next = corpus[i + 1]; counts[token] = counts[token] || {}; counts[token][next] = (counts[token][next] || 0) + 1; });
+  const [token, setToken] = React.useState("the");
+  const [temperature, setTemperature] = React.useState(0);
+  const candidates = Object.entries(counts[token] || {}).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  const total = candidates.reduce((sum, pair) => sum + pair[1], 0);
+  const rank = candidates.length ? Math.round(temperature * (candidates.length - 1)) : 0;
+  const chosen = candidates[rank]?.[0] || "(no continuation)";
+  return <div style={{ fontFamily: "system-ui", padding: 12, color: "#172033", fontSize: 13 }}>
+    <label>current token: <select value={token} onChange={e => setToken(e.target.value)}>{Object.keys(counts).map(value => <option key={value}>{value}</option>)}</select></label>
+    <label style={{ display: "block", marginTop: 8 }}>temperature-like dial: {temperature.toFixed(2)} <input type="range" min="0" max="1" step="0.01" value={temperature} onChange={e => setTemperature(+e.target.value)} /></label>
+    <p style={{ margin: "8px 0 5px" }}>next word: <strong>{chosen}</strong> <small>(rank {candidates.length ? rank + 1 : 0} of {candidates.length})</small></p>
+    {candidates.map(([word, count], i) => <div key={word} style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 3 }}><span style={{ width: 55, fontWeight: i === rank ? "bold" : "normal" }}>{word}</span><span style={{ height: 10, width: count / total * 150, background: i === rank ? "#2563eb" : "#94a3b8", borderRadius: 3 }} /><small>{count}/{total}</small></div>)}
+    <small>Sorted counts are deterministic; increasing the dial selects a lower-ranked continuation.</small>
+  </div>;
+}`}
+ />
+
 > [!TIP]
 > Count pairs in order. `cat dog` is a different bigram from `dog cat`, and the current token is the key used to find the next-word candidates.
 

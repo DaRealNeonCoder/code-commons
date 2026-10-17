@@ -31,6 +31,39 @@ The **learning rate** controls the step size:
 
 Try the bowl `f(w) = (w - 4)²`. Its bottom is at `w = 4`. Starting at `0`, a learning rate of `0.25` moves close to the bottom in a few updates.
 
+<ReactDemo
+  title="Tune the learning rate on a bowl"
+  code={`function Demo() {
+  const [rate, setRate] = React.useState(0.25);
+  const [point, setPoint] = React.useState(0);
+  const [steps, setSteps] = React.useState(0);
+  const target = 4;
+  const gradient = 2 * (point - target);
+  const loss = (point - target) * (point - target);
+  const advance = (count) => {
+    let next = point;
+    for (let i = 0; i < count; i += 1) next = next - rate * 2 * (next - target);
+    setPoint(next);
+    setSteps(steps + count);
+  };
+  const reset = () => { setPoint(0); setSteps(0); };
+  const marker = Math.max(0, Math.min(8, point)) / 8 * 100;
+  const behavior = rate < 0.15 ? "cautious" : rate > 0.9 ? "jumpy" : "steady";
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "#172033" }}>
+    <p style={{ marginTop: 0 }}><strong>f(w) = (w - 4)²</strong></p>
+    <label style={{ display: "block" }}>learning rate = {rate.toFixed(2)} <input type="range" min="0.05" max="1.10" step="0.05" value={rate} onChange={e => setRate(+e.target.value)} /></label>
+    <button onClick={() => advance(1)} style={{ padding: "6px 10px", marginTop: 8 }}>one update</button>{" "}<button onClick={() => advance(5)} style={{ padding: "6px 10px", marginTop: 8 }}>five updates</button>{" "}<button onClick={reset} style={{ padding: "6px 10px", marginTop: 8 }}>reset</button>
+    <div style={{ position: "relative", height: 28, margin: "14px 0", background: "#eef2ff", borderRadius: 6 }}>
+      <div style={{ position: "absolute", left: "50%", top: 0, bottom: 0, borderLeft: "2px solid #4f46e5" }} />
+      <div style={{ position: "absolute", left: marker + "%", top: 7, width: 14, height: 14, marginLeft: -7, borderRadius: "50%", background: "#e11d48" }} />
+      <small style={{ position: "absolute", left: "50%", top: 28, transform: "translateX(-50%)" }}>bottom w = 4</small>
+    </div>
+    <p style={{ marginBottom: 4 }}>w = {point.toFixed(2)} · loss = {loss.toFixed(2)} · gradient = {gradient.toFixed(2)} · steps = {steps}</p>
+    <small>{behavior}: the update subtracts the gradient, so watch whether the point settles or jumps past the bottom.</small>
+  </div>;
+}`}
+/>
+
 ## Convergence
 
 When the updates become tiny and the function value stops improving, we say the process **converged**. It may not land on the exact answer because we usually stop after a fixed number of steps or when the change is small enough.

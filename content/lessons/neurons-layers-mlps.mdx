@@ -54,6 +54,31 @@ The calculation happens from left to right. This is the **forward pass**:
 
 Keeping these steps separate makes the shapes easier to check. If the input has length 2 and a layer has 2 neurons, its weight matrix has 2 rows and 2 columns.
 
+<ReactDemo
+  title="Watch an MLP forward pass"
+  code={`function Demo() {
+  const [input, setInput] = React.useState([0, 1]);
+  const rows = [[0, 0], [0, 1], [1, 0], [1, 1]];
+  const weights = [[1, 1], [1, 1]], biases = [0, -1];
+  const relu = value => Math.max(0, value);
+  const sigmoid = value => 1 / (1 + Math.exp(-value));
+  const sums = weights.map((row, i) => row[0] * input[0] + row[1] * input[1] + biases[i]);
+  const hidden = sums.map(relu);
+  const outputSum = hidden[0] - 2 * hidden[1] - 0.5;
+  const output = sigmoid(outputSum);
+  return <div style={{ fontFamily: "system-ui", padding: 12, color: "#172033" }}>
+    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 8 }}>{rows.map(row => <button key={row.join("")} onClick={() => setInput(row)} style={{ padding: "4px 8px", background: row[0] === input[0] && row[1] === input[1] ? "#dbeafe" : "white", border: "1px solid #94a3b8", borderRadius: 4 }}>({row.join(", ")})</button>)}</div>
+    <svg viewBox="0 0 360 100" style={{ width: "100%", maxWidth: 360, display: "block"}} aria-label="Two input neurons, two hidden neurons, and one output neuron">
+      <line x1="55" y1="35" x2="145" y2="30" stroke="#94a3b8" /><line x1="55" y1="65" x2="145" y2="70" stroke="#94a3b8" /><line x1="205" y1="30" x2="295" y2="50" stroke="#94a3b8" /><line x1="205" y1="70" x2="295" y2="50" stroke="#94a3b8" />
+      <circle cx="45" cy="35" r="16" fill="#e0f2fe" /><circle cx="45" cy="65" r="16" fill="#e0f2fe" /><circle cx="155" cy="30" r="16" fill="#fef3c7" /><circle cx="155" cy="70" r="16" fill="#fef3c7" /><circle cx="305" cy="50" r="18" fill="#dcfce7" />
+      <text x="45" y="39" textAnchor="middle" fontSize="12">{input[0]}</text><text x="45" y="69" textAnchor="middle" fontSize="12">{input[1]}</text><text x="155" y="34" textAnchor="middle" fontSize="11">{hidden[0].toFixed(1)}</text><text x="155" y="74" textAnchor="middle" fontSize="11">{hidden[1].toFixed(1)}</text><text x="305" y="54" textAnchor="middle" fontSize="11">{output.toFixed(2)}</text>
+      <text x="45" y="94" textAnchor="middle" fontSize="10">input</text><text x="155" y="94" textAnchor="middle" fontSize="10">ReLU</text><text x="305" y="94" textAnchor="middle" fontSize="10">sigmoid</text>
+    </svg>
+    <small>weighted sums = ({sums.map(value => value.toFixed(1)).join(", ")}) · hidden = ({hidden.map(value => value.toFixed(1)).join(", ")}) · class = {output >= 0.5 ? 1 : 0}</small>
+  </div>;
+}`}
+ />
+
 ## Why XOR needs a hidden layer
 
 The XOR rule is `1` when exactly one input is `1`:

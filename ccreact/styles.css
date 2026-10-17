@@ -7,11 +7,11 @@ body {
   margin: 0;
   min-width: 180px;
   color: #27272a;
-  background: #fff;
+  background: transparent;
 }
 
 @media (prefers-color-scheme: dark) {
-  body { color: #e4e4e7; background: #18181b; }
+  body { color: #e4e4e7; background: transparent; }
 }
 
 #root { min-height: 100vh; }

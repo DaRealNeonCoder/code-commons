@@ -44,6 +44,35 @@ recall    = TP / (TP + FN)
 
 **Accuracy** is the overall fraction that is correct. **Precision** asks, “When the model predicts positive, how often is it right?” **Recall** asks, “Of the real positives, how many did it find?” If a denominator is zero, report that metric as `0` in this beginner exercise rather than dividing by zero.
 
+<ReactDemo
+  title="Move the classification threshold"
+  code={`function Demo() {
+  const [threshold, setThreshold] = React.useState(0.5);
+  const rows = [[1, 0.92], [1, 0.64], [1, 0.38], [0, 0.72], [0, 0.31], [0, 0.08]];
+  const counts = rows.reduce((out, row) => {
+    const predicted = row[1] >= threshold ? 1 : 0;
+    if (row[0] === 1 && predicted === 1) out.tp += 1;
+    if (row[0] === 0 && predicted === 1) out.fp += 1;
+    if (row[0] === 1 && predicted === 0) out.fn += 1;
+    if (row[0] === 0 && predicted === 0) out.tn += 1;
+    return out;
+  }, { tp: 0, fp: 0, fn: 0, tn: 0 });
+  const metric = (numerator, denominator) => denominator ? numerator / denominator : 0;
+  const accuracy = metric(counts.tp + counts.tn, rows.length);
+  const precision = metric(counts.tp, counts.tp + counts.fp);
+  const recall = metric(counts.tp, counts.tp + counts.fn);
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "#172033" }}>
+    <p style={{ marginTop: 0 }}><strong>fixed unseen test examples</strong></p>
+    <label style={{ display: "block" }}>threshold = {threshold.toFixed(2)} <input type="range" min="0.2" max="0.8" step="0.05" value={threshold} onChange={e => setThreshold(+e.target.value)} /></label>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 6, marginTop: 10 }}>
+      {[['actual 1 / predicted 1', 'TP', counts.tp], ['actual 0 / predicted 1', 'FP', counts.fp], ['actual 1 / predicted 0', 'FN', counts.fn], ['actual 0 / predicted 0', 'TN', counts.tn]].map(cell => <div key={cell[1]} style={{ padding: 7, background: "#eef2ff", borderRadius: 5 }}><strong>{cell[1]}</strong> {cell[2]}<br /><small>{cell[0]}</small></div>)}
+    </div>
+    <p style={{ marginBottom: 4 }}>accuracy {accuracy.toFixed(2)} · precision {precision.toFixed(2)} · recall {recall.toFixed(2)}</p>
+    <small>Each test row has a true label and a probability. Raising the threshold trades some false positives for false negatives.</small>
+  </div>;
+}`}
+/>
+
 Accuracy can hide a problem when one class is much more common. Precision and recall show different kinds of mistakes, so choose the metric that matches the cost of the errors.
 
 ## The leaked-feature trap

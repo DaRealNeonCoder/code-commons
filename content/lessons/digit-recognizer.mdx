@@ -45,6 +45,29 @@ probabilities = [value / total for value in values]
 
 The predicted digit is the index of the largest probability. With a one-hot label, the training signal for class `c` is `probability[c] - 1` for the correct class and `probability[c]` for the others.
 
+<ReactDemo
+  title="Paint pixels and read softmax"
+  code={`function Demo() {
+  const patterns = { 0: ["01111110", "11000011", "11011011", "11011011", "11000011", "11000011", "01111110", "00000000"], 1: ["00011000", "00111000", "00011000", "00011000", "00011000", "00011000", "01111110", "00000000"], 2: ["01111100", "11000110", "00000110", "00001100", "00110000", "01100000", "11111110", "00000000"] };
+  const pixelsFor = digit => patterns[digit].flatMap(row => row.split("").map(Number));
+  const [pixels, setPixels] = React.useState(() => pixelsFor(0));
+  const logits = [0, 1, 2].map(digit => pixels.reduce((sum, pixel, i) => sum + pixel * (patterns[digit][Math.floor(i / 8)][i % 8] === "1" ? 1 : -1), 0) / 8);
+  const largest = Math.max(...logits);
+  const exps = logits.map(value => Math.exp(value - largest));
+  const total = exps.reduce((sum, value) => sum + value, 0);
+  const probabilities = exps.map(value => value / total);
+  const best = probabilities.indexOf(Math.max(...probabilities));
+  const toggle = i => setPixels(previous => previous.map((value, index) => index === i ? 1 - value : value));
+  return <div style={{ fontFamily: "system-ui", padding: 10, color: "#172033", fontSize: 12 }}>
+    <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+      <div><div style={{ display: "grid", gridTemplateColumns: "repeat(8, 16px)", gap: 1, background: "#cbd5e1", padding: 2 }}>{pixels.map((pixel, i) => <button key={i} aria-label={"pixel " + i} onClick={() => toggle(i)} style={{ width: 16, height: 16, padding: 0, border: 0, background: pixel ? "#172033" : "#f8fafc" }} />)}</div><div style={{ marginTop: 5 }}><button onClick={() => setPixels(pixelsFor(0))}>0</button> <button onClick={() => setPixels(pixelsFor(1))}>1</button> <button onClick={() => setPixels(pixelsFor(2))}>2</button> <button onClick={() => setPixels(Array(64).fill(0))}>clear</button></div></div>
+      <div style={{ flex: 1 }}><strong>prediction: {best}</strong>{probabilities.map((probability, digit) => <div key={digit} style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 5 }}><span style={{ width: 12 }}>{digit}</span><span style={{ height: 10, width: Math.round(probability * 150), background: digit === best ? "#2563eb" : "#94a3b8", borderRadius: 3 }} /><small>{(probability * 100).toFixed(0)}%</small></div>)}</div>
+    </div>
+    <small>logits = ({logits.map(value => value.toFixed(2)).join(", ")}) · softmax subtracts the largest logit before exp.</small>
+  </div>;
+}`}
+ />
+
 ## Mini-batches
 
 Updating after every one example can make the path noisy. Updating after the entire dataset can use more memory and can react slowly to new data. A **mini-batch** is a small group of examples:

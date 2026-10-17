@@ -59,6 +59,30 @@ repeat for several epochs:
 
 The XOR problem is a small demonstration. Start with fixed, slightly different weights, visit all four rows, and the loss can fall until the network predicts all four labels correctly.
 
+<ReactDemo
+  title="Take gradient steps on one weight"
+  code={`function Demo() {
+  const [weight, setWeight] = React.useState(-1);
+  const [rate, setRate] = React.useState(0.5);
+  const x = 1.5, target = 1;
+  const sigmoid = value => 1 / (1 + Math.exp(-value));
+  const lossAt = value => -Math.log(sigmoid(value * x));
+  const prediction = sigmoid(weight * x);
+  const loss = lossAt(weight);
+  const gradient = (prediction - target) * x;
+  const h = 0.0001;
+  const numerical = (lossAt(weight + h) - lossAt(weight - h)) / (2 * h);
+  const step = () => setWeight(weight - rate * gradient);
+  return <div style={{ fontFamily: "system-ui", padding: 12, color: "#172033" }}>
+    <p style={{ margin: "0 0 8px" }}><strong>one sigmoid neuron:</strong> x = {x}, target = {target}</p>
+    <label style={{ display: "block", marginBottom: 6 }}>learning rate = {rate.toFixed(2)} <input type="range" min="0.05" max="1" step="0.05" value={rate} onChange={e => setRate(+e.target.value)} /></label>
+    <button onClick={step} style={{ padding: "5px 9px" }}>backprop step</button> <button onClick={() => setWeight(-1)} style={{ padding: "5px 9px" }}>reset</button>
+    <p style={{ margin: "9px 0 4px" }}>weight = {weight.toFixed(3)} · prediction = {prediction.toFixed(3)} · loss = {loss.toFixed(3)}</p>
+    <small>analytic gradient = {gradient.toFixed(3)} · numerical check = {numerical.toFixed(3)}<br />update: weight − learning rate × gradient = {weight.toFixed(3)} − {rate.toFixed(2)} × {gradient.toFixed(3)}</small>
+  </div>;
+}`}
+ />
+
 ## Gradient checking
 
 Backpropagation has many small multiplications, so one missing factor can be hard to spot. A **numerical gradient** provides a check:
