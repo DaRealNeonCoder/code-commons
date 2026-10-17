@@ -90,6 +90,23 @@ print(A + [10, 20, 30])  # add by column: broadcasting
 
 **Broadcasting** lets NumPy reuse a smaller shape when the shapes line up. It is convenient, but it does not remove the shape rules. `A + [10, 20]` is not valid for this `(2, 3)` matrix because the widths disagree.
 
+<ReactDemo
+  title="Transform a vector with a matrix"
+  code={`function Demo() {
+  const [x, setX] = React.useState(1);
+  const [y, setY] = React.useState(2);
+  const a = [[1, 2], [3, 4]];
+  const out = [a[0][0] * x + a[0][1] * y, a[1][0] * x + a[1][1] * y];
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "#172033" }}>
+    <p style={{ marginTop: 0 }}><strong>A × v</strong> where A = [[1, 2], [3, 4]]</p>
+    <label style={{ display: "block" }}>x = {x} <input type="range" min="0" max="5" value={x} onChange={e => setX(+e.target.value)} /></label>
+    <label style={{ display: "block" }}>y = {y} <input type="range" min="0" max="5" value={y} onChange={e => setY(+e.target.value)} /></label>
+    <pre style={{ background: "#eef2ff", padding: 12 }}>{"[1  2]   [" + x + "]   [" + out[0] + "]\\n[3  4] × [" + y + "] = [" + out[1] + "]"}</pre>
+    <small>Each output row is a dot product with the input vector.</small>
+  </div>;
+}`}
+/>
+
 ## Shape detective
 
 When a pipeline breaks, read the shapes from left to right. Here are three common bugs:

@@ -1,7 +1,7 @@
 "use client";
 
-import ReactDemo from "@/components/mdx/ReactDemo";
-import { MAX_REACT_DEMO_CODE, MAX_REACT_DEMO_TITLE } from "@/lib/reactDemo";
+import ReactCodeLoop from "@/components/codeLoop/ReactCodeLoop";
+import { MAX_REACT_DEMO_TITLE } from "@/lib/reactDemo";
 
 const sampleCode = `function Demo() {
   const [count, setCount] = React.useState(0);
@@ -86,19 +86,13 @@ export default function ReactDemoEditor({ demos, onChange, accent = "amber" }) {
                 placeholder="Demo title"
                 className="mb-3 w-full rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
               />
-              <textarea
-                value={demo.code}
-                maxLength={MAX_REACT_DEMO_CODE}
-                onChange={(event) => updateDemo(demo.id, { code: event.target.value })}
-                spellCheck={false}
-                rows={10}
-                className="w-full resize-y rounded border border-zinc-300 bg-zinc-950 px-3 py-2 font-mono text-xs leading-5 text-zinc-100 dark:border-zinc-700"
-                aria-label={`React code for demo ${index + 1}`}
-              />
-              <p className="mt-2 font-mono text-[11px] text-zinc-500">{demo.code.length.toLocaleString()} / {MAX_REACT_DEMO_CODE.toLocaleString()} characters</p>
               <div className="mt-4">
                 <p className="mb-2 font-mono text-xs text-zinc-500">preview</p>
-                <ReactDemo allowValidation code={demo.code} title={demo.title || `Demo ${index + 1}`} />
+                <ReactCodeLoop
+                  code={demo.code}
+                  onCodeChange={(code) => updateDemo(demo.id, { code })}
+                  title={demo.title || `Demo ${index + 1}`}
+                />
               </div>
             </div>
           ))

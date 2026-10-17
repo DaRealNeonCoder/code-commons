@@ -94,6 +94,16 @@ as additional pending items.
 
 ## new stuff
 
+## React code-loop library
+
+- [x] Add a reusable `ReactCodeLoop` authoring component and lifecycle hook for edit, compile, run, and reset.
+- [x] Reuse the restricted React demo compiler and sandboxed iframe runner instead of executing source directly in the editor page.
+- [ ] Add an authenticated, rate-limited compile adapter for reusable library consumers instead of relying on the current creator endpoint.
+- [ ] Add end-to-end coverage for editing, stale compile cancellation, reset, iframe rendering, and compile failures.
+- [ ] Decide whether the internal library should become a separately built package with public exports and peer dependencies.
+- [ ] Define a versioned runner protocol for input props, console events, iteration traces, step, pause, resume, and cancellation before implementing debugger features.
+- [ ] Add a browser compatibility fallback for iframe `credentialless` support.
+
 We are gonna do a lot of seo optimization stuff.
 the following text is stuff I took from a conversation, follow it as best as you can.
 One page per concept, targeting one specific query. “Binary search explained” beats a generic “Algorithms” page. Use the exact phrasing people search for in the title, H1, and URL. (create a new binary search lesson, inside a searching algorithms course (add in red black tree + MCTS + b-trees etc, (you can leave em as stubs for now, but make sure the binary search lesson is fully working, im 90% sure you can also just link an existing binary search tree lesson we have, otherwise make a binary search tree lesson and link it)), and use the SEO optimization we talk about on it)

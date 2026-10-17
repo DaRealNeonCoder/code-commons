@@ -60,6 +60,25 @@ A contour map draws lines where a function has the same height, like lines on a 
 
 We are keeping this course friendly to a browser code runner, so the puzzle checks the arrows' numbers instead of asking you to install a plotting library. You can sketch the bowl on paper: the farther from `(0, 0)`, the higher it is, and the gradient points away from the center.
 
+<ReactDemo
+  title="Follow a gradient on a bowl"
+  code={`function Demo() {
+  const [point, setPoint] = React.useState([1, -2]);
+  const [steps, setSteps] = React.useState(0);
+  const value = ([x, y]) => x * x + 2 * y * y;
+  const gradient = ([x, y]) => [2 * x, 4 * y];
+  const step = () => { const g = gradient(point); setPoint([point[0] - 0.12 * g[0], point[1] - 0.12 * g[1]]); setSteps(steps + 1); };
+  const g = gradient(point);
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "#172033" }}>
+    <p style={{ marginTop: 0 }}><strong>f(x, y) = x² + 2y²</strong></p>
+    <button onClick={step} style={{ padding: "6px 10px" }}>take downhill step</button> <button onClick={() => { setPoint([1, -2]); setSteps(0); }}>reset</button>
+    <p>point = ({point.map(n => n.toFixed(2)).join(", ")}) · value = {value(point).toFixed(2)}</p>
+    <p style={{ marginBottom: 0 }}>gradient = ({g.map(n => n.toFixed(2)).join(", ")}) · steps = {steps}</p>
+    <small>The gradient points uphill, so the update subtracts it.</small>
+  </div>;
+}`}
+/>
+
 ## A direction puzzle
 
 At `(1, -2)`, the gradient `[2, -8]` says:
