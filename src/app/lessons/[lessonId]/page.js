@@ -100,7 +100,7 @@ export default async function LessonPage({ params }) {
             </header>
 
             <article className="mt-8 max-w-3xl rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-10">
-              <MDXRemote source={lesson.content} components={mdxComponents} options={{ mdxOptions }} />
+              <MDXRemote source={lesson.content} components={mdxComponents} options={{ mdxOptions, blockJS: false }} />
             </article>
 
             <NextPuzzleLinks

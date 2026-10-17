@@ -5,7 +5,7 @@ export default function MdxBody({ source, className }) {
   if (!source) return null;
   return (
     <div className={className}>
-      <MDXRemote source={source} components={mdxComponents} options={{ mdxOptions }} />
+      <MDXRemote source={source} components={mdxComponents} options={{ mdxOptions, blockJS: false }} />
     </div>
   );
 }
