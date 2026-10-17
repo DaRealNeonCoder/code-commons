@@ -48,7 +48,7 @@ To make a class prediction, choose a threshold. The usual beginner-friendly choi
     const value = -6 + index * 0.5;
     return (index === 0 ? "M " : " L ") + sx(value) + " " + sy(sigmoid(value));
   }).join("");
-  return <div style={{ fontFamily: "system-ui", padding: 16, color: "#172033" }}>
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
     <p style={{ marginTop: 0 }}><strong>sigmoid(z) = 1 / (1 + e⁻ᶻ)</strong></p>
     <label style={{ display: "block" }}>logit z = {z.toFixed(1)} <input type="range" min="-6" max="6" step="0.1" value={z} onChange={e => setZ(+e.target.value)} /></label>
     <label style={{ display: "block" }}>threshold = {threshold.toFixed(2)} <input type="range" min="0.2" max="0.8" step="0.05" value={threshold} onChange={e => setThreshold(+e.target.value)} /></label>

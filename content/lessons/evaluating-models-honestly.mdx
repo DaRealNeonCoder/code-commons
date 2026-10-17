@@ -61,11 +61,11 @@ recall    = TP / (TP + FN)
   const accuracy = metric(counts.tp + counts.tn, rows.length);
   const precision = metric(counts.tp, counts.tp + counts.fp);
   const recall = metric(counts.tp, counts.tp + counts.fn);
-  return <div style={{ fontFamily: "system-ui", padding: 16, color: "#172033" }}>
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
     <p style={{ marginTop: 0 }}><strong>fixed unseen test examples</strong></p>
     <label style={{ display: "block" }}>threshold = {threshold.toFixed(2)} <input type="range" min="0.2" max="0.8" step="0.05" value={threshold} onChange={e => setThreshold(+e.target.value)} /></label>
     <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 6, marginTop: 10 }}>
-      {[['actual 1 / predicted 1', 'TP', counts.tp], ['actual 0 / predicted 1', 'FP', counts.fp], ['actual 1 / predicted 0', 'FN', counts.fn], ['actual 0 / predicted 0', 'TN', counts.tn]].map(cell => <div key={cell[1]} style={{ padding: 7, background: "#eef2ff", borderRadius: 5 }}><strong>{cell[1]}</strong> {cell[2]}<br /><small>{cell[0]}</small></div>)}
+      {[['actual 1 / predicted 1', 'TP', counts.tp], ['actual 0 / predicted 1', 'FP', counts.fp], ['actual 1 / predicted 0', 'FN', counts.fn], ['actual 0 / predicted 0', 'TN', counts.tn]].map(cell => <div key={cell[1]} style={{ padding: 7, background: "#eef2ff", color: "#172033", borderRadius: 5 }}><strong>{cell[1]}</strong> {cell[2]}<br /><small>{cell[0]}</small></div>)}
     </div>
     <p style={{ marginBottom: 4 }}>accuracy {accuracy.toFixed(2)} · precision {precision.toFixed(2)} · recall {recall.toFixed(2)}</p>
     <small>Each test row has a true label and a probability. Raising the threshold trades some false positives for false negatives.</small>

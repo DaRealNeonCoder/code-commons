@@ -13,7 +13,9 @@ import ContentAuthor from "@/components/ContentAuthor";
 import DeferredEngagement from "@/components/DeferredEngagement";
 import { absoluteUrl, jsonLd, pageDescription } from "@/lib/seo";
 
-export const revalidate = 3600;
+// Lesson content is imported into the database outside of Next.js. Render the
+// page dynamically so an import is visible without waiting for an ISR window.
+export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 
 export async function generateStaticParams() {

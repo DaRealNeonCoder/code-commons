@@ -41,7 +41,7 @@ Squaring makes every miss positive and makes large misses matter more. An MSE of
   const sy = y => 155 - y * 25;
   const line = "M " + sx(-2) + " " + sy(predict(-2)) + " L " + sx(3) + " " + sy(predict(3));
   const reset = () => { setWeight(1); setBias(1); };
-  return <div style={{ fontFamily: "system-ui", padding: 16, color: "#172033" }}>
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
     <p style={{ marginTop: 0 }}><strong>prediction = weight × feature + bias</strong></p>
     <label style={{ display: "block" }}>weight = {weight.toFixed(1)} <input type="range" min="-1" max="3" step="0.1" value={weight} onChange={e => setWeight(+e.target.value)} /></label>
     <label style={{ display: "block" }}>bias = {bias.toFixed(1)} <input type="range" min="0" max="5" step="0.1" value={bias} onChange={e => setBias(+e.target.value)} /></label>

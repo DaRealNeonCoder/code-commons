@@ -82,7 +82,7 @@ This is useful for recommendations. A song can be represented by features such a
   const songs = [{ name: "Rain", v: [1, 0, 0], color: "#38bdf8" }, { name: "Sun", v: [1, 1, 0], color: "#fbbf24" }, { name: "Night", v: [0, 0, 1], color: "#a78bfa" }];
   const user = [x, y, 0];
   const score = (v) => { const dot = user.reduce((s, n, i) => s + n * v[i], 0); const size = Math.hypot(...user) * Math.hypot(...v); return size ? dot / size : 0; };
-  return <div style={{ fontFamily: "system-ui", padding: 16, color: "#172033" }}>
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
     <strong>Listener vector: [{x}, {y}, 0]</strong>
     <label style={{ display: "block", marginTop: 10 }}>calmness <input type="range" min="0" max="2" step="1" value={x} onChange={e => setX(+e.target.value)} /></label>
     <label style={{ display: "block" }}>energy <input type="range" min="0" max="2" step="1" value={y} onChange={e => setY(+e.target.value)} /></label>

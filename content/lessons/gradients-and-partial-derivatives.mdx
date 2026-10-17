@@ -69,7 +69,7 @@ We are keeping this course friendly to a browser code runner, so the puzzle chec
   const gradient = ([x, y]) => [2 * x, 4 * y];
   const step = () => { const g = gradient(point); setPoint([point[0] - 0.12 * g[0], point[1] - 0.12 * g[1]]); setSteps(steps + 1); };
   const g = gradient(point);
-  return <div style={{ fontFamily: "system-ui", padding: 16, color: "#172033" }}>
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
     <p style={{ marginTop: 0 }}><strong>f(x, y) = x² + 2y²</strong></p>
     <button onClick={step} style={{ padding: "6px 10px" }}>take downhill step</button> <button onClick={() => { setPoint([1, -2]); setSteps(0); }}>reset</button>
     <p>point = ({point.map(n => n.toFixed(2)).join(", ")}) · value = {value(point).toFixed(2)}</p>

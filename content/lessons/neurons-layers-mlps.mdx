@@ -66,8 +66,8 @@ Keeping these steps separate makes the shapes easier to check. If the input has 
   const hidden = sums.map(relu);
   const outputSum = hidden[0] - 2 * hidden[1] - 0.5;
   const output = sigmoid(outputSum);
-  return <div style={{ fontFamily: "system-ui", padding: 12, color: "#172033" }}>
-    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 8 }}>{rows.map(row => <button key={row.join("")} onClick={() => setInput(row)} style={{ padding: "4px 8px", background: row[0] === input[0] && row[1] === input[1] ? "#dbeafe" : "white", border: "1px solid #94a3b8", borderRadius: 4 }}>({row.join(", ")})</button>)}</div>
+  return <div style={{ fontFamily: "system-ui", padding: 12, color: "CanvasText" }}>
+    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 8 }}>{rows.map(row => <button key={row.join("")} onClick={() => setInput(row)} style={{ padding: "4px 8px", background: row[0] === input[0] && row[1] === input[1] ? "Highlight" : "ButtonFace", color: row[0] === input[0] && row[1] === input[1] ? "HighlightText" : "ButtonText", border: "1px solid #94a3b8", borderRadius: 4 }}>({row.join(", ")})</button>)}</div>
     <svg viewBox="0 0 360 100" style={{ width: "100%", maxWidth: 360, display: "block"}} aria-label="Two input neurons, two hidden neurons, and one output neuron">
       <line x1="55" y1="35" x2="145" y2="30" stroke="#94a3b8" /><line x1="55" y1="65" x2="145" y2="70" stroke="#94a3b8" /><line x1="205" y1="30" x2="295" y2="50" stroke="#94a3b8" /><line x1="205" y1="70" x2="295" y2="50" stroke="#94a3b8" />
       <circle cx="45" cy="35" r="16" fill="#e0f2fe" /><circle cx="45" cy="65" r="16" fill="#e0f2fe" /><circle cx="155" cy="30" r="16" fill="#fef3c7" /><circle cx="155" cy="70" r="16" fill="#fef3c7" /><circle cx="305" cy="50" r="18" fill="#dcfce7" />
