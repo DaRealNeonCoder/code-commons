@@ -13,17 +13,17 @@ code and original educational content are available under the MIT License in
 ## Exercism problem specifications
 
 Many files under [`content/puzzles/`](./content/puzzles/) are adaptations of
-Exercism exercises. The individual puzzle files include their exercise name,
-source URL, and any original-source attribution in an attribution note at the
-end of the file.
+Exercism exercises. The complete puzzle attribution list, including exercise
+names, source URLs, original-source attributions, and image credits, is in
+[`docs/puzzle-attributions.md`](./docs/puzzle-attributions.md).
 
 - Source project: [Exercism problem specifications](https://github.com/exercism/problem-specifications)
 - License: MIT
 
 These adaptations may also identify upstream sources such as Wikipedia, Project
-Euler, the Turing School, Chris Pine, or other authors. Those notices and links
-are intentionally kept in the corresponding puzzle files and should travel
-with the content.
+Euler, the Turing School, Chris Pine, or other authors. The attribution document
+preserves those notices and links, while the affected puzzle pages link to it
+from their footer.
 
 The complete upstream MIT notice is preserved in
 [`licenses/EXERCISM-PROBLEM-SPECIFICATIONS-MIT.txt`](./licenses/EXERCISM-PROBLEM-SPECIFICATIONS-MIT.txt).
@@ -41,7 +41,8 @@ not a claim that CodeCommons is the original author of the benchmark material.
   [`licenses/HUMAN-EVAL-MIT.txt`](./licenses/HUMAN-EVAL-MIT.txt)
 
 Where an individual puzzle is adapted from HumanEval, its content attribution
-should remain alongside the puzzle so it is not separated from the material.
+should remain documented with the other puzzle attributions so it is not lost
+from the material.
 
 ## Piston
 

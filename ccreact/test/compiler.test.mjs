@@ -5,9 +5,11 @@ import { compileReactDemo, REACT_DEMO_IMPORT_ALLOWLIST } from "../src/compiler.j
 const options = { maxSourceChars: 20_000, maxCompiledChars: 120_000 };
 
 test("compiler accepts only the explicit React allowlist", async () => {
-  assert.deepEqual(REACT_DEMO_IMPORT_ALLOWLIST, ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"]);
+  assert.deepEqual(REACT_DEMO_IMPORT_ALLOWLIST, ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "@code-commons/react-demo/polynomial-graph"]);
   const output = await compileReactDemo('import React, { useState } from "react"; function Demo() { return <button>{useState ? "ok" : "no"}</button>; }', options);
   assert.match(output, /__CCREACT_DEMO__/);
+  const graphOutput = await compileReactDemo('import { PolynomialGraph } from "@code-commons/react-demo/polynomial-graph"; function Demo() { return <PolynomialGraph coefficients={[0, 0, 1]} currentX={1} />; }', options);
+  assert.match(graphOutput, /Polynomial curve/);
   await assert.rejects(() => compileReactDemo('import x from "./secret.js"; function Demo() {}', options), /not allowed/i);
   await assert.rejects(() => compileReactDemo('import x from "fs"; function Demo() {}', options), /not allowed/i);
   await assert.rejects(() => compileReactDemo('import x from "https://example.com/x.js"; function Demo() {}', options), /not allowed/i);

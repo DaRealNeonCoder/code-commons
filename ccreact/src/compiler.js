@@ -1,4 +1,12 @@
 import { build } from "esbuild";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+
+const polynomialGraphPath = [
+  path.resolve(process.cwd(), "ccreact/src/visualizations/polynomialGraph.js"),
+  path.resolve(process.cwd(), "src/visualizations/polynomialGraph.js"),
+].find((candidate) => existsSync(candidate));
+const polynomialGraphModule = polynomialGraphPath ? readFileSync(polynomialGraphPath, "utf8") : "";
 
 // This is deliberately small. A demo is not an application and cannot install
 // packages. The virtual modules point at the runner's own pinned React build;
@@ -8,6 +16,7 @@ export const REACT_DEMO_IMPORT_ALLOWLIST = Object.freeze([
   "react-dom",
   "react/jsx-runtime",
   "react/jsx-dev-runtime",
+  "@code-commons/react-demo/polynomial-graph",
 ]);
 
 const ALLOWED = new Set(REACT_DEMO_IMPORT_ALLOWLIST);
@@ -54,6 +63,7 @@ const runtimeModules = {
     export const Fragment = runtime.Fragment;
     export const jsxDEV = runtime.jsxDEV;
   `,
+  "@code-commons/react-demo/polynomial-graph": polynomialGraphModule,
 };
 
 export function createRestrictedImportPlugin() {

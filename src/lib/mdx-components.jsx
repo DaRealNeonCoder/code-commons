@@ -35,7 +35,14 @@ export const mdxComponents = {
   h1: (props) => <h1 {...props} className="mt-8 mb-4 text-2xl font-semibold first:mt-0" />,
   h2: (props) => <h2 {...props} className="mt-8 mb-3 text-xl font-semibold first:mt-0" />,
   h3: (props) => <h3 {...props} className="mt-6 mb-2 text-lg font-semibold" />,
-  p: (props) => <p {...props} className="mb-5 leading-8 text-zinc-700 dark:text-zinc-300" />,
+  p: (props) => (
+    <p
+      {...props}
+      className={["mb-5 leading-8 text-zinc-700 dark:text-zinc-300", props.className]
+        .filter(Boolean)
+        .join(" ")}
+    />
+  ),
   ul: (props) => <ul {...props} className="mb-5 ml-5 list-disc space-y-2 leading-7 text-zinc-700 dark:text-zinc-300" />,
   ol: (props) => <ol {...props} className="mb-5 ml-5 list-decimal space-y-2 leading-7 text-zinc-700 dark:text-zinc-300" />,
   strong: (props) => <strong {...props} className="font-semibold" />,
