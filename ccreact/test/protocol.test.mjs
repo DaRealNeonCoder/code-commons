@@ -1,6 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { isAllowedParentOrigin, isValidInitMessage, isValidRunnerMessage, MAIN_APP_ORIGIN } from "../src/protocol.js";
+import {
+  isAllowedParentOrigin,
+  isValidInitMessage,
+  isValidRunnerMessage,
+  MAIN_APP_ORIGIN,
+  MIN_DEMO_HEIGHT,
+} from "../src/protocol.js";
 
 const nonce = "0123456789abcdef";
 const parent = {};
@@ -24,4 +30,6 @@ test("parent accepts only messages from its frame and nonce", () => {
   assert.equal(isValidRunnerMessage({ ...event, source: {} }, frame, nonce), false);
   assert.equal(isValidRunnerMessage({ ...event, data: { ...event.data, nonce: "wrong" } }, frame, nonce), false);
   assert.equal(isValidRunnerMessage({ ...event, data: { type: "react-demo:init", nonce } }, frame, nonce), false);
+  assert.equal(isValidRunnerMessage({ source: frame, origin: "null", data: { type: "react-demo:resize", nonce, height: MIN_DEMO_HEIGHT } }, frame, nonce), true);
+  assert.equal(isValidRunnerMessage({ source: frame, origin: "null", data: { type: "react-demo:resize", nonce, height: 2_001 } }, frame, nonce), false);
 });

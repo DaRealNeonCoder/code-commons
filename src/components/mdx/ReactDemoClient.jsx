@@ -8,6 +8,7 @@ import {
   MAX_ACTIVE_REACT_DEMOS,
   MAX_REACT_DEMO_CODE,
   MAX_REACT_DEMO_COMPILED,
+  MIN_REACT_DEMO_HEIGHT,
   REACT_DEMO_IFRAME_CREDENTIALLESS,
   REACT_DEMO_IFRAME_SANDBOX,
   REACT_DEMO_RENDER_TIMEOUT_MS,
@@ -15,6 +16,7 @@ import {
 } from "@/lib/reactDemo";
 
 let activeDemoCount = 0;
+const DEFAULT_REACT_DEMO_HEIGHT = 480;
 
 export default function ReactDemo({ code = "", data = "", title = "Interactive React demo", allowValidation = false }) {
   const frameRef = useRef(null);
@@ -24,6 +26,7 @@ export default function ReactDemo({ code = "", data = "", title = "Interactive R
   const [error, setError] = useState("");
   const [visible, setVisible] = useState(false);
   const [frameKey, setFrameKey] = useState(0);
+  const [frameHeight, setFrameHeight] = useState(DEFAULT_REACT_DEMO_HEIGHT);
   const nonce = useMemo(() => `${createReactDemoNonce()}-${String(frameKey)}`, [frameKey]);
   const [hasSlot, setHasSlot] = useState(false);
   const source = typeof code === "string" ? code.slice(0, MAX_REACT_DEMO_CODE) : "";
@@ -92,6 +95,8 @@ export default function ReactDemo({ code = "", data = "", title = "Interactive R
       } else if (event.data.type === "react-demo:rendered") {
         clearTimeout(timer);
         setError("");
+      } else if (event.data.type === "react-demo:resize") {
+        setFrameHeight(event.data.height);
       } else if (event.data.type === "react-demo:ready") {
         send();
       }
@@ -141,13 +146,20 @@ export default function ReactDemo({ code = "", data = "", title = "Interactive R
           title={title || artifact?.title || "Interactive React demo"}
           src={runnerUrl}
           sandbox={REACT_DEMO_IFRAME_SANDBOX}
-          credentialless={REACT_DEMO_IFRAME_CREDENTIALLESS}
-          loading="lazy"
+           credentialless={REACT_DEMO_IFRAME_CREDENTIALLESS}
+           loading="lazy"
           referrerPolicy="no-referrer"
-          className="block h-56 w-full border-0 bg-transparent"
+          className="block w-full border-0 bg-transparent"
+          style={{ height: `${frameHeight}px` }}
         />
       ) : (
-        <div className="flex h-56 items-center justify-center p-4 text-sm text-zinc-500" aria-busy="true">Scroll to load this interactive demo.</div>
+        <div
+          className="flex items-center justify-center p-4 text-sm text-zinc-500"
+          style={{ height: `${Math.max(frameHeight, MIN_REACT_DEMO_HEIGHT)}px` }}
+          aria-busy="true"
+        >
+          Scroll to load this interactive demo.
+        </div>
       )}
       {error && <p className="mt-2 text-sm text-red-700 dark:text-red-300">Demo error: {error}</p>}
     </figure>

@@ -8,8 +8,10 @@ import {
   MAX_ACTIVE_REACT_DEMOS,
   MAX_REACT_DEMO_CODE,
   MAX_REACT_DEMO_COMPILED,
+  MAX_REACT_DEMO_HEIGHT,
   MAX_REACT_DEMO_LESSON_PAYLOAD,
   MAX_REACT_DEMOS,
+  MIN_REACT_DEMO_HEIGHT,
   REACT_DEMO_IFRAME_CREDENTIALLESS,
   REACT_DEMO_IFRAME_SANDBOX,
   REACT_DEMO_RENDER_TIMEOUT_MS,
@@ -65,4 +67,6 @@ test("runner messages require the exact frame and nonce", () => {
   assert.equal(isValidRunnerMessage({ ...valid, source: {} }, frame, nonce), false);
   assert.equal(isValidRunnerMessage({ ...valid, origin: "https://evil.example" }, frame, nonce), false);
   assert.equal(isValidRunnerMessage({ ...valid, data: { ...valid.data, nonce: "wrong" } }, frame, nonce), false);
+  assert.equal(isValidRunnerMessage({ ...valid, data: { type: "react-demo:resize", nonce, height: MIN_REACT_DEMO_HEIGHT } }, frame, nonce), true);
+  assert.equal(isValidRunnerMessage({ ...valid, data: { type: "react-demo:resize", nonce, height: MAX_REACT_DEMO_HEIGHT + 1 } }, frame, nonce), false);
 });

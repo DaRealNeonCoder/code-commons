@@ -3,7 +3,12 @@ import { createRoot } from "react-dom/client";
 import * as ReactDOM from "react-dom";
 import * as jsxRuntime from "react/jsx-runtime";
 import * as jsxDevRuntime from "react/jsx-dev-runtime";
-import { isValidInitMessage, MAX_COMPILED_DEMO_CHARS } from "./protocol.js";
+import {
+  isValidInitMessage,
+  MAX_COMPILED_DEMO_CHARS,
+  MAX_DEMO_HEIGHT,
+  MIN_DEMO_HEIGHT,
+} from "./protocol.js";
 
 const RENDER_TIMEOUT_MS = 1_500;
 
@@ -12,6 +17,15 @@ function message(type, nonce, extra = {}) {
   // source window, opaque runner origin, message shape, and nonce, so a
   // wildcard target does not weaken the protocol.
   window.parent.postMessage({ type, nonce, ...extra }, "*");
+}
+
+function demoHeight() {
+  const bodyHeight = document.body?.scrollHeight || 0;
+  const documentHeight = document.documentElement?.scrollHeight || 0;
+  return Math.min(
+    MAX_DEMO_HEIGHT,
+    Math.max(MIN_DEMO_HEIGHT, Math.ceil(Math.max(bodyHeight, documentHeight)))
+  );
 }
 
 function Runner() {
@@ -25,6 +39,18 @@ function Runner() {
     if (!nonce) {
       return undefined;
     }
+
+    let cancelled = false;
+    let resizeFrame;
+    const reportSize = () => {
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(() => {
+        if (!cancelled) message("react-demo:resize", nonce, { height: demoHeight() });
+      });
+    };
+    const resizeObserver = new ResizeObserver(reportSize);
+    resizeObserver.observe(document.documentElement);
+    if (document.body) resizeObserver.observe(document.body);
 
     function report(value) {
       const text = String(value?.message || value || "The demo could not be rendered.").slice(0, 500);
@@ -67,6 +93,7 @@ function Runner() {
           root.render(React.createElement(Component));
           setStatus("rendered");
           message("react-demo:rendered", nonce);
+          reportSize();
         };
         script.onerror = () => {
           window.clearTimeout(timeout);
@@ -87,6 +114,9 @@ function Runner() {
       window.removeEventListener("error", onError);
       window.removeEventListener("unhandledrejection", onError);
       window.removeEventListener("message", onMessage);
+      cancelled = true;
+      resizeObserver.disconnect();
+      cancelAnimationFrame(resizeFrame);
       if (scriptRef.current) scriptRef.current.remove();
       rootRef.current?.unmount?.();
     };

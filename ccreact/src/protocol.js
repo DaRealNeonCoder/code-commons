@@ -13,6 +13,8 @@ export function isAllowedParentOrigin(origin) {
   return /^http:\/\/(?:localhost|127\.0\.0\.1):\d+$/.test(origin || "");
 }
 export const MAX_COMPILED_DEMO_CHARS = 120_000;
+export const MIN_DEMO_HEIGHT = 80;
+export const MAX_DEMO_HEIGHT = 2_000;
 
 export function isObject(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -42,6 +44,11 @@ export function isValidRunnerMessage(event, frameWindow, nonce) {
   // parent; accepting only this frame's source prevents another null-origin
   // document from injecting messages.
   const originOk = event?.origin === "null" || event?.origin === RUNNER_ORIGIN;
+  const validType = data?.type === "react-demo:ready"
+    || data?.type === "react-demo:error"
+    || data?.type === "react-demo:rendered"
+    || (data?.type === "react-demo:resize" && Number.isInteger(data.height)
+      && data.height >= MIN_DEMO_HEIGHT && data.height <= MAX_DEMO_HEIGHT);
   return (
     event?.source === frameWindow &&
     originOk &&
@@ -49,6 +56,6 @@ export function isValidRunnerMessage(event, frameWindow, nonce) {
     typeof data.type === "string" &&
     typeof data.nonce === "string" &&
     data.nonce === nonce &&
-    (data.type === "react-demo:ready" || data.type === "react-demo:error" || data.type === "react-demo:rendered")
+    validType
   );
 }

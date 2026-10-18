@@ -8,6 +8,8 @@ export const MAX_REACT_DEMO_TITLE = 120;
 export const MAX_REACT_DEMO_COMPILED = 120_000;
 export const MAX_REACT_DEMO_LESSON_PAYLOAD = 200_000;
 export const MAX_ACTIVE_REACT_DEMOS = 6;
+export const MIN_REACT_DEMO_HEIGHT = 80;
+export const MAX_REACT_DEMO_HEIGHT = 2_000;
 export const REACT_DEMO_RENDER_TIMEOUT_MS = 2_500;
 export const REACT_DEMO_IFRAME_SANDBOX = "allow-scripts";
 // The main app is cross-origin isolated for Pyodide's SharedArrayBuffer use.
@@ -101,7 +103,10 @@ export function isValidRunnerMessage(event, frameWindow, nonce) {
   // as "null". The iframe URL is pinned to REACT_DEMO_RUNNER_ORIGIN and the
   // source-window check prevents another null-origin frame from talking here.
   const originOk = event?.origin === "null" || event?.origin === REACT_DEMO_RUNNER_ORIGIN;
+  const validType = ["react-demo:ready", "react-demo:error", "react-demo:rendered"].includes(data?.type)
+    || (data?.type === "react-demo:resize" && Number.isInteger(data.height)
+      && data.height >= MIN_REACT_DEMO_HEIGHT && data.height <= MAX_REACT_DEMO_HEIGHT);
   return event?.source === frameWindow && originOk && data && typeof data === "object" && !Array.isArray(data)
     && typeof data.type === "string" && typeof data.nonce === "string" && data.nonce === nonce
-    && ["react-demo:ready", "react-demo:error", "react-demo:rendered"].includes(data.type);
+    && validType;
 }

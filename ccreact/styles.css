@@ -14,7 +14,7 @@ body {
   body { background: transparent; }
 }
 
-#root { min-height: 100vh; }
+#root { min-height: 0; }
 .runner-status { padding: 16px; font-size: 13px; }
 .runner-error { color: #b91c1c; white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 @media (prefers-color-scheme: dark) {
