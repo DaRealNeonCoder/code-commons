@@ -1,0 +1,71 @@
+---
+title: "Iterators and Generators"
+order: 403
+summary: "Understand the iterator protocol and use generators to build lazy, memory-friendly data pipelines."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["iterators", "generators", "memory"]
+tags: ["iter", "next", "yield", "lazy-evaluation"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["lazy-event-stream"]
+---
+
+An iterable can produce an iterator. An iterator remembers where it is and supplies the next item when Python calls `next()`.
+
+```python
+items = iter([10, 20])
+next(items)  # 10
+next(items)  # 20
+```
+
+When there are no more items, an iterator raises `StopIteration`. A `for` loop handles that protocol for you.
+
+## Generators pause at `yield`
+
+A function containing `yield` returns a generator object. Its body runs until the next `yield`, pauses, and resumes from that point when asked for another value:
+
+```python
+def positive_numbers(values):
+    for value in values:
+        if value > 0:
+            yield value
+```
+
+Generators are valuable when the input is large, infinite, or expensive to produce. They do not make the work free; they move the work to consumption time and avoid storing all results.
+
+## Compose a pipeline
+
+Keep each stage narrow:
+
+```python
+events = read_events(file)
+valid = (event for event in events if event.ok)
+names = (event.name.upper() for event in valid)
+for name in names:
+    print(name)
+```
+
+Be careful with one-shot iterators: after consumption, they are exhausted. If you need to traverse data several times, a list or a repeatable iterable may be the correct choice.
+
+<ReactDemo
+  title="Pull values from a generator"
+  code={`function Demo() {
+  const [requested, setRequested] = React.useState(0);
+  const source = [2, 4, 6, 8];
+  const visible = source.slice(0, requested);
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <input aria-label="next values" style={{ width: "100%" }} type="range" min="0" max={source.length} value={requested} onChange={e => setRequested(+e.target.value)} />
+    <p>values requested from generator: <strong>[{visible.join(", ") || "nothing yet"}]</strong></p>
+    <p>source values not yet requested: {source.length - requested}</p>
+    <small>A lazy producer does not need to create every result before the consumer asks for one.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> Choose a generator when “produce one more item” is a useful boundary. Choose a list when you need random access, repeated traversal, or the full result immediately.
+
+## Practice
+
+In the [Lazy Event Stream puzzle](/puzzles/lazy-event-stream?lesson=iterators-and-generators&course=advanced-python), create a generator that filters and transforms events while preserving lazy order.

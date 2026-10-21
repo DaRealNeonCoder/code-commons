@@ -1,0 +1,26 @@
+---
+title: "Choose Concurrency"
+order: 410
+available: true
+areas: ["programming-fundamentals"]
+topics: ["concurrency", "asyncio", "parallelism"]
+tags: ["threads", "processes", "async"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  def choose(work):
+      # TODO: return thread, process, asyncio, or serial
+      pass
+
+  for _ in range(4):
+      print(choose(input().strip()))
+testCases:
+  - input: "many network requests\nlarge prime calculations\nthree files with blocking reads\nsmall calculation"
+    expected: "asyncio\nprocess\nthread\nserial"
+    hidden: false
+  - input: "many independent image transforms\nwebsocket messages\nshared counter with unsafe mutation\n"
+    expected: "process\nasyncio\nserial\nserial"
+    hidden: true
+---
+
+Choose using these rules: network requests or websocket messages → `asyncio`; independent CPU-heavy calculations or image transforms → `process`; many blocking file reads → `thread`; a small or shared-state task with no clear waiting benefit → `serial`.

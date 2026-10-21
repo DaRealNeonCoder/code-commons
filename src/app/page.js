@@ -1,37 +1,5 @@
 /* 
 
-ADVANCED PYTHON
-Create an entirely new Advanced Python Programming course that builds on the existing Intro to Python course.
-
-The introductory course covers Hello World, variables and types, operators, strings and input, conditionals, loops, lists, tuples and sets, dictionaries, and functions. Avoid repeating these topics except for brief refreshers when necessary.
-
-Design a structured, hands-on learning path that progresses from intermediate Python to advanced programming techniques. Consider topics such as:
-
-Python internals: mutability, references, object identity, memory management, and how Python executes code.
-
-Advanced functions: closures, decorators, generators, iterators, and context managers.
-
-Object-oriented programming: classes, inheritance, composition, polymorphism, and data classes.
-
-Pythonic design: comprehensions, unpacking, type hints, protocols, and writing clean, maintainable code.
-
-Error handling: custom exceptions, debugging, and robust program design.
-
-Modules and packaging: imports, project structure, virtual environments, dependencies, and creating reusable packages.
-
-Testing: unit tests, mocking, test-driven development, and property-based testing.
-
-Concurrency and parallelism: threading, multiprocessing, asynchronous programming with asyncio, and when to use each.
-
-Performance: profiling, algorithmic complexity, memory efficiency, and optimization.
-
-Practical projects: APIs, file processing, databases, command-line tools, and larger multi-module applications.
-
-First, assess the prerequisites and design a logical progression from core concepts to advanced techniques. Then create the lessons, coding puzzles, and interactive demos that best teach these concepts.
-
-Keep the course practical and code-first. Use progressively challenging exercises and projects that help learners understand not just how features work, but when and why to use them. Avoid unnecessary duplication and prioritize skills useful for building real-world Python applications.
- 
-
 
 
 

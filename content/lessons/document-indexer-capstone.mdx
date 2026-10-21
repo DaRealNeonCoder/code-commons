@@ -1,0 +1,64 @@
+---
+title: "Capstone: Build a Document Indexer"
+order: 413
+summary: "Integrate generators, dataclasses, exceptions, tests, persistence, CLI design, concurrency, and profiling in one practical application."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["projects", "architecture", "search"]
+tags: ["capstone", "indexing", "generators", "sqlite", "concurrency"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["document-indexer"]
+---
+
+The capstone is a local document indexer and search tool. It is deliberately modular rather than enormous. Start with a pure parser, then add one boundary at a time.
+
+## Suggested architecture
+
+```text
+document_tool/
+  parsing.py      # text → Document records
+  indexing.py     # records → term → document IDs
+  storage.py      # save/load snapshots or SQLite rows
+  search.py       # query → ranked results
+  cli.py          # argparse and formatting
+tests/
+```
+
+Use a dataclass for a document record. Use a generator to walk paths without loading every file. Raise a custom exception for malformed metadata. Test parsing and search as pure functions before testing filesystem and database adapters.
+
+## Add concurrency only after correctness
+
+Index files independently with a bounded thread pool when file reads dominate. Keep errors associated with their path, and make output deterministic by sorting results before displaying them. If profiling shows tokenization is CPU-heavy, compare a process pool—but measure serialization costs first.
+
+## A realistic definition of done
+
+- `index` accepts a directory and records document IDs, paths, and terms.
+- `search` returns matching document paths in a stable order.
+- malformed files produce a useful error without losing valid files.
+- the index can be saved and loaded.
+- unit tests cover parsing, empty queries, duplicate terms, and failures.
+- a benchmark records file count, runtime, and memory assumptions.
+
+<ReactDemo
+  title="Grow the index in stages"
+  code={`function Demo() {
+  const stages = ["parse", "normalize", "index", "persist", "search", "test", "parallelize"];
+  const [stage, setStage] = React.useState(2);
+  const descriptions = ["read one document", "extract stable terms", "map terms to IDs", "save the index", "rank matches", "protect behavior", "measure a safe speedup"];
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <input aria-label="capstone stage" style={{ width: "100%" }} type="range" min="0" max={stages.length - 1} value={stage} onChange={e => setStage(+e.target.value)} />
+    <p>current stage: <strong>{stages[stage]}</strong></p>
+    <p>{descriptions[stage]}</p>
+    <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>{stages.map((name, index) => <span key={name} style={{ padding: "5px 8px", background: index <= stage ? "#0f766e" : "#e2e8f0", color: index <= stage ? "white" : "#475569" }}>{name}</span>)}</div>
+    <small>Correctness and tests come before concurrency and optimization.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> A capstone is successful when another person can run it, test it, understand its module boundaries, and diagnose a failure—not when it contains every Python feature.
+
+## Practice
+
+In the [Document Indexer puzzle](/puzzles/document-indexer?lesson=document-indexer-capstone&course=advanced-python), implement the core pure functions: normalize a document, build an inverted index, and return deterministic search results. Use the surrounding lessons to extend it locally with SQLite, a CLI, and concurrency.

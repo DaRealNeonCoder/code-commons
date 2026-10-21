@@ -1,0 +1,39 @@
+---
+title: "Pseudocode to Python"
+order: 6
+available: true
+areas: ["programming-fundamentals"]
+topics: ["problem-solving", "expressions"]
+tags: ["pseudocode", "decomposition", "trace"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def rectangle_report(width, height):
+      # TODO: return (area, perimeter) in that order
+      pass
+
+  width, height = map(int, input().split())
+  area, perimeter = rectangle_report(width, height)
+  print(area)
+  print(perimeter)
+testCases:
+  - input: "4 5"
+    expected: "20\n18"
+    hidden: false
+  - input: "1 9"
+    expected: "9\n20"
+    hidden: true
+  - input: "0 7"
+    expected: "0\n14"
+    hidden: true
+---
+
+Implement the plan:
+
+```text
+area = width × height
+perimeter = 2 × width + 2 × height
+return both values
+```
+
+Return a tuple `(area, perimeter)`. The provided code unpacks it and prints each result on its own line.

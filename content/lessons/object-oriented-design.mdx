@@ -1,0 +1,63 @@
+---
+title: "Object-Oriented Design: Classes, Composition, and Polymorphism"
+order: 406
+summary: "Model a domain with dataclasses and behavior, prefer composition when it fits, and use polymorphism through small interfaces."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["object-oriented-programming", "software-design"]
+tags: ["classes", "dataclasses", "inheritance", "composition", "polymorphism"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["domain-model"]
+---
+
+Classes are useful when data and the operations that protect its rules belong together. They are not automatically better than functions and dictionaries. Choose a class when an object has a meaningful state, invariants, and behavior that should travel together.
+
+## Dataclasses make records explicit
+
+```python
+from dataclasses import dataclass
+
+@dataclass
+class Book:
+    title: str
+    available: bool = True
+```
+
+The decorator supplies an initializer and readable representation. Add methods when the class can enforce a rule, such as `checkout()` refusing an unavailable book.
+
+## Composition before inheritance
+
+Composition means one object contains another object:
+
+```python
+class Library:
+    def __init__(self, catalog):
+        self.catalog = catalog
+```
+
+It keeps responsibilities separate and lets you replace the catalog implementation. Inheritance can be useful for a stable “is-a” relationship, but deep hierarchies make behavior harder to find. Prefer small interfaces and compose collaborators.
+
+## Polymorphism is about behavior
+
+If several objects provide a `total()` method, a checkout function can call `item.total()` without checking every concrete type. This duck-typed style is often more flexible than a long chain of `isinstance` checks. The next typing lesson shows how to document that expected behavior with a protocol.
+
+<ReactDemo
+  title="Choose composition or inheritance"
+  code={`function Demo() {
+  const [choice, setChoice] = React.useState("composition");
+  const text = choice === "composition" ? "Library owns a Catalog collaborator; each piece can change independently." : "SpecializedBook inherits Book behavior and overrides one method.";
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <select value={choice} onChange={e => setChoice(e.target.value)}><option value="composition">composition</option><option value="inheritance">inheritance</option></select>
+    <p>{text}</p>
+    <small>Use the relationship that matches the domain. A class hierarchy is not a goal by itself.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> Give a class one reason to change. If a class stores data, parses input, talks to a database, and formats terminal output, it is probably several objects waiting to be separated.
+
+## Practice
+
+In the [Domain Model puzzle](/puzzles/domain-model?lesson=object-oriented-design&course=advanced-python), implement a small dataclass-like record and a polymorphic total calculation without type-specific branching.

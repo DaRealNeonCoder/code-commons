@@ -1,0 +1,37 @@
+---
+title: "Assignment Trace"
+order: 2
+available: true
+areas: ["programming-fundamentals"]
+topics: ["expressions", "variables"]
+tags: ["assignment", "reassignment", "trace"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def final_value(start, add, multiply):
+      # TODO: apply the addition, then the multiplication
+      pass
+
+  start, add, multiply = map(int, input().split())
+  print(final_value(start, add, multiply))
+testCases:
+  - input: "2 3 4"
+    expected: "20"
+    hidden: false
+  - input: "10 -2 3"
+    expected: "24"
+    hidden: true
+  - input: "0 5 0"
+    expected: "0"
+    hidden: true
+---
+
+Implement `final_value` as if Python ran these lines:
+
+```python
+value = start
+value = value + add
+value = value * multiply
+```
+
+Return the final value. The order matters: do the addition before the multiplication.

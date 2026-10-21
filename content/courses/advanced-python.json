@@ -1,0 +1,20 @@
+{
+  "title": "Advanced Python Programming",
+  "summary": "A practical progression beyond Intro to Python: Python's data model, lazy iteration, decorators, context managers, object-oriented design, typing, testing, packaging, concurrency, performance, and a multi-module document indexer.",
+  "lessons": [
+    "advanced-python-roadmap",
+    "python-data-model",
+    "pythonic-iteration",
+    "iterators-and-generators",
+    "closures-and-decorators",
+    "exceptions-and-context-managers",
+    "object-oriented-design",
+    "type-hints-and-protocols",
+    "testing-real-programs",
+    "modules-packaging-and-environments",
+    "concurrency-and-asyncio",
+    "performance-and-profiling",
+    "building-cli-and-database-tools",
+    "document-indexer-capstone"
+  ]
+}

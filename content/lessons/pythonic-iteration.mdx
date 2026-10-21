@@ -1,0 +1,62 @@
+---
+title: "Pythonic Iteration and Data Transformation"
+order: 402
+summary: "Use comprehensions, unpacking, enumerate, zip, sorted keys, and itertools to express data transformations clearly."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["iteration", "collections", "standard-library"]
+tags: ["comprehensions", "unpacking", "enumerate", "zip", "itertools"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["pythonic-transform"]
+---
+
+The Intro course taught the loop mechanics. Pythonic code makes the data flow explicit without hiding important decisions.
+
+## Transform, filter, and pair
+
+```python
+squares = [n * n for n in numbers]
+large = [n for n in numbers if n > 10]
+paired = list(zip(names, scores))
+```
+
+Use a comprehension when it is one readable transformation. Use a normal loop when the body has multiple actions, error handling, or nested decisions. A shorter line is not automatically clearer.
+
+Unpacking names the parts of a structure:
+
+```python
+first, *middle, last = values
+for index, value in enumerate(values, start=1):
+    print(index, value)
+```
+
+## Sort by a computed key
+
+`sorted(records, key=lambda record: record["score"], reverse=True)` separates ordering from the record itself. For a named rule, a normal function is often easier to test than a long lambda.
+
+## Compose standard-library iterators
+
+The `itertools` module provides lazy building blocks such as `chain`, `islice`, `repeat`, and `groupby`. “Lazy” means values are produced as requested rather than all stored at once. Preserve the input ordering assumptions that a tool such as `groupby` requires.
+
+<ReactDemo
+  title="Compare a loop with a transformation"
+  code={`function Demo() {
+  const values = [1, 2, 3, 4, 5, 6];
+  const [limit, setLimit] = React.useState(3);
+  const selected = values.filter(value => value > limit).map(value => value * value);
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label>keep values greater than {limit} <input type="range" min="0" max="5" value={limit} onChange={e => setLimit(+e.target.value)} /></label>
+    <p>source: [{values.join(", ")}]</p>
+    <p>filter → map: <strong>[{selected.join(", ") || "nothing"}]</strong></p>
+    <small>A readable comprehension would express the same two-stage idea for a small, pure transformation.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> First write the plain loop. Then decide whether a comprehension or iterator makes the same steps easier to scan. Pythonic does not mean cryptic.
+
+## Practice
+
+In the [Pythonic Transform puzzle](/puzzles/pythonic-transform?lesson=pythonic-iteration&course=advanced-python), combine `enumerate`, `zip`, filtering, and stable sorting to transform records into deterministic output.

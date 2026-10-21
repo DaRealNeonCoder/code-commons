@@ -1,0 +1,63 @@
+---
+title: "Type Hints, Protocols, and Maintainable Interfaces"
+order: 407
+summary: "Use annotations to communicate intent, generics to describe containers, and protocols to specify behavior without forcing inheritance."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["typing", "software-design"]
+tags: ["type-hints", "protocols", "generics", "maintainability"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["typed-interface"]
+---
+
+Type hints describe how a function is meant to be used. Python usually does not enforce them at runtime, but editors, static checkers, and human readers can use the information to catch mistakes earlier.
+
+```python
+def total(prices: list[float], tax: float = 0.0) -> float:
+    return sum(prices) * (1 + tax)
+```
+
+Use `list[str]`, `dict[str, int]`, `tuple[str, int]`, and `str | None` to describe common values. Type hints should make a boundary clearer, not decorate every local variable without purpose.
+
+## Protocols describe capabilities
+
+An abstract base class requires an explicit relationship. A `Protocol` can describe the methods an object must provide:
+
+```python
+from typing import Protocol
+
+class HasTotal(Protocol):
+    def total(self) -> float: ...
+
+def invoice_total(items: list[HasTotal]) -> float:
+    return sum(item.total() for item in items)
+```
+
+Any object with a compatible `total()` method can work with `invoice_total`, even if it does not inherit from `HasTotal`. This is structural typing: compatibility comes from shape and behavior.
+
+## Keep contracts useful
+
+Document units, allowed empty values, exceptions, and side effects. A type hint `float` does not say whether the value is dollars, seconds, or a probability. Types support design; they do not replace naming, tests, or validation.
+
+<ReactDemo
+  title="See an interface accept different implementations"
+  code={`function Demo() {
+  const [kind, setKind] = React.useState("book");
+  const records = { book: { label: "Book", total: 12 }, service: { label: "Service", total: 20 } };
+  const record = records[kind];
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <select value={kind} onChange={e => setKind(e.target.value)}><option value="book">Book</option><option value="service">Service</option></select>
+    <p><strong>invoice_total</strong> asks for a <code>total()</code>-like capability.</p>
+    <p>{record.label} contributes ${record.total.toFixed(2)} without the invoice knowing its concrete type.</p>
+    <small>A protocol documents the behavior a collaborator must provide.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> Start with a useful runtime boundary, then add the narrowest type description that communicates it. Do not use a type system to hide a vague design.
+
+## Practice
+
+In the [Typed Interface puzzle](/puzzles/typed-interface?lesson=type-hints-and-protocols&course=advanced-python), annotate a small aggregation interface and implement a generic helper that works with records exposing the same method.

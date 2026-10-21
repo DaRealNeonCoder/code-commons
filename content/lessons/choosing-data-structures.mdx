@@ -1,0 +1,67 @@
+---
+title: "Choosing Data Structures"
+order: 13
+summary: "Choose between lists, tuples, sets, and dictionaries by asking what the data means and how it will be used."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["lists", "tuples", "sets", "dictionaries"]
+tags: ["collections", "nested-data", "data-structures"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["choose-the-collection"]
+---
+
+Python gives you several collection types because programs ask different questions. Choosing the right one makes the code clearer and often avoids extra work.
+
+| Need | Good first choice | Why |
+| --- | --- | --- |
+| ordered items that may change | list | position and repeated values matter |
+| a fixed group of related values | tuple | the group should not change |
+| membership and uniqueness | set | duplicates disappear and membership is direct |
+| look up a value by a key | dictionary | each key maps to a value |
+
+## Nested data follows the shape of the problem
+
+A class roster might be a list of names. Scores by student might be a dictionary whose values are lists:
+
+```python
+scores = {
+    "Mina": [8, 10],
+    "Leo": [7, 9]
+}
+```
+
+Choose the outer structure by the operation you need first. If you ask “what are Mina's scores?”, a dictionary is natural. If you ask “in what order were submissions received?”, a list is natural.
+
+## Convert deliberately
+
+It is normal to move between structures:
+
+```python
+names = ["Ada", "Ada", "Lin"]
+unique_names = set(names)
+ordered_again = sorted(unique_names)
+```
+
+The conversion may discard duplicates or change ordering. Make that trade-off visible in the variable name and only convert when it serves the next operation.
+
+<ReactDemo
+  title="Match the structure to the question"
+  code={`function Demo() {
+  const [choice, setChoice] = React.useState("list");
+  const details = { list: "keep order and duplicates", tuple: "keep a fixed pair", set: "test membership without duplicates", dictionary: "look up a value by key" };
+  const examples = { list: "[\"red\", \"red\", \"blue\"]", tuple: "(width, height)", set: "{\"red\", \"blue\"}", dictionary: "{\"Ada\": 36}" };
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <select value={choice} onChange={e => setChoice(e.target.value)}>{Object.keys(details).map(key => <option key={key}>{key}</option>)}</select>
+    <p><code>{examples[choice]}</code></p><p><strong>{choice}</strong>: {details[choice]}</p>
+    <small>Start with the question your code asks, not with a favorite container type.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> A data structure is a decision about meaning. Ask whether order, changeability, duplicates, membership, or key-based lookup is the important property.
+
+## Practice
+
+In the [Choose the Collection puzzle](/puzzles/choose-the-collection?lesson=choosing-data-structures&course=intro-to-python), represent a small roster and answer membership, lookup, and ordered-output questions with the appropriate built-in structures.

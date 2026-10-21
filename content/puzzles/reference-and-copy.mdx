@@ -1,0 +1,31 @@
+---
+title: "Reference and Copy"
+order: 401
+available: true
+areas: ["programming-fundamentals"]
+topics: ["python-internals", "data-model"]
+tags: ["identity", "mutability", "copying"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  def compare_updates():
+      shared = [1, 2]
+      alias = shared
+      copy = shared.copy()
+      alias.append(3)
+      copy.append(4)
+      return shared, alias, copy, shared is alias, shared is copy
+
+  shared, alias, copy, shared_identity, copy_identity = compare_updates()
+  print(" ".join(map(str, shared)))
+  print(" ".join(map(str, alias)))
+  print(" ".join(map(str, copy)))
+  print("shared" if shared_identity else "separate")
+  print("shared" if copy_identity else "separate")
+testCases:
+  - input: ""
+    expected: "1 2 3\n1 2 3\n1 2 4\nshared\nseparate"
+    hidden: false
+---
+
+The starter program already performs the updates. Read the output and explain it: `alias` refers to the same list as `shared`, while `copy` refers to a new outer list. The puzzle is a prediction exercise, so no input is required.

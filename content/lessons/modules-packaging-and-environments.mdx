@@ -1,0 +1,71 @@
+---
+title: "Modules, Packaging, and Environments"
+order: 409
+summary: "Turn a collection of scripts into an importable package with clear boundaries, dependencies, and repeatable environments."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["modules", "packaging", "dependencies"]
+tags: ["imports", "packages", "virtual-environments", "project-structure"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["package-layout"]
+---
+
+The Intro course showed how to import a standard-library module. A maintainable application also needs a project structure that makes ownership and dependencies clear.
+
+## Separate responsibilities
+
+A small package might look like:
+
+```text
+document_tool/
+  pyproject.toml
+  src/document_tool/
+    __init__.py
+    parsing.py
+    indexing.py
+    cli.py
+  tests/
+    test_parsing.py
+```
+
+Keep the command-line boundary in `cli.py`, domain logic in modules that are easy to import, and tests outside the package. Avoid circular imports by keeping dependencies pointed in one direction.
+
+## Environments and dependencies
+
+A virtual environment isolates the interpreter and installed packages for one project. Record direct dependencies in project metadata and pin or constrain versions according to the application's reproducibility needs. Do not rely on a developer's globally installed package by accident.
+
+## Imports are execution
+
+Importing a module executes its top-level statements once per interpreter. Put reusable definitions at module scope and guard command-line startup:
+
+```python
+def main():
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+This lets a module be imported by tests without unexpectedly running the CLI. Keep module initialization light so imports remain predictable.
+
+<ReactDemo
+  title="Trace a package boundary"
+  code={`function Demo() {
+  const [part, setPart] = React.useState("cli");
+  const descriptions = { cli: "parses arguments and prints a result", parsing: "turns raw text into domain records", indexing: "stores and searches records", tests: "checks each boundary" };
+  const order = ["cli", "parsing", "indexing", "tests"];
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <select value={part} onChange={e => setPart(e.target.value)}>{order.map(name => <option key={name}>{name}</option>)}</select>
+    <p><code>document_tool.{part}</code>: {descriptions[part]}</p>
+    <small>Modules should have names and responsibilities that make the dependency direction understandable.</small>
+  </div>;
+}`}
+ />
+
+> [!WARNING]
+> A package is not made maintainable by folders alone. Keep imports, side effects, configuration, and public interfaces deliberate.
+
+## Practice
+
+In the [Package Layout puzzle](/puzzles/package-layout?lesson=modules-packaging-and-environments&course=advanced-python), classify module responsibilities and detect an import layout that would create a circular dependency.

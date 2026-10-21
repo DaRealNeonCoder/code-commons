@@ -1,0 +1,31 @@
+---
+title: "Debug the Average"
+order: 16
+available: true
+areas: ["programming-fundamentals"]
+topics: ["debugging", "functions"]
+tags: ["traceback", "edge-cases", "type-error"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def safe_average(values):
+      # TODO: return 0.0 for an empty list, otherwise the average
+      pass
+
+  values = [] if input().strip() == "empty" else list(map(float, input().split()))
+  print(f"{safe_average(values):.2f}")
+testCases:
+  - input: "values\n2 4 6"
+    expected: "4.00"
+    hidden: false
+  - input: "empty"
+    expected: "0.00"
+    hidden: true
+  - input: "values\n-2 2"
+    expected: "0.00"
+    hidden: true
+---
+
+Return `0.0` when `values` is empty. Otherwise return `sum(values) / len(values)`. The empty case is the bug boundary: calling `len(values)` is safe, but dividing by zero is not.
+
+The first input word is setup supplied by the puzzle. When it is `values`, the next line contains the numbers; when it is `empty`, there is no second line.

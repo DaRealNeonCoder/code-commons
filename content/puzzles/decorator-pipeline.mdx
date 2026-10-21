@@ -1,0 +1,39 @@
+---
+title: "Decorator Pipeline"
+order: 404
+available: true
+areas: ["programming-fundamentals"]
+topics: ["functions", "software-design"]
+tags: ["closures", "decorators", "wrappers"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  from functools import wraps
+
+  def make_counter():
+      # TODO: return a function that increments and returns its private count
+      pass
+
+  def record_calls(log):
+      # TODO: return a decorator that appends the function name to log
+      pass
+
+  log = []
+  count = make_counter()
+
+  @record_calls(log)
+  def add(a, b):
+      return a + b
+
+  print(count(), count())
+  print(add(2, 3))
+  print(" ".join(log))
+testCases:
+  - input: ""
+    expected: "1 2\n5\nadd"
+    hidden: false
+---
+
+`make_counter` should keep its count in an enclosing variable and return an inner function that increments it with `nonlocal`.
+
+`record_calls(log)` should return a decorator. The decorator should wrap the original function, append `function.__name__` to `log`, call the original with `*args` and `**kwargs`, and return its result. Use `@wraps` so the wrapper keeps the original metadata.

@@ -1,0 +1,74 @@
+---
+title: "Loop Patterns: Accumulate, Search, and Count"
+order: 9
+summary: "Practice the reusable loop shapes behind totals, counts, searches, and validation."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["loops", "patterns"]
+tags: ["accumulator", "search", "count", "validation"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["loop-patterns"]
+---
+
+The previous lesson showed how `for` and `while` repeat code. This lesson focuses on the patterns you can reuse when the problem changes.
+
+## Accumulate a result
+
+Start with a neutral value, update it once per item, and use it after the loop:
+
+```python
+total = 0
+for price in [3, 5, 2]:
+    total += price
+```
+
+The starting value depends on the operation: `0` for a sum, `1` for a product, and an empty list for collecting results.
+
+## Count and search
+
+Counting is an accumulator whose update is conditional:
+
+```python
+count = 0
+for word in words:
+    if len(word) > 4:
+        count += 1
+```
+
+For a search, keep a clear answer such as `found = False`, or return immediately from a function when the match is found. Use `break` when the surrounding code still needs to run after the loop.
+
+## Validate input
+
+Validation often means “keep asking while the value is not acceptable”:
+
+```python
+while True:
+    answer = input()
+    if answer in ("yes", "no"):
+        break
+```
+
+In a puzzle, the input is usually already valid. The pattern still matters because real programs must decide what to do with empty, out-of-range, or incorrectly formatted data.
+
+<ReactDemo
+  title="Watch an accumulator grow"
+  code={`function Demo() {
+  const values = [3, 5, 2, 7, 4];
+  const [count, setCount] = React.useState(0);
+  const total = values.slice(0, count).reduce((sum, value) => sum + value, 0);
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <input aria-label="items processed" style={{ width: "100%" }} type="range" min="0" max={values.length} value={count} onChange={e => setCount(+e.target.value)} />
+    <p>processed: [{values.slice(0, count).join(", ") || "nothing yet"}]</p>
+    <p>start at <code>0</code> → add each value → total = <strong>{total}</strong></p>
+    <small>The loop state is visible after each item. The same shape works for counts and collected results.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> Before a loop, decide what the result should be before processing any items. That choice usually tells you the correct initial accumulator.
+
+## Practice
+
+In the [Loop Patterns puzzle](/puzzles/loop-patterns?lesson=loop-patterns&course=intro-to-python), return a total, a count, and whether a target was found. Solve each part with a small, readable loop before trying shortcuts.

@@ -1,0 +1,45 @@
+---
+title: "Document Indexer"
+order: 413
+available: true
+areas: ["programming-fundamentals"]
+topics: ["projects", "architecture", "search"]
+tags: ["capstone", "indexing", "generators", "dataclasses"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  def normalize(text):
+      # TODO: return lowercase words with punctuation removed
+      pass
+
+  def build_index(documents):
+      # TODO: return {word: sorted list of document IDs}
+      pass
+
+  def search(index, query):
+      # TODO: return sorted IDs containing every query word
+      pass
+
+  count = int(input())
+  documents = []
+  for _ in range(count):
+      document_id, text = input().split("|", 1)
+      documents.append((document_id, text))
+  index = build_index(documents)
+  query = input()
+  print(" ".join(search(index, query)))
+testCases:
+  - input: "3\na|Python makes programs\nb|Programs can be tested\nc|Python can be tested\npython tested"
+    expected: "c"
+    hidden: false
+  - input: "2\na|red blue red\nb|blue green\nred"
+    expected: "a"
+    hidden: true
+  - input: "1\na|Hello, world!\nmissing"
+    expected: ""
+    hidden: true
+---
+
+Implement `normalize` using lowercase text and a simple punctuation-free word split. `build_index` should add each document ID once per word, then sort each ID list. `search` should normalize the query and return IDs that appear for every query word, sorted for deterministic output.
+
+This puzzle deliberately focuses on pure functions. In the full project, keep filesystem traversal, SQLite persistence, CLI parsing, logging, tests, and concurrency in separate modules around these functions.

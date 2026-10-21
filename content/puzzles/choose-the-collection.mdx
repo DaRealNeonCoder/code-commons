@@ -1,0 +1,39 @@
+---
+title: "Choose the Collection"
+order: 13
+available: true
+areas: ["programming-fundamentals"]
+topics: ["lists", "sets", "dictionaries"]
+tags: ["collections", "membership", "lookup"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def roster_report(names, scores, wanted):
+      # TODO: return (unique_count, score_or_zero, sorted_names)
+      pass
+
+  names = input().split()
+  wanted = input().strip()
+  scores = {}
+  for item in input().split():
+      name, score = item.split(":")
+      scores[name] = int(score)
+  unique_count, score, sorted_names = roster_report(names, scores, wanted)
+  print(unique_count)
+  print(score)
+  print(" ".join(sorted_names))
+testCases:
+  - input: "Mina Leo Mina\nLeo\nMina:8 Leo:10\n"
+    expected: "2\n10\nLeo Mina"
+    hidden: false
+  - input: "Zoe Zoe\nKai\nZoe:7\n"
+    expected: "1\n0\nZoe"
+    hidden: true
+  - input: "b a c\na\na:1 b:2 c:3\n"
+    expected: "3\n1\na b c"
+    hidden: true
+---
+
+Use a set to count unique names, a dictionary to look up `wanted`, and `sorted()` for the final ordered list. Return `0` when the wanted name is not in the scores dictionary.
+
+The input setup is provided so you can focus on choosing and combining data structures. The first line may contain duplicate names.

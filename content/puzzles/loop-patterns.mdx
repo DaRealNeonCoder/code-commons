@@ -1,0 +1,39 @@
+---
+title: "Loop Patterns"
+order: 9
+available: true
+areas: ["programming-fundamentals"]
+topics: ["loops", "patterns"]
+tags: ["accumulator", "search", "count"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def summarize(values, target):
+      # TODO: return (total, count_above_two, found_target)
+      pass
+
+  values = list(map(int, input().split()))
+  target = int(input())
+  total, count, found = summarize(values, target)
+  print(total)
+  print(count)
+  print("yes" if found else "no")
+testCases:
+  - input: "1 3 5 2\n5"
+    expected: "11\n2\nyes"
+    hidden: false
+  - input: "0 1 2\n9"
+    expected: "3\n0\nno"
+    hidden: true
+  - input: "4 4 4\n4"
+    expected: "12\n3\nyes"
+    hidden: true
+---
+
+Use one loop to calculate all three answers:
+
+- add every value to `total`;
+- increase the count when the value is greater than `2`;
+- set `found_target` to `True` when a value equals `target`.
+
+Return `(total, count_above_two, found_target)`. Do not remove values or sort the list; this is practice for reading each item once.

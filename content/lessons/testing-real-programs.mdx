@@ -1,0 +1,61 @@
+---
+title: "Testing Real Programs"
+order: 408
+summary: "Design focused tests, use mocks at boundaries, practice test-driven development, and understand property-based thinking."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["testing", "software-design"]
+tags: ["unit-tests", "mocking", "tdd", "properties"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["test-case-design"]
+---
+
+Tests are executable examples of a program's contract. A useful test fails for a meaningful regression and points toward the violated behavior.
+
+## Unit, integration, and boundary tests
+
+A unit test isolates one function or class. An integration test checks that real components work together, such as a parser writing records to SQLite. Test the boundary between your code and the network, clock, filesystem, or random number generator deliberately.
+
+Arrange the input, act once, and assert the observable result:
+
+```python
+def test_discount_rounds_to_cents():
+    result = discount(10.00, 0.15)
+    assert result == 8.50
+```
+
+Add tests for the normal path, boundary values, invalid input, and empty input. Avoid asserting private implementation details unless that detail is itself a contract.
+
+## TDD and mocks
+
+Test-driven development cycles through a failing test, the smallest implementation, and a cleanup pass. A mock can stand in for an external collaborator and let a test assert “the email client was called once,” but a suite full of mocks may pass while the real integration is broken. Keep a few integration tests with real boundaries.
+
+## Properties, not only examples
+
+Property-based thinking asks what should always remain true. For a sorting function, the output should be ordered and contain the same elements as the input. For a round-trip serializer, decoding what you encoded should recover the original data. You can check these properties with generated examples or with carefully chosen hand-written cases when a property-testing library is not available.
+
+<ReactDemo
+  title="See examples and properties cover different risks"
+  code={`function Demo() {
+  const [caseIndex, setCaseIndex] = React.useState(0);
+  const cases = [[3, 1, 2], [0], [], [5, 5, 1]];
+  const input = cases[caseIndex];
+  const output = [...input].sort((a, b) => a - b);
+  const ordered = output.every((value, index) => index === 0 || output[index - 1] <= value);
+  const sameItems = output.slice().sort().join(",") === input.slice().sort().join(",");
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <input aria-label="test case" style={{ width: "100%" }} type="range" min="0" max={cases.length - 1} value={caseIndex} onChange={e => setCaseIndex(+e.target.value)} />
+    <p>input: [{input.join(", ") || "empty"}] → output: [{output.join(", ") || "empty"}]</p>
+    <p>properties: ordered = <strong>{String(ordered)}</strong>, same items = <strong>{String(sameItems)}</strong></p>
+    <small>Examples choose cases; properties describe truths that should hold across many cases.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> A test name should describe behavior, not implementation: `test_empty_index_returns_no_results` is more durable than `test_loop_runs_zero_times`.
+
+## Practice
+
+In the [Test Case Design puzzle](/puzzles/test-case-design?lesson=testing-real-programs&course=advanced-python), identify boundary cases and implement a small property checker for a transformation.

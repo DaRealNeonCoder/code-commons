@@ -1,16 +1,24 @@
 {
   "title": "Intro to Python",
-  "summary": "Learn Python for beginners with free lessons and browser-based coding puzzles. Start with Hello World, then learn variables, loops, lists, and functions.",
+  "summary": "Learn Python for beginners with free lessons, visual explanations, and browser-based coding puzzles. Build from expressions and control flow to collections, functions, files, and a small project.",
   "lessons": [
     "hello-world",
+    "how-python-runs",
     "variables-and-types",
     "operators",
     "strings-and-input",
+    "problem-solving-and-tracing",
     "conditionals",
     "loops",
+    "loop-patterns",
     "lists",
     "tuples-and-sets",
     "dictionaries",
-    "functions"
+    "choosing-data-structures",
+    "functions",
+    "functions-in-practice",
+    "debugging-and-errors",
+    "files-and-modules",
+    "expense-tracker-project"
   ]
 }

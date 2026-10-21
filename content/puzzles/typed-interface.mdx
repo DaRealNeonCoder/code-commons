@@ -1,0 +1,41 @@
+---
+title: "Typed Interface"
+order: 407
+available: true
+areas: ["programming-fundamentals"]
+topics: ["typing", "software-design"]
+tags: ["type-hints", "protocols", "interfaces"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  from dataclasses import dataclass
+  from typing import Protocol
+
+  class HasTotal(Protocol):
+      def total(self) -> float:
+          ...
+
+  @dataclass
+  class Charge:
+      amount: float
+
+      def total(self) -> float:
+          return self.amount
+
+  def total_all(items: list[HasTotal]) -> float:
+      # TODO: sum item.total() without checking concrete classes
+      pass
+
+  count = int(input())
+  items = [Charge(float(input())) for _ in range(count)]
+  print(f"{total_all(items):.2f}")
+testCases:
+  - input: "3\n2.50\n4\n1.25"
+    expected: "7.75"
+    hidden: false
+  - input: "0"
+    expected: "0.00"
+    hidden: true
+---
+
+Complete `total_all` with a generator expression or loop that calls `item.total()` for every item. The function is typed against the behavior it needs, not against the concrete `Charge` class.

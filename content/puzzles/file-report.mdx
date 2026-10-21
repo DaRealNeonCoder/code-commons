@@ -1,0 +1,35 @@
+---
+title: "File Report"
+order: 17
+available: true
+areas: ["programming-fundamentals"]
+topics: ["files", "strings", "loops"]
+tags: ["text-processing", "splitlines", "standard-library"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def report(text):
+      # TODO: return (nonempty_lines, word_count, longest_line_length)
+      pass
+
+  line_count = int(input())
+  lines = [input() for _ in range(line_count)]
+  nonempty, words, longest = report("\n".join(lines))
+  print(nonempty)
+  print(words)
+  print(longest)
+testCases:
+  - input: "3\nhello world\n\nPython"
+    expected: "2\n3\n11"
+    hidden: false
+  - input: "2\na b c\nd"
+    expected: "2\n4\n5"
+    hidden: true
+  - input: "1\n"
+    expected: "0\n0\n0"
+    hidden: true
+---
+
+Treat the input string as file contents. Split it into lines, ignore lines whose stripped text is empty, count words with whitespace splitting, and track the largest original line length. Return `(nonempty_lines, word_count, longest_line_length)`.
+
+The file itself is simulated by the provided setup. In a local script, the same `report` function could receive `file.read()` from a `with open(...)` block.

@@ -1,0 +1,84 @@
+---
+title: "How Python Runs a Program"
+order: 2
+summary: "Read expressions, assignment, and reassignment as a sequence of steps Python performs from top to bottom."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["expressions", "variables", "execution"]
+tags: ["assignment", "expressions", "trace"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["assignment-trace"]
+---
+
+After `print()`, the next useful question is: **what does Python do first, next, and after that?** Most small programs run top to bottom. Python evaluates an expression, then uses its value in an instruction such as assignment or `print()`.
+
+## Expressions produce values
+
+An expression is code Python can evaluate to a value:
+
+```python
+2 + 3       # 5
+"hi" * 2    # "hihi"
+```
+
+An expression can contain variables. Python looks up their current values before calculating:
+
+```python
+price = 4
+quantity = 3
+total = price * quantity
+print(total)  # 12
+```
+
+## Assignment changes a name
+
+Read `total = price * quantity` as “evaluate the right side, then make `total` refer to that result.” The equals sign is not a promise that the two sides will stay equal. Reassignment replaces the old value:
+
+```python
+score = 10
+score = score + 5
+score = score * 2
+print(score)  # 30
+```
+
+The right side of `score = score + 5` uses the old score. Only after the calculation does Python store `15` under the name `score`.
+
+## Trace before you run
+
+For a short program, make a table of names after each line:
+
+| Line | Instruction | `points` |
+| --- | --- | ---: |
+| 1 | `points = 2` | 2 |
+| 2 | `points = points + 3` | 5 |
+| 3 | `points = points * 2` | 10 |
+
+Tracing is not a special debugging tool. It is a way to make the execution model visible while a program is still small.
+
+<ReactDemo
+  title="Step through assignments"
+  code={`function Demo() {
+  const [step, setStep] = React.useState(0);
+  const rows = [
+    ["start", "—", "—"],
+    ["points = 2", "2", ""],
+    ["points = points + 3", "5", ""],
+    ["points = points * 2", "10", ""]
+  ];
+  const visible = rows.slice(0, step + 1);
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <input aria-label="step" style={{ width: "100%" }} type="range" min="0" max="3" value={step} onChange={e => setStep(+e.target.value)} />
+    {visible.map((row, index) => <div key={index} style={{ display: "grid", gridTemplateColumns: "190px 1fr", gap: 8, marginTop: 7 }}><code>{row[0]}</code><strong>{row[1]}</strong></div>)}
+    <p>current value of <code>points</code>: <strong>{["not assigned", "2", "5", "10"][step]}</strong></p>
+    <small>Each assignment evaluates its right side using the values from the previous step.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> When a line looks confusing, split it into two questions: “What value does the right side produce?” and “Which name receives that value?”
+
+## Practice
+
+In the [Assignment Trace puzzle](/puzzles/assignment-trace?lesson=how-python-runs&course=intro-to-python), calculate a short sequence of updates and print the final value. The goal is to practice tracing before loops and conditions make programs branch.

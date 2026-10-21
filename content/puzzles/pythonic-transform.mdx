@@ -1,0 +1,32 @@
+---
+title: "Pythonic Transform"
+order: 402
+available: true
+areas: ["programming-fundamentals"]
+topics: ["iteration", "collections"]
+tags: ["comprehensions", "enumerate", "zip", "sorting"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  def transform(names, scores, minimum):
+      # TODO: pair names and scores, keep scores >= minimum,
+      # sort by score descending then name ascending, return lines
+      pass
+
+  names = input().split()
+  scores = list(map(int, input().split()))
+  minimum = int(input())
+  print("\\n".join(transform(names, scores, minimum)))
+testCases:
+  - input: "Ada Lin Bo\n90 75 90\n80"
+    expected: "Ada: 90\nBo: 90"
+    hidden: false
+  - input: "z a m\n80 95 95\n80"
+    expected: "a: 95\nm: 95\nz: 80"
+    hidden: true
+  - input: "a b\n1 2\n3"
+    expected: ""
+    hidden: true
+---
+
+Pair names with scores using `zip`. Keep pairs whose score is at least `minimum`, sort by `(-score, name)`, and return formatted strings such as `Ada: 90`. The caller prints the returned lines.

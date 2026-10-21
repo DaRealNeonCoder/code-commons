@@ -1,0 +1,63 @@
+---
+title: "Building CLI and Database Tools"
+order: 412
+summary: "Connect modules to a command-line interface and SQLite database while keeping parsing, domain logic, and persistence separate."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["cli", "databases", "software-design"]
+tags: ["argparse", "sqlite3", "json", "persistence"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["cli-query-plan"]
+---
+
+Real applications need an interface and durable state. Python's standard library is enough to build a useful local tool before adding a web framework or an external database.
+
+## Keep the CLI thin
+
+`argparse` turns command-line arguments into a structured namespace. The CLI should validate user-facing options and call application functions; it should not contain every parsing, query, and formatting detail.
+
+```python
+parser.add_argument("command", choices=["add", "search"])
+parser.add_argument("--term", default="")
+args = parser.parse_args()
+```
+
+This makes help output and invalid commands predictable. Test the domain functions independently of `sys.argv`, then add a small number of CLI integration tests.
+
+## SQLite is a useful local boundary
+
+```python
+import sqlite3
+
+with sqlite3.connect("records.db") as connection:
+    connection.execute("CREATE TABLE IF NOT EXISTS records (id INTEGER PRIMARY KEY, text TEXT)")
+    connection.execute("INSERT INTO records(text) VALUES (?)", (text,))
+    connection.commit()
+```
+
+Always parameterize values instead of joining strings into SQL. Keep schema creation and query functions in a persistence module. A transaction gives a group of writes all-or-nothing behavior; context managers help close connections and roll back failures according to the chosen policy.
+
+## JSON is an interchange format
+
+Use `json` when a human-readable snapshot or message is more appropriate than relational queries. Validate the shape when loading external JSON; a syntactically valid document can still violate the application's schema.
+
+<ReactDemo
+  title="Trace a CLI request to storage"
+  code={`function Demo() {
+  const [command, setCommand] = React.useState("search");
+  const steps = command === "search" ? ["argv: search --term python", "cli parses options", "repository queries SQLite", "format results"] : ["argv: add --text note", "cli parses options", "repository starts transaction", "commit row"];
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <select value={command} onChange={e => setCommand(e.target.value)}><option value="search">search</option><option value="add">add</option></select>
+    <ol>{steps.map((step, index) => <li key={index}><code>{step}</code></li>)}</ol>
+    <small>The CLI boundary handles arguments; application and persistence modules handle behavior and storage.</small>
+  </div>;
+}`}
+ />
+
+> [!WARNING]
+> Never build SQL by concatenating user text. Parameterized queries protect both correctness and the database boundary.
+
+## Practice
+
+In the [CLI Query Plan puzzle](/puzzles/cli-query-plan?lesson=building-cli-and-database-tools&course=advanced-python), route commands to the correct layer and generate a parameterized query plan without interpolating user input.

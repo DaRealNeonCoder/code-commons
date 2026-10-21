@@ -1,0 +1,69 @@
+---
+title: "Exceptions and Context Managers"
+order: 405
+summary: "Design clear failure paths, define custom exceptions, and guarantee cleanup with context managers."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["exceptions", "resource-management"]
+tags: ["custom-exceptions", "raise", "context-manager", "cleanup"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["safe-parser"]
+---
+
+The Intro course used debugging and ordinary errors. Larger programs need deliberate failure design: which problems should the caller handle, which should stop the operation, and what cleanup must happen even when an error occurs?
+
+## Catch narrowly, explain clearly
+
+```python
+try:
+    amount = float(text)
+except ValueError as error:
+    raise InvalidRecord("amount is not a number") from error
+```
+
+Catch the exception you expect, not every exception. A bare `except` can hide programming bugs. `raise ... from error` preserves the original cause while presenting a domain-level message.
+
+Custom exceptions communicate the boundary of a module:
+
+```python
+class InvalidRecord(Exception):
+    pass
+```
+
+Callers can catch `InvalidRecord` without knowing whether parsing used a file, JSON, or a database.
+
+## Context managers guarantee a boundary
+
+The `with` statement calls `__enter__` and then guarantees `__exit__`, even if the body raises. Files use this protocol, but it also applies to locks, temporary directories, transactions, and test fixtures.
+
+```python
+class Audit:
+    def __enter__(self):
+        self.events = []
+        return self
+    def __exit__(self, exc_type, exc, traceback):
+        save_events(self.events)
+```
+
+Return `False` or `None` from `__exit__` to let an exception propagate. Suppress an exception only when the context manager has fully handled it and that behavior is part of its contract.
+
+<ReactDemo
+  title="See cleanup happen on success and failure"
+  code={`function Demo() {
+  const [fails, setFails] = React.useState(false);
+  const events = ["enter resource", fails ? "body raises an error" : "body completes", "exit resource / cleanup", fails ? "caller handles error" : "continue"];
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label><input type="checkbox" checked={fails} onChange={e => setFails(e.target.checked)} /> simulate failure inside with block</label>
+    <ol>{events.map((event, index) => <li key={index}>{event}</li>)}</ol>
+    <small>Cleanup belongs to the context boundary, not only to the success path.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> A robust function documents what it accepts, what it returns, and which exception types a caller can reasonably handle.
+
+## Practice
+
+In the [Safe Parser puzzle](/puzzles/safe-parser?lesson=exceptions-and-context-managers&course=advanced-python), parse records, return a domain-level error label for invalid input, and leave valid records unchanged.

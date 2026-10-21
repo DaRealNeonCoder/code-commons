@@ -1,0 +1,65 @@
+---
+title: "Files and Modules"
+order: 17
+summary: "Read and transform text files, write results safely, and use Python's standard library without hiding the data flow."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["files", "modules", "standard-library"]
+tags: ["open", "with", "import", "path"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["file-report"]
+---
+
+Until now, input came from the puzzle's input box. Files let a program work with data that lasts after the program stops. Modules let you organize useful code and reuse tools from Python's standard library.
+
+## Read and write with `with`
+
+Use a `with` block so Python closes the file even if the block finishes through an error:
+
+```python
+with open("notes.txt", "r") as file:
+    text = file.read()
+
+with open("summary.txt", "w") as file:
+    file.write("finished\n")
+```
+
+The mode matters: `"r"` reads, `"w"` replaces or creates a file, and `"a"` appends. A real program should choose paths carefully and handle a missing file instead of assuming it exists.
+
+For line-oriented data, iterate over the file or use `read().splitlines()`. Strip only what you mean to strip; whitespace may be part of the data.
+
+## Import a module
+
+Python's standard library contains modules such as `math`, `statistics`, and `random`:
+
+```python
+import math
+
+print(math.sqrt(25))
+```
+
+`import math` gives you a name `math`; `math.sqrt` looks up the function inside the module. Importing a module does not make every name global by magic. Prefer clear imports while you are learning.
+
+<ReactDemo
+  title="See a text-file pipeline"
+  code={`function Demo() {
+  const [text, setText] = React.useState("Ada\n\nLin\nMina");
+  const lines = text.split("\\n");
+  const nonempty = lines.filter(line => line.trim() !== "");
+  const output = nonempty.map(line => line.trim().toUpperCase()).join("\\n");
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <textarea value={text} onChange={e => setText(e.target.value)} rows="4" style={{ width: "100%" }} />
+    <p>read {lines.length} lines → kept {nonempty.length} non-empty lines → wrote:</p>
+    <pre style={{ background: "#f1f5f9", padding: 8 }}>{output}</pre>
+    <small>The browser demo uses a string, but the same read → transform → write stages apply to a file.</small>
+  </div>;
+}`}
+ />
+
+> [!WARNING]
+> File paths and file contents are external input. Check encoding, missing files, empty files, and whether `"w"` would overwrite data before running a script.
+
+## Practice
+
+In the [File Report puzzle](/puzzles/file-report?lesson=files-and-modules&course=intro-to-python), process text supplied as input and report non-empty lines, word count, and the longest line. The puzzle simulates file contents so it stays safe and browser-executable.

@@ -1,0 +1,52 @@
+---
+title: "Debugging and Errors"
+order: 16
+summary: "Read tracebacks, classify common Python errors, and debug with small observations instead of guessing."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["debugging", "errors"]
+tags: ["traceback", "syntax-error", "type-error", "index-error"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["debug-the-average"]
+---
+
+Errors are feedback about the program's current behavior. Debugging means using that feedback to find the smallest incorrect assumption and test a correction.
+
+## Three useful categories
+
+- **SyntaxError:** Python cannot parse the code, often because of a missing colon, quote, or parenthesis. Fix the line Python points to, then check the line before it too.
+- **Runtime error:** the code parsed, but an operation failed while it ran. `NameError` means a name is not defined; `TypeError` means an operation received an incompatible type; `IndexError` means a sequence position is outside its valid range.
+- **Logic error:** the program runs but produces the wrong answer. Add a small print, trace the values, and compare the first unexpected value with your hand calculation.
+
+## Read a traceback from the bottom
+
+The last line usually names the error and explains it. The lines above show the call path and the file/line where the failure surfaced. Do not treat the traceback as a wall of text: locate the final error type, inspect the indicated line, and ask what types and values reached it.
+
+## A systematic loop
+
+1. Reproduce the smallest failing input.
+2. State the expected result.
+3. Inspect one intermediate value with `print(type(value), value)`.
+4. Change one thing.
+5. Re-run the same input, then test an edge case.
+
+<ReactDemo
+  title="Classify a failure before fixing it"
+  code={`function Demo() {
+  const [kind, setKind] = React.useState("TypeError");
+  const messages = { SyntaxError: "Python could not parse the instructions", NameError: "a name was used before it was defined", TypeError: "an operation received the wrong kind of value", IndexError: "a sequence position does not exist", Logic: "the program ran, but the result is wrong" };
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <select value={kind} onChange={e => setKind(e.target.value)}>{Object.keys(messages).map(name => <option key={name}>{name}</option>)}</select>
+    <p><strong>{kind}</strong>: {messages[kind]}</p>
+    <small>Classifying the failure narrows the next question. It does not replace reading the actual traceback.</small>
+  </div>;
+}`}
+ />
+
+> [!WARNING]
+> Do not “fix” an error by hiding it with a broad workaround you do not understand. First learn what value or assumption caused the failure.
+
+## Practice
+
+In the [Debug the Average puzzle](/puzzles/debug-the-average?lesson=debugging-and-errors&course=intro-to-python), complete a safe average function and handle empty input explicitly. The exercise turns a common runtime edge case into a clear contract.

@@ -1,0 +1,62 @@
+---
+title: "Capstone: Build an Expense Tracker"
+order: 18
+summary: "Combine input, validation, loops, dictionaries, lists, and functions in one small practical program."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["projects", "functions", "dictionaries"]
+tags: ["capstone", "decomposition", "input", "aggregation"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["expense-tracker"]
+---
+
+The course pieces are more useful when they work together. An expense tracker is small enough to understand but rich enough to require planning:
+
+1. Read a number of expense records.
+2. Validate that each record has a category and a non-negative amount.
+3. Store records in a list or aggregate totals in a dictionary.
+4. Calculate the grand total and category totals.
+5. Print a predictable report.
+
+## Decompose before coding
+
+Possible helpers are:
+
+```python
+def parse_expense(line):
+    category, amount = line.split(":")
+    return category, float(amount)
+
+def add_expense(totals, category, amount):
+    totals[category] = totals.get(category, 0) + amount
+```
+
+The main program can then focus on the order of operations. Each helper has a simple contract and can be tested with one example before the full loop is written.
+
+## Decide edge cases
+
+What should happen with no records? What about a blank category, a negative amount, or two records with the same category? State the choices before implementation. This project treats invalid records as skipped, repeated categories as combined, and an empty total as `0.00`.
+
+<ReactDemo
+  title="Watch category totals accumulate"
+  code={`function Demo() {
+  const expenses = [["food", 12], ["travel", 8], ["food", 5], ["books", 10]];
+  const [count, setCount] = React.useState(0);
+  const totals = {};
+  expenses.slice(0, count).forEach(([category, amount]) => { totals[category] = (totals[category] || 0) + amount; });
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <input aria-label="expenses processed" style={{ width: "100%" }} type="range" min="0" max={expenses.length} value={count} onChange={e => setCount(+e.target.value)} />
+    <p>processed {count} of {expenses.length} records</p>
+    {Object.keys(totals).length === 0 ? <p>no totals yet</p> : Object.entries(totals).map(([category, amount]) => <div key={category}>{category}: <strong>${amount.toFixed(2)}</strong></div>)}
+    <small>The dictionary groups repeated categories while the loop visits each record exactly once.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> A capstone is not a race to write the most code. Keep the first version small, test one helper, then add one behavior at a time.
+
+## Practice
+
+In the [Expense Tracker puzzle](/puzzles/expense-tracker?lesson=expense-tracker-project&course=intro-to-python), parse records, skip invalid entries, combine category totals, and print a stable report. The visible case gives you a checkpoint before hidden edge cases.

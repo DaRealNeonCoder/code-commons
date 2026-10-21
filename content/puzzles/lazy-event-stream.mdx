@@ -1,0 +1,34 @@
+---
+title: "Lazy Event Stream"
+order: 403
+available: true
+areas: ["programming-fundamentals"]
+topics: ["iterators", "generators"]
+tags: ["yield", "lazy-evaluation", "pipeline"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  def important_events(events):
+      # TODO: yield uppercase names for events whose level is "important"
+      pass
+
+  count = int(input())
+  events = []
+  for _ in range(count):
+      level, name = input().split(":", 1)
+      events.append((level, name))
+  for name in important_events(events):
+      print(name)
+testCases:
+  - input: "4\nnormal:open\nimportant:save\nnormal:close\nimportant:publish"
+    expected: "SAVE\nPUBLISH"
+    hidden: false
+  - input: "2\nimportant:cache miss\nimportant:retry"
+    expected: "CACHE MISS\nRETRY"
+    hidden: true
+  - input: "3\nnormal:a\nnormal:b\nnormal:c"
+    expected: ""
+    hidden: true
+---
+
+Implement `important_events` as a generator function. For each `(level, name)`, yield `name.upper()` only when `level == "important"`. Do not build a second list inside the function; the caller should receive values one at a time.

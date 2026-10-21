@@ -1,0 +1,35 @@
+---
+title: "Test Case Design"
+order: 408
+available: true
+areas: ["programming-fundamentals"]
+topics: ["testing", "software-design"]
+tags: ["unit-tests", "properties", "edge-cases"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  def is_sorted(values):
+      # TODO: return True when values never decrease
+      pass
+
+  def preserves_items(before, after):
+      # TODO: compare sorted copies without changing either input
+      pass
+
+  before = list(map(int, input().split()))
+  after = list(map(int, input().split()))
+  print("yes" if is_sorted(after) else "no")
+  print("yes" if preserves_items(before, after) else "no")
+testCases:
+  - input: "3 1 2\n1 2 3"
+    expected: "yes\nyes"
+    hidden: false
+  - input: "1 2 2\n2 1 2"
+    expected: "no\nyes"
+    hidden: true
+  - input: "\n"
+    expected: "yes\nyes"
+    hidden: true
+---
+
+Implement `is_sorted` by checking every adjacent pair. Implement `preserves_items` by comparing `sorted(before)` and `sorted(after)`; do not mutate the input lists. These are two properties a sorting function should satisfy.

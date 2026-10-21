@@ -1,0 +1,73 @@
+---
+title: "Python's Data Model: Names, Identity, and Mutability"
+order: 401
+summary: "Understand references, object identity, mutation, copying, hashing, and why shared state causes surprising bugs."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["python-internals", "data-model"]
+tags: ["identity", "mutability", "references", "copying"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["reference-and-copy"]
+---
+
+In Intro to Python, assignment was introduced as storing a value under a name. More precisely, a name refers to an object. Understanding that distinction explains aliasing, mutation, and many bugs that appear when a program grows.
+
+## Equality is not identity
+
+`==` asks whether two objects have equal values. `is` asks whether two names refer to the same object:
+
+```python
+first = [1, 2]
+second = first
+third = [1, 2]
+
+first == third  # True: equal contents
+first is third  # False: different list objects
+first is second # True: one object, two names
+```
+
+Mutating `first` also changes what `second` sees because both names share the list. Rebinding `first` to a new list would not rebind `second`.
+
+## Copy the boundary you need
+
+`copy.copy()` makes a shallow copy: the outer container is new, but nested objects are still shared. `copy.deepcopy()` recursively copies supported nested values. Prefer explicit construction when the data shape is small; it documents which parts should be independent.
+
+Mutable default arguments are another aliasing trap. A default list is created once when the function is defined, not once per call:
+
+```python
+def add_item(item, items=None):
+    if items is None:
+        items = []
+    items.append(item)
+    return items
+```
+
+## Hashing and dictionaries
+
+Dictionary keys and set members need a stable hash and equality behavior. Mutable lists cannot be keys because changing their contents would change the lookup identity. Immutable tuples can be keys when all their members are hashable.
+
+Python manages object memory automatically through reference counting plus a cyclic garbage collector. You usually should not manage memory manually; you should release unnecessary references and avoid retaining huge objects longer than needed.
+
+<ReactDemo
+  title="See an alias change with its original"
+  code={`function Demo() {
+  const [shared, setShared] = React.useState(true);
+  const original = shared ? ["red", "blue"] : ["red", "blue"];
+  const alias = shared ? original : ["red", "blue"];
+  if (shared) alias.push("green");
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <button onClick={() => setShared(value => !value)} style={{ padding: "6px 10px" }}>{shared ? "use a shared reference" : "use a copied list"}</button>
+    <p>original: <strong>[{original.join(", ")}]</strong></p>
+    <p>alias: <strong>[{alias.join(", ")}]</strong></p>
+    <small>{shared ? "Both names refer to one list, so mutation is visible twice." : "The alias is a separate list, so its mutation does not change original."}</small>
+  </div>;
+}`}
+ />
+
+> [!WARNING]
+> Do not use `is` for ordinary value comparison. Identity checks are appropriate for singletons such as `None`; use `==` when you mean equal contents.
+
+## Practice
+
+In the [Reference and Copy puzzle](/puzzles/reference-and-copy?lesson=python-data-model&course=advanced-python), implement independent and shared updates, then report which values changed. The visible case makes aliasing observable without relying on implementation-specific small-integer caching.

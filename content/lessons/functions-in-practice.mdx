@@ -1,0 +1,72 @@
+---
+title: "Functions in Practice"
+order: 15
+summary: "Break a small program into helpers with clear inputs, return values, and responsibilities."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["functions", "decomposition"]
+tags: ["helpers", "parameters", "return-values", "scope"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["functions-in-practice"]
+---
+
+Knowing the syntax of `def` is only the beginning. A useful function has one clear job, receives the values it needs, and returns a result instead of quietly changing unrelated state.
+
+## Design a small interface
+
+For a score report, separate the questions:
+
+```python
+def average(scores):
+    return sum(scores) / len(scores)
+
+def status(score):
+    return "pass" if score >= 60 else "retry"
+```
+
+The caller does not need to know how each helper works. It can compose them:
+
+```python
+score = average([70, 80, 90])
+print(status(score))
+```
+
+This is decomposition: turn one large problem into named steps that can be tested independently.
+
+## Scope and side effects
+
+Parameters and local variables belong to the function call. Prefer:
+
+```python
+def add_tax(price, rate):
+    return price * (1 + rate)
+```
+
+over a function that reaches into a global `price` or prints when the caller needs to perform another calculation. Printing is useful at the edge of a program; returning values is more reusable inside it.
+
+## Test the edges
+
+Ask what should happen for an empty list, a zero value, a boundary score, or a missing key. Decide that behavior in the function contract. A short docstring or comment can state the decision before the implementation.
+
+<ReactDemo
+  title="Follow a function call"
+  code={`function Demo() {
+  const [score, setScore] = React.useState(75);
+  const average = score;
+  const status = average >= 60 ? "pass" : "retry";
+  const steps = [["call", "status(" + score + ")"], ["compare", score + " >= 60"], ["return", status]];
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <input aria-label="score" style={{ width: "100%" }} type="range" min="0" max="100" value={score} onChange={e => setScore(+e.target.value)} />
+    {steps.map((step, index) => <div key={index} style={{ marginTop: 7 }}><strong>{step[0]}</strong>: <code>{step[1]}</code></div>)}
+    <small>The function receives a value, makes a decision locally, and returns one result to its caller.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> If a function needs a paragraph of explanation, consider whether it is doing more than one job. Split the calculation from the input/output code first.
+
+## Practice
+
+In the [Functions in Practice puzzle](/puzzles/functions-in-practice?lesson=functions-in-practice&course=intro-to-python), implement helpers for an average, a pass/retry status, and a formatted report. The tests include an empty-score edge case.

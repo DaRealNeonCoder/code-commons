@@ -1,0 +1,36 @@
+---
+title: "Expense Tracker"
+order: 18
+available: true
+areas: ["programming-fundamentals"]
+topics: ["projects", "functions", "dictionaries"]
+tags: ["capstone", "aggregation", "validation"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def expense_report(lines):
+      # TODO: skip invalid records, then return (total, category_totals)
+      # A valid record looks like category:amount with amount >= 0.
+      pass
+
+  count = int(input())
+  lines = [input() for _ in range(count)]
+  total, categories = expense_report(lines)
+  print(f"{total:.2f}")
+  for category in sorted(categories):
+      print(f"{category}: {categories[category]:.2f}")
+testCases:
+  - input: "4\nfood:12.50\ntravel:8\nfood:5.50\ninvalid"
+    expected: "26.00\nfood: 18.00\ntravel: 8.00"
+    hidden: false
+  - input: "3\nbooks:10\nbooks:-2\n :4"
+    expected: "10.00\nbooks: 10.00"
+    hidden: true
+  - input: "0"
+    expected: "0.00"
+    hidden: true
+---
+
+For each line, split once at `:`. Skip lines without exactly a category and amount, blank categories, negative amounts, or amounts that cannot be converted with `float()`.
+
+Use a dictionary and `.get(category, 0)` to combine repeated categories. Return the grand total and dictionary. The provided output code sorts category names so the report is deterministic.

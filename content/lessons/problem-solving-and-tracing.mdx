@@ -1,0 +1,66 @@
+---
+title: "Problem Solving: From Words to Steps"
+order: 6
+summary: "Turn a problem statement into examples, pseudocode, and a traceable Python plan before writing the final code."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["problem-solving", "debugging", "control-flow"]
+tags: ["pseudocode", "decomposition", "tracing"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["pseudocode-to-python"]
+---
+
+Programming is more than remembering syntax. A useful first step is to turn a vague request into a sequence of small operations that can each be checked.
+
+## A four-step plan
+
+Suppose the task is: “Given a price and a discount percentage, print the final price.”
+
+1. **Identify inputs:** price and percentage.
+2. **Name the result:** the amount after subtracting the discount.
+3. **Write an example:** `100` with `20%` should produce `80`.
+4. **Write pseudocode:**
+
+```text
+read price
+read percent
+discount = price × percent / 100
+final price = price - discount
+print final price
+```
+
+Pseudocode is not a second programming language. It is a temporary bridge between the problem and Python syntax.
+
+## Decompose repeated work
+
+If a program must process many values, separate “what happens to one value?” from “how do I visit every value?” The first question often becomes a small function; the second becomes a loop. This separation makes both pieces easier to test.
+
+## Trace an example by hand
+
+Use a small input and write the value of each important name after every step. If the output is wrong, the first row where your trace differs from Python is the most useful place to look.
+
+<ReactDemo
+  title="Build a plan one step at a time"
+  code={`function Demo() {
+  const [step, setStep] = React.useState(0);
+  const plan = [
+    ["inputs", "price = 100, percent = 20"],
+    ["calculate", "discount = 100 × 20 / 100 = 20"],
+    ["calculate", "final_price = 100 - 20 = 80"],
+    ["output", "print 80"]
+  ];
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <input aria-label="plan step" style={{ width: "100%" }} type="range" min="0" max="3" value={step} onChange={e => setStep(+e.target.value)} />
+    <ol>{plan.slice(0, step + 1).map((item, index) => <li key={index}><strong>{item[0]}</strong>: {item[1]}</li>)}</ol>
+    <small>Start with an example that is easy to calculate. Then turn each line into one small Python statement.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> When stuck, do not immediately add more syntax. Make the example smaller, write the expected output, and identify the one value that is currently wrong.
+
+## Practice
+
+In the [Pseudocode to Python puzzle](/puzzles/pseudocode-to-python?lesson=problem-solving-and-tracing&course=intro-to-python), translate a short algorithm into a function and return each intermediate result in the requested order.

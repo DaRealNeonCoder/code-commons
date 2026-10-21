@@ -1,0 +1,59 @@
+---
+title: "Concurrency and Parallelism"
+order: 410
+summary: "Choose between threads, processes, and asyncio by identifying whether work is waiting, CPU-heavy, or naturally asynchronous."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["concurrency", "asyncio", "parallelism"]
+tags: ["threads", "processes", "async", "gil"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["choose-concurrency"]
+---
+
+Concurrency is about managing multiple in-progress tasks. Parallelism is about doing work at the same time on different CPU cores. The right tool depends on the bottleneck.
+
+## Threads for waiting
+
+Threads can overlap I/O waits such as network or file operations. They share memory, which makes communication easy but creates races. Protect shared mutable state with a lock or, better, reduce the amount of shared state.
+
+## Processes for CPU work
+
+CPU-heavy pure Python threads are limited by the Global Interpreter Lock (GIL) in common CPython builds. Separate processes can use multiple cores, but data must be serialized between processes and process startup has a cost. Use a process pool for independent CPU-bound tasks large enough to justify that cost.
+
+## asyncio for cooperative I/O
+
+An `async def` function returns a coroutine. `await` gives the event loop a chance to run another task while the current task waits:
+
+```python
+async def fetch_all(client, urls):
+    return await asyncio.gather(*(client.get(url) for url in urls))
+```
+
+Async code only helps when the operations cooperate with the event loop. Calling blocking file or CPU work directly inside an async function still blocks every other task.
+
+## Cancellation and backpressure
+
+Bound concurrency with a semaphore or queue. Handle cancellation so resources are released. A producer that creates work faster than consumers can handle it needs backpressure, otherwise memory grows without limit.
+
+<ReactDemo
+  title="Compare task schedules"
+  code={`function Demo() {
+  const [mode, setMode] = React.useState("async");
+  const tasks = ["download A", "download B", "download C"];
+  const schedule = mode === "async" ? [["A", 0], ["B", 0], ["C", 0], ["A", 1], ["B", 1], ["C", 1]] : [["A", 0], ["A", 1], ["B", 0], ["B", 1], ["C", 0], ["C", 1]];
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <select value={mode} onChange={e => setMode(e.target.value)}><option value="async">overlap waits</option><option value="serial">one task at a time</option></select>
+    <p>{tasks.join(", ")}</p>
+    <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>{schedule.map(([name, tick], index) => <span key={index} style={{ padding: "5px 8px", background: tick ? "#14b8a6" : "#cbd5e1" }}>{name} {tick ? "done" : "wait"}</span>)}</div>
+    <small>Concurrency can overlap waiting, but it does not make CPU work automatically parallel.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> Measure the operation first. “Async” is not a speed spell; it is a coordination model with cancellation, error, and resource-lifetime rules.
+
+## Practice
+
+In the [Choose Concurrency puzzle](/puzzles/choose-concurrency?lesson=concurrency-and-asyncio&course=advanced-python), choose `thread`, `process`, or `asyncio` for representative workloads and explain the bottleneck in the returned label.

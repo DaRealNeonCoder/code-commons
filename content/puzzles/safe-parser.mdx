@@ -1,0 +1,43 @@
+---
+title: "Safe Parser"
+order: 405
+available: true
+areas: ["programming-fundamentals"]
+topics: ["exceptions", "data-model"]
+tags: ["custom-exceptions", "validation", "raise"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  class InvalidRecord(Exception):
+      pass
+
+  def parse_record(text):
+      # TODO: return (name, amount) or raise InvalidRecord
+      pass
+
+  count = int(input())
+  for _ in range(count):
+      try:
+          name, amount = parse_record(input())
+          print(f"ok:{name}:{amount:.2f}")
+      except InvalidRecord as error:
+          print(f"error:{error}")
+testCases:
+  - input: "3\ncoffee:3.50\ninvalid\nbook:12"
+    expected: "ok:coffee:3.50\nerror:expected name:amount\nok:book:12.00"
+    hidden: false
+  - input: "2\n:4\nmeal:not-number"
+    expected: "error:empty name\nerror:invalid amount"
+    hidden: true
+  - input: "1\ntravel:-2"
+    expected: "error:negative amount"
+    hidden: true
+---
+
+Implement `parse_record`:
+
+1. Split once at `:`; if there is no separator, raise `InvalidRecord("expected name:amount")`.
+2. Strip the name; if it is empty, raise `InvalidRecord("empty name")`.
+3. Convert the amount with `float()`; if conversion raises `ValueError`, raise `InvalidRecord("invalid amount")`.
+4. Reject negative amounts with `InvalidRecord("negative amount")`.
+5. Return the stripped name and numeric amount.

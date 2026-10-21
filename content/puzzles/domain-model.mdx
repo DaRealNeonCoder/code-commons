@@ -1,0 +1,45 @@
+---
+title: "Domain Model"
+order: 406
+available: true
+areas: ["programming-fundamentals"]
+topics: ["object-oriented-programming", "software-design"]
+tags: ["classes", "dataclass", "polymorphism"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  from dataclasses import dataclass
+
+  @dataclass
+  class LineItem:
+      name: str
+      quantity: int
+      price: float
+
+      def total(self):
+          # TODO: return quantity * price
+          pass
+
+  def cart_total(items):
+      # TODO: use polymorphism: call item.total() for every item
+      pass
+
+  count = int(input())
+  items = []
+  for _ in range(count):
+      name, quantity, price = input().split()
+      items.append(LineItem(name, int(quantity), float(price)))
+  print(f"{cart_total(items):.2f}")
+testCases:
+  - input: "2\npen 2 1.50\nbook 1 8"
+    expected: "11.00"
+    hidden: false
+  - input: "0"
+    expected: "0.00"
+    hidden: true
+  - input: "1\ncoffee 3 2.25"
+    expected: "6.75"
+    hidden: true
+---
+
+Complete `LineItem.total()` and `cart_total`. The cart should not inspect `name`, `quantity`, or `price`; it should ask each item for its `total()`. That same interface could later support a `Subscription` or `DiscountedItem` class.

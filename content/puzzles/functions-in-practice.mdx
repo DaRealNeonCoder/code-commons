@@ -1,0 +1,35 @@
+---
+title: "Functions in Practice"
+order: 15
+available: true
+areas: ["programming-fundamentals"]
+topics: ["functions", "decomposition"]
+tags: ["helpers", "return-values", "scope"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def average(scores):
+      # TODO: return 0 for an empty list, otherwise the mean
+      pass
+
+  def status(score):
+      # TODO: return "pass" for 60 or higher, otherwise "retry"
+      pass
+
+  scores = list(map(int, input().split()))
+  score = average(scores)
+  print(f"{score:.1f}")
+  print(status(score))
+testCases:
+  - input: "70 80 90"
+    expected: "80.0\npass"
+    hidden: false
+  - input: "50 60"
+    expected: "55.0\nretry"
+    hidden: true
+  - input: ""
+    expected: "0.0\nretry"
+    hidden: true
+---
+
+Implement `average` and `status` separately. An empty score list has average `0`; a score of exactly `60` passes. The provided caller composes the helpers, which is the same pattern used in a larger program.

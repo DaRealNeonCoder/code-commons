@@ -1,0 +1,61 @@
+---
+title: "Advanced Python: From Scripts to Systems"
+order: 400
+summary: "Set the prerequisites and a practical progression from Python's object model to a tested, concurrent application."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["python", "software-design"]
+tags: ["prerequisites", "architecture", "projects"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["advanced-python-tool-choice"]
+---
+
+This course assumes you completed [Intro to Python](/courses/intro-to-python). You should be comfortable with functions, collections, file/module basics, exceptions as ordinary failures, and decomposing a small program into helpers. We will briefly reuse those ideas, not reteach them.
+
+The goal is to build programs that remain understandable as they grow. Each stage adds a capability and a reason to use it:
+
+| Stage | Question | Skills |
+| --- | --- | --- |
+| Python's model | What does a name point to? | identity, mutability, hashing, memory behavior |
+| Expressive code | How can repeated data flow stay clear? | comprehensions, unpacking, iterators, generators |
+| Reusable behavior | How can functions add behavior without copying code? | closures, decorators, context managers |
+| Domain design | How should a program represent real things? | composition, inheritance, dataclasses, protocols |
+| Reliability | How do we know changes did not break behavior? | exceptions, type hints, tests, mocks |
+| Delivery | How does code become a reusable tool? | packages, environments, CLI, SQLite |
+| Scale | What should run concurrently or faster? | threads, processes, asyncio, profiling |
+| Integration | Can the pieces work together? | a tested document indexer/search CLI |
+
+## A project-first loop
+
+For every new feature:
+
+1. write a small behavior example;
+2. choose the narrowest interface that expresses it;
+3. implement the simplest version;
+4. test normal and failure cases;
+5. measure before optimizing;
+6. document the boundary that another module will use.
+
+Advanced Python is not a contest to use the most language features. A generator, decorator, class, or async task is valuable when it makes a real constraint easier to express.
+
+<ReactDemo
+  title="See the course grow a system"
+  code={`function Demo() {
+  const stages = ["data model", "lazy pipeline", "domain model", "tests", "package", "concurrency", "capstone"];
+  const [stage, setStage] = React.useState(0);
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <input aria-label="stage" style={{ width: "100%" }} type="range" min="0" max={stages.length - 1} value={stage} onChange={e => setStage(+e.target.value)} />
+    <p>current focus: <strong>{stages[stage]}</strong></p>
+    <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>{stages.map((name, index) => <span key={name} style={{ padding: "5px 8px", borderRadius: 8, background: index <= stage ? "#0f766e" : "#e2e8f0", color: index <= stage ? "white" : "#475569" }}>{name}</span>)}</div>
+    <small>Each advanced feature is introduced as a response to a design or operational constraint.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> Keep the Intro course nearby as a reference. If a lesson mentions a list, dictionary, function, or file, the advanced goal is to use it inside a larger design—not to memorize its basic syntax again.
+
+## Practice
+
+In the [Advanced Python Tool Choice puzzle](/puzzles/advanced-python-tool-choice?lesson=advanced-python-roadmap&course=advanced-python), choose the least complicated feature that fits a set of real application constraints.

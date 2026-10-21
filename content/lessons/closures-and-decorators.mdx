@@ -1,0 +1,71 @@
+---
+title: "Closures and Decorators"
+order: 404
+summary: "Treat functions as values, retain state with closures, and add reusable behavior with decorators."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["functions", "software-design"]
+tags: ["closures", "decorators", "higher-order-functions"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["decorator-pipeline"]
+---
+
+Intro to Python used functions as named blocks. Python also lets you store a function in a variable, pass it to another function, and return a new function. This is the basis of callbacks, closures, and decorators.
+
+## Closures retain an enclosing value
+
+```python
+def make_multiplier(factor):
+    def multiply(value):
+        return value * factor
+    return multiply
+
+times_three = make_multiplier(3)
+times_three(4)  # 12
+```
+
+The returned function remembers `factor` even after `make_multiplier` has returned. That retained environment is a closure. Use `nonlocal` when the inner function must reassign a captured name, such as a counter.
+
+## Decorators wrap a function
+
+A decorator receives a function and returns a replacement with an extra behavior:
+
+```python
+from functools import wraps
+
+def announce(function):
+    @wraps(function)
+    def wrapper(*args, **kwargs):
+        print("starting")
+        result = function(*args, **kwargs)
+        print("finished")
+        return result
+    return wrapper
+```
+
+`@announce` is syntax for replacing the function with `announce(function)`. Preserve the original name and docstring with `functools.wraps`. A decorator should not accidentally swallow return values or exceptions.
+
+## When to use them
+
+Decorators are useful for cross-cutting behavior such as timing, authorization, retries, caching, or logging. A closure is often the simpler choice when you only need a configured function. If a decorator makes the call signature or control flow mysterious, a normal helper may be better.
+
+<ReactDemo
+  title="Watch a wrapper add behavior"
+  code={`function Demo() {
+  const [enabled, setEnabled] = React.useState(true);
+  const events = enabled ? ["wrapper: before", "function: calculate", "wrapper: after"] : ["function: calculate"];
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label><input type="checkbox" checked={enabled} onChange={e => setEnabled(e.target.checked)} /> decorator enabled</label>
+    <ol>{events.map((event, index) => <li key={index}><code>{event}</code></li>)}</ol>
+    <small>The wrapped function still performs the calculation; the decorator adds a repeatable before/after policy.</small>
+  </div>;
+}`}
+ />
+
+> [!WARNING]
+> A decorator runs when the function is defined, while the wrapper runs when the function is called. Keeping those moments distinct prevents surprising setup behavior.
+
+## Practice
+
+In the [Decorator Pipeline puzzle](/puzzles/decorator-pipeline?lesson=closures-and-decorators&course=advanced-python), implement a closure-backed counter and a decorator that records calls while preserving the wrapped function's return value.

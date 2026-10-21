@@ -1,0 +1,47 @@
+---
+title: "Performance and Profiling"
+order: 411
+summary: "Find the real bottleneck with complexity reasoning, profilers, caching, and memory-aware data choices before optimizing."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["performance", "algorithms", "memory"]
+tags: ["profiling", "complexity", "caching", "optimization"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["complexity-and-cache"]
+---
+
+Performance work starts with a user-visible target and a measurement. “This feels slow” is a prompt to profile, not a reason to rewrite every loop.
+
+## Complexity is a prediction
+
+An `O(n)` scan usually grows more gently than an `O(n²)` nested comparison. Dictionary and set membership is typically average `O(1)`, while list membership is `O(n)`. Constants, input shape, memory locality, and I/O can still dominate at realistic sizes.
+
+## Profile before optimizing
+
+Use `time.perf_counter()` for a controlled elapsed-time measurement and `cProfile` for a function-level view. Measure representative inputs, warm up if relevant, and compare the same output and correctness checks before and after a change.
+
+## Memory and caching
+
+Generators avoid storing a full intermediate result. `__slots__` can reduce per-instance dictionary overhead for specialized classes, but it changes flexibility and should be measured. Caching is useful when the same expensive input repeats; it is harmful when keys are unbounded or values become stale. Define a cache size or invalidation policy.
+
+<ReactDemo
+  title="See why a cache changes repeated work"
+  code={`function Demo() {
+  const [cached, setCached] = React.useState(true);
+  const calls = cached ? ["parse A", "parse B", "reuse A", "reuse B"] : ["parse A", "parse B", "parse A", "parse B"];
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label><input type="checkbox" checked={cached} onChange={e => setCached(e.target.checked)} /> cache repeated results</label>
+    <ol>{calls.map((call, index) => <li key={index}>{call}</li>)}</ol>
+    <p>expensive parses: <strong>{cached ? 2 : 4}</strong></p>
+    <small>A cache trades memory and invalidation complexity for less repeated work.</small>
+  </div>;
+}`}
+ />
+
+> [!WARNING]
+> Never trade correctness for a benchmark win. Verify output first, then record the input size, environment, command, and measurement method.
+
+## Practice
+
+In the [Complexity and Cache puzzle](/puzzles/complexity-and-cache?lesson=performance-and-profiling&course=advanced-python), classify simple algorithms and implement a bounded memoization helper with an explicit hit/miss count.

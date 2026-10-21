@@ -1,0 +1,35 @@
+---
+title: "Advanced Python Tool Choice"
+order: 400
+available: true
+areas: ["programming-fundamentals"]
+topics: ["python", "software-design"]
+tags: ["design", "tradeoffs", "architecture"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  def choose_tool(problem):
+      # TODO: return the simplest suitable feature name
+      pass
+
+  for _ in range(3):
+      print(choose_tool(input().strip()))
+testCases:
+  - input: "process one item at a time without storing the file\nadd a timestamp to many functions\nrepresent a record with named fields"
+    expected: "generator\ndecorator\ndataclass"
+    hidden: false
+  - input: "run independent CPU-heavy calculations\nshare a small cache between calls\nclean up a resource after use"
+    expected: "process\nclosure\ncontext-manager"
+    hidden: true
+---
+
+Return the feature that best fits each problem:
+
+- `process one item at a time without storing the file` → `generator`
+- `add a timestamp to many functions` → `decorator`
+- `represent a record with named fields` → `dataclass`
+- `run independent CPU-heavy calculations` → `process`
+- `share a small cache between calls` → `closure`
+- `clean up a resource after use` → `context-manager`
+
+The right answer is not “the most advanced feature.” It is the smallest feature that makes the constraint explicit.

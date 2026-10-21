@@ -1,0 +1,37 @@
+---
+title: "Package Layout"
+order: 409
+available: true
+areas: ["programming-fundamentals"]
+topics: ["modules", "packaging"]
+tags: ["imports", "architecture", "dependencies"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  def classify(module):
+      # TODO: return the responsibility for a module name
+      pass
+
+  def has_cycle(edges):
+      # TODO: return True when directed edges contain a cycle
+      pass
+
+  print(classify(input().strip()))
+  count = int(input())
+  edges = [tuple(input().split("->")) for _ in range(count)]
+  print("cycle" if has_cycle(edges) else "acyclic")
+testCases:
+  - input: "cli\n3\ncli->parsing\nparsing->indexing\nindexing->storage"
+    expected: "entrypoint\nacyclic"
+    hidden: false
+  - input: "parsing\n3\na->b\nb->c\nc->a"
+    expected: "domain\ncycle"
+    hidden: true
+  - input: "tests\n1\ntests->parsing"
+    expected: "verification\nacyclic"
+    hidden: true
+---
+
+Map module names as follows: `cli` → `entrypoint`, `parsing` and `indexing` → `domain`, `storage` → `infrastructure`, and `tests` → `verification`; use `other` for an unknown name.
+
+For `has_cycle`, treat each edge as `source->destination` and use depth-first search with a set of nodes currently on the search path. A back-edge to a node on that path is a cycle.

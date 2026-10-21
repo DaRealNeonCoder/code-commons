@@ -1,0 +1,34 @@
+---
+title: "CLI Query Plan"
+order: 412
+available: true
+areas: ["programming-fundamentals"]
+topics: ["cli", "databases"]
+tags: ["argparse", "sqlite3", "sql-injection"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  def query_plan(command, term):
+      # TODO: return a safe SQL statement and parameter tuple
+      pass
+
+  command = input().strip()
+  term = input()
+  statement, params = query_plan(command, term)
+  print(statement)
+  print("|".join(params))
+testCases:
+  - input: "search\npython"
+    expected: "SELECT id, text FROM records WHERE text LIKE ?\n%python%"
+    hidden: false
+  - input: "search\n100% safe"
+    expected: "SELECT id, text FROM records WHERE text LIKE ?\n%100% safe%"
+    hidden: true
+  - input: "other\nignored"
+    expected: "ERROR\n"
+    hidden: true
+---
+
+For `search`, return the exact statement `SELECT id, text FROM records WHERE text LIKE ?` and the one-item tuple containing `"%" + term + "%"`. Return `("ERROR", ())` for any other command.
+
+The placeholder keeps user text out of the SQL statement. The puzzle prints parameters separately so the boundary is visible.
