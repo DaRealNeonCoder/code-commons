@@ -1,0 +1,46 @@
+---
+title: "Optimizer Updates"
+order: 301
+available: true
+areas: ["algorithms"]
+topics: ["optimization"]
+tags: ["schedules", "momentum", "adam"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  import math
+
+  def cosine_rate(start, minimum, step, total_steps):
+      # TODO: return the cosine-decayed rate
+      pass
+
+  def momentum_step(parameter, velocity, gradient, rate, beta):
+      # TODO: return (new_parameter, new_velocity)
+      pass
+
+  def adam_step(parameter, first, second, gradient, step, rate=0.1, beta1=0.9, beta2=0.999, epsilon=1e-8):
+      # TODO: return (new_parameter, new_first, new_second)
+      pass
+
+  start, minimum, step, total = map(float, input().split())
+  parameter, velocity, gradient = map(float, input().split())
+  print(f"{cosine_rate(start, minimum, step, total):.6f}")
+  new_parameter, new_velocity = momentum_step(parameter, velocity, gradient, 0.1, 0.9)
+  print(f"{new_parameter:.6f} {new_velocity:.6f}")
+  adam_parameter, _, _ = adam_step(parameter, 0.0, 0.0, gradient, 1)
+  print(f"{adam_parameter:.6f}")
+testCases:
+  - input: "0.1 0.01 5 10\n2 0 1"
+    expected: "0.055000\n1.991000 0.100000\n1.900000"
+    hidden: false
+  - input: "0.2 0.02 0 20\n-1 0 -2"
+    expected: "0.200000\n-0.982000 -0.200000\n-0.800000"
+    hidden: true
+  - input: "0.1 0.01 10 10\n3 1 0.5"
+    expected: "0.010000\n2.914000 0.950000\n2.900000"
+    hidden: true
+---
+
+Implement cosine decay with `minimum + 0.5 * (start - minimum) * (1 + cos(pi * step / total_steps))`. For momentum, update velocity first using `beta * velocity + (1 - beta) * gradient`, then subtract `rate * velocity` from the parameter.
+
+For Adam, update the first and second moments, correct them with `1 - beta1 ** step` and `1 - beta2 ** step`, and subtract the normalized step. Return the updated parameter and both moments.

@@ -1,0 +1,55 @@
+---
+title: "Retrieval-Augmented Generation"
+order: 314
+summary: "Build a small retrieval pipeline that grounds generation in selected documents and exposes where retrieval can fail."
+available: true
+areas: ["algorithms"]
+topics: ["retrieval", "language-models", "nlp"]
+tags: ["rag", "vector-search", "grounding", "evaluation"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["rank-retrieved-documents"]
+---
+
+A language model's learned parameters are not a live database. Retrieval-augmented generation (RAG) adds a data path: find relevant passages, place them in a prompt, and ask the generator to answer using that context.
+
+## The RAG loop
+
+1. Split source documents into chunks with useful boundaries.
+2. Embed chunks and store vectors with IDs and source metadata.
+3. Embed the query and retrieve candidates by similarity.
+4. Optionally rerank candidates with a stronger model.
+5. Construct a bounded prompt containing the selected passages and instructions.
+6. Generate an answer with citations or abstain when evidence is insufficient.
+
+Retrieval and generation are separate failure modes. A fluent answer can be wrong because the retriever missed the source, because the prompt allowed unsupported synthesis, or because the model ignored the evidence.
+
+## Evaluate the whole path
+
+Measure retrieval recall at `k`, answer correctness, citation support, latency, and cost. Include questions with no answer in the corpus. Protect against prompt injection in retrieved documents, enforce access controls before retrieval, and treat document metadata as untrusted input.
+
+<ReactDemo
+  title="Rank evidence for a query"
+  code={`function Demo() {
+  const [query, setQuery] = React.useState("optimizer schedule");
+  const documents = [{ title: "Optimization", words: ["optimizer", "schedule", "momentum"] }, { title: "CNNs", words: ["kernel", "stride", "image"] }, { title: "Evaluation", words: ["validation", "test", "drift"] }];
+  const queryWords = query.toLowerCase().split(/\\s+/);
+  const ranked = documents.map(document => ({ ...document, score: queryWords.filter(word => document.words.includes(word)).length })).sort((a, b) => b.score - a.score);
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <input aria-label="query" value={query} onChange={e => setQuery(e.target.value)} style={{ width: "100%" }} />
+    {ranked.map(document => <div key={document.title} style={{ marginTop: 8 }}><strong>{document.title}</strong> · lexical score {document.score}</div>)}
+    <small>This toy retriever counts matching words. Production retrieval usually uses embeddings, metadata filters, and a reranker.</small>
+  </div>;
+}`}
+ />
+
+## Grounding is a product contract
+
+Tell the generator what counts as evidence, how to cite it, and what to do when passages conflict or do not answer the question. Return source IDs alongside text so a user can inspect the evidence. Keep retrieval logs privacy-aware and delete or restrict documents according to their source policy.
+
+> [!TIP]
+> RAG does not “remove hallucinations.” It creates an opportunity for the model to use evidence. Retrieval recall, prompt design, generation behavior, and citation validation all need checks.
+
+## Practice
+
+In the [Rank Retrieved Documents puzzle](/puzzles/rank-retrieved-documents?lesson=retrieval-augmented-generation&course=advanced-machine-learning), rank documents by query overlap with deterministic tie-breaking and return the top evidence IDs.

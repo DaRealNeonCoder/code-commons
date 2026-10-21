@@ -61,6 +61,7 @@ export default async function CoursePage({ params }) {
     ? Math.round((completedLessons / availableLessons.length) * 100)
     : 0;
   const isSearchingCourse = course.id === "searching-algorithms";
+  const isAdvancedMlCourse = course.id === "advanced-machine-learning";
 
   const courseSchema = {
     "@context": "https://schema.org",
@@ -98,7 +99,7 @@ export default async function CoursePage({ params }) {
                <div className="flex flex-wrap items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">
                  <span>course</span>
                  <span className="text-zinc-300 dark:text-zinc-700">/</span>
-                  <span>{course.id === "searching-algorithms" ? "algorithms" : "python"}</span>
+                   <span>{isSearchingCourse ? "algorithms" : isAdvancedMlCourse ? "machine learning" : "python"}</span>
                </div>
                <h1 className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 dark:text-white sm:text-4xl">{course.title}</h1>
                {course.summary && <p className="mt-3 max-w-2xl text-base leading-7 text-zinc-700 dark:text-zinc-300 sm:text-lg">{course.summary}</p>}
@@ -144,17 +145,21 @@ export default async function CoursePage({ params }) {
                       ? "You made it through the course."
                       : focusLessonIsFirst
                          ? isSearchingCourse
-                           ? "Find your first target in a sorted list."
-                           : "Make your first Python program."
+                            ? "Find your first target in a sorted list."
+                            : isAdvancedMlCourse
+                              ? "Train a stronger model and make it reliable."
+                              : "Make your first Python program."
                         : `Next up: ${focusLesson.title}`}
                   </h2>
                   <p className="mt-3 max-w-xl leading-7 text-zinc-700 dark:text-zinc-300">
                     {courseComplete
                       ? "Revisit any lesson, or start another pass to sharpen what you learned."
                        : focusLessonIsFirst
-                        ? isSearchingCourse
-                          ? "Trace the middle of a sorted list, implement binary search, and test it against hidden cases."
-                          : "Run one line of code, see the result immediately, and turn that first success into a tiny challenge."
+                         ? isSearchingCourse
+                           ? "Trace the middle of a sorted list, implement binary search, and test it against hidden cases."
+                           : isAdvancedMlCourse
+                             ? "Start with optimization and experiments, then build toward Transformers and production retrieval."
+                             : "Run one line of code, see the result immediately, and turn that first success into a tiny challenge."
                         : focusLesson.summary || "Pick up where you left off with the next short lesson."}
                   </p>
 
@@ -173,10 +178,10 @@ export default async function CoursePage({ params }) {
 
                 <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 shadow-lg">
                   <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2.5">
-                     <span className="font-mono text-xs text-zinc-400">{focusLessonIsFirst ? (isSearchingCourse ? "binary_search.py" : "first_program.py") : "next_step.py"}</span>
+                      <span className="font-mono text-xs text-zinc-400">{focusLessonIsFirst ? (isSearchingCourse ? "binary_search.py" : isAdvancedMlCourse ? "optimizer.py" : "first_program.py") : "next_step.py"}</span>
                     <span className="font-mono text-[10px] uppercase tracking-wide text-teal-400">ready</span>
                   </div>
-                   <pre className="overflow-x-auto p-5 font-mono text-sm leading-7"><code>{isSearchingCourse ? <><span className="text-amber-300">mid</span><span className="text-zinc-400"> = </span><span className="text-teal-300">(low + high) // 2</span>{"\n"}<span className="text-amber-300">if</span><span className="text-zinc-400"> array[mid] == target:</span>{"\n  "}<span className="text-green-400">return mid</span></> : <><span className="text-amber-300">print</span><span className="text-zinc-400">(</span><span className="text-teal-300">&quot;Hello, World!&quot;</span><span className="text-zinc-400">)</span>{"\n\n"}<span className="text-zinc-500"># output</span>{"\n"}<span className="text-green-400">Hello, World!</span></>}</code></pre>
+                   <pre className="overflow-x-auto p-5 font-mono text-sm leading-7"><code>{isSearchingCourse ? <><span className="text-amber-300">mid</span><span className="text-zinc-400"> = </span><span className="text-teal-300">(low + high) // 2</span>{"\n"}<span className="text-amber-300">if</span><span className="text-zinc-400"> array[mid] == target:</span>{"\n  "}<span className="text-green-400">return mid</span></> : isAdvancedMlCourse ? <><span className="text-amber-300">rate</span><span className="text-zinc-400"> = </span><span className="text-teal-300">cosine_schedule(start, step)</span>{"\n"}<span className="text-amber-300">loss</span><span className="text-zinc-400"> = </span><span className="text-green-400">train_batch</span><span className="text-zinc-400">(model, rate)</span></> : <><span className="text-amber-300">print</span><span className="text-zinc-400">(</span><span className="text-teal-300">&quot;Hello, World!&quot;</span><span className="text-zinc-400">)</span>{"\n\n"}<span className="text-zinc-500"># output</span>{"\n"}<span className="text-green-400">Hello, World!</span></>}</code></pre>
                 </div>
                  </div>
                )}

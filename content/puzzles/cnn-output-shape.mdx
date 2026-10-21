@@ -1,0 +1,36 @@
+---
+title: "CNN Output Shape"
+order: 303
+available: true
+areas: ["algorithms"]
+topics: ["deep-learning", "computer-vision"]
+tags: ["cnn", "shapes", "convolution"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  def output_size(size, kernel, padding, stride):
+      # TODO: return floor((size + 2*padding - kernel) / stride) + 1
+      pass
+
+  def valid_convolution(values, kernel):
+      # TODO: return every 1D valid dot-product window
+      pass
+
+  size, kernel_size, padding, stride = map(int, input().split())
+  values = list(map(float, input().split()))
+  weights = list(map(float, input().split()))
+  print(output_size(size, kernel_size, padding, stride))
+  print(" ".join(f"{value:.1f}" for value in valid_convolution(values, weights)))
+testCases:
+  - input: "7 3 1 2\n1 2 3 4 5\n1 0 -1"
+    expected: "4\n-2.0 -2.0 -2.0"
+    hidden: false
+  - input: "5 3 0 1\n1 0 2 1 3\n1 2 1"
+    expected: "3\n5.0 5.0 8.0"
+    hidden: true
+  - input: "8 5 2 2\n2 1 0 -1 3 2 1 0\n1 -1 0 1 -1"
+    expected: "4\n-3.0 2.0 2.0 -3.0"
+    hidden: true
+---
+
+Implement the output-size formula using integer floor division. For `valid_convolution`, slide the kernel one position at a time across `values`, multiply matching entries, and return the sums. The shape function demonstrates stride and padding; the small convolution keeps the inner operation visible.

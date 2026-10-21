@@ -1,0 +1,59 @@
+---
+title: "Attention: Choosing Which Context Matters"
+order: 308
+summary: "Calculate query-key scores, normalize them, and use the resulting weights to mix values from a sequence."
+available: true
+areas: ["algorithms"]
+topics: ["attention", "sequence-models"]
+tags: ["self-attention", "queries", "keys", "values"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["scaled-attention"]
+---
+
+Attention lets a position look at other positions and choose how much each one should contribute. Instead of compressing the entire past into one recurrent state, it computes a weighted combination of available **values**.
+
+## Query, key, value
+
+For a query `q`, keys `kᵢ`, and values `vᵢ`:
+
+```text
+scoreᵢ = q · kᵢ / sqrt(dₖ)
+weights = softmax(scores)
+output = sum(weightsᵢ × vᵢ)
+```
+
+The query asks what this position needs. A key describes what each candidate offers. The value is the content that gets mixed. The scale `sqrt(dₖ)` keeps dot products from becoming too large as the key dimension grows.
+
+## Self-attention and masks
+
+In self-attention, queries, keys, and values come from the same sequence. A language model uses a causal mask so position `t` cannot inspect future tokens. Encoder-style attention may allow every position to see every other position. Multi-head attention runs several smaller projections in parallel, letting heads specialize in different relationships.
+
+<ReactDemo
+  title="Inspect attention weights"
+  code={`function Demo() {
+  const [query, setQuery] = React.useState(1);
+  const keys = [0, 0.5, 1, 2];
+  const values = ["the", "small", "model", "learns"];
+  const scores = keys.map(key => query * key);
+  const exps = scores.map(score => Math.exp(score - Math.max(...scores)));
+  const total = exps.reduce((sum, value) => sum + value, 0);
+  const weights = exps.map(value => value / total);
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label>query strength = {query.toFixed(1)} <input type="range" min="-2" max="3" step="0.1" value={query} onChange={e => setQuery(+e.target.value)} /></label>
+    {weights.map((weight, index) => <div key={values[index]} style={{ display: "flex", gap: 6, alignItems: "center", marginTop: 7 }}><span style={{ width: 52 }}>{values[index]}</span><span style={{ height: 12, width: weight * 180, background: "#0d9488", borderRadius: 4 }} /><small>{(weight * 100).toFixed(1)}%</small></div>)}
+    <small>The output is a weighted mixture. Change the query to change which key receives attention.</small>
+  </div>;
+}`}
+ />
+
+## Attention is not explanation by default
+
+High attention weight tells you which values contributed to one computation, not necessarily why a model made a human-level decision. Test causal claims with interventions, ablations, or counterfactual inputs. Also remember that attention cost grows with the number of pairwise token interactions.
+
+> [!TIP]
+> Keep the three projections distinct in code. Mixing up query, key, and value tensors can still produce numbers with the right shape while destroying the intended behavior.
+
+## Practice
+
+In the [Scaled Attention puzzle](/puzzles/scaled-attention?lesson=attention-mechanism&course=advanced-machine-learning), implement stable scaled dot-product attention and return the weighted value for a query.

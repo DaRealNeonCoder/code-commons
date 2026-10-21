@@ -1,0 +1,63 @@
+---
+title: "Training at Scale: Batches, Devices, and Efficiency"
+order: 312
+summary: "Understand the practical trade-offs behind batching, GPU acceleration, mixed precision, and efficient training loops."
+available: true
+areas: ["algorithms"]
+topics: ["training-systems", "optimization"]
+tags: ["batches", "gpu", "mixed-precision", "throughput"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["batching-and-throughput"]
+---
+
+Scaling training is not only “use a larger machine.” It is a sequence of choices about data movement, memory, numerical precision, and how much useful work each update performs.
+
+## Batches and gradient accumulation
+
+Large batches improve hardware utilization but require more memory and can change optimization behavior. If a device cannot hold the desired batch, accumulate gradients over several micro-batches and update once:
+
+```text
+for micro_batch in batch:
+    loss = model(micro_batch)
+    loss.backward()
+optimizer.step()
+optimizer.zero_grad()
+```
+
+Average gradients consistently. Accumulating sums without dividing changes the effective learning rate when the number of micro-batches changes.
+
+## GPU acceleration is a data-path problem
+
+Move model parameters and input tensors to the same device, overlap data loading with computation when possible, and avoid copying a tensor back to the CPU inside every training step. Measure data wait time, forward/backward time, and optimizer time separately.
+
+## Mixed precision and stability
+
+Lower-precision arithmetic can increase throughput and reduce memory. Keep sensitive operations, reductions, and parameter updates in a safe precision when needed. Loss scaling multiplies a small loss before backpropagation to keep gradients representable, then unscales them before clipping or updating. Check for overflow and skip unsafe steps.
+
+<ReactDemo
+  title="See the batch-size trade-off"
+  code={`function Demo() {
+  const [batch, setBatch] = React.useState(16);
+  const examples = 1024;
+  const steps = Math.ceil(examples / batch);
+  const memory = batch * 0.08;
+  const throughput = Math.min(1, 0.25 + Math.log2(batch) * 0.12);
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label>batch size = {batch} <input type="range" min="1" max="128" step="1" value={batch} onChange={e => setBatch(+e.target.value)} /></label>
+    <p>updates per epoch = <strong>{steps}</strong> · relative memory = {memory.toFixed(1)} · illustrative throughput = {(throughput * 100).toFixed(0)}%</p>
+    <small>Larger batches can reduce update count and improve utilization, but memory and generalization behavior must be measured.</small>
+  </div>;
+}`}
+ />
+
+## Efficiency is a measurement question
+
+Track examples per second, peak memory, time to a target validation score, and total cost—not only raw step time. A faster step that needs twice as many steps is not necessarily a faster experiment. Keep data order, seeds, and evaluation frequency stable when comparing implementations.
+
+> [!TIP]
+> Optimize the bottleneck you measured. If the GPU waits for parsing, a larger GPU will not fix the input pipeline. If memory is the bottleneck, accumulation or activation checkpointing may help more than changing the optimizer.
+
+## Practice
+
+In the [Batching and Throughput puzzle](/puzzles/batching-and-throughput?lesson=training-at-scale&course=advanced-machine-learning), calculate micro-batch counts, accumulated gradient averages, and a simple throughput comparison.

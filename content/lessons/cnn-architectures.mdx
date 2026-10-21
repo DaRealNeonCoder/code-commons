@@ -1,0 +1,55 @@
+---
+title: "CNNs in Depth: Receptive Fields and Feature Hierarchies"
+order: 303
+summary: "Build a clearer mental model of convolutional networks through channels, padding, stride, pooling, and receptive fields."
+available: true
+areas: ["algorithms"]
+topics: ["deep-learning", "computer-vision"]
+tags: ["cnn", "convolution", "receptive-field", "pooling"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["cnn-output-shape"]
+---
+
+The Intro course applied one hand-designed edge filter. A CNN becomes useful when it learns many filters and composes them across depth. Early layers can detect local edges; later layers combine them into corners, textures, parts, and object-level evidence.
+
+## Channels, kernels, and feature maps
+
+An RGB image has three input channels. A convolution kernel has a matching input-channel dimension and produces one output channel. A layer with 32 kernels produces 32 feature maps. Each kernel is reused at every spatial location, which gives CNNs translation-aware local patterns with fewer parameters than a dense layer over every pixel.
+
+## Shape, padding, and stride
+
+For one spatial dimension, a kernel of width `K`, padding `P`, and stride `S` produces:
+
+```text
+output_width = floor((input_width + 2P - K) / S) + 1
+```
+
+Padding can preserve border information and stride can downsample. Pooling is another downsampling operation, but it has no learned weights. Track shapes after every block; a shape mismatch is usually more informative than a mysterious training failure.
+
+## Receptive fields grow with depth
+
+One `3 × 3` layer sees a `3 × 3` patch. Two stride-one `3 × 3` layers give a theoretical `5 × 5` receptive field, while keeping fewer parameters than one `5 × 5` layer. Stride and pooling enlarge the region seen by deeper features. This is why architecture depth changes what “local” means.
+
+<ReactDemo
+  title="Move a convolution window"
+  code={`function Demo() {
+  const image = [0, 1, 0, 0, 1, 1, 0, 0, 1];
+  const kernel = [1, 0, -1, 1, 0, -1, 1, 0, -1];
+  const [position, setPosition] = React.useState(0);
+  const score = kernel.reduce((sum, weight, index) => sum + weight * image[position + index], 0);
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <div style={{ display: "flex", gap: 5, flexWrap: "wrap", maxWidth: 170 }}>{image.map((value, index) => <span key={index} style={{ width: 42, height: 28, textAlign: "center", paddingTop: 8, background: index >= position && index < position + 3 ? "#99f6e4" : "#e5e7eb" }}>{value}</span>)}</div>
+    <input aria-label="window" style={{ width: "100%", marginTop: 12 }} type="range" min="0" max="6" value={position} onChange={e => setPosition(+e.target.value)} />
+    <p>window starts at {position} · filter score = <strong>{score}</strong></p>
+    <small>The same kernel is reused at each position. A real 2D CNN does this across rows, columns, and channels.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> Separate two questions: “What pattern does this kernel respond to?” and “What spatial region can this layer see?” Kernels learn patterns; architecture controls context.
+
+## Practice
+
+In the [CNN Output Shape puzzle](/puzzles/cnn-output-shape?lesson=cnn-architectures&course=advanced-machine-learning), calculate output dimensions and one valid convolution for a small multi-channel shape. Do the shape arithmetic before writing the loop.

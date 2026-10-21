@@ -1,0 +1,38 @@
+---
+title: "Recurrent State Update"
+order: 307
+available: true
+areas: ["algorithms"]
+topics: ["sequence-models", "deep-learning"]
+tags: ["rnn", "lstm", "hidden-state"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  import math
+
+  def rnn_states(inputs, recurrent_weight=0.5, input_weight=0.8):
+      # TODO: start at zero and append tanh(input_weight*x + recurrent_weight*h)
+      pass
+
+  def gated_cell(inputs, forget=0.8, input_gate=0.3):
+      # TODO: update c = forget*c + input_gate*x, starting at zero
+      pass
+
+  inputs = list(map(float, input().split()))
+  print(" ".join(f"{value:.3f}" for value in rnn_states(inputs)))
+  print(" ".join(f"{value:.3f}" for value in gated_cell(inputs)))
+testCases:
+  - input: "1 0 1"
+    expected: "0.664 0.320 0.744\n0.300 0.240 0.492"
+    hidden: false
+  - input: "0 0 0"
+    expected: "0.000 0.000 0.000\n0.000 0.000 0.000"
+    hidden: true
+  - input: "-1 1"
+    expected: "-0.664 0.437\n-0.300 0.150"
+    hidden: true
+---
+
+Implement both state functions. For the RNN, keep `h` between steps and append `tanh(0.8 * x + 0.5 * h)`. For the gated cell, keep `c` and append `0.8 * c + 0.3 * x` after each input.
+
+The second line is not a complete LSTM—it isolates the additive memory path that helps explain why gates can preserve information.

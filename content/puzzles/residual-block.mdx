@@ -1,0 +1,29 @@
+---
+title: "Residual Block"
+order: 304
+available: true
+areas: ["algorithms"]
+topics: ["deep-learning", "optimization"]
+tags: ["resnet", "skip-connections"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  def residual_block(value, learned_change, projection=1.0):
+      # TODO: return max(0, projection * value + learned_change)
+      pass
+
+  value, change, projection = map(float, input().split())
+  print(f"{residual_block(value, change, projection):.3f}")
+testCases:
+  - input: "2 0.5 1"
+    expected: "2.500"
+    hidden: false
+  - input: "-1 0.2 1"
+    expected: "0.000"
+    hidden: true
+  - input: "2 -0.5 0.5"
+    expected: "0.500"
+    hidden: true
+---
+
+Implement `max(0, projection * value + learned_change)`. The projection represents the skip-path transform used when the block's input and output widths do not match. In a tensor implementation, the addition happens element by element.

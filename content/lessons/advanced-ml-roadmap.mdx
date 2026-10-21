@@ -1,0 +1,64 @@
+---
+title: "Advanced ML: From Working Model to Reliable System"
+order: 300
+summary: "Set the prerequisites, mental model, and experiment loop for the Advanced Machine Learning course."
+available: true
+areas: ["algorithms"]
+topics: ["machine-learning", "experiments"]
+tags: ["prerequisites", "workflow", "reproducibility"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["advanced-ml-experiment-plan"]
+---
+
+This course assumes you have completed [Intro to AI & Machine Learning](/courses/intro-to-ai-machine-learning). You should already be able to read Python, manipulate vectors and matrices, differentiate a loss, run gradient descent, explain train/test leakage, and implement a small neural network. We will use those ideas rather than reteach them.
+
+The goal here is not to collect fashionable model names. It is to learn the decisions that make a model more capable **and** more trustworthy: choosing an optimizer, controlling generalization, designing representations, selecting an architecture, measuring a real experiment, and serving a useful result.
+
+## The course progression
+
+| Stage | Question | Main build |
+| --- | --- | --- |
+| Optimization | How can training become faster and steadier? | momentum and Adam updates |
+| Generalization | Why does a larger model fail on new data? | weight decay, dropout, early stopping |
+| Architectures | How should a model use space or depth? | CNN blocks and residual connections |
+| Representations | What useful structure can a model discover? | embeddings, contrastive learning, autoencoders |
+| Sequences | How should a model use order and context? | RNNs, LSTMs, attention, Transformers |
+| Systems | How do we train and use it responsibly? | token pipeline, efficient training, deployment, RAG |
+
+Each lesson has a small from-scratch implementation. The puzzles use plain Python lists and deterministic inputs so you can inspect the algorithm without installing a framework. In a real project, the same ideas map to PyTorch or another tensor library.
+
+## A repeatable experiment loop
+
+Write down the question before changing code:
+
+1. Make a hypothesis, such as “a cosine-decay schedule will reduce late-epoch oscillation.”
+2. Fix the data split and random seed.
+3. Change one important variable.
+4. Record training loss, validation loss, runtime, and the final setting.
+5. Keep the best checkpoint by a preselected validation rule.
+
+An experiment is not “the last run looked good.” It is a comparison whose conditions are known well enough to repeat.
+
+<ReactDemo
+  title="Turn an experiment into a record"
+  code={`function Demo() {
+  const [learningRate, setLearningRate] = React.useState(0.1);
+  const [epochs, setEpochs] = React.useState(20);
+  const loss = Math.exp(-learningRate * epochs) + (learningRate > 0.18 ? 0.25 : 0);
+  const verdict = loss < 0.2 ? "promising" : "try a controlled change";
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label style={{ display: "block" }}>learning rate = {learningRate.toFixed(2)} <input type="range" min="0.02" max="0.3" step="0.01" value={learningRate} onChange={e => setLearningRate(+e.target.value)} /></label>
+    <label style={{ display: "block", marginTop: 8 }}>epochs = {epochs} <input type="range" min="5" max="40" value={epochs} onChange={e => setEpochs(+e.target.value)} /></label>
+    <pre style={{ marginTop: 12 }}>{JSON.stringify({ question: "does this setting improve validation?", learningRate, epochs, validationLoss: +loss.toFixed(3), verdict }, null, 2)}</pre>
+    <small>A record is useful because it preserves both the result and the conditions that produced it.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> The Intro course taught how to calculate gradients. This course concentrates on what happens around that calculation: optimization dynamics, representations, architecture, data, and systems.
+
+## Practice
+
+In the [Advanced ML Experiment Plan puzzle](/puzzles/advanced-ml-experiment-plan?lesson=advanced-ml-roadmap&course=advanced-machine-learning), validate a proposed experiment and print a compact, reproducible record. It is a small habit that will make the larger models easier to reason about.

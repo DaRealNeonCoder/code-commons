@@ -1,0 +1,58 @@
+---
+title: "Transformer Blocks: Attention Plus a Useful MLP"
+order: 309
+summary: "Assemble the pieces of a Transformer block and understand residual paths, normalization, and positional information."
+available: true
+areas: ["algorithms"]
+topics: ["transformers", "attention", "deep-learning"]
+tags: ["transformer", "layer-normalization", "positional-encoding"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["transformer-block"]
+---
+
+Attention lets tokens exchange information. A Transformer block adds two other ideas: a position-wise feed-forward network that transforms each token independently, and residual/normalization paths that keep deep stacks trainable.
+
+## A common block shape
+
+A simplified pre-normalization decoder block is:
+
+```text
+x = x + self_attention(layer_norm(x))
+x = x + feed_forward(layer_norm(x))
+```
+
+The feed-forward network expands the hidden width, applies a nonlinearity such as GELU, and projects back down. Attention mixes information across positions; the MLP changes the features at each position. They solve different problems.
+
+## Position is information
+
+Self-attention by itself does not know whether a token came first or last. Add positional information to token embeddings before attention, either with fixed sine/cosine functions or learned position embeddings. Relative-position methods instead encode distances or directional relationships in the attention calculation.
+
+## Normalization and residuals
+
+Layer normalization standardizes features within one token representation using a learned scale and shift. Residual paths preserve the current representation and provide a direct gradient route. Pre-normalization often makes deep optimization more stable; the exact placement is an architectural choice to test rather than a slogan to memorize.
+
+<ReactDemo
+  title="Trace a toy Transformer block"
+  code={`function Demo() {
+  const [attention, setAttention] = React.useState(0.4);
+  const [mlp, setMlp] = React.useState(0.2);
+  const input = 1;
+  const normalized = input / Math.sqrt(input * input + 0.01);
+  const afterAttention = input + attention * normalized;
+  const afterMlp = afterAttention + mlp * Math.max(0, afterAttention);
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label style={{ display: "block" }}>attention output = {attention.toFixed(2)} <input type="range" min="-1" max="1" step="0.05" value={attention} onChange={e => setAttention(+e.target.value)} /></label>
+    <label style={{ display: "block" }}>MLP output = {mlp.toFixed(2)} <input type="range" min="-1" max="1" step="0.05" value={mlp} onChange={e => setMlp(+e.target.value)} /></label>
+    <p>input {input.toFixed(2)} → normalized {normalized.toFixed(2)} → attention residual {afterAttention.toFixed(2)} → MLP residual <strong>{afterMlp.toFixed(2)}</strong></p>
+    <small>Each sublayer proposes a change; residual addition keeps the previous representation available.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> A Transformer is an architecture assembled from familiar operations: matrix projections, softmax attention, normalization, nonlinear layers, and residual addition. Understanding the data flow is more valuable than memorizing the name.
+
+## Practice
+
+In the [Transformer Block puzzle](/puzzles/transformer-block?lesson=transformer-blocks&course=advanced-machine-learning), apply a scalar pre-normalization, attention residual, ReLU MLP, and second residual in the correct order.

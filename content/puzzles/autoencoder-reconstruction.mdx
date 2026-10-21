@@ -1,0 +1,43 @@
+---
+title: "Autoencoder Reconstruction"
+order: 306
+available: true
+areas: ["algorithms"]
+topics: ["representation-learning", "deep-learning"]
+tags: ["autoencoder", "reconstruction"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  def encode(row):
+      # TODO: average the row into a one-number latent representation
+      pass
+
+  def decode(latent, width):
+      # TODO: repeat the latent value width times
+      pass
+
+  def mse(row, reconstruction):
+      # TODO: return mean squared reconstruction error
+      pass
+
+  row = list(map(float, input().split()))
+  latent = encode(row)
+  reconstruction = decode(latent, len(row))
+  print(f"{latent:.3f}")
+  print(" ".join(f"{value:.3f}" for value in reconstruction))
+  print(f"{mse(row, reconstruction):.3f}")
+testCases:
+  - input: "1 1 1"
+    expected: "1.000\n1.000 1.000 1.000\n0.000"
+    hidden: false
+  - input: "0 1"
+    expected: "0.500\n0.500 0.500\n0.250"
+    hidden: true
+  - input: "2 4 6 8"
+    expected: "5.000\n5.000 5.000 5.000 5.000\n5.000"
+    hidden: true
+---
+
+Implement the encoder as the mean of the row, the decoder by repeating the latent value, and `mse` as the average squared difference between the original row and reconstruction.
+
+This intentionally tiny bottleneck cannot preserve all variation. Its error makes the information trade-off concrete before a learned multi-layer autoencoder adds more capacity.

@@ -1,0 +1,38 @@
+---
+title: "Transfer Learning Plan"
+order: 311
+available: true
+areas: ["algorithms"]
+topics: ["representation-learning", "deep-learning"]
+tags: ["self-supervised", "transfer-learning", "fine-tuning"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  def strategy(label_count, domain_shift):
+      # TODO: frozen for <= 100 labels and low shift, partial otherwise,
+      # full only for > 1000 labels and high shift.
+      pass
+
+  def preserves_label(task, augmentation):
+      # TODO: horizontal_flip is unsafe for left-right-position tasks
+      pass
+
+  labels = int(input())
+  shift = input().strip()
+  task = input().strip()
+  augmentation = input().strip()
+  print(strategy(labels, shift))
+  print("safe" if preserves_label(task, augmentation) else "unsafe")
+testCases:
+  - input: "50\nlow\nobject\nhorizontal_flip"
+    expected: "frozen\nsafe"
+    hidden: false
+  - input: "500\nmedium\nobject\ncolor_jitter"
+    expected: "partial\nsafe"
+    hidden: true
+  - input: "2000\nhigh\nposition\nhorizontal_flip"
+    expected: "full\nunsafe"
+    hidden: true
+---
+
+Implement the documented thresholds. Treat low-shift, small-data cases as `frozen`; use `partial` for the middle case; use `full` only when both the label count and shift justify it. A horizontal flip is unsafe for a left-right-position task and safe for the other task names in the tests.

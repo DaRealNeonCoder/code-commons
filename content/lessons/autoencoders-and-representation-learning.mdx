@@ -1,0 +1,57 @@
+---
+title: "Autoencoders and Representation Learning"
+order: 306
+summary: "Train an encoder and decoder to preserve useful information, then inspect what the bottleneck keeps or discards."
+available: true
+areas: ["algorithms"]
+topics: ["representation-learning", "deep-learning"]
+tags: ["autoencoder", "latent-space", "reconstruction"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["autoencoder-reconstruction"]
+---
+
+An autoencoder learns without labels by trying to reconstruct its input. The **encoder** maps an input to a smaller latent vector; the **decoder** maps that vector back to the input space:
+
+```text
+x → encoder(x) = z → decoder(z) = x̂
+```
+
+Training minimizes reconstruction loss, often mean squared error for continuous values or binary cross-entropy for binary pixels. The bottleneck forces the model to represent recurring structure rather than copy every coordinate directly.
+
+## Compression is not automatically meaning
+
+A latent vector is useful only relative to a task. A narrow bottleneck may preserve broad shape while losing small details. A powerful decoder can sometimes reconstruct well from a latent space that is hard to interpret. Inspect reconstructions, nearest latent neighbors, and performance on a downstream task before calling a representation semantic.
+
+## Denoising and anomaly detection
+
+For a denoising autoencoder, corrupt the input but ask the decoder to reconstruct the clean target. For anomaly detection, train mostly on normal examples and measure reconstruction error. An unusual input may reconstruct poorly, but this works only when the training distribution and threshold are chosen carefully.
+
+<ReactDemo
+  title="Explore a two-number bottleneck"
+  code={`function Demo() {
+  const [a, setA] = React.useState(0.8);
+  const [b, setB] = React.useState(0.2);
+  const latent = [(a + b) / 2, (a - b) / 2];
+  const reconstruction = [latent[0] + latent[1], latent[0] - latent[1]];
+  const error = (a - reconstruction[0]) ** 2 + (b - reconstruction[1]) ** 2;
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label style={{ display: "block" }}>input A <input type="range" min="0" max="1" step="0.05" value={a} onChange={e => setA(+e.target.value)} /></label>
+    <label style={{ display: "block" }}>input B <input type="range" min="0" max="1" step="0.05" value={b} onChange={e => setB(+e.target.value)} /></label>
+    <p>latent = [{latent.map(value => value.toFixed(2)).join(", ")}] · reconstruction = [{reconstruction.map(value => value.toFixed(2)).join(", ")}]</p>
+    <p>reconstruction error = <strong>{error.toFixed(4)}</strong></p>
+    <small>This toy encoder keeps two independent coordinates. A tighter real bottleneck must choose which variation to preserve.</small>
+  </div>;
+}`}
+ />
+
+## Variational autoencoders, briefly
+
+A variational autoencoder adds a probabilistic constraint so nearby latent points can decode into plausible samples. It combines reconstruction loss with a regularizer that keeps the latent distribution near a chosen prior. That is a useful next direction, but the deterministic bottleneck is the right place to understand the basic information trade-off.
+
+> [!TIP]
+> Always name the target. Reconstruction training compares the output with the clean input; it is not the same as supervised classification and does not guarantee a useful downstream feature.
+
+## Practice
+
+In the [Autoencoder Reconstruction puzzle](/puzzles/autoencoder-reconstruction?lesson=autoencoders-and-representation-learning&course=advanced-machine-learning), implement a small linear encoder/decoder and calculate reconstruction error for a batch.

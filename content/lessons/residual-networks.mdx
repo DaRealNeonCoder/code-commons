@@ -1,0 +1,58 @@
+---
+title: "Residual Networks: Learning the Change"
+order: 304
+summary: "Understand skip connections as an optimization tool that lets deep networks preserve useful signals while learning refinements."
+available: true
+areas: ["algorithms"]
+topics: ["deep-learning", "computer-vision", "optimization"]
+tags: ["resnet", "skip-connections", "vanishing-gradients"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["residual-block"]
+---
+
+Adding layers can increase expressive power, but a very deep plain network can be difficult to optimize. Gradients may shrink as they travel backward, and a new layer may damage a representation that was already useful.
+
+## Learn a residual, not a replacement
+
+A residual block computes:
+
+```text
+output = activation(x + F(x))
+```
+
+`F(x)` is the learned change. If the best behavior is close to the identity function, the block can make `F(x)` close to zero and pass `x` through the skip path. The skip connection gives both activations and gradients a shorter route.
+
+If input and output shapes differ, a learned projection can transform the skip path:
+
+```text
+output = activation(projection(x) + F(x))
+```
+
+This is an architectural pattern, not a special loss function. Batch normalization, activation placement, and bottleneck blocks are important engineering variations, but the identity-plus-change idea is the foundation.
+
+<ReactDemo
+  title="Identity path versus plain stacking"
+  code={`function Demo() {
+  const [change, setChange] = React.useState(0.2);
+  const input = 1;
+  const plain = Math.tanh(Math.tanh(input + change) + change);
+  const residual = Math.tanh(input + Math.tanh(change));
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label>learned change = {change.toFixed(2)} <input style={{ width: "100%" }} type="range" min="-1" max="1" step="0.05" value={change} onChange={e => setChange(+e.target.value)} /></label>
+    <p>input = 1 · plain stack = <strong>{plain.toFixed(3)}</strong> · residual block = <strong>{residual.toFixed(3)}</strong></p>
+    <small>The skip path preserves the original signal while the learned branch proposes a refinement.</small>
+  </div>;
+}`}
+ />
+
+## When residuals help
+
+Residual connections do not guarantee a better model. They make optimization easier by giving a block a safe identity-like starting behavior. You still need a validation protocol, suitable normalization, enough data, and a sensible learning rate. A deeper model with skip connections can then improve representations without requiring every layer to relearn the entire input.
+
+> [!TIP]
+> “Deeper” and “harder to optimize” are not synonyms. Ask whether the architecture gives gradients a direct path and whether a block can represent “do nothing.”
+
+## Practice
+
+In the [Residual Block puzzle](/puzzles/residual-block?lesson=residual-networks&course=advanced-machine-learning), implement a scalar residual block and a projection branch for mismatched widths.

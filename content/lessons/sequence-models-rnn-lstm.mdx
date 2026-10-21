@@ -1,0 +1,67 @@
+---
+title: "Sequence Models: RNNs and LSTMs"
+order: 307
+summary: "Track information across ordered inputs, then see how LSTM gates reduce the memory problems of plain recurrent networks."
+available: true
+areas: ["algorithms"]
+topics: ["sequence-models", "deep-learning"]
+tags: ["rnn", "lstm", "long-term-dependencies"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["recurrent-state-update"]
+---
+
+The Intro language-model lesson counted adjacent pairs. A recurrent neural network instead carries a learned hidden state from one time step to the next:
+
+```text
+hₜ = tanh(Wₓxₜ + Wₕhₜ₋₁ + b)
+```
+
+The same parameters are reused at every position, so a sequence can have variable length. The hidden state is a compressed summary, not an unlimited memory.
+
+## Why plain RNNs struggle
+
+During backpropagation through time, gradients are repeatedly multiplied by recurrent Jacobians. Values smaller than one can vanish; values larger than one can explode. A long-range clue may therefore be forgotten or become numerically unstable. Truncated backpropagation through time limits the number of steps used for the update, trading memory for an approximation.
+
+## LSTM gates make memory explicit
+
+An LSTM separates a cell state from the exposed hidden state and uses gates:
+
+```text
+forget gate:  fₜ = sigmoid(...)
+input gate:   iₜ = sigmoid(...)
+candidate:    c̃ₜ = tanh(...)
+cell state:   cₜ = fₜ × cₜ₋₁ + iₜ × c̃ₜ
+output gate:  oₜ = sigmoid(...)
+hidden:       hₜ = oₜ × tanh(cₜ)
+```
+
+The cell path gives information a more direct route through time. Gates can retain, overwrite, or reveal information. LSTMs reduce—but do not eliminate—the cost of sequential computation and long contexts.
+
+<ReactDemo
+  title="Gate a running memory"
+  code={`function Demo() {
+  const [forget, setForget] = React.useState(0.8);
+  const [input, setInput] = React.useState(0.3);
+  const [candidate, setCandidate] = React.useState(1);
+  const cell = forget * 0.9 + input * candidate;
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label style={{ display: "block" }}>forget gate = {forget.toFixed(2)} <input type="range" min="0" max="1" step="0.05" value={forget} onChange={e => setForget(+e.target.value)} /></label>
+    <label style={{ display: "block" }}>input gate = {input.toFixed(2)} <input type="range" min="0" max="1" step="0.05" value={input} onChange={e => setInput(+e.target.value)} /></label>
+    <label style={{ display: "block" }}>candidate = {candidate.toFixed(2)} <input type="range" min="-1" max="1" step="0.1" value={candidate} onChange={e => setCandidate(+e.target.value)} /></label>
+    <p>previous cell = 0.90 · new cell = <strong>{cell.toFixed(3)}</strong></p>
+    <small>One gate preserves old memory; the other controls how much new candidate information enters.</small>
+  </div>;
+}`}
+ />
+
+## When recurrence is the wrong tool
+
+RNNs and LSTMs process positions sequentially, which limits parallelism during training. They can be a good fit for streaming or small stateful tasks, but long-context language and vision systems often use attention to connect positions directly. The next lessons explain that transition rather than treating Transformers as magic replacements.
+
+> [!TIP]
+> Draw the state at every time step. If you cannot say what is carried forward, you cannot diagnose whether the model forgot, overwritten, or never received the relevant signal.
+
+## Practice
+
+In the [Recurrent State Update puzzle](/puzzles/recurrent-state-update?lesson=sequence-models-rnn-lstm&course=advanced-machine-learning), implement a scalar recurrent update and an LSTM-style gated cell update over a short sequence.

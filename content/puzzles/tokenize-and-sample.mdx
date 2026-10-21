@@ -1,0 +1,39 @@
+---
+title: "Tokenize and Sample"
+order: 310
+available: true
+areas: ["algorithms"]
+topics: ["language-models", "nlp"]
+tags: ["tokenization", "sampling", "inference"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  import math
+
+  def tokenize(text, vocabulary):
+      # TODO: map characters to IDs, using vocabulary["<unk>"] when absent
+      pass
+
+  def temperature_probabilities(logits, temperature):
+      # TODO: return stable softmax(logit / temperature)
+      pass
+
+  text = input()
+  temperature = float(input())
+  vocabulary = {"a": 0, "b": 1, " ": 2, "<unk>": 3}
+  print(" ".join(map(str, tokenize(text, vocabulary))))
+  probabilities = temperature_probabilities([2, 1, 0], temperature)
+  print(" ".join(f"{value:.3f}" for value in probabilities))
+testCases:
+  - input: "ab x\n1"
+    expected: "0 1 2 3\n0.665 0.245 0.090"
+    hidden: false
+  - input: "ba\n2"
+    expected: "1 0\n0.506 0.307 0.186"
+    hidden: true
+  - input: "?\n0.5"
+    expected: "3\n0.867 0.117 0.016"
+    hidden: true
+---
+
+Implement character tokenization with the unknown-token fallback. For probabilities, divide every logit by `temperature`, subtract the largest scaled logit before exponentiating, and normalize the exponentials. The output keeps vocabulary order.

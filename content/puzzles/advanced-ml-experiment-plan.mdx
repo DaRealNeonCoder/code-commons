@@ -1,0 +1,37 @@
+---
+title: "Advanced ML Experiment Plan"
+order: 300
+available: true
+areas: ["algorithms"]
+topics: ["experiments", "machine-learning"]
+tags: ["reproducibility", "validation", "workflow"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  def validate_plan(question, seed, train_size, validation_size, test_size):
+      # TODO: return "ready" only for a non-empty question, non-negative seed,
+      # and splits that add to 100.
+      pass
+
+  question = input().strip()
+  seed = int(input())
+  sizes = list(map(int, input().split()))
+  print(validate_plan(question, seed, sizes[0], sizes[1], sizes[2]))
+testCases:
+  - input: "compare schedules\n7\n70 15 15"
+    expected: "ready"
+    hidden: false
+  - input: "\n7\n70 15 15"
+    expected: "invalid"
+    hidden: true
+  - input: "compare\n-1\n70 15 15"
+    expected: "invalid"
+    hidden: true
+  - input: "compare\n2\n80 20 10"
+    expected: "invalid"
+    hidden: true
+---
+
+Implement `validate_plan`. Return `ready` when the question is non-empty, the seed is non-negative, every split size is non-negative, and the three percentages add to `100`. Return `invalid` otherwise.
+
+The point is not the particular percentages. A recorded question, seed, and data roles make a run distinguishable from an unrepeatable guess.

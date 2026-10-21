@@ -1,0 +1,59 @@
+---
+title: "Language Modeling in Practice"
+order: 310
+summary: "Build the data path for a small causal language model: tokenize, predict the next token, train, fine-tune, and sample."
+available: true
+areas: ["algorithms"]
+topics: ["language-models", "transformers", "nlp"]
+tags: ["tokenization", "pretraining", "fine-tuning", "inference"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["tokenize-and-sample"]
+---
+
+The Intro course counted bigrams. A small neural language model instead predicts a distribution over the next token from a context of tokens. The data pipeline and objective are still simple enough to inspect.
+
+## Tokens and vocabulary
+
+Tokenization maps text to integers. A character tokenizer is easy to implement but produces long sequences. A word tokenizer is compact but struggles with unknown words. Subword tokenization balances the two by representing frequent pieces as whole tokens and rare words as several pieces. Reserve explicit IDs for padding, beginning/end markers, and unknown pieces when the task needs them.
+
+For a token sequence `t₀, t₁, ..., tₙ`, causal training creates examples where the input context is shifted from the target:
+
+```text
+input:  [t₀, t₁, t₂]
+target: [t₁, t₂, t₃]
+```
+
+The loss is the average cross-entropy over target positions. A causal mask prevents the prediction at position `i` from reading `tᵢ` or later.
+
+## Pretraining, fine-tuning, inference
+
+Pretraining learns broad next-token regularities from a large unlabeled corpus. Fine-tuning changes the model using a narrower task or instruction data set; keep a held-out evaluation set and watch for loss of general capabilities. During inference, choose the next token from logits using greedy decoding, temperature, top-k, or nucleus sampling. Sampling controls variety, not factuality.
+
+<ReactDemo
+  title="Temperature changes token sampling"
+  code={`function Demo() {
+  const [temperature, setTemperature] = React.useState(0.7);
+  const logits = [2, 1, 0];
+  const exps = logits.map(value => Math.exp(value / temperature));
+  const total = exps.reduce((sum, value) => sum + value, 0);
+  const probabilities = exps.map(value => value / total);
+  const tokens = ["cat", "dog", "bird"];
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label>temperature = {temperature.toFixed(1)} <input type="range" min="0.2" max="2" step="0.1" value={temperature} onChange={e => setTemperature(+e.target.value)} /></label>
+    {probabilities.map((probability, index) => <div key={tokens[index]} style={{ marginTop: 7 }}>{tokens[index]} <span style={{ display: "inline-block", width: probability * 180, height: 10, background: "#4f46e5" }} /> {(probability * 100).toFixed(1)}%</div>)}
+    <small>Lower temperature concentrates probability on the largest logit; higher temperature makes alternatives more likely.</small>
+  </div>;
+}`}
+ />
+
+## A small model is still a real model
+
+Start with a tiny context, vocabulary, and hidden width so you can overfit a toy corpus deliberately. Check that training loss falls, then test on a held-out phrase. Inspect token IDs, masks, logits, and decoded text separately. Debugging the data path is usually more productive than immediately increasing model size.
+
+> [!TIP]
+> “The model generated text” is not an evaluation. Record the prompt, tokenizer version, decoding settings, checkpoint, and an appropriate held-out metric or human review protocol.
+
+## Practice
+
+In the [Tokenize and Sample puzzle](/puzzles/tokenize-and-sample?lesson=language-modeling-in-practice&course=advanced-machine-learning), build a deterministic character vocabulary and temperature-scaled next-token probabilities.

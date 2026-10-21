@@ -1,0 +1,59 @@
+---
+title: "Production ML: Data Pipelines, Tracking, and Deployment"
+order: 313
+summary: "Turn a trained model into a reproducible service with versioned data, tracked experiments, explicit contracts, and safe rollout checks."
+available: true
+areas: ["algorithms"]
+topics: ["mlops", "deployment", "data"]
+tags: ["data-pipeline", "experiment-tracking", "deployment", "monitoring"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["production-pipeline-check"]
+---
+
+A high validation score is only one part of a useful ML system. Production work connects raw inputs to a versioned transformation, model artifact, serving interface, monitoring signal, and rollback plan.
+
+## Make the data path explicit
+
+A robust pipeline separates:
+
+1. ingestion and schema validation;
+2. splitting before any learned preprocessing;
+3. feature/token transformation fit on training data;
+4. training and artifact storage;
+5. offline evaluation and approval;
+6. serving and monitoring.
+
+Version the dataset snapshot, code, configuration, tokenizer, feature statistics, and model weights together. A model cannot be reproduced from weights alone if its input transformation has changed.
+
+## Track experiments and interfaces
+
+Log the run ID, commit or source version, seed, data version, hyperparameters, training/validation metrics, runtime, and artifact location. Define the serving contract: input schema, output schema, timeout, missing-value behavior, and model version. Test the contract with representative and invalid inputs before deployment.
+
+## Monitor after release
+
+Monitor service health and model health separately. Latency, error rate, and resource use reveal operational problems. Input drift, missingness, class mix, delayed labels, and performance slices reveal data or fairness problems. A dashboard is not a solution without an owner and a response threshold.
+
+<ReactDemo
+  title="Gate a model rollout"
+  code={`function Demo() {
+  const [accuracy, setAccuracy] = React.useState(0.92);
+  const [latency, setLatency] = React.useState(80);
+  const [drift, setDrift] = React.useState(0.08);
+  const ready = accuracy >= 0.9 && latency <= 120 && drift <= 0.1;
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label style={{ display: "block" }}>validation accuracy = {accuracy.toFixed(2)} <input type="range" min="0.7" max="1" step="0.01" value={accuracy} onChange={e => setAccuracy(+e.target.value)} /></label>
+    <label style={{ display: "block" }}>p95 latency = {latency}ms <input type="range" min="40" max="200" step="5" value={latency} onChange={e => setLatency(+e.target.value)} /></label>
+    <label style={{ display: "block" }}>input drift = {drift.toFixed(2)} <input type="range" min="0" max="0.3" step="0.01" value={drift} onChange={e => setDrift(+e.target.value)} /></label>
+    <p>rollout gate: <strong style={{ color: ready ? "#15803d" : "#b91c1c" }}>{ready ? "pass" : "hold"}</strong></p>
+    <small>A model can be accurate and still fail a latency or drift contract.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> Deployment is a continuation of evaluation. Define the failure state before release: what causes a hold, rollback, alert, or human review?
+
+## Practice
+
+In the [Production Pipeline Check puzzle](/puzzles/production-pipeline-check?lesson=production-ml-and-rag&course=advanced-machine-learning), validate a pipeline record and decide whether an artifact is safe to promote.

@@ -1,0 +1,53 @@
+---
+title: "Self-Supervised and Transfer Learning"
+order: 311
+summary: "Reuse learned representations safely, choose a self-supervised pretext task, and avoid leaking evaluation information."
+available: true
+areas: ["algorithms"]
+topics: ["representation-learning", "deep-learning"]
+tags: ["self-supervised", "transfer-learning", "fine-tuning"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["transfer-learning-plan"]
+---
+
+Labels are expensive, but raw data is often plentiful. **Self-supervised learning** creates a target from the input itself: predict a masked token, match two augmented views, or predict the order of pieces. The learned encoder can then provide features for a labeled downstream task.
+
+## Transfer learning choices
+
+Start with a pretrained backbone and choose how much to update:
+
+- **Frozen features:** train a new head while keeping the backbone fixed. This is cheap and reduces overfitting on a small labeled set.
+- **Partial fine-tuning:** unfreeze later blocks and use a smaller learning rate for pretrained layers.
+- **Full fine-tuning:** update the entire model when the new domain is sufficiently different and data supports it.
+
+Preprocessing, label definitions, and input distributions must match the assumptions of pretraining. A backbone can transfer a shortcut as easily as a useful feature.
+
+## Data augmentation is a hypothesis
+
+An augmentation should preserve the label. Cropping a photo may be safe for object category but unsafe for a task where position is the label. Compare augmentation policies on validation data and inspect examples; “more augmentation” is not automatically better.
+
+<ReactDemo
+  title="Choose a transfer strategy"
+  code={`function Demo() {
+  const [labels, setLabels] = React.useState(100);
+  const [domainShift, setDomainShift] = React.useState(0.3);
+  const frozen = Math.max(0, 0.88 - domainShift * 0.45);
+  const partial = Math.max(0, 0.78 + Math.min(labels, 500) / 5000 - domainShift * 0.2);
+  const full = Math.max(0, 0.62 + Math.min(labels, 500) / 800 - domainShift * 0.05);
+  const values = [["frozen", frozen], ["partial", partial], ["full", full]];
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label style={{ display: "block" }}>labeled examples = {labels} <input type="range" min="10" max="500" step="10" value={labels} onChange={e => setLabels(+e.target.value)} /></label>
+    <label style={{ display: "block" }}>domain shift = {domainShift.toFixed(1)} <input type="range" min="0" max="1" step="0.1" value={domainShift} onChange={e => setDomainShift(+e.target.value)} /></label>
+    {values.map(([name, score]) => <div key={name} style={{ marginTop: 7 }}>{name}: {(score * 100).toFixed(1)}%</div>)}
+    <small>These are illustrative scores, not a rule. The right choice depends on data size, domain shift, and validation evidence.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> Fine-tuning is still training. Keep a clean downstream validation/test split, fit preprocessing on training data only, and compare against a simple frozen-feature baseline.
+
+## Practice
+
+In the [Transfer Learning Plan puzzle](/puzzles/transfer-learning-plan?lesson=self-supervised-and-transfer-learning&course=advanced-machine-learning), choose frozen, partial, or full fine-tuning from data size and domain-shift conditions, while rejecting an augmentation that changes the label.

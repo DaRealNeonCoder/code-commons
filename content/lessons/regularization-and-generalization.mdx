@@ -1,0 +1,60 @@
+---
+title: "Regularization and Generalization"
+order: 302
+summary: "Use weight decay, dropout, early stopping, and validation curves to control overfitting instead of merely shrinking a model."
+available: true
+areas: ["algorithms"]
+topics: ["generalization", "optimization"]
+tags: ["regularization", "dropout", "early-stopping", "overfitting"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["regularization-decisions"]
+---
+
+An expressive model can memorize a small training set. The objective is not to make training loss as low as possible; it is to find a useful pattern that survives new inputs. Regularization adds a preference for solutions that are less brittle.
+
+## Weight decay and L2 regularization
+
+One common update adds a shrinkage term:
+
+```text
+loss_total = data_loss + λ × sum(weights²)
+weight = weight - rate × (data_gradient + λ × weight)
+```
+
+Large weights are penalized, but the data gradient can still move a useful weight away from zero. Weight decay is often applied directly to weights and not to biases or normalization parameters.
+
+## Dropout is noise during training
+
+Dropout randomly sets some activations to zero during training and scales the survivors so their expected value is unchanged. This prevents the next layer from depending on one fragile path. At evaluation time, dropout is disabled. Applying a new random mask at test time makes the score noisy and is a common implementation bug.
+
+## Early stopping reads two curves
+
+Training loss often keeps falling. Validation loss may fall, flatten, and then rise as the model starts fitting details specific to the training set. Save the checkpoint with the best validation loss, not necessarily the final checkpoint. A patience value allows a few noisy epochs before stopping.
+
+<ReactDemo
+  title="Find the best checkpoint"
+  code={`function Demo() {
+  const train = [0.9, 0.6, 0.4, 0.25, 0.16, 0.1, 0.07];
+  const validation = [0.95, 0.62, 0.45, 0.38, 0.4, 0.48, 0.6];
+  const [epoch, setEpoch] = React.useState(3);
+  const best = validation.indexOf(Math.min(...validation)) + 1;
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <input aria-label="epoch" style={{ width: "100%" }} type="range" min="1" max="7" value={epoch} onChange={e => setEpoch(+e.target.value)} />
+    <p>epoch {epoch} · train loss {train[epoch - 1].toFixed(2)} · validation loss <strong>{validation[epoch - 1].toFixed(2)}</strong></p>
+    <p>best checkpoint: <strong>epoch {best}</strong></p>
+    <small>After epoch {best}, training keeps improving while validation worsens: a small overfitting signal.</small>
+  </div>;
+}`}
+ />
+
+## Regularization is a measurement decision
+
+Compare the same held-out split, keep preprocessing inside the training pipeline, and report both training and validation metrics. A lower training loss after adding dropout is not a failure if validation performance improves. Conversely, regularization that erases the signal is underfitting.
+
+> [!TIP]
+> The validation set chooses among models. The test set remains untouched until the design is frozen. This is the Intro course's evaluation rule applied to larger, more flexible systems.
+
+## Practice
+
+In the [Regularization Decisions puzzle](/puzzles/regularization-decisions?lesson=regularization-and-generalization&course=advanced-machine-learning), identify the best checkpoint, apply weight decay to a parameter update, and decide whether a curve shows underfitting or overfitting.

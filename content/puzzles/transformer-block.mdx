@@ -1,0 +1,37 @@
+---
+title: "Transformer Block"
+order: 309
+available: true
+areas: ["algorithms"]
+topics: ["transformers", "attention"]
+tags: ["residuals", "normalization", "mlp"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  import math
+
+  def layer_norm(value):
+      # scalar toy normalization: x / sqrt(x*x + eps)
+      pass
+
+  def block(value, attention_output, mlp_scale):
+      # TODO: normalize, add attention residual, apply ReLU MLP residual
+      pass
+
+  value, attention_output, mlp_scale = map(float, input().split())
+  print(f"{block(value, attention_output, mlp_scale):.6f}")
+testCases:
+  - input: "1 0.4 0.2"
+    expected: "1.680000"
+    hidden: false
+  - input: "-1 0.4 0.2"
+    expected: "-1.400000"
+    hidden: true
+  - input: "2 -0.5 0.5"
+    expected: "2.250000"
+    hidden: true
+---
+
+Use `normalized = value / sqrt(value * value + 1e-6)`, then `after_attention = value + attention_output * normalized`. The MLP residual is `after_attention + mlp_scale * max(0, after_attention)`.
+
+This scalar exercise is not a replacement for tensor shapes. It isolates the order of operations in a block so the same structure is recognizable in a framework implementation.

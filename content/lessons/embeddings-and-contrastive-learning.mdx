@@ -1,0 +1,62 @@
+---
+title: "Embeddings and Contrastive Learning"
+order: 305
+summary: "Learn how models place items in a useful vector space and train that space with positive and negative relationships."
+available: true
+areas: ["algorithms"]
+topics: ["representation-learning", "similarity"]
+tags: ["embeddings", "contrastive-learning", "metric-learning"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["contrastive-similarity"]
+---
+
+An embedding is a learned vector representation. Unlike the hand-chosen features in the Intro course, an embedding's coordinates do not have a fixed human meaning. The useful property is relational: items with similar roles should land near one another under a chosen similarity measure.
+
+## Similarity is a training signal
+
+Given an anchor `a`, a positive example `p`, and negatives `n₁...nₖ`, a simple contrastive objective tries to make:
+
+```text
+similarity(a, p) high
+similarity(a, nᵢ) low
+```
+
+One softmax-style loss is:
+
+```text
+loss = -log( exp(sim(a,p) / temperature) / sum_j exp(sim(a,j) / temperature) )
+```
+
+Temperature controls how sharply the loss focuses on the hardest alternatives. Lower temperature makes small similarity differences matter more, but can make optimization brittle.
+
+## Where positives come from
+
+For images, two augmented views of one image can be a positive pair. For text, nearby context, a query and its relevant passage, or two descriptions of one item can be positives. The model learns from the relationship, not from a manually assigned class for every possible concept.
+
+<ReactDemo
+  title="Pull positives together"
+  code={`function Demo() {
+  const [temperature, setTemperature] = React.useState(0.5);
+  const similarities = [0.9, 0.3, 0.1];
+  const scores = similarities.map(value => Math.exp(value / temperature));
+  const probability = scores[0] / scores.reduce((sum, value) => sum + value, 0);
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label>temperature = {temperature.toFixed(2)} <input type="range" min="0.1" max="1.5" step="0.1" value={temperature} onChange={e => setTemperature(+e.target.value)} /></label>
+    <p>positive probability = <strong>{(probability * 100).toFixed(1)}%</strong> · loss = {(-Math.log(probability)).toFixed(3)}</p>
+    {similarities.map((value, index) => <div key={index} style={{ marginTop: 6 }}>candidate {index}: similarity {value} <span style={{ display: "inline-block", width: scores[index] / Math.max(...scores) * 130, height: 9, background: index === 0 ? "#14b8a6" : "#94a3b8" }} /></div>)}
+    <small>The positive pair is candidate 0. Temperature changes how strongly similarity differences affect the softmax.</small>
+  </div>;
+}`}
+ />
+
+## Geometry, not labels alone
+
+Normalize embeddings when cosine similarity is the intended geometry. Watch for shortcuts: a model may encode camera style, document length, or another accidental cue instead of the semantic relationship. Evaluate retrieval with held-out relationships and inspect nearest neighbors, not only the training loss.
+
+> [!TIP]
+> An embedding is an interface. Decide what “nearby” should mean, then choose the data pairs, similarity function, and evaluation examples to match that meaning.
+
+## Practice
+
+In the [Contrastive Similarity puzzle](/puzzles/contrastive-similarity?lesson=embeddings-and-contrastive-learning&course=advanced-machine-learning), calculate normalized similarities and a temperature-scaled positive-pair loss.

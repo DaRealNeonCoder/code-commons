@@ -1,0 +1,38 @@
+---
+title: "Contrastive Similarity"
+order: 305
+available: true
+areas: ["algorithms"]
+topics: ["representation-learning", "similarity"]
+tags: ["embeddings", "contrastive-learning"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  import math
+
+  def cosine(a, b):
+      # TODO: return the cosine similarity, or 0 for a zero vector
+      pass
+
+  def positive_loss(anchor, candidates, positive, temperature):
+      # TODO: use exp(cosine(anchor, candidate) / temperature)
+      pass
+
+  anchor = list(map(float, input().split()))
+  positive = int(input())
+  temperature = float(input())
+  candidates = [list(map(float, input().split())) for _ in range(3)]
+  print(f"{positive_loss(anchor, candidates, positive, temperature):.6f}")
+testCases:
+  - input: "1 0\n0\n0.5\n1 0\n0 1\n-1 0"
+    expected: "0.142932"
+    hidden: false
+  - input: "0 0\n1\n1\n1 0\n0 1\n-1 0"
+    expected: "1.098612"
+    hidden: true
+  - input: "1 0\n2\n1\n1 0\n0 1\n-1 0"
+    expected: "2.407606"
+    hidden: true
+---
+
+Implement cosine similarity and the positive-pair loss. For each candidate, calculate `exp(similarity / temperature)`, divide the positive candidate's value by the total, and return the negative natural logarithm of that probability. Return zero cosine similarity when either vector has zero norm.

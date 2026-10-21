@@ -1,0 +1,43 @@
+---
+title: "Batching and Throughput"
+order: 312
+available: true
+areas: ["algorithms"]
+topics: ["training-systems", "optimization"]
+tags: ["batches", "gradient-accumulation", "throughput"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  import math
+
+  def micro_batches(example_count, micro_batch_size):
+      # TODO: return ceil(example_count / micro_batch_size)
+      pass
+
+  def average_gradients(gradients):
+      # TODO: average one scalar gradient per micro-batch
+      pass
+
+  def examples_per_second(examples, seconds):
+      # TODO: safe division, returning 0 for non-positive seconds
+      pass
+
+  examples, size = map(int, input().split())
+  gradients = list(map(float, input().split()))
+  seconds = float(input())
+  print(micro_batches(examples, size))
+  print(f"{average_gradients(gradients):.3f}")
+  print(f"{examples_per_second(examples, seconds):.3f}")
+testCases:
+  - input: "100 32\n1 3 2 2\n5"
+    expected: "4\n2.000\n20.000"
+    hidden: false
+  - input: "64 16\n-1 1\n0"
+    expected: "4\n0.000\n0.000"
+    hidden: true
+  - input: "10 6\n0.5 1.5 2.5\n2"
+    expected: "2\n1.500\n5.000"
+    hidden: true
+---
+
+Implement ceiling division as `(example_count + micro_batch_size - 1) // micro_batch_size`. Average the supplied gradients, and return zero when the duration is not positive. The puzzle separates bookkeeping from framework-specific device code.

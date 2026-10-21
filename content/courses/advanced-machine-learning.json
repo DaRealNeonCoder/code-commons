@@ -1,0 +1,21 @@
+{
+  "title": "Advanced Machine Learning",
+  "summary": "A code-first progression beyond the Intro course: modern optimization, deep architectures, representation learning, sequence models, Transformers, efficient training, and practical deployment.",
+  "lessons": [
+    "advanced-ml-roadmap",
+    "optimization-in-practice",
+    "regularization-and-generalization",
+    "cnn-architectures",
+    "residual-networks",
+    "embeddings-and-contrastive-learning",
+    "autoencoders-and-representation-learning",
+    "sequence-models-rnn-lstm",
+    "attention-mechanism",
+    "transformer-blocks",
+    "language-modeling-in-practice",
+    "self-supervised-and-transfer-learning",
+    "training-at-scale",
+    "production-ml-and-rag",
+    "retrieval-augmented-generation"
+  ]
+}

@@ -1,0 +1,32 @@
+---
+title: "Production Pipeline Check"
+order: 313
+available: true
+areas: ["algorithms"]
+topics: ["mlops", "deployment"]
+tags: ["data-pipeline", "monitoring", "deployment"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  def rollout_status(accuracy, latency_ms, drift, has_data_version, has_preprocess_version):
+      # TODO: pass only when metrics meet thresholds and versions exist
+      pass
+
+  accuracy, latency, drift = map(float, input().split())
+  data_version, preprocess_version = input().split()
+  print(rollout_status(accuracy, latency, drift, data_version != "-", preprocess_version != "-"))
+testCases:
+  - input: "0.92 80 0.08\ndataset-4 prep-2"
+    expected: "promote"
+    hidden: false
+  - input: "0.95 180 0.02\ndataset-4 prep-2"
+    expected: "hold"
+    hidden: true
+  - input: "0.92 80 0.08\n- prep-2"
+    expected: "hold"
+    hidden: true
+---
+
+Return `promote` only when accuracy is at least `0.90`, latency is at most `120` milliseconds, drift is at most `0.10`, and both data and preprocessing versions exist. Return `hold` otherwise.
+
+This is a release gate, not a complete monitoring system. Its value is that the requirements are executable and explicit.

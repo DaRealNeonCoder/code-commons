@@ -1,0 +1,81 @@
+---
+title: "Optimization in Practice: Schedules, Momentum, and Adam"
+order: 301
+summary: "Understand why modern optimizers change the path of gradient descent and implement their core state updates."
+available: true
+areas: ["algorithms"]
+topics: ["optimization", "deep-learning"]
+tags: ["learning-rate", "momentum", "adam", "initialization"]
+languages: ["python"]
+difficulty: "advanced"
+puzzles: ["optimizer-updates"]
+---
+
+The Intro course used a fixed learning rate and the update `parameter -= rate × gradient`. That is the foundation, not the only option. Deep networks often have uneven curvature, noisy mini-batch gradients, and parameters that need different step sizes.
+
+## Learning-rate schedules
+
+A schedule changes the learning rate during training. A warm-up starts small while activations and gradients settle; decay then takes smaller steps near a useful solution. Two simple schedules are:
+
+```text
+linear decay: rate(t) = start × (1 - t / total_steps)
+cosine decay: rate(t) = minimum + 1/2 × (start - minimum) × (1 + cos(πt / total_steps))
+```
+
+The schedule is a hyperparameter choice. Plot it before training so a surprising loss curve is not confused with a mysterious model failure.
+
+## Momentum remembers direction
+
+Momentum keeps an exponentially smoothed velocity:
+
+```text
+velocity = β × velocity + (1 - β) × gradient
+parameter = parameter - rate × velocity
+```
+
+Repeated gradients in the same direction accumulate; alternating noise is damped. The `β` value controls how much history remains.
+
+## Adam adapts each coordinate
+
+Adam keeps both a first moment and a second moment:
+
+```text
+m = β₁m + (1 - β₁)g
+v = β₂v + (1 - β₂)g²
+parameter -= rate × (m̂ / (sqrt(v̂) + ε))
+```
+
+The hats correct the early bias toward zero. Adam is convenient, not magic: its learning rate still matters, and adaptive steps do not remove the need for validation.
+
+## Initialization is part of optimization
+
+If every hidden unit starts with identical weights, they receive identical gradients and learn the same feature. Small random values break symmetry. Xavier/Glorot initialization scales a weight by the input and output widths; He initialization uses a larger scale for ReLU-like activations. The principle is to keep activations and gradients from immediately exploding or vanishing.
+
+<ReactDemo
+  title="Compare optimizer paths"
+  code={`function Demo() {
+  const [optimizer, setOptimizer] = React.useState("plain");
+  const [step, setStep] = React.useState(0);
+  const gradient = n => n - 2;
+  let position = 5;
+  let velocity = 0;
+  for (let i = 0; i < step; i++) {
+    const g = gradient(position);
+    if (optimizer === "momentum") { velocity = 0.8 * velocity + 0.2 * g; position -= 0.8 * velocity; }
+    else { position -= 0.2 * g; }
+  }
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label>optimizer <select value={optimizer} onChange={e => { setOptimizer(e.target.value); setStep(0); }}><option value="plain">plain descent</option><option value="momentum">momentum</option></select></label>
+    <input aria-label="steps" style={{ display: "block", width: "100%", margin: "14px 0" }} type="range" min="0" max="12" value={step} onChange={e => setStep(+e.target.value)} />
+    <p>step {step} · position = <strong>{position.toFixed(3)}</strong> · target = 2</p>
+    <small>Both methods use the same gradient. Momentum changes the history-sensitive path.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> Treat the optimizer as part of the model configuration. Record its learning rate, schedule, momentum coefficients, initialization seed, and checkpoint rule.
+
+## Practice
+
+In the [Optimizer Updates puzzle](/puzzles/optimizer-updates?lesson=optimization-in-practice&course=advanced-machine-learning), implement one scheduled learning-rate step, one momentum step, and one bias-corrected Adam step.

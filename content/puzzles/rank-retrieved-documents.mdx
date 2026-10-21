@@ -1,0 +1,37 @@
+---
+title: "Rank Retrieved Documents"
+order: 314
+available: true
+areas: ["algorithms"]
+topics: ["retrieval", "nlp"]
+tags: ["rag", "vector-search", "ranking"]
+languages: ["python"]
+difficulty: "advanced"
+starterCode: |
+  def rank_documents(query, documents, limit):
+      # TODO: score by distinct query words contained in each document,
+      # sort by score descending then original order, return top IDs
+      pass
+
+  query = set(input().lower().split())
+  count, limit = map(int, input().split())
+  documents = []
+  for _ in range(count):
+      parts = input().split()
+      documents.append((parts[0], set(parts[1:])))
+  print(" ".join(rank_documents(query, documents, limit)))
+testCases:
+  - input: "optimizer schedule\n3 2\nd1 optimizer schedule momentum\nd2 kernel stride\nd3 schedule validation"
+    expected: "d1 d3"
+    hidden: false
+  - input: "cat\n3 3\na dog\nb cat\nc cat"
+    expected: "b c a"
+    hidden: true
+  - input: "missing words\n2 1\na present\nb absent"
+    expected: "a"
+    hidden: true
+---
+
+Score each document by the number of distinct query words it contains. Sort by decreasing score while preserving the original order for ties, then return at most `limit` document IDs.
+
+This toy ranker makes retrieval behavior inspectable. A production RAG system should add semantic embeddings, metadata/access filters, reranking, source citations, and tests for unanswered questions.
