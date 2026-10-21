@@ -1,6 +1,6 @@
 ---
 title: "Linear Regression"
-order: 207
+order: 210
 summary: "Use a line, mean squared error, and feature scaling to predict a number."
 available: true
 areas: ["algorithms"]
@@ -96,7 +96,7 @@ This is the same recipe as the bowl from Part A, now applied to a table of examp
 
 Suppose one feature is bike weight in kilograms, usually between `8` and `20`, and another is distance in meters, often between `1` and `10,000`. During training, the large-number feature can produce much larger gradients. The model may spend its updates reacting to distance while barely learning from weight.
 
-**Feature scaling** puts features on more similar ranges. A simple option is:
+The [Data Basics lesson](/lessons/data-and-train-test-splits?course=intro-to-ai-machine-learning) introduced mean and standard deviation. **Feature scaling** puts features on more similar ranges. A simple option is:
 
 ```text
 scaled value = (value - mean) / standard deviation

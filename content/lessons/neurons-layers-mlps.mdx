@@ -1,6 +1,6 @@
 ---
 title: "Neurons, Layers, and MLPs"
-order: 210
+order: 213
 summary: "Build a small neural network from weighted sums, biases, and simple activation functions."
 available: true
 areas: ["programming-fundamentals"]
@@ -11,7 +11,7 @@ difficulty: "beginner"
 puzzles: ["xor-and-mlp-forward-pass"]
 ---
 
-A **neuron** is a small function that turns several input numbers into one output number. It starts by giving each input a weight:
+The [One Neuron, One Update lesson](/lessons/single-neuron-learning?course=intro-to-ai-machine-learning) isolates one forward pass and one update. Here we reuse those pieces to build layers. A **neuron** is a small function that turns several input numbers into one output number. It starts by giving each input a weight:
 
 ```text
 z = (x₁ × w₁) + (x₂ × w₂) + ... + b

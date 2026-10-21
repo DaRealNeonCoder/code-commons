@@ -1,0 +1,77 @@
+---
+title: "One Neuron, One Update"
+order: 214
+summary: "Follow one sigmoid neuron's forward pass, error, and parameter update before scaling up to backpropagation."
+available: true
+areas: ["algorithms"]
+topics: ["math", "arrays"]
+tags: ["neurons", "sigmoid", "gradient-descent"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["single-neuron-update"]
+---
+
+An MLP can feel like a wall of symbols when every weight changes at once. Start with one neuron and two features. The same four steps will later be repeated for many neurons:
+
+1. **Forward pass:** calculate `z = w · x + b`.
+2. **Activation:** turn the score into an output with the sigmoid.
+3. **Error:** compare the output with the label.
+4. **Update:** move the parameters in a direction that should reduce the error.
+
+## Forward pass
+
+For features `x = [x₁, x₂]`, weights `w = [w₁, w₂]`, and bias `b`:
+
+```text
+z = w₁x₁ + w₂x₂ + b
+output = sigmoid(z) = 1 / (1 + exp(-z))
+```
+
+The output is between `0` and `1`. We can interpret it as the model's confidence in class `1`; a threshold such as `0.5` turns it into a hard class, but the smooth probability is what makes a useful gradient possible.
+
+## One update, carefully
+
+For a sigmoid output trained with binary cross-entropy, the output error simplifies to:
+
+```text
+error = output - label
+gradient_w[i] = error × x[i]
+gradient_b = error
+```
+
+Then subtract `learning_rate × gradient` from each parameter. The sign matters. If the model is too confident in class `1` for a label of `0`, `error` is positive and the update lowers the score.
+
+<ReactDemo
+  title="Watch one neuron learn a point"
+  code={`function Demo() {
+  const [weight, setWeight] = React.useState(-1);
+  const [bias, setBias] = React.useState(0);
+  const x = [1, 1];
+  const label = 1;
+  const sigmoid = value => 1 / (1 + Math.exp(-value));
+  const output = sigmoid(weight * x[0] + weight * x[1] + bias);
+  const error = output - label;
+  const step = 0.8;
+  const nextWeight = weight - step * error;
+  const nextBias = bias - step * error;
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <p style={{ marginTop: 0 }}>input <code>x = [1, 1]</code>, target <code>y = 1</code></p>
+    <label style={{ display: "block" }}>shared weight = {weight.toFixed(2)} <input type="range" min="-3" max="3" step="0.1" value={weight} onChange={e => setWeight(+e.target.value)} /></label>
+    <label style={{ display: "block" }}>bias = {bias.toFixed(2)} <input type="range" min="-3" max="3" step="0.1" value={bias} onChange={e => setBias(+e.target.value)} /></label>
+    <p>output = {output.toFixed(3)} · error = {error.toFixed(3)}</p>
+    <p style={{ marginBottom: 4 }}>after one step: weight ≈ {nextWeight.toFixed(2)}, bias ≈ {nextBias.toFixed(2)}</p>
+    <small>When the target is 1 and the output is too small, the negative error makes the update increase the score.</small>
+  </div>;
+}`}
+ />
+
+## Why this prepares us for backpropagation
+
+With one neuron, every parameter receives a direct signal. In a layer of neurons, each neuron has its own weights and bias. In a network with hidden layers, a hidden neuron's error is indirect: it must be carried backward through the later layer. That is backpropagation, not a new kind of forward pass.
+
+> [!TIP]
+> Write down `z`, the activated output, and `error` before writing update code. Most beginner bugs are a missing bias, a wrong sign, or using a hard threshold before calculating the gradient.
+
+## Practice
+
+In the [Single Neuron Update puzzle](/puzzles/single-neuron-update?lesson=single-neuron-learning&course=intro-to-ai-machine-learning), implement a sigmoid neuron and one gradient-descent update. The tests expose the intermediate output so you can check each stage rather than guessing whether the final number looks plausible.

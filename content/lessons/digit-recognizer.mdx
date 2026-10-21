@@ -1,6 +1,6 @@
 ---
 title: "A Tiny Digit Recognizer"
-order: 212
+order: 217
 summary: "Represent 8×8 images as pixels, train a softmax classifier in mini-batches, and measure its accuracy."
 available: true
 areas: ["algorithms"]
@@ -43,7 +43,7 @@ total = sum(values)
 probabilities = [value / total for value in values]
 ```
 
-The predicted digit is the index of the largest probability. With a one-hot label, the training signal for class `c` is `probability[c] - 1` for the correct class and `probability[c]` for the others.
+The predicted digit is the index of the largest probability. A one-hot label makes the target concrete: digit `2` among three classes is `[0, 0, 1]`. The [Softmax and Cross-Entropy lesson](/lessons/softmax-and-cross-entropy?course=intro-to-ai-machine-learning) explains why the training signal for class `c` is `probability[c] - 1` for the correct class and `probability[c]` for the others.
 
 <ReactDemo
   title="Paint pixels and read softmax"

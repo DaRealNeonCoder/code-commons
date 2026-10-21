@@ -1,0 +1,64 @@
+---
+title: "Vector Norms and Matrix Shapes"
+order: 202
+summary: "Build geometric intuition for length, direction, and the shape rules that make matrix multiplication work."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "arrays"]
+tags: ["norms", "shapes", "matrices"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["vector-norms-and-shapes"]
+---
+
+The previous lesson used dot products as a matching score. Two ideas make that score easier to reason about: a vector's **length** and the **shape** of a collection of vectors.
+
+## Length is distance from the origin
+
+For a two-dimensional vector `[x, y]`, the length (or **Euclidean norm**) is:
+
+```text
+||v|| = sqrt(x² + y²)
+```
+
+This is the Pythagorean theorem. The vector `[3, 4]` has length `5`, because `sqrt(3² + 4²) = 5`. A norm is never negative. The zero vector has length zero and no direction, which is why cosine similarity needs a special case for it.
+
+Scaling a vector changes its length but not its direction: `[1, 2]` and `[2, 4]` point the same way. Cosine similarity divides a dot product by both lengths to focus on that direction.
+
+<ReactDemo
+  title="Length versus direction"
+  code={`function Demo() {
+  const [x, setX] = React.useState(3);
+  const [y, setY] = React.useState(4);
+  const length = Math.hypot(x, y);
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <strong>vector = [{x}, {y}]</strong>
+    <label style={{ display: "block", marginTop: 10 }}>x <input type="range" min="-5" max="5" step="1" value={x} onChange={e => setX(+e.target.value)} /></label>
+    <label style={{ display: "block" }}>y <input type="range" min="-5" max="5" step="1" value={y} onChange={e => setY(+e.target.value)} /></label>
+    <div style={{ marginTop: 12, width: 180, height: 120, position: "relative", borderLeft: "1px solid #94a3b8", borderBottom: "1px solid #94a3b8" }}><div style={{ position: "absolute", left: 90, bottom: 60, width: Math.abs(x) * 12, height: 3, background: "#4f46e5", transformOrigin: x < 0 ? "right" : "left", transform: "rotate(" + Math.atan2(-y, x) + "rad)" }} /></div>
+    <p>length = <strong>{length.toFixed(2)}</strong></p>
+    <small>Try doubling both coordinates mentally: the direction stays the same, but the length doubles.</small>
+  </div>;
+}`}
+ />
+
+## Shape is a safety rule
+
+Write a matrix's shape as `(rows, columns)`. A matrix with two rows and three columns has shape `(2, 3)`:
+
+```text
+X = [[area, rooms, age],
+     [area, rooms, age]]       shape: (2, 3)
+```
+
+Each row is one example and each column is one feature. Matrix-vector multiplication works when the vector has one weight per column:
+
+```text
+(2, 3) × (3,) → (2,)
+```
+
+The result has one weighted sum per row. The inner dimensions, `3` and `3`, match. If a table has four feature columns, a weight vector of length three is a type error in disguise: one feature has no weight.
+
+## Practice
+
+In the [Vector Norms and Shapes puzzle](/puzzles/vector-norms-and-shapes?lesson=norms-and-shapes&course=intro-to-ai-machine-learning), calculate a Euclidean norm and perform a shape-checked matrix-vector multiplication with plain lists. The checker includes a mismatched case so you practice rejecting incompatible inputs instead of silently producing a misleading result.

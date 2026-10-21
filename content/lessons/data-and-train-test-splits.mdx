@@ -1,0 +1,70 @@
+---
+title: "Data Basics: Averages and Train–Test Splits"
+order: 209
+summary: "Understand variation in a data set and decide which examples may be used for training, validation, and testing."
+available: true
+areas: ["algorithms"]
+topics: ["math", "probability"]
+tags: ["mean", "standard-deviation", "train-test", "validation"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["data-splits-and-baselines"]
+---
+
+Before fitting a model, understand the table it will see. A single average is a useful baseline, but it hides variation. A fair evaluation also depends on keeping some examples out of training.
+
+## Mean, spread, and a baseline
+
+The **mean** is the usual average. The **standard deviation** summarizes a typical distance from that average:
+
+```text
+mean = sum(values) / n
+variance = sum((value - mean)²) / n
+standard deviation = sqrt(variance)
+```
+
+The mean is a simple regression baseline: predict the training-set mean for every new row. A useful model should beat that baseline on data it has not seen. A **z-score** says how many standard deviations a value is above or below the mean:
+
+```text
+z = (value - mean) / standard deviation
+```
+
+## Three data roles
+
+Use different rows for different decisions:
+
+1. **Training set:** the model changes its parameters using these labels.
+2. **Validation set:** we compare model settings, such as learning rates or hidden-unit counts.
+3. **Test set:** we report a final score once, after choices are finished.
+
+If the same row helps choose a setting and then proves that setting works, the score is optimistic. That is not a minor bookkeeping issue: it changes what the score means.
+
+<ReactDemo
+  title="See why a held-out score matters"
+  code={`function Demo() {
+  const [cut, setCut] = React.useState(4);
+  const values = [2, 3, 4, 5, 20, 21];
+  const train = values.slice(0, cut);
+  const test = values.slice(cut);
+  const mean = items => items.reduce((sum, value) => sum + value, 0) / items.length;
+  const prediction = train.length ? mean(train) : 0;
+  const mse = items => items.length ? items.reduce((sum, value) => sum + (prediction - value) ** 2, 0) / items.length : 0;
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <p style={{ marginTop: 0 }}>ordered examples: <strong>{values.join(", ")}</strong></p>
+    <label>training rows: <input type="range" min="1" max="5" value={cut} onChange={e => setCut(+e.target.value)} /></label>
+    <p>training mean = <strong>{prediction.toFixed(1)}</strong> · training MSE = {mse(train).toFixed(1)} · held-out MSE = {mse(test).toFixed(1)}</p>
+    <small>The unusual values at the end make it easy to see why a training score alone can be reassuring but incomplete.</small>
+  </div>;
+}`}
+ />
+
+## Leakage is a shortcut, not learning
+
+**Data leakage** happens when information that would not be available at prediction time sneaks into training. A feature that directly copies the answer can produce a perfect score without teaching the model a useful pattern. Split first, calculate training statistics only from the training set, and apply those fixed statistics to validation and test rows.
+
+> [!TIP]
+> A test score answers “How did this finished choice work on new examples?” It does not answer “Which choice should I make?” That is the validation set's job.
+
+## Practice
+
+In the [Data Splits and Baselines puzzle](/puzzles/data-splits-and-baselines?lesson=data-and-train-test-splits&course=intro-to-ai-machine-learning), calculate a mean baseline, its MSE, and the sizes of deterministic train/validation/test splits. The later model puzzles can then be read with the data roles in mind.

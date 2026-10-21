@@ -1,0 +1,65 @@
+---
+title: "Derivative Rules: Powers, Sine, and Exponentials"
+order: 205
+summary: "Move from measuring slopes numerically to recognizing a few derivative rules used in machine learning."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math"]
+tags: ["derivatives", "power-rule", "exponentials"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["derivative-rules"]
+---
+
+The previous lesson estimated a slope by looking at nearby points. That is useful for checking our work, but training code also needs quick, exact rules. These rules describe the same local rate of change.
+
+## Three rules for now
+
+| Function | Derivative | What it says |
+| --- | --- | --- |
+| `xⁿ` | `n × xⁿ⁻¹` | powers get one degree lower |
+| `sin(x)` | `cos(x)` | the slope cycles with the wave |
+| `exp(x)` | `exp(x)` | the exponential is its own slope |
+
+The derivative of a constant is `0`. Derivatives add, so the derivative of `x² + 3x + 4` is `2x + 3`. When a function has one function inside another, use the **chain rule**; that is the next lesson.
+
+At `x = 3`, the derivative of `x² + 3x + 4` is `2 × 3 + 3 = 9`. A numerical estimate with a small step should be close to `9`, giving us a useful test of the algebra.
+
+## Why exponentials appear
+
+The exponential `exp(x)` grows quickly and is always positive. Its shifted version
+
+```text
+sigmoid(x) = 1 / (1 + exp(-x))
+```
+
+turns any real number into a value between `0` and `1`, which makes it useful for a probability-like prediction. We will meet it again in logistic regression and neural networks.
+
+<ReactDemo
+  title="Compare a rule with a nearby-points estimate"
+  code={`function Demo() {
+  const [x, setX] = React.useState(1);
+  const h = 0.001;
+  const f = value => value * value + 3 * value + 4;
+  const exact = 2 * x + 3;
+  const estimate = (f(x + h) - f(x)) / h;
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <strong>f(x) = x² + 3x + 4</strong>
+    <input aria-label="x" style={{ display: "block", width: "100%", margin: "14px 0" }} type="range" min="-3" max="3" step="0.1" value={x} onChange={e => setX(+e.target.value)} />
+    <p style={{ marginBottom: 4 }}>x = {x.toFixed(1)} · exact derivative = <strong>{exact.toFixed(2)}</strong></p>
+    <p style={{ marginTop: 0 }}>nearby-points estimate = {estimate.toFixed(2)}</p>
+    <small>A derivative rule and a sufficiently small finite difference answer the same question: how does the output change here?</small>
+  </div>;
+}`}
+ />
+
+## A derivative is not an average slope
+
+The slope between two far-apart points is an **average** change. A derivative is the slope at one point, found by shrinking the gap. In code, choose `h` small enough to be useful but not so small that floating-point rounding overwhelms the subtraction.
+
+> [!TIP]
+> Learn the rule, then check it numerically. The two methods are different paths to the same local slope and are excellent at catching a missing factor or sign.
+
+## Practice
+
+In the [Derivative Rules puzzle](/puzzles/derivative-rules?lesson=derivative-rules&course=intro-to-ai-machine-learning), implement the three rules and a numerical check for a requested function. The next lesson will combine these simple derivatives with the chain rule.

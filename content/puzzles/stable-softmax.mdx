@@ -1,0 +1,40 @@
+---
+title: "Stable Softmax"
+order: 216
+available: true
+areas: ["algorithms"]
+topics: ["math", "probability"]
+tags: ["softmax", "cross-entropy", "multiclass"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  import math
+
+  def softmax(logits):
+      # TODO: subtract the largest logit before exponentiating
+      pass
+
+  def cross_entropy(probabilities, correct):
+      # TODO: return -log(probability of the correct class)
+      pass
+
+  logits = list(map(float, input().split()))
+  correct = int(input())
+  probabilities = softmax(logits)
+  print(" ".join(f"{value:.6f}" for value in probabilities))
+  print(f"{cross_entropy(probabilities, correct):.6f}")
+testCases:
+  - input: "2 1 0\n1"
+    expected: "0.665241 0.244728 0.090031\n1.407606"
+    hidden: false
+  - input: "1000 999 998\n0"
+    expected: "0.665241 0.244728 0.090031\n0.407606"
+    hidden: true
+  - input: "-1000 -999 -998\n2"
+    expected: "0.090031 0.244728 0.665241\n0.407606"
+    hidden: true
+---
+
+Implement `softmax(logits)` by subtracting `max(logits)`, exponentiating, and dividing each value by the sum. Implement `cross_entropy` as the negative natural logarithm of the probability at `correct`.
+
+Print probabilities in their original class order. Stable softmax must produce the same probabilities for `[1000, 999, 998]` as for `[2, 1, 0]`; without the subtraction, the large exponentials can overflow.

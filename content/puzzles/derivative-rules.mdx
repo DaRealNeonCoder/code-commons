@@ -1,0 +1,52 @@
+---
+title: "Derivative Rules"
+order: 205
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math"]
+tags: ["derivatives", "power-rule", "chain-rule"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  import math
+
+  def derivative(kind, x):
+      # TODO: return the exact derivative at x
+      # kind is "power", "sine", or "exp".
+      pass
+
+  def numerical_derivative(f, x, h=0.00001):
+      return (f(x + h) - f(x)) / h
+
+  kind = input().strip()
+  x = float(input())
+  functions = {
+      "power": lambda value: value ** 3,
+      "sine": math.sin,
+      "exp": math.exp,
+  }
+  exact = derivative(kind, x)
+  checked = numerical_derivative(functions[kind], x)
+  print(f"{exact:.3f} {checked:.3f}")
+testCases:
+  - input: "power\n2"
+    expected: "12.000 12.000"
+    hidden: false
+  - input: "sine\n0"
+    expected: "1.000 1.000"
+    hidden: true
+  - input: "exp\n1"
+    expected: "2.718 2.718"
+    hidden: true
+  - input: "power\n-1.5"
+    expected: "6.750 6.750"
+    hidden: true
+---
+
+Implement `derivative(kind, x)` using these rules:
+
+- `power` represents `x³`, so its derivative is `3x²`;
+- `sine` represents `sin(x)`, so its derivative is `cos(x)`;
+- `exp` represents `exp(x)`, so its derivative is `exp(x)`.
+
+The supplied code compares your exact result with a nearby-points estimate. Small differences from floating-point arithmetic are hidden by the three-decimal formatting.

@@ -1,0 +1,85 @@
+---
+title: "Multiclass Labels, Softmax, and Cross-Entropy"
+order: 216
+summary: "Turn several class scores into probabilities and understand why the correct class drives the learning signal."
+available: true
+areas: ["algorithms"]
+topics: ["math", "probability"]
+tags: ["softmax", "cross-entropy", "multiclass"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["stable-softmax"]
+---
+
+Binary classification has two outcomes. A digit recognizer has several possible outcomes, so it needs a probability for every class. The model first produces one raw **logit** per class, then softmax turns the collection into a probability distribution.
+
+## One-hot labels
+
+If the correct class is `2` among three classes, a one-hot label is:
+
+```text
+[0, 0, 1]
+```
+
+It has one `1` at the correct index and `0` elsewhere. This is a convenient numeric way to say which class is correct; it does not mean the classes are ordered quantities.
+
+## Stable softmax
+
+```text
+softmax(zᵢ) = exp(zᵢ) / (exp(z₁) + exp(z₂) + ...)
+```
+
+The probabilities are non-negative and add to `1`. To avoid overflowing when logits are large, subtract the largest logit first:
+
+```python
+largest = max(logits)
+exponentials = [math.exp(value - largest) for value in logits]
+total = sum(exponentials)
+probabilities = [value / total for value in exponentials]
+```
+
+Subtracting the same number from every logit does not change the relative probabilities. It only makes the intermediate exponentials safer.
+
+<ReactDemo
+  title="Move the winning logit"
+  code={`function Demo() {
+  const [winner, setWinner] = React.useState(1);
+  const logits = [1, 1, 1].map((value, index) => value + (index === winner ? 2 : 0));
+  const largest = Math.max(...logits);
+  const values = logits.map(value => Math.exp(value - largest));
+  const total = values.reduce((sum, value) => sum + value, 0);
+  const probabilities = values.map(value => value / total);
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <label>class with extra score: <select value={winner} onChange={e => setWinner(+e.target.value)}><option value="0">0</option><option value="1">1</option><option value="2">2</option></select></label>
+    {probabilities.map((probability, index) => <div key={index} style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 8 }}><span style={{ width: 44 }}>class {index}</span><span style={{ display: "inline-block", height: 12, width: probability * 180, background: index === winner ? "#2563eb" : "#94a3b8", borderRadius: 4 }} /><small>{(probability * 100).toFixed(1)}%</small></div>)}
+    <small>All three logits start equal. Giving one class a higher score makes its probability larger, but not automatically 100%.</small>
+  </div>;
+}`}
+ />
+
+## Cross-entropy rewards calibrated confidence
+
+For a one-hot label, cross-entropy loss is:
+
+```text
+loss = -log(probability of the correct class)
+```
+
+Predicting the correct class with probability `0.9` gives a small loss. Predicting it with probability `0.01` gives a large loss, even if it was the second-largest score. This teaches the model not only to rank the correct class first, but to put more probability on it.
+
+Here `log` means the natural logarithm: it asks which power of `e` produces a number. For probabilities, `log(1) = 0` and `log` becomes more negative as the probability approaches zero. The negative sign therefore makes a confident wrong answer expensive while keeping a confident correct answer near zero loss.
+
+For softmax followed by cross-entropy, the gradient with respect to each logit is especially simple:
+
+```text
+gradient = probabilities - one_hot_label
+```
+
+The digit recognizer will use exactly this signal, first for one example and then averaged over a mini-batch.
+
+> [!TIP]
+> Logits are not probabilities. Keep the stages named: linear scores → stable softmax → loss → gradient.
+
+## Practice
+
+In the [Stable Softmax puzzle](/puzzles/stable-softmax?lesson=softmax-and-cross-entropy&course=intro-to-ai-machine-learning), implement stable softmax and cross-entropy for one correct class. Try the large negative logits test to see why subtracting the maximum is a practical safety step.

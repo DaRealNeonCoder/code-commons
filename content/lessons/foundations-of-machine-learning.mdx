@@ -1,0 +1,80 @@
+---
+title: "Foundations: Data, Models, and the Math Toolkit"
+order: 200
+summary: "Learn the small set of Python, vocabulary, and arithmetic ideas used throughout the course."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "arrays"]
+tags: ["features", "labels", "models", "prerequisites"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["ml-foundations-check"]
+---
+
+This course uses a small amount of Python to make the ideas visible. You do not need a scientific-computing library yet, but you should be comfortable reading a function, a loop, and a list.
+
+## The vocabulary of a learning problem
+
+Imagine a table of houses. Each row is one **example**. The columns used as input are **features**, such as floor area or number of rooms. The answer we want to predict is the **label** or **target**, such as the sale price.
+
+| Word | Meaning | Example |
+| --- | --- | --- |
+| data set | a collection of examples | 100 house rows |
+| feature | an input measurement | floor area = 80 |
+| label | the answer attached to an example | price = 250 |
+| model | a rule with adjustable numbers | `prediction = weight × area + bias` |
+| parameter | a number learned by the model | `weight` or `bias` |
+| prediction | the model's output | estimated price = 240 |
+| loss | a number measuring a miss | squared error = 100 |
+
+In **supervised learning**, examples include labels while the model is learning. Later, we give the model features without showing the label and ask it to predict.
+
+## A tiny Python toolkit
+
+Lists hold features, loops visit examples, and functions give a name to a repeatable calculation:
+
+```python
+def average(values):
+    total = 0
+    for value in values:
+        total += value
+    return total / len(values)
+
+ages = [2, 4, 6]
+print(average(ages))  # 4.0
+```
+
+`zip(a, b)` pairs matching positions, which is why it appears often in vector code. A table is commonly represented as a list of lists:
+
+```python
+features = [[80, 3], [50, 2]]  # area and room count for two houses
+```
+
+You will also see `x ** 2` for “x squared,” `math.sqrt(x)` for a square root, and `abs(x)` for distance from zero. An average is a total divided by the number of values. These are enough for the first mathematical steps.
+
+## A useful habit: name the shapes
+
+Before calculating, say what each list means. `[80, 3]` is a two-feature row; `[[80, 3], [50, 2]]` is a two-row by two-column table. The next lessons turn these lists into vectors and matrices.
+
+<ReactDemo
+  title="Translate a data row"
+  code={`function Demo() {
+  const [area, setArea] = React.useState(80);
+  const [rooms, setRooms] = React.useState(3);
+  const score = area * 0.02 + rooms * 0.5;
+  return <div style={{ fontFamily: "system-ui", padding: 16, color: "CanvasText" }}>
+    <p style={{ marginTop: 0 }}><strong>features = [{area}, {rooms}]</strong></p>
+    <label style={{ display: "block" }}>area <input type="range" min="20" max="120" value={area} onChange={e => setArea(+e.target.value)} /></label>
+    <label style={{ display: "block" }}>rooms <input type="range" min="1" max="6" value={rooms} onChange={e => setRooms(+e.target.value)} /></label>
+    <p>model: <code>0.02 × area + 0.5 × rooms</code> = <strong>{score.toFixed(1)}</strong></p>
+    <small>The sliders change features. The fixed numbers are parameters; the result is a prediction.</small>
+  </div>;
+}`}
+ />
+
+> [!TIP]
+> Keep three questions separate: What are the inputs? What answer should the model produce? Which numbers is training allowed to change?
+
+## Practice
+
+In the [ML Foundations Check puzzle](/puzzles/ml-foundations-check?lesson=foundations-of-machine-learning&course=intro-to-ai-machine-learning), implement a small average, feature-count, and z-score calculation. It is a warm-up for the list and arithmetic patterns used later.

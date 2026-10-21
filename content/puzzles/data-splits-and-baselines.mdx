@@ -1,0 +1,42 @@
+---
+title: "Data Splits and Baselines"
+order: 209
+available: true
+areas: ["algorithms"]
+topics: ["math", "probability"]
+tags: ["mean", "mse", "train-test", "baseline"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def mean(values):
+      # TODO: return the arithmetic mean
+      pass
+
+  def mse(values, prediction):
+      # TODO: return mean squared error
+      pass
+
+  def split_sizes(count):
+      # TODO: use 60% train, 20% validation, and the remainder for test
+      pass
+
+  values = list(map(float, input().split()))
+  prediction = mean(values)
+  train, validation, test = split_sizes(len(values))
+  print(f"{prediction:.3f} {mse(values, prediction):.3f}")
+  print(f"{train} {validation} {test}")
+testCases:
+  - input: "2 4 6 8 10"
+    expected: "6.000 8.000\n3 1 1"
+    hidden: false
+  - input: "5 5 5 5"
+    expected: "5.000 0.000\n2 0 2"
+    hidden: true
+  - input: "1 2 3 4 5 6 7 8 9 10"
+    expected: "5.500 8.250\n6 2 2"
+    hidden: true
+---
+
+Implement the mean and mean squared error. For `split_sizes(count)`, use integer floor division for the training count (`count * 60 // 100`) and validation count (`count * 20 // 100`); the test count is whatever remains. This keeps every example in exactly one split.
+
+The baseline predicts the same mean for every row. A trained regression model should be compared with this simple reference on held-out data, not only on the rows it used for updates.

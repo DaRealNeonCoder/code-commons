@@ -10,17 +10,23 @@ const course = JSON.parse(
 
 test("interactive demos in the ML course compile through the restricted runner", async () => {
   const expectedDemoLessons = new Set([
+    "foundations-of-machine-learning",
     "vectors-and-dot-products",
+    "norms-and-shapes",
     "matrices-and-multiplication",
     "calculus-derivatives",
+    "derivative-rules",
     "chain-rule-computational-graphs",
     "gradients-and-partial-derivatives",
     "gradient-descent",
+    "data-and-train-test-splits",
     "linear-regression",
     "probability-logistic-regression",
     "evaluating-models-honestly",
     "neurons-layers-mlps",
+    "single-neuron-learning",
     "backpropagation",
+    "softmax-and-cross-entropy",
     "digit-recognizer",
     "convolutions",
     "language-model-next-word",

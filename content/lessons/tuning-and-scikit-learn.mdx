@@ -1,6 +1,6 @@
 ---
 title: "Tuning MLP Hyperparameters"
-order: 213
+order: 218
 summary: "Choose neural-network settings with validation data and use regularization to control overfitting."
 available: true
 areas: ["algorithms"]
@@ -38,7 +38,17 @@ The symbol `α` is another hyperparameter. A larger `α` pushes weights toward z
 
 ## How this relates to scikit-learn
 
-`sklearn.neural_network.MLPClassifier` performs the same broad workflow with a ready-made MLP. Its `hidden_layer_sizes`, `learning_rate_init`, and `max_iter` correspond to the settings above. Its `alpha` controls L2 regularization. A real project can use validation or cross-validation to compare configurations; the code puzzle below uses fixed numbers and plain Python so the result is deterministic and needs no installation or plot.
+`sklearn.neural_network.MLPClassifier` performs the same broad workflow with a ready-made MLP. Its `hidden_layer_sizes`, `learning_rate_init`, and `max_iter` correspond to the settings above. Its `alpha` controls L2 regularization. A minimal training call looks like this:
+
+```python
+from sklearn.neural_network import MLPClassifier
+
+model = MLPClassifier(hidden_layer_sizes=(4,), learning_rate_init=0.05, max_iter=500, random_state=0)
+model.fit(train_features, train_labels)
+validation_accuracy = model.score(validation_features, validation_labels)
+```
+
+A real project can use validation or cross-validation to compare configurations; the code puzzle below uses fixed numbers and plain Python so the result is deterministic and needs no installation or plot.
 
 > [!TIP]
 > Compare validation results, not just training results. A slightly worse training score can be a better choice if it generalizes to unseen data.

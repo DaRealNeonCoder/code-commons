@@ -1,0 +1,41 @@
+---
+title: "Vector Norms and Shapes"
+order: 202
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "arrays"]
+tags: ["norms", "shapes", "matrix-vector"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  import math
+
+  def norm(vector):
+      # TODO: return the Euclidean length
+      pass
+
+  def matrix_vector(matrix, vector):
+      # TODO: return None when the column count does not match
+      pass
+
+  rows, columns = map(int, input().split())
+  matrix = [list(map(float, input().split())) for _ in range(rows)]
+  vector = list(map(float, input().split()))
+  print(f"{norm(vector):.3f}")
+  result = matrix_vector(matrix, vector)
+  print("invalid" if result is None else " ".join(f"{value:.3f}" for value in result))
+testCases:
+  - input: "2 3\n1 2 0\n0 1 1\n3 4 0"
+    expected: "5.000\n11.000 4.000"
+    hidden: false
+  - input: "1 2\n2 -1\n1 3"
+    expected: "3.162\ninvalid"
+    hidden: true
+  - input: "2 2\n1 0\n0 1\n-3 4"
+    expected: "5.000\n-3.000 4.000"
+    hidden: true
+---
+
+Implement `norm` with the square root of the sum of squared values. In `matrix_vector`, first check that every row has the same number of columns as the vector. Return one dot product per row, or `None` for an incompatible shape.
+
+The first input line gives the matrix's row and column counts. The following lines contain the matrix, then the vector. Print the vector norm and either the result or `invalid`.

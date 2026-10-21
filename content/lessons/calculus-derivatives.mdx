@@ -1,6 +1,6 @@
 ---
-title: "Calculus I: Derivatives"
-order: 203
+title: "Calculus I: Slope and Finite Differences"
+order: 204
 summary: "Read a derivative as a slope, estimate it with nearby points, and walk toward the bottom of a simple curve."
 available: true
 areas: ["programming-fundamentals"]
@@ -40,17 +40,9 @@ def numerical_derivative(f, x, h=0.00001):
 
 For the parabola `f(x) = x²`, the derivative at `x = 3` is about `6`.
 
-## Three rules worth knowing
+## From an estimate to a rule
 
-You can often find derivatives without estimating:
-
-| Rule | Example |
-| --- | --- |
-| Power rule | `d(xⁿ)/dx = n × xⁿ⁻¹` |
-| Sum rule | derivative of `f + g` is `f' + g'` |
-| Product rule | derivative of `f × g` is `f' × g + f × g'` |
-
-The power rule says the derivative of `x²` is `2x`. At `x = 3`, that is `6`, matching the nearby-points estimate.
+For `f(x) = x²`, the exact derivative is `2x`; at `x = 3`, that is `6`, matching the nearby-points estimate. In the next lesson, [Derivative Rules](/lessons/derivative-rules?course=intro-to-ai-machine-learning), you will practice the power rule alongside the `sin` and `exp` rules used by computational graphs. Keeping the numerical method separate from the rules makes it easier to use one as a check for the other.
 
 ## Walking downhill
 
