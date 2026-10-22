@@ -1,0 +1,50 @@
+---
+title: "Building 3D Scenes and Draw Calls"
+order: 11
+summary: "Compose multiple objects, geometry, and per-object materials with CPU-side JavaScript."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["geometry", "simulation"]
+tags: ["webgl", "scene-graph", "draw-calls", "objects"]
+languages: ["javascript"]
+difficulty: "intermediate"
+puzzles: ["shader:programmable-3d-gallery"]
+---
+
+# A scene is a list of draw calls
+
+`engine.scene.add` returns an object with `position`, `rotation`, `scale`,
+`geometry`, and `material`. Each visible object becomes one indexed triangle
+draw. Keep object creation in `setup`; mutate transforms in `update`.
+
+```js
+const left = engine.scene.add({
+  geometry: engine.geometry.cube(),
+  material: engine.material({ uniforms: { u_color: [1, 0.25, 0.25] } }),
+  position: [-1.2, 0, 0],
+});
+const right = engine.scene.add({
+  geometry: engine.geometry.plane(),
+  material: engine.material({ uniforms: { u_color: [0.25, 1, 0.6] } }),
+  position: [1.2, 0, 0],
+});
+```
+
+Use `scene.remove(object)` and `scene.clear()` for lifecycle experiments. A
+scene is not a game: this course stops at rendering, transforms, and input.
+
+<ReactDemo
+  title="Count the draw calls"
+  code={`function Demo() {
+  const [objects, setObjects] = React.useState(2);
+  return <div style={{ fontFamily: 'system-ui', padding: 16 }}><button onClick={() => setObjects(n => Math.max(0, n - 1))}>remove</button><button onClick={() => setObjects(n => n + 1)} style={{ marginLeft: 8 }}>add</button><div style={{ display: 'flex', gap: 6, marginTop: 14 }}>{Array.from({ length: objects }, (_, i) => <span key={i} style={{ width: 30, height: 30, background: i % 2 ? '#fbbf24' : '#38bdf8', transform: 'rotate(' + i * 12 + 'deg)' }} />)}</div><p>{objects} objects → {objects} draw calls</p></div>;
+}`}
+/>
+
+## Project
+
+Open [Programmable 3D Gallery](/shaders/programmable-3d-gallery). Render a
+cube, plane, and custom triangle with three materials. The acceptance target
+is three visible objects, three distinct colors, and independent rotation of
+the cube and triangle. Do not duplicate geometry data when a built-in helper
+or one shared geometry object is enough.

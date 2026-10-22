@@ -1,0 +1,53 @@
+---
+title: "Shapes with Signed Distance Functions"
+order: 3
+summary: "Describe a circle mathematically, shade its boundary, and build a reusable shape function."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["geometry", "math"]
+tags: ["shaders", "sdf", "circles", "smoothstep"]
+languages: ["javascript"]
+difficulty: "beginner"
+puzzles: ["shader:graphics-sdf-circle"]
+---
+
+# A circle without a mesh
+
+Center the pixel coordinate and correct for aspect ratio:
+
+```glsl
+vec2 p = (2.0 * gl_FragCoord.xy - iResolution.xy) / iResolution.y;
+```
+
+The signed distance to a circle of radius `r` is `length(p) - r`. Negative
+values are inside, positive values are outside, and zero is the boundary. A
+hard comparison works, but a narrow `smoothstep` range gives an antialiased
+edge:
+
+```glsl
+float d = length(p) - 0.5;
+float inside = 1.0 - smoothstep(-0.01, 0.01, d);
+fragColor = vec4(mix(vec3(0.02), vec3(0.2, 0.75, 1.0), inside), 1.0);
+```
+
+This is a shader-art superpower: the image is generated from a formula, not
+from CPU-created vertices. The same idea extends to boxes, capsules, rings,
+and eventually 3D scenes.
+
+<ReactDemo
+  title="Inspect a circle's distance field"
+  code={`function Demo() {
+  const [radius, setRadius] = React.useState(0.5);
+  return <div style={{ fontFamily: 'system-ui', padding: 16 }}><div style={{ width: 180, height: 180, borderRadius: '50%', background: '#172554', display: 'grid', placeItems: 'center' }}><div style={{ width: radius * 180, height: radius * 180, borderRadius: '50%', background: '#67e8f9' }} /></div><label>radius <input type="range" min="0.15" max="0.9" step="0.01" value={radius} onChange={e => setRadius(+e.target.value)} /></label><code style={{ display: 'block' }}>d(p) = length(p) - {radius.toFixed(2)}</code></div>;
+}`}
+/>
+
+## Checkpoint
+
+In the [SDF circle puzzle](/shaders/graphics-sdf-circle), produce one centered
+circle with a dark background and a cyan interior. The checker evaluates the
+rendered pixels, including the boundary. Match the radius before adding glow.
+
+> [!TIP]
+> Keep the distance function separate from coloring. That makes it possible
+> to reuse the same geometry for outlines, glow, shadows, and combinations.

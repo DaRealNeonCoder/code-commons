@@ -1,0 +1,49 @@
+---
+title: "Color, Time, and Gradients"
+order: 2
+summary: "Map numbers to color and animate a shader with the engine's time uniform."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "simulation"]
+tags: ["shaders", "color", "animation", "gradients"]
+languages: ["javascript"]
+difficulty: "beginner"
+puzzles: ["shader:graphics-color-bars"]
+---
+
+# Color is data
+
+GLSL colors are `vec3` values whose channels usually range from `0.0` to
+`1.0`. A gradient is just a function that maps a coordinate to a color:
+
+```glsl
+vec2 uv = gl_FragCoord.xy / iResolution.xy;
+vec3 sky = mix(vec3(0.03, 0.05, 0.16), vec3(0.9, 0.35, 0.12), uv.y);
+float pulse = 0.5 + 0.5 * sin(iTime * 2.0);
+fragColor = vec4(sky * (0.7 + 0.3 * pulse), 1.0);
+```
+
+`mix(a, b, t)` interpolates between two values. `sin` and `cos` give smooth,
+repeatable motion. Keep the time calculation in the fragment shader when the
+effect is image-wide; there is no reason to add CPU-side scene code for a
+color field.
+
+<ReactDemo
+  title="Blend two colors"
+  code={`function Demo() {
+  const [t, setT] = React.useState(0.5);
+  const color = 'rgb(' + Math.round(20 + 220 * t) + ', ' + Math.round(40 + 100 * (1 - t)) + ', ' + Math.round(180 + 50 * t) + ')';
+  return <div style={{ fontFamily: 'system-ui', padding: 16 }}><div style={{ height: 70, borderRadius: 12, background: 'linear-gradient(90deg, #14213d, ' + color + ', #fca311)' }} /><input style={{ width: '100%' }} type="range" min="0" max="1" step="0.01" value={t} onChange={e => setT(+e.target.value)} /><p>mix amount: {t.toFixed(2)}</p></div>;
+}`}
+/>
+
+## Checkpoint
+
+The [color bars puzzle](/shaders/graphics-color-bars) asks for three exact
+horizontal bands. It is a useful debugging exercise: if a band is in the
+wrong place, inspect the coordinate you fed to `step` or `smoothstep` rather
+than changing colors at random.
+
+**Goal:** at time zero, the top, middle, and bottom thirds must match the
+specified RGB values. A later animation may be added after the fixed target
+matches.

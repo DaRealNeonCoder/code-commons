@@ -1,0 +1,22 @@
+{
+  "title": "Computer Graphics & Shaders",
+  "summary": "Turn coordinates, vectors, and small programs into pixels, animated shader art, and interactive 3D scenes with codeloop's lightweight WebGL engine.",
+  "lessons": [
+    "shader-pixels-and-uv-coordinates",
+    "shader-color-time-and-gradients",
+    "shader-shapes-and-signed-distance-functions",
+    "procedural-patterns-and-animation",
+    "combining-shapes-noise-and-interaction",
+    "graphics-pipeline-cpu-and-gpu",
+    "vertices-triangles-and-interpolation",
+    "programmable-3d-engine-api",
+    "coordinate-spaces-and-transformations",
+    "cameras-matrices-and-perspective",
+    "building-3d-scenes-and-draw-calls",
+    "uvs-materials-and-procedural-surfaces",
+    "normals-lighting-and-shadows",
+    "ray-marching-and-signed-distance-scenes",
+    "ray-tracing-fundamentals",
+    "graphics-capstone-procedural-world"
+  ]
+}

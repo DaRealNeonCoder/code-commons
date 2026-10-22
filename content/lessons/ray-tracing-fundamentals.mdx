@@ -1,0 +1,52 @@
+---
+title: "Ray Tracing Fundamentals"
+order: 15
+summary: "Understand primary rays, intersections, reflections, and when a ray tracer is practical in a shader."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["geometry", "math", "simulation"]
+tags: ["ray-tracing", "rays", "intersections", "reflection"]
+languages: ["javascript"]
+difficulty: "advanced"
+puzzles: ["shader:graphics-ray-intersection"]
+---
+
+# Ray tracing is a different loop
+
+Ray marching asks how far it may safely travel. Ray tracing solves an
+intersection equation, such as the quadratic for a ray and sphere. For each
+pixel:
+
+1. Construct a primary ray from the camera through the pixel.
+2. Find the closest positive intersection.
+3. Compute the hit normal and direct lighting.
+4. Reflect the ray and recurse or iterate for another bounce.
+
+One reflection step already demonstrates the central idea:
+
+```glsl
+vec3 reflectedRay = reflect(rayDirection, normal);
+```
+
+In codeloop's fragment runtime, a small fixed loop and a few analytic shapes
+are practical. Full global illumination, acceleration structures, meshes, and
+many-bounce path tracing are outside the runtime and outside this course.
+
+<ReactDemo
+  title="Reflect a ray from a surface"
+  code={`function Demo() {
+  const [normal, setNormal] = React.useState(0.5);
+  const reflected = (1 - normal).toFixed(2);
+  return <div style={{ fontFamily: 'system-ui', padding: 16 }}><div style={{ height: 90, background: 'linear-gradient(150deg, transparent 48%, #fbbf24 49% 51%, transparent 52%), #0f172a' }} /><input type="range" min="0" max="1" step="0.01" value={normal} onChange={e => setNormal(+e.target.value)} /><p>hit normal component: {normal.toFixed(2)} · reflected direction component: {reflected}</p></div>;
+}`}
+/>
+
+## Checkpoint
+
+The [ray intersection puzzle](/shaders/graphics-ray-intersection) asks for a
+single analytic sphere hit. At the center pixel, the ray must hit; at a corner
+pixel it must miss. Draw the normal as a color to inspect the intersection
+before adding reflection.
+
+**Boundary to remember:** ray tracing here means a small educational fragment
+shader, not a promise of production-quality photorealistic rendering.

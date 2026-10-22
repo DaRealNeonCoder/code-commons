@@ -19,6 +19,7 @@ import { getProject } from "./src/lib/creatorProjects";
 import { parseCircuit, EMPTY_CIRCUIT } from "./src/lib/circuits/circuitData";
 import { getPuzzlePorts, getPuzzleTests, validatePuzzleCircuit } from "./src/lib/circuits/puzzle";
 import { getShaderPuzzle } from "./src/lib/shaders/puzzle";
+import { FRAGMENT_SHADER_MODE, PROGRAMMABLE_3D_MODE, normalizeProgrammableFiles } from "./src/lib/shaders/programmable3d.js";
 import { normalizeMathQuiz } from "./src/lib/mathQuiz";
 
 const ROOT = process.cwd();
@@ -75,6 +76,25 @@ async function importMdx(kind, dir, store, payloadFor) {
   }
 }
 
+function shaderPayload(data) {
+  const runtime = data.runtime === PROGRAMMABLE_3D_MODE ? PROGRAMMABLE_3D_MODE : FRAGMENT_SHADER_MODE;
+  if (runtime === PROGRAMMABLE_3D_MODE) {
+    const sourceFiles = normalizeProgrammableFiles(data.sourceFiles);
+    return {
+      runtime,
+      starterCode: sourceFiles.fragment,
+      sourceFiles,
+      puzzleConfig: null,
+    };
+  }
+  return {
+    runtime,
+    starterCode: str(data.starterCode),
+    sourceFiles: null,
+    puzzleConfig: data.shaderPuzzle == null ? null : getShaderPuzzle(data.shaderPuzzle),
+  };
+}
+
 function puzzlePayload(data) {
   const kind = data.kind == null ? "coding" : data.kind;
   if (kind === "coding") {
@@ -99,10 +119,7 @@ async function main() {
 
   await importMdx("puzzle", "content/puzzles", puzzleStore, puzzlePayload);
 
-  await importMdx("shader", "content/shaders", shaderStore, (d) => ({
-    starterCode: str(d.starterCode),
-    puzzleConfig: d.shaderPuzzle == null ? null : getShaderPuzzle(d.shaderPuzzle),
-  }));
+  await importMdx("shader", "content/shaders", shaderStore, shaderPayload);
 
   await importMdx("circuit", "content/circuits", circuitStore, (d) => {
     const starterCircuit = parseCircuit(d.starterCircuit) ?? EMPTY_CIRCUIT;

@@ -1,0 +1,50 @@
+---
+title: "Programmable 3D Gallery"
+summary: "Render multiple objects with separate transforms and material uniforms."
+order: 11
+available: true
+runtime: programmable-3d
+sourceFiles:
+  cpu: |
+    function setup(engine) {
+      const cube = engine.scene.add({ geometry: engine.geometry.cube(), material: engine.material({ uniforms: { u_color: [0.95, 0.25, 0.3] } }), position: [-1.2, 0.2, 0] });
+      const plane = engine.scene.add({ geometry: engine.geometry.plane(), material: engine.material({ uniforms: { u_color: [0.2, 0.9, 0.55] } }), position: [1.2, -0.6, 0], scale: [0.8, 0.8, 0.8] });
+      const triangle = engine.scene.add({ geometry: engine.geometry.triangle(), material: engine.material({ uniforms: { u_color: [0.95, 0.7, 0.15] } }), position: [0, 1, 0] });
+      engine.camera.position.set(0, 0, 5);
+      engine.camera.lookAt(0, 0, 0);
+      return { update({ delta }) { cube.rotation.y += delta; triangle.rotation.z -= delta * 0.7; } };
+    }
+  vertex: |
+    attribute vec3 a_position;
+    attribute vec3 a_normal;
+    attribute vec2 a_uv;
+    uniform mat4 u_model;
+    uniform mat4 u_view;
+    uniform mat4 u_projection;
+    varying vec3 v_normal;
+    varying vec2 v_uv;
+    void main() {
+      vec4 world = u_model * vec4(a_position, 1.0);
+      v_normal = mat3(u_model) * a_normal;
+      v_uv = a_uv;
+      gl_Position = u_projection * u_view * world;
+    }
+  fragment: |
+    precision mediump float;
+    uniform vec3 u_color;
+    varying vec3 v_normal;
+    varying vec2 v_uv;
+    void main() {
+      vec3 n = normalize(v_normal);
+      float light = 0.25 + 0.75 * max(dot(n, normalize(vec3(-0.4, 0.8, 0.6))), 0.0);
+      gl_FragColor = vec4(u_color * light, 1.0);
+    }
+areas: ["programming-fundamentals"]
+topics: ["geometry", "simulation"]
+tags: ["webgl", "scene", "draw-calls", "materials"]
+languages: ["javascript"]
+difficulty: intermediate
+---
+
+This scene intentionally uses only built-in geometry. Add a custom indexed
+triangle after you can explain why the scene needs three draw calls.

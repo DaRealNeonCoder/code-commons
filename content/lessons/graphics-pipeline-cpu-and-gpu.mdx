@@ -1,0 +1,52 @@
+---
+title: "The Graphics Pipeline: CPU and GPU"
+order: 6
+summary: "Understand what the CPU schedules, what the GPU computes, and where shader stages fit."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["simulation", "geometry"]
+tags: ["webgl", "pipeline", "cpu", "gpu"]
+languages: ["javascript"]
+difficulty: "beginner"
+puzzles: ["shader:graphics-pipeline-check"]
+---
+
+# Two programmable sides of a frame
+
+The **CPU** runs JavaScript. It creates scene objects, updates transforms,
+chooses materials, and issues draw calls. The **GPU** runs many shader
+invocations in parallel. It transforms vertices and computes the final color of
+fragments.
+
+The full path is:
+
+1. CPU code describes geometry, camera, and material state.
+2. The vertex shader runs once per vertex and produces clip-space position.
+3. Rasterization turns triangles into fragments and interpolates varyings.
+4. The fragment shader runs for each covered fragment and writes a color.
+5. Depth testing decides which visible fragments remain.
+
+The existing fragment-only workflow starts after steps 1–3 using an internal
+full-screen triangle. The programmable 3D workflow exposes those earlier
+steps, but it remains opt-in.
+
+<ReactDemo
+  title="Trace a frame"
+  code={`function Demo() {
+  const stages = ['CPU: scene state', 'Vertex: positions', 'Rasterizer: fragments', 'Fragment: colors', 'Framebuffer: image'];
+  const [active, setActive] = React.useState(0);
+  return <div style={{ fontFamily: 'system-ui', padding: 16 }}>{stages.map((stage, i) => <button key={stage} onClick={() => setActive(i)} style={{ display: 'block', width: '100%', margin: 5, padding: 8, textAlign: 'left', background: i === active ? '#38bdf8' : '#e2e8f0', border: 0, borderRadius: 6 }}>{i + 1}. {stage}</button>)}<p>Current stage: <strong>{stages[active]}</strong></p></div>;
+}`}
+/>
+
+## Checkpoint
+
+The [pipeline check](/shaders/graphics-pipeline-check) is a visual ordering
+puzzle. It asks you to render five numbered bands in pipeline order. The
+important objective is not memorizing jargon: explain which values exist at
+each stage and why a fragment can receive an interpolated value that no
+vertex wrote directly.
+
+> [!TIP]
+> A draw call is a useful boundary. Change CPU state between two draw calls,
+> and the GPU can render two objects with different transforms or materials.

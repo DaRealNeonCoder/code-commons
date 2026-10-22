@@ -1,0 +1,52 @@
+---
+title: "Coordinate Spaces and Transformations"
+order: 9
+summary: "Track a point from model space to world, view, and clip space with matrix transforms."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["matrices", "math", "geometry"]
+tags: ["webgl", "coordinate-spaces", "matrices", "transforms"]
+languages: ["javascript"]
+difficulty: "intermediate"
+puzzles: ["shader:graphics-transform-order"]
+---
+
+# The same point, four meanings
+
+A vertex starts in **model space**, where a cube is centered around the origin.
+The CPU's object transform places it in **world space**. The camera's view
+transform expresses the world relative to the camera. Projection maps that
+view-space point into clip space, where WebGL clips and rasterizes it.
+
+The vertex shader performs the standard chain:
+
+```glsl
+vec4 world = u_model * vec4(a_position, 1.0);
+gl_Position = u_projection * u_view * world;
+```
+
+Matrix order matters because matrix multiplication is not commutative. Scaling
+then translating is different from translating then scaling. The engine owns
+the model, view, and projection matrices; the lesson is about reading their
+meaning and changing the CPU transforms deliberately.
+
+<ReactDemo
+  title="Translation before or after scale"
+  code={`function Demo() {
+  const [scale, setScale] = React.useState(1.5);
+  const [x, setX] = React.useState(0.4);
+  return <div style={{ fontFamily: 'system-ui', padding: 16 }}><div style={{ width: 220, height: 90, background: '#0f172a', position: 'relative' }}><span style={{ position: 'absolute', left: 15 + x * 120, top: 28, width: 35 * scale, height: 35 * scale, background: '#38bdf8', transform: 'rotate(12deg)' }} /></div><label>translation <input type="range" min="0" max="1" step="0.01" value={x} onChange={e => setX(+e.target.value)} /></label><label style={{ display: 'block' }}>scale <input type="range" min="0.5" max="2" step="0.01" value={scale} onChange={e => setScale(+e.target.value)} /></label></div>;
+}`}
+/>
+
+## Checkpoint
+
+In the [transform order puzzle](/shaders/graphics-transform-order), move a
+triangle to `(1, 0, 0)` and scale it by two without changing its rotation. The
+target makes the order visible. State which space each displayed coordinate
+belongs to before you edit the code.
+
+> [!TIP]
+> The engine uses column-major matrices and column vectors. Read
+> `projection * view * model * position` from right to left when explaining a
+> vertex's journey.

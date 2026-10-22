@@ -1,0 +1,53 @@
+---
+title: "Programmable 3D Lighting"
+summary: "Shade a cube with normal-based diffuse and specular lighting."
+order: 13
+available: true
+runtime: programmable-3d
+sourceFiles:
+  cpu: |
+    function setup(engine) {
+      engine.scene.add({ geometry: engine.geometry.cube(), material: engine.material({ uniforms: { u_color: [0.2, 0.55, 1.0] } }) });
+      engine.camera.position.set(0, 0, 4.5);
+      engine.camera.lookAt(0, 0, 0);
+    }
+  vertex: |
+    attribute vec3 a_position;
+    attribute vec3 a_normal;
+    attribute vec2 a_uv;
+    uniform mat4 u_model;
+    uniform mat4 u_view;
+    uniform mat4 u_projection;
+    uniform float u_time;
+    varying vec3 v_normal;
+    varying vec3 v_worldPosition;
+    void main() {
+      vec4 world = u_model * vec4(a_position, 1.0);
+      v_worldPosition = world.xyz;
+      v_normal = mat3(u_model) * a_normal;
+      gl_Position = u_projection * u_view * world;
+    }
+  fragment: |
+    precision mediump float;
+    uniform vec3 u_color;
+    uniform vec3 u_cameraPosition;
+    varying vec3 v_normal;
+    varying vec3 v_worldPosition;
+    void main() {
+      vec3 n = normalize(v_normal);
+      vec3 l = normalize(vec3(-0.4, 0.8, 0.6));
+      vec3 v = normalize(u_cameraPosition - v_worldPosition);
+      float diffuse = max(dot(n, l), 0.0);
+      float specular = pow(max(dot(v, reflect(-l, n)), 0.0), 32.0);
+      gl_FragColor = vec4(u_color * (0.18 + 0.82 * diffuse) + vec3(specular), 1.0);
+    }
+areas: ["programming-fundamentals"]
+topics: ["geometry", "math"]
+tags: ["webgl", "normals", "lighting", "specular"]
+languages: ["javascript"]
+difficulty: intermediate
+---
+
+Compare the normal visualization with diffuse and specular terms. Shadow maps
+are not supplied by this runner; use the separate ray-marching lesson for a
+practical soft-shadow experiment.

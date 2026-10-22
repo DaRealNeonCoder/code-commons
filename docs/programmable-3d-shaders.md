@@ -64,8 +64,14 @@ numbers. The engine supplies these uniforms when a shader declares them:
 
 The default vertex shader uses `a_position`, `a_normal`, and `a_uv`; the
 default fragment shader receives `v_normal`, `v_uv`, and `v_worldPosition`.
-Creators can replace either file and add their own attributes/uniforms as long
-as the CPU material provides their uniform values.
+Creators can replace either file. The runner currently binds only
+`a_position`, `a_normal`, and `a_uv`; it does not provide arbitrary custom
+vertex attributes. CPU materials may provide numeric float uniforms, but not
+samplers or textures yet.
+
+This boundary is intentional for the first course: procedural materials can
+still use UVs, time, normals, and uniforms, while texture loading, filtering,
+shadow maps, and extra vertex attributes remain optional future engine work.
 
 ## Persistence and publishing
 

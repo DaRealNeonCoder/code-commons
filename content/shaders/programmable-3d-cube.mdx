@@ -1,0 +1,60 @@
+---
+title: "Programmable 3D Cube"
+summary: "Use setup(engine), a built-in cube, and three programmable shader files."
+order: 8
+available: true
+runtime: programmable-3d
+sourceFiles:
+  cpu: |
+    function setup(engine) {
+      const cube = engine.scene.add({
+        geometry: engine.geometry.cube(),
+        material: engine.material({ uniforms: { u_color: [0.2, 0.7, 1.0] } }),
+        position: [0, 0, 0],
+      });
+      engine.camera.position.set(0, 0, 4.5);
+      engine.camera.lookAt(0, 0, 0);
+      return { update({ time, delta }) {
+        cube.rotation.y += delta * 0.9;
+        cube.rotation.x = Math.sin(time * 0.8) * 0.25;
+      } };
+    }
+  vertex: |
+    attribute vec3 a_position;
+    attribute vec3 a_normal;
+    attribute vec2 a_uv;
+    uniform mat4 u_model;
+    uniform mat4 u_view;
+    uniform mat4 u_projection;
+    varying vec3 v_normal;
+    varying vec2 v_uv;
+    varying vec3 v_worldPosition;
+    void main() {
+      vec4 worldPosition = u_model * vec4(a_position, 1.0);
+      v_worldPosition = worldPosition.xyz;
+      v_normal = mat3(u_model) * a_normal;
+      v_uv = a_uv;
+      gl_Position = u_projection * u_view * worldPosition;
+    }
+  fragment: |
+    precision mediump float;
+    uniform vec3 u_color;
+    uniform float u_time;
+    varying vec3 v_normal;
+    varying vec2 v_uv;
+    void main() {
+      vec3 normal = normalize(v_normal);
+      vec3 light = normalize(vec3(-0.4, 0.8, 0.6));
+      float diffuse = max(dot(normal, light), 0.0);
+      float stripe = 0.08 * sin(u_time * 2.0 + v_uv.x * 6.2831);
+      gl_FragColor = vec4(u_color * (0.22 + diffuse * 0.78) + stripe, 1.0);
+    }
+areas: ["programming-fundamentals"]
+topics: ["geometry", "matrices", "simulation"]
+tags: ["webgl", "programmable-3d", "cube"]
+languages: ["javascript"]
+difficulty: intermediate
+---
+
+Edit the CPU, vertex, and fragment files independently. The preview reports
+which stage failed, so a broken experiment is still useful feedback.

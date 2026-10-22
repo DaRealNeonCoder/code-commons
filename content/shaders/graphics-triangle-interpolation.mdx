@@ -1,0 +1,25 @@
+---
+title: "Triangle Interpolation Puzzle"
+summary: "Render a triangle whose vertex colors are interpolated by the GPU."
+order: 7
+available: true
+starterCode: |
+  void main() {
+      vec2 p = gl_FragCoord.xy / iResolution.xy;
+      fragColor = vec4(p.x, p.y, 0.5, 1.0);
+  }
+shaderPuzzle:
+  width: 96
+  height: 96
+  tolerance: 0.1
+  requiredMatch: 0.9
+  referenceImage: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpath d='M48 4L4 92h88z' fill='%2338bdf8'/%3E%3C/svg%3E"
+areas: ["programming-fundamentals"]
+topics: ["geometry", "math"]
+tags: ["shader", "triangles", "interpolation"]
+languages: ["javascript"]
+difficulty: intermediate
+---
+
+This target is a visual reminder that programmable 3D uses triangles while
+the fragment-only workflow uses an internal full-screen triangle.

@@ -1,0 +1,48 @@
+---
+title: "Combining Shapes, Noise, and Interaction"
+order: 5
+summary: "Turn simple distance fields into layered, animated scenes that respond to the pointer."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["geometry", "simulation", "math"]
+tags: ["shaders", "noise", "sdf", "interaction"]
+languages: ["javascript"]
+difficulty: "beginner"
+puzzles: ["shader:graphics-sdf-composition"]
+---
+
+# From formulas to shader art
+
+Signed distances combine predictably:
+
+- `min(a, b)` is a union, because either shape can contain the point.
+- `max(a, b)` is an intersection when the distances are oriented correctly.
+- `max(a, -b)` subtracts one shape from another.
+
+Small hash functions can provide repeatable value noise without a texture. Use
+noise as a color or displacement ingredient, not as a replacement for
+understanding the base shape. For pointer-driven art, `iMouse.xy` is in
+normalized canvas coordinates; map it into the same centered coordinate system
+as your SDF.
+
+<ReactDemo
+  title="Union versus subtraction"
+  code={`function Demo() {
+  const [subtract, setSubtract] = React.useState(false);
+  return <div style={{ fontFamily: 'system-ui', padding: 16 }}><div style={{ position: 'relative', width: 220, height: 120, background: '#0f172a', overflow: 'hidden' }}><span style={{ position: 'absolute', left: 45, top: 25, width: 80, height: 80, borderRadius: '50%', background: '#38bdf8' }} /><span style={{ position: 'absolute', left: 100, top: 40, width: 65, height: 65, borderRadius: '50%', background: subtract ? '#0f172a' : '#fbbf24' }} /></div><label><input type="checkbox" checked={subtract} onChange={e => setSubtract(e.target.checked)} /> use max(dA, -dB) subtraction</label></div>;
+}`}
+/>
+
+## Checkpoint and mini-project
+
+The [SDF composition puzzle](/shaders/graphics-sdf-composition) asks for a
+ring made from two circles. Its target is checked at a fixed resolution, so a
+correct `max(dOuter, -dInner)` beats a hand-tuned image.
+
+**Mini-project — reactive poster:** combine three SDFs, a moving gradient, and
+the pointer position to make a poster. Save two versions: one with an
+intermediate distance-field visualization and one with your final palette.
+
+This completes the shader-art track's first arc. From here, the course keeps
+that workflow available while introducing a second workflow only when meshes
+and CPU-side control become useful.

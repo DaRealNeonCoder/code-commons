@@ -1,0 +1,51 @@
+---
+title: "Vertices, Triangles, and Interpolation"
+order: 7
+summary: "Move from pixels to mesh data and pass attributes through a vertex shader."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["geometry", "math"]
+tags: ["webgl", "vertices", "triangles", "interpolation"]
+languages: ["javascript"]
+difficulty: "intermediate"
+puzzles: ["shader:graphics-triangle-interpolation"]
+---
+
+# A triangle is the programmable 3D primitive
+
+The engine's programmable geometry uses flat arrays:
+
+```js
+engine.geometry.from({
+  positions: [-1, -1, 0, 1, -1, 0, 0, 1, 0],
+  normals: [0, 0, 1, 0, 0, 1, 0, 0, 1],
+  uvs: [0, 0, 1, 0, 0.5, 1],
+  indices: [0, 1, 2],
+});
+```
+
+The current runner binds exactly `a_position`, `a_normal`, and `a_uv`, and
+renders indexed triangles. A vertex shader can write `gl_Position` and pass
+values through `varying` variables. During rasterization those values are
+interpolated across the triangle before the fragment shader reads them.
+
+<ReactDemo
+  title="Barycentric color interpolation"
+  code={`function Demo() {
+  const [x, setX] = React.useState(0.5);
+  const [y, setY] = React.useState(0.35);
+  const z = Math.max(0, 1 - x - y);
+  return <div style={{ fontFamily: 'system-ui', padding: 16 }}><div style={{ width: 220, height: 150, clipPath: 'polygon(50% 0, 0 100%, 100% 100%)', background: 'linear-gradient(135deg, #f43f5e, #38bdf8 55%, #fbbf24)' }} /><label>a <input type="range" min="0" max="1" step="0.01" value={x} onChange={e => setX(+e.target.value)} /></label><label>b <input type="range" min="0" max="1" step="0.01" value={y} onChange={e => setY(+e.target.value)} /></label><p>barycentric weights: {z.toFixed(2)}, {x.toFixed(2)}, {y.toFixed(2)}</p></div>;
+}`}
+/>
+
+## Checkpoint
+
+The [triangle interpolation puzzle](/shaders/graphics-triangle-interpolation)
+requires a triangle whose three corners have distinct colors. Its center must
+be the average of the three corner colors. Change one vertex color to predict
+the center before rendering it.
+
+The fragment-only path is still the right tool for a full-screen mathematical
+image. Use programmable geometry when the vertices themselves carry useful
+structure or when the CPU needs to control multiple objects.

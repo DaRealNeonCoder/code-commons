@@ -1,0 +1,56 @@
+---
+title: "UVs, Materials, and Procedural Surfaces"
+order: 12
+summary: "Use interpolated UV coordinates and uniforms to make reusable procedural materials."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["geometry", "math"]
+tags: ["webgl", "uv", "materials", "procedural"]
+languages: ["javascript"]
+difficulty: "intermediate"
+puzzles: ["shader:programmable-3d-material"]
+---
+
+# Surface data without an asset pipeline
+
+The built-in plane and cube include UV coordinates. The vertex shader passes
+`a_uv` to `v_uv`; the fragment shader can use the interpolated value to create
+stripes, checkerboards, gradients, or other **procedural materials**:
+
+```glsl
+float stripe = step(0.5, fract(v_uv.x * 8.0));
+vec3 color = mix(u_color, vec3(1.0), stripe * 0.35);
+gl_FragColor = vec4(color, 1.0);
+```
+
+This runner currently has no image loader, sampler, texture object, or
+filtering API. You can learn what texture coordinates mean and how a shader
+would sample them, but you should not pretend that `sampler2D` works here.
+Procedural surfaces are the supported equivalent.
+
+Conceptually, a texture **sample** looks up a color at a UV coordinate. Nearest
+filtering chooses one texel; linear filtering blends nearby texels. Repeated
+or clamped addressing decides what happens outside `[0, 1]`. Those choices
+change the image at edges and at different scales. In a renderer with textures
+the fragment code would declare `sampler2D` and call `texture2D` (or `texture`
+in newer GLSL); in this runner, replace that lookup with a mathematical
+function of `v_uv` so the experiment stays executable.
+
+<ReactDemo
+  title="UVs become stripes"
+  code={`function Demo() {
+  const [count, setCount] = React.useState(8);
+  return <div style={{ fontFamily: 'system-ui', padding: 16 }}><div style={{ height: 70, background: 'repeating-linear-gradient(90deg, #38bdf8 0 ' + (100 / count / 2) + '%, #172554 ' + (100 / count / 2) + '% ' + (100 / count) + '%)' }} /><label>stripe count <input type="range" min="2" max="16" value={count} onChange={e => setCount(+e.target.value)} /></label><code style={{ display: 'block' }}>step(0.5, fract(v_uv.x * {count}.0))</code></div>;
+}`}
+/>
+
+## Checkpoint
+
+In the [procedural material puzzle](/shaders/programmable-3d-material), put
+four alternating bands on a plane using `v_uv`. The objective is a material
+calculation, not a texture workaround. Compare the effect of `step`, `mix`,
+and a smooth threshold.
+
+**Optional future extension:** add a sandbox-safe CPU-generated texture API
+with explicit nearest/linear filtering. It is not required for this course's
+supported path.

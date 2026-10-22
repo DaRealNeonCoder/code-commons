@@ -1,0 +1,52 @@
+---
+title: "Ray Marching and Signed-Distance Scenes"
+order: 14
+summary: "Use a fragment shader to render 3D-looking SDF scenes with normals, lighting, and soft shadows."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["geometry", "math", "simulation"]
+tags: ["ray-marching", "sdf", "procedural-3d", "shaders"]
+languages: ["javascript"]
+difficulty: "advanced"
+puzzles: ["shader:graphics-raymarched-spheres"]
+---
+
+# 3D without a mesh
+
+Ray marching stays in the shader-art workflow. For each pixel, build a camera
+ray and repeatedly advance by the scene's signed distance. If the distance is
+small, the ray hit a surface. Estimate a normal with finite differences and
+reuse the diffuse/specular math from the lighting lesson.
+
+```glsl
+float scene(vec3 p) {
+  float sphere = length(p) - 1.0;
+  float floorPlane = p.y + 1.0;
+  return min(sphere, floorPlane);
+}
+```
+
+Union, intersection, and subtraction work in 3D exactly as they did for 2D
+SDFs. Soft shadows can sample the distance field toward a light and reduce
+visibility when another surface gets close. This is practical at small step
+counts, but it is not a general mesh renderer.
+
+<ReactDemo
+  title="Ray-march one sphere"
+  code={`function Demo() {
+  const [steps, setSteps] = React.useState(32);
+  const quality = Math.min(1, steps / 64);
+  return <div style={{ fontFamily: 'system-ui', padding: 16 }}><div style={{ width: 220, height: 130, background: 'radial-gradient(circle at 44% 38%, #f8fafc, #38bdf8 24%, #172554 55%, #020617 56%)' }} /><label>steps <input type="range" min="4" max="96" value={steps} onChange={e => setSteps(+e.target.value)} /></label><p>more steps: {Math.round(quality * 100)}% hit precision</p></div>;
+}`}
+/>
+
+## Checkpoint and project
+
+Open [Ray-marched Spheres](/shaders/graphics-raymarched-spheres). Render two
+SDF spheres and a floor, with an obvious cast-shadow band. A correct solution
+must define a ray direction, stop on a hit or a maximum distance, and shade
+the normal; a painted gradient does not satisfy the rendering requirement.
+
+This lesson is deliberately placed after mesh lighting. The math is shared,
+but the data path differs: ray marching evaluates a scene formula per pixel,
+where programmable 3D evaluates attributes on mesh triangles.

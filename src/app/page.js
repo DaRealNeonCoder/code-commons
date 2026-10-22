@@ -8,61 +8,6 @@
 
 
 
-
-
-GAMENGINE COURSE
-Create a new Computer Graphics & Shaders course for codeloop, built around its lightweight, programmable WebGL graphics engine.
-
-Design a practical, visually driven learning path that takes learners from simple shader art to building and rendering interactive 3D scenes. Build on basic programming and introductory linear algebra without unnecessarily repeating existing lessons.
-
-Structure the course as a gradual progression:
-
-2D shader fundamentals: pixels, UV coordinates, resolution, color, time, shapes, gradients, and signed distance functions. Start with simple effects such as drawing a circle using only a fragment shader.
-
-Procedural shader art: animation, transformations, patterns, noise, and combining shapes to create increasingly complex visuals.
-
-The graphics pipeline: explain the CPU versus GPU, what the vertex and fragment shader stages do, and how data travels between them.
-
-Geometry and vertex shaders: vertices, triangles, attributes, interpolation, and passing data between shader stages.
-
-3D mathematics: coordinate spaces, transformations, matrices, model/view/projection transforms, cameras, and perspective.
-
-Building 3D scenes: geometry, multiple objects, draw calls, materials, and controlling scenes using CPU-side JavaScript.
-
-Textures and materials: texture coordinates, sampling, filtering, surface properties, and procedural materials.
-
-Lighting: surface normals, diffuse and specular lighting, basic shading models, and introductory shadow techniques.
-
-Procedural 3D graphics: ray marching, signed distance fields, constructive solid geometry, and combining mathematical shapes into scenes.
-
-Ray tracing fundamentals: rays, intersections, reflections, and the basic principles behind realistic rendering, where practical within the available runtime.
-
-First, inspect the graphics engine and its actual API. Align the curriculum with the capabilities it supports rather than inventing APIs or assuming features exist. Identify any small engine improvements that are genuinely necessary, and distinguish them from optional future extensions.
-
-Create focused lessons, coding puzzles, and interactive demos throughout the course. Use objectively verifiable goals where possible, such as matching a mathematical shape, implementing a transformation, producing a specified lighting result, or satisfying a rendering requirement.
-
-Include progressively challenging projects that combine concepts into complete visual results. Let learners experiment directly with shaders, inspect intermediate results, and understand how changing the math or CPU-side code affects the rendered image.
-
-Important: preserve two equally valid workflows throughout the course:
-
-Shader art: write a fragment shader and immediately render images and animations without needing CPU-side scene code or a 3D pipeline setup.
-
-Programmable 3D graphics: use CPU-side JavaScript, geometry, cameras, and custom vertex/fragment shaders when the lesson requires them.
-
-Introduce additional complexity only when it becomes useful. Do not force beginners creating simple shader art to learn the entire rendering engine first.
-
-Keep the course focused on computer graphics fundamentals and practical experimentation. Avoid turning it into a complete game-development course or diving unnecessarily into research-level rendering techniques. Follow codeloop's existing conventions for courses, lessons, puzzles, and interactive demos.
-
-
-
-
-
-
-
-
-
-
-
 HARDWARE COURSE
 
 Create a new **Introduction to Computer Engineering** course for codeloop.

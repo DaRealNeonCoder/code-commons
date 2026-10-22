@@ -1,0 +1,55 @@
+---
+title: "The Programmable 3D Engine API"
+order: 8
+summary: "Create a real 3D scene with setup(engine), built-in geometry, materials, and an update loop."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["geometry", "simulation"]
+tags: ["webgl", "javascript", "engine-api", "scenes"]
+languages: ["javascript"]
+difficulty: "intermediate"
+puzzles: ["shader:programmable-3d-cube"]
+---
+
+# Opt in to programmable 3D
+
+Select **Programmable 3D scene** when a lesson needs CPU-side scene code. The
+CPU file must define `setup(engine)`. A minimal object is:
+
+```js
+function setup(engine) {
+  const cube = engine.scene.add({
+    geometry: engine.geometry.cube(),
+    material: engine.material({ uniforms: { u_color: [0.2, 0.7, 1.0] } }),
+    position: [0, 0, 0],
+  });
+  engine.camera.position.set(0, 0, 4.5);
+  return { update({ delta }) { cube.rotation.y += delta; } };
+}
+```
+
+The three files are deliberately visible: CPU JavaScript, vertex GLSL, and
+fragment GLSL. The engine supplies `u_model`, `u_view`, `u_projection`,
+`u_cameraPosition`, `u_time`, and `u_resolution`. Material uniforms can be
+numbers or numeric vectors/matrices.
+
+<ReactDemo
+  title="Choose the smallest useful workflow"
+  code={`function Demo() {
+  const [mode, setMode] = React.useState('art');
+  const text = mode === 'art' ? 'Fragment shader only: pixels, UVs, time, and math.' : 'Programmable 3D: CPU scene code, vertices, camera, and two shader stages.';
+  return <div style={{ fontFamily: 'system-ui', padding: 16 }}><button onClick={() => setMode('art')} style={{ marginRight: 8 }}>Shader art</button><button onClick={() => setMode('scene')}>3D scene</button><p>{text}</p></div>;
+}`}
+/>
+
+## Checkpoint and project
+
+Open [Programmable 3D Cube](/shaders/programmable-3d-cube). Change only one
+file at a time: first the CPU rotation, then the vertex position, then the
+fragment color. A valid result has one centered cube, visible depth, and a
+rotation driven by `delta`, not by a fixed frame count.
+
+This API is intentionally small: built-in cube, plane, and triangle geometry;
+custom indexed geometry; one perspective camera; scene add/remove/clear; and
+normalized pointer input. It is enough for graphics fundamentals without
+requiring a game loop or asset pipeline.

@@ -1,0 +1,30 @@
+---
+title: "Ray-Marched Spheres"
+summary: "Build a small SDF scene with two spheres, a floor, a normal, and a soft shadow."
+order: 14
+available: true
+starterCode: |
+  float scene(vec3 p) {
+      return length(p) - 1.0;
+  }
+
+  void main() {
+      vec2 uv = (2.0 * gl_FragCoord.xy - iResolution.xy) / iResolution.y;
+      fragColor = vec4(vec3(0.02 + 0.2 * length(uv)), 1.0);
+  }
+shaderPuzzle:
+  width: 128
+  height: 96
+  tolerance: 0.12
+  requiredMatch: 0.82
+  referenceImage: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 96'%3E%3Crect width='128' height='96' fill='%23020617'/%3E%3Cellipse cx='50' cy='45' rx='24' ry='25' fill='%2338bdf8'/%3E%3Cellipse cx='90' cy='55' rx='14' ry='15' fill='%23fbbf24'/%3E%3Cpath d='M0 78Q64 64 128 78v18H0z' fill='%231e293b'/%3E%3C/svg%3E"
+areas: ["programming-fundamentals"]
+topics: ["geometry", "math", "simulation"]
+tags: ["shader", "ray-marching", "sdf", "lighting"]
+languages: ["javascript"]
+difficulty: advanced
+---
+
+March a primary ray, estimate the normal, and shade the hit. Add a bounded
+shadow march toward the light. Keep the step count small enough for the live
+preview.

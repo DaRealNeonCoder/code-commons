@@ -1,0 +1,52 @@
+---
+title: "Cameras, Matrices, and Perspective"
+order: 10
+summary: "Use the engine's perspective camera and implement an orbit controller from pointer input."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["matrices", "math", "simulation"]
+tags: ["webgl", "camera", "perspective", "input"]
+languages: ["javascript"]
+difficulty: "intermediate"
+puzzles: ["shader:graphics-perspective"]
+---
+
+# A camera is a transform, not a magical viewport
+
+The engine camera exposes `position`, `target`, `fov`, `near`, `far`, and
+`lookAt(x, y, z)`. It constructs a view matrix from the camera pose and a
+perspective projection from field of view, aspect ratio, and clipping planes.
+Perspective makes distant objects appear smaller; orthographic projection is
+not currently a runner option.
+
+Pointer input is normalized. In the CPU update callback, `input.x` and
+`input.y` run from zero to one and `input.down` reports the pointer button. A
+simple orbit controller can convert two angles into a camera position:
+
+```js
+const radius = 4.5;
+engine.camera.position.set(
+  Math.sin(yaw) * radius,
+  Math.sin(pitch) * radius,
+  Math.cos(yaw) * radius,
+);
+engine.camera.lookAt(0, 0, 0);
+```
+
+<ReactDemo
+  title="Field of view changes perspective"
+  code={`function Demo() {
+  const [fov, setFov] = React.useState(45);
+  const near = 1;
+  const far = 4;
+  const size = 90 * (45 / fov);
+  return <div style={{ fontFamily: 'system-ui', padding: 16 }}><div style={{ height: 120, background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}><span style={{ width: size, height: size, borderRadius: 10, background: '#38bdf8' }} /><span style={{ width: size * 0.45, height: size * 0.45, borderRadius: 10, background: '#fbbf24' }} /></div><label>fov <input type="range" min="25" max="90" value={fov} onChange={e => setFov(+e.target.value)} /> {fov}°</label><p>near = {near}, far = {far}; objects outside the planes are clipped.</p></div>;
+}`}
+/>
+
+## Checkpoint
+
+The [perspective puzzle](/shaders/graphics-perspective) contains two equal
+planes at different depths. Match the camera at `(0, 0, 5)`, target the origin,
+and use a 45° field of view. Then add pointer orbiting as an extension. The
+static target keeps camera math objectively checkable before interaction.

@@ -1,0 +1,51 @@
+---
+title: "Capstone: A Procedural World"
+order: 16
+summary: "Choose the right workflow and combine coordinate math, procedural materials, lighting, and interaction into one visual result."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["geometry", "math", "simulation"]
+tags: ["capstone", "webgl", "shaders", "3d"]
+languages: ["javascript"]
+difficulty: "advanced"
+puzzles: ["shader:graphics-capstone-check"]
+---
+
+# Build a world, not a game
+
+The capstone has two equally valid submissions:
+
+1. **Shader art:** a fragment shader that ray-marches a small SDF world or
+   traces a few analytic shapes. It must run without CPU scene setup.
+2. **Programmable 3D:** CPU JavaScript creates at least three objects using
+   the documented engine API, and custom vertex/fragment shaders render them.
+
+Both submissions must include a coordinate explanation, one controlled
+parameter, and an intermediate-debug mode that exposes a normal, UV, depth, or
+distance field. The point is to connect math to pixels, not to build a game.
+
+<ReactDemo
+  title="Capstone acceptance checklist"
+  code={`function Demo() {
+  const checks = ['A measurable visual target', 'One editable math parameter', 'An inspectable intermediate view', 'Animation based on time or delta', 'A short explanation of the data path'];
+  const [done, setDone] = React.useState([]);
+  const toggle = item => setDone(values => values.includes(item) ? values.filter(value => value !== item) : [...values, item]);
+  return <div style={{ fontFamily: 'system-ui', padding: 16 }}>{checks.map(item => <label key={item} style={{ display: 'block', margin: 7 }}><input type="checkbox" checked={done.includes(item)} onChange={() => toggle(item)} /> {item}</label>)}<strong>{done.length}/{checks.length} ready</strong></div>;
+}`}
+/>
+
+## Rubric
+
+- **Image correctness (40%)** — the required shape, composition, and palette
+  are visible at a known resolution.
+- **Graphics reasoning (25%)** — explain coordinates, interpolation, and the
+  CPU/GPU boundary used by the submission.
+- **Interaction (15%)** — time, delta, or normalized pointer input changes a
+  meaningful parameter.
+- **Debuggability (10%)** — a toggleable intermediate result proves the math.
+- **Scope (10%)** — no unsupported textures, shadow-map, asset, or game-system
+  claims are hidden behind the visual result.
+
+Use the [capstone check](/shaders/graphics-capstone-check) for a small fixed
+target before making the scene your own. Publish the final work with a note
+that distinguishes supported engine features from optional future extensions.

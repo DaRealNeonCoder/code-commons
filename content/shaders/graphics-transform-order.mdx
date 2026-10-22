@@ -1,0 +1,44 @@
+---
+title: "Transform Order Study"
+summary: "Inspect model-space transforms on a custom triangle."
+order: 9
+available: true
+runtime: programmable-3d
+sourceFiles:
+  cpu: |
+    function setup(engine) {
+      const triangle = engine.scene.add({ geometry: engine.geometry.triangle(), material: engine.material({ uniforms: { u_color: [0.2, 0.8, 1.0] } }), position: [1, 0, 0], scale: [2, 2, 2] });
+      engine.camera.position.set(0, 0, 5);
+      engine.camera.lookAt(0, 0, 0);
+      return { update({ time }) { triangle.rotation.z = Math.sin(time) * 0.15; } };
+    }
+  vertex: |
+    attribute vec3 a_position;
+    attribute vec3 a_normal;
+    attribute vec2 a_uv;
+    uniform mat4 u_model;
+    uniform mat4 u_view;
+    uniform mat4 u_projection;
+    varying vec3 v_normal;
+    void main() {
+      vec4 world = u_model * vec4(a_position, 1.0);
+      v_normal = mat3(u_model) * a_normal;
+      gl_Position = u_projection * u_view * world;
+    }
+  fragment: |
+    precision mediump float;
+    uniform vec3 u_color;
+    varying vec3 v_normal;
+    void main() {
+      float light = 0.3 + 0.7 * max(dot(normalize(v_normal), normalize(vec3(-0.2, 0.8, 0.5))), 0.0);
+      gl_FragColor = vec4(u_color * light, 1.0);
+    }
+areas: ["programming-fundamentals"]
+topics: ["matrices", "geometry"]
+tags: ["webgl", "transforms", "matrices"]
+languages: ["javascript"]
+difficulty: intermediate
+---
+
+The CPU deliberately sets translation and scale separately so the model matrix
+can be inspected while you reason about multiplication order.

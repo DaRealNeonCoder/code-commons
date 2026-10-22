@@ -1,0 +1,44 @@
+---
+title: "Perspective Camera Study"
+summary: "Compare equal objects at different depths through the engine camera."
+order: 10
+available: true
+runtime: programmable-3d
+sourceFiles:
+  cpu: |
+    function setup(engine) {
+      engine.scene.add({ geometry: engine.geometry.cube(), material: engine.material({ uniforms: { u_color: [0.3, 0.75, 1.0] } }), position: [-0.8, 0, 0] });
+      engine.scene.add({ geometry: engine.geometry.cube(), material: engine.material({ uniforms: { u_color: [1.0, 0.55, 0.2] } }), position: [0.8, 0, -1.4] });
+      engine.camera.position.set(0, 0, 5);
+      engine.camera.lookAt(0, 0, 0);
+    }
+  vertex: |
+    attribute vec3 a_position;
+    attribute vec3 a_normal;
+    attribute vec2 a_uv;
+    uniform mat4 u_model;
+    uniform mat4 u_view;
+    uniform mat4 u_projection;
+    varying vec3 v_normal;
+    void main() {
+      vec4 world = u_model * vec4(a_position, 1.0);
+      v_normal = mat3(u_model) * a_normal;
+      gl_Position = u_projection * u_view * world;
+    }
+  fragment: |
+    precision mediump float;
+    uniform vec3 u_color;
+    varying vec3 v_normal;
+    void main() {
+      float light = 0.25 + 0.75 * max(dot(normalize(v_normal), normalize(vec3(-0.4, 0.8, 0.6))), 0.0);
+      gl_FragColor = vec4(u_color * light, 1.0);
+    }
+areas: ["programming-fundamentals"]
+topics: ["matrices", "geometry", "math"]
+tags: ["webgl", "camera", "perspective"]
+languages: ["javascript"]
+difficulty: intermediate
+---
+
+The two cubes share a scale but use different depths. Change `fov` to see the
+projection change while keeping the camera position fixed.

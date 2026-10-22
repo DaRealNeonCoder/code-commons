@@ -1,0 +1,45 @@
+---
+title: "Procedural Patterns and Animation"
+order: 4
+summary: "Use repetition, transformations, and trigonometry to make a shader image move."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "simulation"]
+tags: ["shaders", "patterns", "transforms", "modulo"]
+languages: ["javascript"]
+difficulty: "beginner"
+puzzles: ["shader:graphics-grid-pattern"]
+---
+
+# Make one shape become many
+
+Procedural patterns come from transforming coordinates before evaluating a
+shape. `fract` repeats a tile, `floor` identifies a cell, and `mod` gives
+repeating phases. A centered tile coordinate is often useful:
+
+```glsl
+vec2 cell = fract(uv * 6.0) - 0.5;
+float d = length(cell) - 0.22;
+float glow = 1.0 - smoothstep(0.0, 0.04, abs(d));
+```
+
+For motion, offset the coordinate with `iTime` rather than moving every object
+on the CPU. Rotate a point with a 2D matrix, then feed it into the same SDF.
+This is still the immediate fragment workflow: one `main`, one image, no
+engine setup.
+
+<ReactDemo
+  title="Tile a moving pattern"
+  code={`function Demo() {
+  const [phase, setPhase] = React.useState(0.35);
+  const cells = Array.from({ length: 36 }, (_, i) => i);
+  return <div style={{ fontFamily: 'system-ui', padding: 16 }}><div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 22px)', gap: 3 }}>{cells.map(i => <span key={i} style={{ width: 22, height: 22, borderRadius: 4, background: (i + Math.floor(phase * 6)) % 2 ? '#38bdf8' : '#172554' }} />)}</div><input type="range" min="0" max="1" step="0.01" value={phase} onChange={e => setPhase(+e.target.value)} /><p>phase = fract(uv * 6.0 + {phase.toFixed(2)})</p></div>;
+}`}
+/>
+
+## Checkpoint
+
+The [grid pattern puzzle](/shaders/graphics-grid-pattern) requires a centered
+five-by-five repetition. Match cell count and spacing at time zero. Then try
+replacing the circle with a box or rotating each cell; the target checker is
+deliberately deterministic so visual experimentation does not hide mistakes.
