@@ -1,0 +1,42 @@
+---
+title: "Building a Half Adder"
+order: 10
+summary: "Combine XOR and AND so a circuit can add two single bits and produce both a sum and a carry."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "bit-manipulation"]
+tags: ["half-adder", "binary-arithmetic", "circuit-design"]
+languages: []
+difficulty: "beginner"
+puzzles: ["circuit:half-adder-from-nand"]
+---
+
+A **half adder** adds two one-bit inputs, `A` and `B`. It needs two outputs:
+
+- `SUM = A XOR B`
+- `CARRY = A AND B`
+
+| A | B | SUM | CARRY |
+| ---: | ---: | ---: | ---: |
+| 0 | 0 | 0 | 0 |
+| 0 | 1 | 1 | 0 |
+| 1 | 0 | 1 | 0 |
+| 1 | 1 | 0 | 1 |
+
+The half adder is “half” an adder because it has no input for a carry from an earlier column.
+
+<ReactDemo
+  title="Two outputs from one bit addition"
+  code={`function Demo() {
+  const [a, setA] = React.useState(false);
+  const [b, setB] = React.useState(false);
+  const sum = a !== b;
+  const carry = a && b;
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <button onClick={() => setA(!a)} style={{ padding: 9, marginRight: 6 }}>A = {a ? '1' : '0'}</button><button onClick={() => setB(!b)} style={{ padding: 9 }}>B = {b ? '1' : '0'}</button>
+    <p>SUM (XOR): <strong>{sum ? '1' : '0'}</strong> · CARRY (AND): <strong>{carry ? '1' : '0'}</strong></p>
+  </div>;
+}`}
+  />
+
+Build the [half adder from NAND gates](/circuits/half-adder-from-nand?lesson=building-a-half-adder&course=intro-to-computer-engineering-part-2). Its two LEDs are checked together, so a circuit that gets only the sum right is not enough.

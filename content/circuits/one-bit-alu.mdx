@@ -1,0 +1,65 @@
+---
+title: "Build a One-Bit ALU"
+summary: "Select between an AND operation and a one-bit addition operation."
+difficulty: beginner
+areas: [programming-fundamentals]
+topics: [bit-manipulation]
+tags: [alu, arithmetic, nand]
+available: true
+puzzlePorts:
+  inputs: [input_a, input_b, input_cin, input_op]
+  outputs: [led_result, led_cout]
+testCases:
+  - input: [false, false, false, false]
+    expected: [false, false]
+  - input: [false, false, false, true]
+    expected: [false, false]
+  - input: [false, false, true, false]
+    expected: [false, false]
+  - input: [false, false, true, true]
+    expected: [true, false]
+  - input: [false, true, false, false]
+    expected: [false, false]
+  - input: [false, true, false, true]
+    expected: [true, false]
+  - input: [false, true, true, false]
+    expected: [false, false]
+  - input: [false, true, true, true]
+    expected: [false, true]
+  - input: [true, false, false, false]
+    expected: [false, false]
+  - input: [true, false, false, true]
+    expected: [true, false]
+  - input: [true, false, true, false]
+    expected: [false, false]
+  - input: [true, false, true, true]
+    expected: [false, true]
+  - input: [true, true, false, false]
+    expected: [true, false]
+  - input: [true, true, false, true]
+    expected: [false, true]
+  - input: [true, true, true, false]
+    expected: [true, false]
+  - input: [true, true, true, true]
+    expected: [true, true]
+starterCircuit:
+  components:
+    - { id: input_a, kind: INPUT, label: A, x: 60, y: 60, value: false }
+    - { id: input_b, kind: INPUT, label: B, x: 60, y: 180, value: false }
+    - { id: input_cin, kind: INPUT, label: CIN, x: 60, y: 300, value: false }
+    - { id: input_op, kind: INPUT, label: OP, x: 60, y: 420, value: false }
+    - { id: led_result, kind: LED, label: RESULT, x: 900, y: 160 }
+    - { id: led_cout, kind: LED, label: COUT, x: 900, y: 340 }
+  connections: []
+  chips: {}
+---
+
+Build this small ALU from NAND gates:
+
+```text
+OP = 0 → RESULT = A AND B, COUT = 0
+OP = 1 → RESULT = A + B + CIN, COUT = carry
+```
+
+Use a multiplexer-style selection rule for `RESULT`. The checker covers all 16
+input combinations.

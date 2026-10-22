@@ -1,0 +1,51 @@
+---
+title: "What Is a Computer Made Of?"
+order: 1
+summary: "Meet the small set of ideas—information, signals, logic, and state—that we will use to explain a computer without assuming any hardware background."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["simulation"]
+tags: ["computer-engineering", "digital-logic"]
+languages: []
+difficulty: "beginner"
+puzzles: ["computer-parts-and-signals"]
+---
+
+You do not need to know how to build a computer before starting this course. We will begin with a simple question: **how can a machine represent a fact and act on it?**
+
+A computer is a collection of parts that work together:
+
+- **Signals** carry changing values, such as a low or high voltage.
+- **Bits** give those values a small language: `0` and `1`.
+- **Logic gates** transform input bits into output bits.
+- **Circuits** combine gates into useful behavior.
+- **State** lets a circuit remember something from an earlier moment.
+
+The processor, memory, and devices in a real computer are much larger systems built from these same ideas. This course stays at the level where we can reason about a few inputs and outputs at a time.
+
+<ReactDemo
+  title="A computer is a chain of transformations"
+  code={`function Demo() {
+  const stages = [
+    ['world', 'a fact to represent'],
+    ['signal', 'a measurable low or high value'],
+    ['bit', '0 or 1'],
+    ['logic', 'a rule that transforms bits'],
+    ['result', 'an output a person or circuit can use']
+  ];
+  const [active, setActive] = React.useState(0);
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <div style={{ display: 'grid', gap: 8 }}>
+      {stages.map((stage, index) => <button key={stage[0]} onClick={() => setActive(index)} style={{ padding: 10, textAlign: 'left', borderRadius: 8, border: '1px solid', background: index === active ? '#fbbf24' : 'transparent', color: 'inherit' }}>{index + 1}. <strong>{stage[0]}</strong> — {stage[1]}</button>)}
+    </div>
+    <p>Right now we are studying: <strong>{stages[active][0]}</strong>.</p>
+  </div>;
+}`}
+  />
+
+> [!TIP]
+> When a diagram feels intimidating, name its inputs, outputs, and the rule between them. You can understand a surprising amount of hardware with those three questions.
+
+## Checkpoint
+
+The [computer parts and signals quiz](/puzzles/computer-parts-and-signals?lesson=what-is-a-computer-made-of&course=intro-to-computer-engineering) checks the vocabulary we will use. It is intentionally short: the goal is orientation, not memorizing a parts catalog.

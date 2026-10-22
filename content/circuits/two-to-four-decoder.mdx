@@ -1,0 +1,35 @@
+---
+title: "Build a Two-to-Four Decoder"
+summary: "Decode two input bits into one active output line."
+difficulty: beginner
+areas: [programming-fundamentals]
+topics: [bit-manipulation]
+tags: [decoder, control-signals, nand]
+available: true
+puzzlePorts:
+  inputs: [input_a, input_b]
+  outputs: [led_y0, led_y1, led_y2, led_y3]
+testCases:
+  - input: [false, false]
+    expected: [true, false, false, false]
+  - input: [false, true]
+    expected: [false, true, false, false]
+  - input: [true, false]
+    expected: [false, false, true, false]
+  - input: [true, true]
+    expected: [false, false, false, true]
+starterCircuit:
+  components:
+    - { id: input_a, kind: INPUT, label: A, x: 60, y: 120, value: false }
+    - { id: input_b, kind: INPUT, label: B, x: 60, y: 300, value: false }
+    - { id: led_y0, kind: LED, label: Y0, x: 760, y: 60 }
+    - { id: led_y1, kind: LED, label: Y1, x: 760, y: 180 }
+    - { id: led_y2, kind: LED, label: Y2, x: 760, y: 300 }
+    - { id: led_y3, kind: LED, label: Y3, x: 760, y: 420 }
+  connections: []
+  chips: {}
+---
+
+Build a 2-to-4 decoder using NAND gates. For each pair of input bits, exactly
+one output LED should be on. Treat `A` as the high input bit and `B` as the low
+input bit.

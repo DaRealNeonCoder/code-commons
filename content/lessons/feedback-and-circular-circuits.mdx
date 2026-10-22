@@ -1,0 +1,40 @@
+---
+title: "Feedback and Circular Circuits"
+order: 2
+summary: "Understand feedback as a signal that returns to an earlier part of a circuit, and why feedback can create a stable remembered value."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["simulation"]
+tags: ["feedback", "state", "circuit-design"]
+languages: []
+difficulty: "beginner"
+puzzles: ["feedback-reasoning"]
+---
+
+A **feedback path** sends an output back around as an input. This sounds circular because it is: the circuit’s next result can depend on its previous result.
+
+Feedback is the ingredient that combinational circuits were missing. A pair of gates can reinforce one stable condition, then switch to another when a control input changes. Real storage circuits are carefully designed so that feedback settles instead of changing forever.
+
+The NAND-only puzzle editor in Part 1 focuses on acyclic circuits, so it cannot safely simulate a feedback loop yet. We can still reason about the idea with a timeline:
+
+```text
+control input → gate → output → feedback path → gate
+                         ↑
+                    previous value
+```
+
+<ReactDemo
+  title="A feedback loop remembers its last state"
+  code={`function Demo() {
+  const [state, setState] = React.useState(false);
+  const [pulse, setPulse] = React.useState(false);
+  const next = pulse ? !state : state;
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <button onClick={() => { setPulse(true); setState(!state); setTimeout(() => setPulse(false), 250); }} style={{ padding: 10, borderRadius: 8, border: '1px solid', background: pulse ? '#fbbf24' : 'transparent', color: 'inherit' }}>Send a pulse</button>
+    <p>Feedback state: <strong>{next ? '1' : '0'}</strong></p>
+    <small>No pulse means the loop keeps its previous value instead of recomputing from scratch.</small>
+  </div>;
+}`}
+  />
+
+The [feedback reasoning puzzle](/puzzles/feedback-reasoning?lesson=feedback-and-circular-circuits&course=intro-to-computer-engineering-part-2) asks you to trace a few stable and changing states without requiring electronics knowledge.

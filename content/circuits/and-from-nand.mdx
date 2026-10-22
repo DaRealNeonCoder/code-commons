@@ -1,0 +1,38 @@
+---
+title: "Build AND from NAND Gates"
+summary: "Make an AND gate using only NAND gates."
+difficulty: beginner
+areas: [programming-fundamentals]
+topics: [bit-manipulation]
+tags: [and-gate, nand, digital-logic]
+available: true
+puzzlePorts:
+  inputs: [input_a, input_b]
+  outputs: [led_out]
+testCases:
+  - input: [false, false]
+    expected: [false]
+  - input: [false, true]
+    expected: [false]
+  - input: [true, false]
+    expected: [false]
+  - input: [true, true]
+    expected: [true]
+starterCircuit:
+  components:
+    - { id: input_a, kind: INPUT, label: A, x: 60, y: 100, value: false }
+    - { id: input_b, kind: INPUT, label: B, x: 60, y: 260, value: false }
+    - { id: led_out, kind: LED, label: Q, x: 560, y: 180 }
+  connections: []
+  chips: {}
+---
+
+Build **AND** from NAND gates: **Q** should light up only when both **A** and
+**B** are on.
+
+The first NAND produces `NOT (A AND B)`. Feed that output into both inputs of a
+second NAND to invert it again. Drag the NAND gates onto the canvas, wire the
+circuit, and choose **Check solution** when it behaves correctly.
+
+The labeled inputs and output belong to the puzzle and cannot be deleted. All
+checker cases are hidden so the truth table is yours to reason out.

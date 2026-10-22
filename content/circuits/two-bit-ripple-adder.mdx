@@ -1,0 +1,95 @@
+---
+title: "Build a Two-Bit Ripple-Carry Adder"
+summary: "Chain two one-bit full adders so a pair of two-bit numbers can be added."
+difficulty: beginner
+areas: [programming-fundamentals]
+topics: [bit-manipulation]
+tags: [ripple-carry, multi-bit-adder, nand]
+available: true
+puzzlePorts:
+  inputs: [input_a0, input_a1, input_b0, input_b1, input_cin]
+  outputs: [led_s0, led_s1, led_cout]
+testCases:
+  - input: [false, false, false, false, false]
+    expected: [false, false, false]
+  - input: [false, false, false, false, true]
+    expected: [true, false, false]
+  - input: [true, false, false, false, false]
+    expected: [true, false, false]
+  - input: [true, false, false, false, true]
+    expected: [false, true, false]
+  - input: [false, true, false, false, false]
+    expected: [false, true, false]
+  - input: [false, true, false, false, true]
+    expected: [true, true, false]
+  - input: [true, true, false, false, false]
+    expected: [true, true, false]
+  - input: [true, true, false, false, true]
+    expected: [false, false, true]
+  - input: [false, false, true, false, false]
+    expected: [true, false, false]
+  - input: [false, false, true, false, true]
+    expected: [false, true, false]
+  - input: [true, false, true, false, false]
+    expected: [false, true, false]
+  - input: [true, false, true, false, true]
+    expected: [true, true, false]
+  - input: [false, true, true, false, false]
+    expected: [true, true, false]
+  - input: [false, true, true, false, true]
+    expected: [false, false, true]
+  - input: [true, true, true, false, false]
+    expected: [false, false, true]
+  - input: [true, true, true, false, true]
+    expected: [true, false, true]
+  - input: [false, false, false, true, false]
+    expected: [false, true, false]
+  - input: [false, false, false, true, true]
+    expected: [true, true, false]
+  - input: [true, false, false, true, false]
+    expected: [true, true, false]
+  - input: [true, false, false, true, true]
+    expected: [false, false, true]
+  - input: [false, true, false, true, false]
+    expected: [false, false, true]
+  - input: [false, true, false, true, true]
+    expected: [true, false, true]
+  - input: [true, true, false, true, false]
+    expected: [true, false, true]
+  - input: [true, true, false, true, true]
+    expected: [false, true, true]
+  - input: [false, false, true, true, false]
+    expected: [false, false, true]
+  - input: [false, false, true, true, true]
+    expected: [true, false, true]
+  - input: [true, false, true, true, false]
+    expected: [true, false, true]
+  - input: [true, false, true, true, true]
+    expected: [false, true, true]
+  - input: [false, true, true, true, false]
+    expected: [true, false, true]
+  - input: [false, true, true, true, true]
+    expected: [false, true, true]
+  - input: [true, true, true, true, false]
+    expected: [false, true, true]
+  - input: [true, true, true, true, true]
+    expected: [true, true, true]
+starterCircuit:
+  components:
+    - { id: input_a0, kind: INPUT, label: A0, x: 60, y: 60, value: false }
+    - { id: input_a1, kind: INPUT, label: A1, x: 60, y: 140, value: false }
+    - { id: input_b0, kind: INPUT, label: B0, x: 60, y: 260, value: false }
+    - { id: input_b1, kind: INPUT, label: B1, x: 60, y: 340, value: false }
+    - { id: input_cin, kind: INPUT, label: CIN, x: 60, y: 440, value: false }
+    - { id: led_s0, kind: LED, label: S0, x: 860, y: 120 }
+    - { id: led_s1, kind: LED, label: S1, x: 860, y: 260 }
+    - { id: led_cout, kind: LED, label: COUT, x: 860, y: 400 }
+  connections: []
+  chips: {}
+---
+
+Build a two-bit ripple-carry adder. `A0` and `B0` are the least-significant
+bits. The carry from that stage must feed the `CIN` of the next stage.
+
+The checker includes small values, carries between columns, and a final carry
+out. You may build the full-adder behavior directly from NAND gates.

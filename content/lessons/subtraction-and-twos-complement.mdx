@@ -1,0 +1,41 @@
+---
+title: "Subtraction and Two's Complement"
+order: 13
+summary: "Use two's complement to represent negative integers and reuse addition hardware for subtraction."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "bit-manipulation"]
+tags: ["twos-complement", "subtraction", "signed-numbers"]
+languages: []
+difficulty: "beginner"
+puzzles: ["twos-complement"]
+---
+
+Computer designers often avoid building a completely separate subtraction machine. In a fixed width, two’s complement turns subtraction into addition:
+
+```text
+A - B = A + (invert B + 1)
+```
+
+For 4 bits, the two’s complement of `0011` is:
+
+1. invert: `1100`
+2. add one: `1101`
+
+Interpreted as a signed 4-bit number, `1101` represents `-3`. The bit pattern depends on the chosen width, so always write down the width before converting.
+
+<ReactDemo
+  title="Find a four-bit two's complement"
+  code={`function Demo() {
+  const [value, setValue] = React.useState(3);
+  const inverted = value ^ 15;
+  const complement = (inverted + 1) & 15;
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <label>value <input type='range' min='0' max='15' value={value} onChange={event => setValue(+event.target.value)} /></label>
+    <p>{value.toString(2).padStart(4, '0')} → invert {inverted.toString(2).padStart(4, '0')} → add one <strong>{complement.toString(2).padStart(4, '0')}</strong></p>
+    <small>All results are kept to four bits.</small>
+  </div>;
+}`}
+  />
+
+The [two's complement puzzle](/puzzles/twos-complement?lesson=subtraction-and-twos-complement&course=intro-to-computer-engineering-part-2) keeps the numbers small and asks you to show the intermediate inversion and addition steps.

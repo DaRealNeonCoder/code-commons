@@ -1,0 +1,37 @@
+---
+title: "Designing Reusable Circuit Components"
+order: 21
+summary: "Turn a verified circuit into a named component with a clear interface, then reuse it without reopening every internal gate."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["simulation", "bit-manipulation"]
+tags: ["chips", "abstraction", "circuit-design"]
+languages: []
+difficulty: "beginner"
+puzzles: ["component-reuse"]
+---
+
+A reusable circuit component is a small abstraction. Its users should need to know:
+
+1. what inputs it accepts,
+2. what outputs it produces, and
+3. what promise it makes.
+
+They should not have to inspect every NAND gate inside. In this course, a half adder can be treated as a component with inputs `A`, `B` and outputs `SUM`, `CARRY`. A full adder can then use several half adders as building blocks.
+
+<ReactDemo
+  title="Use a component by its interface"
+  code={`function Demo() {
+  const [a, setA] = React.useState(false);
+  const [b, setB] = React.useState(true);
+  const sum = a !== b;
+  const carry = a && b;
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <p style={{ border: '2px solid #2dd4bf', padding: 12, borderRadius: 8 }}>HALF ADDER<br /><small>inputs: A, B · outputs: SUM, CARRY</small></p>
+    <button onClick={() => setA(!a)} style={{ padding: 8, marginRight: 5 }}>A={a ? '1' : '0'}</button><button onClick={() => setB(!b)} style={{ padding: 8 }}>B={b ? '1' : '0'}</button>
+    <p>SUM={sum ? '1' : '0'} · CARRY={carry ? '1' : '0'}</p>
+  </div>;
+}`}
+  />
+
+The [component reuse quiz](/puzzles/component-reuse?lesson=designing-reusable-circuit-components&course=intro-to-computer-engineering-part-2) asks you to match interfaces to jobs. Good interfaces make large circuits readable and easier to test.

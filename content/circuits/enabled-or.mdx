@@ -1,0 +1,43 @@
+---
+title: "Build an Enabled OR from NAND Gates"
+summary: "Combine OR and AND behavior in a three-input NAND-only circuit."
+difficulty: beginner
+areas: [programming-fundamentals]
+topics: [bit-manipulation]
+tags: [or-gate, and-gate, nand, combinational-logic]
+available: true
+puzzlePorts:
+  inputs: [input_enable, input_a, input_b]
+  outputs: [led_out]
+testCases:
+  - input: [false, false, false]
+    expected: [false]
+  - input: [false, false, true]
+    expected: [false]
+  - input: [false, true, false]
+    expected: [false]
+  - input: [false, true, true]
+    expected: [false]
+  - input: [true, false, false]
+    expected: [false]
+  - input: [true, false, true]
+    expected: [true]
+  - input: [true, true, false]
+    expected: [true]
+  - input: [true, true, true]
+    expected: [true]
+starterCircuit:
+  components:
+    - { id: input_enable, kind: INPUT, label: ENABLE, x: 60, y: 80, value: false }
+    - { id: input_a, kind: INPUT, label: A, x: 60, y: 220, value: false }
+    - { id: input_b, kind: INPUT, label: B, x: 60, y: 360, value: false }
+    - { id: led_out, kind: LED, label: Q, x: 720, y: 220 }
+  connections: []
+  chips: {}
+---
+
+Build the specification **Q = ENABLE AND (A OR B)** using only NAND gates.
+
+The output should be on when the system is enabled and at least one request is
+on. Use intermediate signals to keep the design understandable, then choose
+**Check solution** to test all eight possible input combinations.

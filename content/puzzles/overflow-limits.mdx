@@ -1,0 +1,34 @@
+---
+title: "Overflow and Arithmetic Limits"
+order: 311
+available: true
+summary: "Recognize when a fixed-width arithmetic result cannot fit in the available bits."
+areas: ["programming-fundamentals"]
+topics: ["math", "bit-manipulation"]
+tags: ["overflow", "bit-width"]
+languages: []
+difficulty: "beginner"
+kind: "math-quiz"
+mathQuiz:
+  version: 1
+  questions:
+    - id: "q1"
+      prompt: "Does 15 + 1 overflow an unsigned 4-bit register?"
+      type: "choice"
+      choices:
+        - id: "a"
+          label: "Yes"
+        - id: "b"
+          label: "No"
+      answer: "a"
+    - id: "q2"
+      prompt: "What are the low four bits of 15 + 1? Enter the decimal value."
+      type: "numeric"
+      answer: "0"
+    - id: "q3"
+      prompt: "What is the largest unsigned value in a 4-bit register?"
+      type: "numeric"
+      answer: "15"
+---
+
+Overflow means the mathematical answer needs more capacity than the circuit has.

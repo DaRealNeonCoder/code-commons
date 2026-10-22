@@ -1,0 +1,38 @@
+---
+title: "Decoders and Control Signals"
+order: 17
+summary: "Turn a binary select value into one active output, a pattern used to choose registers, memory locations, and operations."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["bit-manipulation", "simulation"]
+tags: ["decoder", "control-signals", "one-hot"]
+languages: []
+difficulty: "beginner"
+puzzles: ["circuit:two-to-four-decoder"]
+---
+
+A **decoder** interprets an input pattern and activates one matching output. A 2-to-4 decoder has two input bits and four outputs:
+
+| A | B | active output |
+| ---: | ---: | --- |
+| 0 | 0 | Y0 |
+| 0 | 1 | Y1 |
+| 1 | 0 | Y2 |
+| 1 | 1 | Y3 |
+
+The one-active-output pattern is called **one-hot**. A decoder can turn an address into a single memory-enable signal or turn instruction bits into control signals.
+
+<ReactDemo
+  title="Decode two bits"
+  code={`function Demo() {
+  const [value, setValue] = React.useState(0);
+  const bits = [value >> 1 & 1, value & 1];
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <button onClick={() => setValue((value + 1) % 4)} style={{ padding: 9, background: '#fbbf24', border: 0, borderRadius: 6 }}>Next input</button>
+    <p>input: <code>{bits.join('')}</code></p>
+    <div style={{ display: 'flex', gap: 6 }}>{[0, 1, 2, 3].map(index => <span key={index} style={{ padding: 8, borderRadius: 6, background: index === value ? '#2dd4bf' : '#334155' }}>Y{index}: {index === value ? '1' : '0'}</span>)}</div>
+  </div>;
+}`}
+  />
+
+The [two-to-four decoder puzzle](/circuits/two-to-four-decoder?lesson=decoders-and-control-signals&course=intro-to-computer-engineering-part-2) checks that exactly the correct LED turns on for all four input patterns.

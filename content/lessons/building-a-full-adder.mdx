@@ -1,0 +1,38 @@
+---
+title: "Building a Full Adder"
+order: 11
+summary: "Extend a half adder with an incoming carry so one stage can sit inside a multi-bit addition circuit."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "bit-manipulation"]
+tags: ["full-adder", "carry", "circuit-design"]
+languages: []
+difficulty: "beginner"
+puzzles: ["circuit:full-adder-from-nand"]
+---
+
+A **full adder** adds three bits: `A`, `B`, and `CIN` (carry in). It produces `SUM` and `COUT` (carry out).
+
+One beginner-friendly design uses two half adders:
+
+1. Add `A` and `B`.
+2. Add that first sum to `CIN`.
+3. OR the two carry results.
+
+The circuit is larger, but the idea is still composition. Each stage has a small contract and passes its result to the next stage.
+
+<ReactDemo
+  title="Watch carry in affect the result"
+  code={`function Demo() {
+  const [bits, setBits] = React.useState([false, false, false]);
+  const [a, b, cin] = bits;
+  const total = Number(a) + Number(b) + Number(cin);
+  const toggle = index => setBits(bits.map((bit, i) => i === index ? !bit : bit));
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    {['A', 'B', 'CIN'].map((label, index) => <button key={label} onClick={() => toggle(index)} style={{ padding: 8, marginRight: 5 }}>{label} = {bits[index] ? '1' : '0'}</button>)}
+    <p>total: {total} · SUM: <strong>{total % 2}</strong> · COUT: <strong>{total >= 2 ? '1' : '0'}</strong></p>
+  </div>;
+}`}
+  />
+
+The [full adder from NAND gates](/circuits/full-adder-from-nand?lesson=building-a-full-adder&course=intro-to-computer-engineering-part-2) puzzle includes all eight input combinations, including the rows where the incoming carry changes the answer.

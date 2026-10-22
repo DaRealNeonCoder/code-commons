@@ -1,0 +1,35 @@
+---
+title: "State and Signal"
+order: 208
+available: true
+summary: "Tell apart outputs determined only by current inputs from outputs that can remember the past."
+areas: ["programming-fundamentals"]
+topics: ["math", "simulation"]
+tags: ["state", "memory"]
+languages: []
+difficulty: "beginner"
+kind: "math-quiz"
+mathQuiz:
+  version: 1
+  questions:
+    - id: "q1"
+      prompt: "An AND gate's output depends only on its current inputs. Is it combinational or stateful?"
+      type: "choice"
+      choices:
+        - id: "a"
+          label: "Combinational"
+        - id: "b"
+          label: "Stateful"
+      answer: "a"
+    - id: "q2"
+      prompt: "A stored bit remains 1 after its input returns to 0. Does the past matter?"
+      type: "choice"
+      choices:
+        - id: "a"
+          label: "Yes"
+        - id: "b"
+          label: "No"
+      answer: "a"
+---
+
+The word state means that earlier events can affect the current result.

@@ -1,0 +1,42 @@
+---
+title: "Building a Multi-Bit Adder"
+order: 12
+summary: "Chain full adders from the least-significant bit to the most-significant bit to add whole binary numbers."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "bit-manipulation"]
+tags: ["ripple-carry", "multi-bit-adder", "carry"]
+languages: []
+difficulty: "beginner"
+puzzles: ["circuit:two-bit-ripple-adder"]
+---
+
+To add multi-bit numbers, place one full adder in each bit column. The carry out from the low column becomes the carry in for the next column.
+
+```text
+ A1 B1 ──> full adder ──> S1, C2
+ A0 B0 ──> full adder ──> S0, C1
+                         ↑
+                       carry flows upward
+```
+
+This is called a **ripple-carry adder** because the carry signal ripples from one stage to the next. It is easy to understand and build, even though faster computers use more advanced carry designs.
+
+<ReactDemo
+  title="Carry ripples through two columns"
+  code={`function Demo() {
+  const [a, setA] = React.useState(2);
+  const [b, setB] = React.useState(3);
+  const total = a + b;
+  const low = total % 2;
+  const high = Math.floor(total / 2) % 2;
+  const carry = total >= 4 ? 1 : 0;
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <label>A <input type='range' min='0' max='3' value={a} onChange={event => setA(+event.target.value)} /></label> <strong>{a.toString(2).padStart(2, '0')}</strong><br />
+    <label>B <input type='range' min='0' max='3' value={b} onChange={event => setB(+event.target.value)} /></label> <strong>{b.toString(2).padStart(2, '0')}</strong>
+    <p>sum bits: <strong>{carry}{high}{low}</strong> · low stage carry: <strong>{Math.floor((a % 2 + b % 2) / 2)}</strong></p>
+  </div>;
+}`}
+  />
+
+The [two-bit ripple-carry adder puzzle](/circuits/two-bit-ripple-adder?lesson=building-a-multi-bit-adder&course=intro-to-computer-engineering-part-2) is deliberately small. Get the signal order right before thinking about wider adders.

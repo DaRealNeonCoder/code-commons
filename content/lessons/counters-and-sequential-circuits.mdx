@@ -1,0 +1,35 @@
+---
+title: "Counters and Sequential Circuits"
+order: 19
+summary: "Use a register and an increment rule to understand how a counter changes state once per clock tick."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "simulation"]
+tags: ["counter", "sequential-logic", "clock"]
+languages: []
+difficulty: "beginner"
+puzzles: ["counter-sequences"]
+---
+
+A counter is a register with a feedback rule: on each clock edge, it stores the old value plus one. With a fixed width, it eventually wraps around.
+
+```text
+next count = current count + 1
+```
+
+The register provides memory; the adder provides computation; the clock decides when the new result is captured. This is the first time in the course that those pieces act as one sequential circuit.
+
+<ReactDemo
+  title="Advance a four-bit counter"
+  code={`function Demo() {
+  const [count, setCount] = React.useState(0);
+  const next = (count + 1) % 16;
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <button onClick={() => setCount(next)} style={{ padding: 10, background: '#fbbf24', border: 0, borderRadius: 6 }}>Clock edge</button>
+    <p>stored count: <strong>{count.toString(2).padStart(4, '0')}</strong> ({count})</p>
+    <small>After 1111, four-bit storage wraps back to 0000.</small>
+  </div>;
+}`}
+  />
+
+The [counter sequences quiz](/puzzles/counter-sequences?lesson=counters-and-sequential-circuits&course=intro-to-computer-engineering-part-2) asks you to predict a few ticks and identify the wrap point.

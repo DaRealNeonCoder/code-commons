@@ -1,0 +1,28 @@
+{
+  "title": "Intro to Computer Engineering: Part 2",
+  "summary": "Continue from gates and truth tables into memory, clocks, arithmetic circuits, data selection, and the building blocks that let computer components work together.",
+  "lessons": [
+    "why-computers-need-memory",
+    "feedback-and-circular-circuits",
+    "the-sr-latch",
+    "storing-a-bit-with-a-latch",
+    "clock-signals-and-synchronous-systems",
+    "the-d-flip-flop",
+    "registers-and-multi-bit-storage",
+    "binary-numbers-and-bit-width",
+    "unsigned-binary-arithmetic",
+    "building-a-half-adder",
+    "building-a-full-adder",
+    "building-a-multi-bit-adder",
+    "subtraction-and-twos-complement",
+    "overflow-and-arithmetic-limits",
+    "multiplexers-and-data-selection",
+    "demultiplexers-and-decoding",
+    "decoders-and-control-signals",
+    "building-a-simple-arithmetic-logic-unit",
+    "counters-and-sequential-circuits",
+    "combining-storage-and-computation",
+    "designing-reusable-circuit-components",
+    "connecting-computer-components"
+  ]
+}

@@ -8,6 +8,7 @@ import {
   validateProgrammableFiles,
   validateShaderProjectData,
 } from "../src/lib/shaders/programmable3d.js";
+import { createProgrammableRunnerDocument } from "../src/lib/shaders/programmable3dRunner.js";
 
 test("the programmable starter contains a complete three-file project", () => {
   const files = defaultProgrammableFiles();
@@ -34,4 +35,14 @@ test("fragment projects remain valid without a mode discriminator", () => {
   assert.equal(validateShaderProjectData({ mode: "fragment", code: "void main() {}" }), null);
   assert.equal(validateShaderProjectData({ mode: PROGRAMMABLE_3D_MODE, files: defaultProgrammableFiles() }), null);
   assert.match(validateShaderProjectData({ mode: PROGRAMMABLE_3D_MODE, files: {} }), /source files are required/);
+});
+
+test("programmable runner announces boot after installing its init listener", () => {
+  const source = createProgrammableRunnerDocument();
+  const listener = source.indexOf('window.addEventListener("message"');
+  const boot = source.indexOf('window.parent.postMessage({type:"programmable-3d:boot"}');
+  assert.ok(listener >= 0);
+  assert.ok(boot > listener, "boot must be announced after the init listener exists");
+  assert.match(source, /typeof ResizeObserver === "function"/);
+  assert.doesNotMatch(source, /report\("programmable-3d:ready"\); requestAnimationFrame/);
 });

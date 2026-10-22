@@ -1,0 +1,38 @@
+---
+title: "Storing a Bit with a Latch"
+order: 4
+summary: "Use a write control to decide when a latch accepts new data and when it keeps the old bit."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["simulation", "bit-manipulation"]
+tags: ["latch", "memory", "data"]
+languages: []
+difficulty: "beginner"
+puzzles: ["latch-storage"]
+---
+
+An SR latch exposes set and reset controls directly. A data latch is easier to use as a storage component: give it a data bit `D` and a write or enable signal.
+
+```text
+if WRITE is active: Q becomes D
+otherwise:          Q keeps its old value
+```
+
+That rule is the beginning of a memory interface. A computer can put a value on a shared data path, activate a particular write control, and leave every other storage location alone.
+
+<ReactDemo
+  title="Write or hold"
+  code={`function Demo() {
+  const [data, setData] = React.useState(false);
+  const [write, setWrite] = React.useState(false);
+  const [q, setQ] = React.useState(false);
+  const store = () => { if (write) setQ(data); };
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <button onClick={() => setData(!data)} style={{ padding: 9, marginRight: 6 }}>D = {data ? '1' : '0'}</button><button onClick={() => setWrite(!write)} style={{ padding: 9, marginRight: 6 }}>WRITE = {write ? '1' : '0'}</button><button onClick={store} style={{ padding: 9, background: '#fbbf24', border: 0, borderRadius: 6 }}>Apply</button>
+    <p>Stored Q: <strong>{q ? '1' : '0'}</strong></p>
+    <small>Apply with WRITE off and Q holds its previous value.</small>
+  </div>;
+}`}
+  />
+
+The [latch storage puzzle](/puzzles/latch-storage?lesson=storing-a-bit-with-a-latch&course=intro-to-computer-engineering-part-2) gives you short write and hold sequences to predict.

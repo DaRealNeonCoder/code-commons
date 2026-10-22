@@ -1,0 +1,40 @@
+---
+title: "Build a Two-to-One Multiplexer"
+summary: "Use a select bit to choose one of two data inputs."
+difficulty: beginner
+areas: [programming-fundamentals]
+topics: [bit-manipulation]
+tags: [multiplexer, data-selection, nand]
+available: true
+puzzlePorts:
+  inputs: [input_d0, input_d1, input_select]
+  outputs: [led_y]
+testCases:
+  - input: [false, false, false]
+    expected: [false]
+  - input: [false, false, true]
+    expected: [false]
+  - input: [false, true, false]
+    expected: [false]
+  - input: [false, true, true]
+    expected: [true]
+  - input: [true, false, false]
+    expected: [true]
+  - input: [true, false, true]
+    expected: [false]
+  - input: [true, true, false]
+    expected: [true]
+  - input: [true, true, true]
+    expected: [true]
+starterCircuit:
+  components:
+    - { id: input_d0, kind: INPUT, label: D0, x: 60, y: 100, value: false }
+    - { id: input_d1, kind: INPUT, label: D1, x: 60, y: 240, value: false }
+    - { id: input_select, kind: INPUT, label: S, x: 60, y: 380, value: false }
+    - { id: led_y, kind: LED, label: Y, x: 680, y: 240 }
+  connections: []
+  chips: {}
+---
+
+Build `Y = S ? D1 : D0` using NAND gates. The select bit chooses which data
+input reaches the output; it is not itself the output.

@@ -1,0 +1,25 @@
+---
+title: "Latch Storage"
+order: 304
+available: true
+summary: "Predict whether a data latch writes a new value or holds its old one."
+areas: ["programming-fundamentals"]
+topics: ["simulation", "bit-manipulation"]
+tags: ["latch", "memory"]
+languages: []
+difficulty: "beginner"
+kind: "math-quiz"
+mathQuiz:
+  version: 1
+  questions:
+    - id: "q1"
+      prompt: "A latch stores Q=0. D=1 and WRITE=1. What is Q after the write?"
+      type: "numeric"
+      answer: "1"
+    - id: "q2"
+      prompt: "A latch stores Q=1. D=0 and WRITE=0. What is Q after the attempt?"
+      type: "numeric"
+      answer: "1"
+---
+
+WRITE decides whether D is accepted; without it, the old value remains.

@@ -1,0 +1,25 @@
+---
+title: "Feedback Reasoning"
+order: 302
+available: true
+summary: "Reason about a feedback path that holds a stable value until a control pulse changes it."
+areas: ["programming-fundamentals"]
+topics: ["simulation"]
+tags: ["feedback", "state"]
+languages: []
+difficulty: "beginner"
+kind: "math-quiz"
+mathQuiz:
+  version: 1
+  questions:
+    - id: "q1"
+      prompt: "If a stored state is 1 and no control pulse arrives, what is the next state?"
+      type: "numeric"
+      answer: "1"
+    - id: "q2"
+      prompt: "If a toggle pulse arrives while the state is 0, what is the next state?"
+      type: "numeric"
+      answer: "1"
+---
+
+Use the previous state when the feedback path is holding.

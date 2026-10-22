@@ -1,0 +1,42 @@
+---
+title: "The NAND Gate and Why It Is Important"
+order: 7
+summary: "Combine NOT and AND into NAND, then see why one kind of gate can be used to build every other kind of Boolean logic."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["bit-manipulation"]
+tags: ["nand", "universal-gate", "digital-logic"]
+languages: []
+difficulty: "beginner"
+puzzles: ["circuit:and-from-nand"]
+---
+
+**NAND** means “NOT AND.” Start with an AND result, then invert it:
+
+```text
+A NAND B = NOT (A AND B)
+```
+
+| A | B | A AND B | A NAND B |
+| ---: | ---: | ---: | ---: |
+| 0 | 0 | 0 | 1 |
+| 0 | 1 | 0 | 1 |
+| 1 | 0 | 0 | 1 |
+| 1 | 1 | 1 | 0 |
+
+NAND is important because it is **functionally complete**: with enough NAND gates, we can construct NOT, AND, OR, XOR, and much larger circuits. Real chips use many physical gate types for speed and efficiency, but NAND gives us a small and powerful starting vocabulary.
+
+<ReactDemo
+  title="NAND is an inverted AND"
+  code={`function Demo() {
+  const [values, setValues] = React.useState([false, false]);
+  const andValue = values[0] && values[1];
+  const nandValue = !andValue;
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    {values.map((value, index) => <button key={index} onClick={() => setValues(values.map((old, i) => i === index ? !old : old))} style={{ marginRight: 8, padding: 10, borderRadius: 8, border: '1px solid', background: value ? '#2dd4bf' : 'transparent', color: 'inherit' }}>Input {index === 0 ? 'A' : 'B'} = {value ? '1' : '0'}</button>)}
+    <div style={{ marginTop: 14, display: 'grid', gap: 5 }}><span>AND result: <strong>{andValue ? '1' : '0'}</strong></span><span>NAND result: <strong>{nandValue ? '1' : '0'}</strong></span></div>
+  </div>;
+}`}
+  />
+
+In the [Build AND from NAND gates puzzle](/circuits/and-from-nand?lesson=the-nand-gate&course=intro-to-computer-engineering), the simulator gives you only NAND gates plus fixed input switches and an LED. Build the two-stage circuit that behaves like AND. The checker tests all input combinations privately.

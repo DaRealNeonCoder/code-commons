@@ -1,0 +1,38 @@
+---
+title: "Combining Storage and Computation"
+order: 20
+summary: "Trace a small datapath where a register stores a value, the ALU computes a new one, and a control signal decides whether to load it."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "simulation", "bit-manipulation"]
+tags: ["datapath", "register", "alu", "control-signals"]
+languages: []
+difficulty: "beginner"
+puzzles: ["datapath-trace"]
+---
+
+Computation and storage have different jobs:
+
+- The **ALU** calculates a candidate result.
+- A **MUX** chooses which candidate should be written back.
+- A **register** holds the chosen value.
+- A **clock edge** makes the update happen.
+
+That pattern is a tiny datapath. Real processors repeat it with wider values and more operations.
+
+<ReactDemo
+  title="Trace a one-register datapath"
+  code={`function Demo() {
+  const [stored, setStored] = React.useState(1);
+  const [input, setInput] = React.useState(3);
+  const [add, setAdd] = React.useState(true);
+  const candidate = add ? (stored + input) % 16 : input;
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <p>register = <strong>{stored}</strong> · input = <strong>{input}</strong></p>
+    <button onClick={() => setInput((input + 1) % 8)} style={{ padding: 8, marginRight: 5 }}>Change input</button><button onClick={() => setAdd(!add)} style={{ padding: 8, marginRight: 5 }}>Mode: {add ? 'ADD' : 'LOAD'}</button><button onClick={() => setStored(candidate)} style={{ padding: 8, background: '#fbbf24', border: 0, borderRadius: 5 }}>Clock edge</button>
+    <p>candidate next value: <strong>{candidate}</strong></p>
+  </div>;
+}`}
+  />
+
+The [datapath trace puzzle](/puzzles/datapath-trace?lesson=combining-storage-and-computation&course=intro-to-computer-engineering-part-2) keeps the values small so you can follow every MUX choice and register update.

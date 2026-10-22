@@ -1,0 +1,29 @@
+---
+title: "D Flip-Flop Timeline"
+order: 306
+available: true
+summary: "Trace data values captured by a D flip-flop at successive clock edges."
+areas: ["programming-fundamentals"]
+topics: ["simulation", "bit-manipulation"]
+tags: ["d-flip-flop", "clock"]
+languages: []
+difficulty: "beginner"
+kind: "math-quiz"
+mathQuiz:
+  version: 1
+  questions:
+    - id: "q1"
+      prompt: "Q starts at 0. D=1 at the first rising edge. What is Q?"
+      type: "numeric"
+      answer: "1"
+    - id: "q2"
+      prompt: "After that edge, D changes to 0 but no new edge arrives. What is Q?"
+      type: "numeric"
+      answer: "1"
+    - id: "q3"
+      prompt: "At the next rising edge D=0. What is Q?"
+      type: "numeric"
+      answer: "0"
+---
+
+Only the value present at the edge is captured.

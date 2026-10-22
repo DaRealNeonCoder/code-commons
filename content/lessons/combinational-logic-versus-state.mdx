@@ -1,0 +1,37 @@
+---
+title: "Combinational Logic Versus State"
+order: 11
+summary: "Distinguish circuits that only calculate from current inputs from circuits that remember a previous value, without diving into advanced electronics."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["simulation", "math"]
+tags: ["state", "memory", "combinational-logic"]
+languages: []
+difficulty: "beginner"
+puzzles: ["state-and-signal"]
+---
+
+So far, every output has been determined by the inputs visible **right now**. That is combinational logic. If the same inputs always produce the same output, the circuit has no memory of what happened earlier.
+
+A circuit with **state** can remember a value. A button press might change a stored bit, and the stored bit can remain `1` after the button is released. Clocks, latches, flip-flops, registers, and memory build on this idea. We will only use the distinction here; a follow-up course can explore the hardware in detail.
+
+| Kind of circuit | Output depends on | Example |
+| --- | --- | --- |
+| Combinational | current inputs | AND gate |
+| Stateful | current inputs and stored state | a one-bit memory cell |
+
+<ReactDemo
+  title="Calculation versus memory"
+  code={`function Demo() {
+  const [input, setInput] = React.useState(false);
+  const [stored, setStored] = React.useState(false);
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <button onClick={() => setInput(!input)} style={{ padding: 9, marginRight: 8, borderRadius: 8, border: '1px solid', color: 'inherit', background: input ? '#2dd4bf' : 'transparent' }}>Input = {input ? '1' : '0'}</button>
+    <button onClick={() => setStored(input)} style={{ padding: 9, borderRadius: 8, border: '1px solid', color: 'inherit', background: stored ? '#fbbf24' : 'transparent' }}>Store current input</button>
+    <p>Combinational output follows input: <strong>{input ? '1' : '0'}</strong></p>
+    <p>Stored output stays at its last saved value: <strong>{stored ? '1' : '0'}</strong></p>
+  </div>;
+}`}
+  />
+
+The [state and signal quiz](/puzzles/state-and-signal?lesson=combinational-logic-versus-state&course=intro-to-computer-engineering) asks you to classify short examples. “State” does not mean the output is random; it means the past can matter.

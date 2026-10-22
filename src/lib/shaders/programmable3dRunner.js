@@ -162,8 +162,12 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
   }
   canvas.addEventListener("pointermove",function(e){var r=canvas.getBoundingClientRect();input.x=(e.clientX-r.left)/r.width;input.y=1-(e.clientY-r.top)/r.height;});
   canvas.addEventListener("pointerdown",function(e){input.down=true;input.clickX=input.x;input.clickY=input.y;}); canvas.addEventListener("pointerup",function(){input.down=false;});
-  window.addEventListener("resize",resize); new ResizeObserver(resize).observe(canvas); window.addEventListener("message",function(e){if(e.source!==window.parent||!e.data||e.data.type!=="programmable-3d:init")return; try{if(!gl)gl=canvas.getContext("webgl2",{alpha:false})||canvas.getContext("webgl",{alpha:false}); if(!gl)throw new Error("WebGL is not supported in this browser."); var next=Object.assign({},e.data.project,{nonce:e.data.nonce}); load(next); }catch(err){fail("runtime",err.message);}});
-  report("programmable-3d:ready"); requestAnimationFrame(render);
+  // Install the message listener before announcing that the runner is alive.
+  // The parent can miss an iframe load event on cached navigations, so this
+  // boot message gives it a reliable opportunity to send the project again.
+  window.addEventListener("message",function(e){if(e.source!==window.parent||!e.data||e.data.type!=="programmable-3d:init")return; var next=Object.assign({},e.data.project,{nonce:e.data.nonce}); project=next; try{if(!gl)gl=canvas.getContext("webgl2",{alpha:false})||canvas.getContext("webgl",{alpha:false}); if(!gl)throw new Error("WebGL is not supported in this browser."); load(next); }catch(err){fail("runtime",err.message);}});
+  window.addEventListener("resize",resize); if(typeof ResizeObserver === "function") new ResizeObserver(resize).observe(canvas);
+  window.parent.postMessage({type:"programmable-3d:boot"},"*"); requestAnimationFrame(render);
 }());
 </script></body></html>`;
 }

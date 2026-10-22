@@ -1,0 +1,48 @@
+---
+title: "True, False, and Boolean Logic"
+order: 3
+summary: "Use true and false as precise values, then write simple Boolean rules that describe what a circuit should do."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "bit-manipulation"]
+tags: ["boolean-logic", "digital-logic"]
+languages: []
+difficulty: "beginner"
+puzzles: ["boolean-values"]
+---
+
+Boolean logic is a way to reason about statements that are either **true** or **false**. In a circuit, we often write those values as `1` and `0`.
+
+Suppose `door_open` is true when a door is open. A safety light might follow the rule:
+
+```text
+light_on = door_open
+```
+
+This is not a claim about a particular programming language. It is a compact description of a relationship between an input and an output.
+
+Three words will appear throughout the course:
+
+- **NOT** reverses a value.
+- **AND** requires every input to be true.
+- **OR** requires at least one input to be true.
+
+We will study each one as a physical-looking gate. For now, treat them as rules you can calculate with.
+
+<ReactDemo
+  title="Evaluate a Boolean rule"
+  code={`function Demo() {
+  const [door, setDoor] = React.useState(false);
+  const [armed, setArmed] = React.useState(true);
+  const light = door && armed;
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    {[['door is open', door, setDoor], ['system is armed', armed, setArmed]].map(([label, value, setValue]) => <button key={label} onClick={() => setValue(!value)} style={{ display: 'block', width: '100%', padding: 10, marginBottom: 8, textAlign: 'left', borderRadius: 8, border: '1px solid', background: value ? '#2dd4bf' : 'transparent', color: 'inherit' }}>{value ? '1' : '0'} — {label}</button>)}
+    <p><code>door AND armed</code> = <strong>{light ? '1 (light on)' : '0 (light off)'}</strong></p>
+  </div>;
+}`}
+  />
+
+> [!TIP]
+> Say the rule out loud before calculating it. “The light is on when the door is open **and** the system is armed” is easier to check than a symbol copied without its meaning.
+
+The [Boolean values quiz](/puzzles/boolean-values?lesson=true-false-and-boolean-logic&course=intro-to-computer-engineering) asks you to evaluate small rules. You can solve every question with the definitions above; no algebra background is required.

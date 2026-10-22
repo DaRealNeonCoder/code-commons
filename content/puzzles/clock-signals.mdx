@@ -1,0 +1,30 @@
+---
+title: "Clock Signals"
+order: 305
+available: true
+summary: "Distinguish changes between clock edges from values captured at a clock edge."
+areas: ["programming-fundamentals"]
+topics: ["simulation"]
+tags: ["clock", "timing"]
+languages: []
+difficulty: "beginner"
+kind: "math-quiz"
+mathQuiz:
+  version: 1
+  questions:
+    - id: "q1"
+      prompt: "A register captures D only on a rising edge. D is 1 at the edge. What does Q become?"
+      type: "numeric"
+      answer: "1"
+    - id: "q2"
+      prompt: "D changes between edges. Does Q change immediately?"
+      type: "choice"
+      choices:
+        - id: "a"
+          label: "Yes"
+        - id: "b"
+          label: "No"
+      answer: "b"
+---
+
+The clock gives the system a shared moment for state updates.

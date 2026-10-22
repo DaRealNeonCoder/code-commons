@@ -1,0 +1,32 @@
+---
+title: "Component Reuse"
+order: 314
+available: true
+summary: "Match reusable circuit interfaces with the jobs they perform."
+areas: ["programming-fundamentals"]
+topics: ["simulation", "bit-manipulation"]
+tags: ["chips", "abstraction"]
+languages: []
+difficulty: "beginner"
+kind: "math-quiz"
+mathQuiz:
+  version: 1
+  questions:
+    - id: "q1"
+      prompt: "A half adder has two one-bit inputs and how many output roles?"
+      type: "numeric"
+      answer: "2"
+    - id: "q2"
+      prompt: "Why can a larger circuit use a half-adder chip without inspecting its NAND gates?"
+      type: "choice"
+      choices:
+        - id: "a"
+          label: "Its input/output interface is a contract"
+        - id: "b"
+          label: "It has no inputs"
+        - id: "c"
+          label: "It skips testing"
+      answer: "a"
+---
+
+Abstraction makes a circuit easier to read, reuse, and test.

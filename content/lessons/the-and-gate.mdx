@@ -1,0 +1,38 @@
+---
+title: "The AND Gate"
+order: 5
+summary: "Understand a gate whose output is on only when every input is on, and connect that rule to everyday conditions."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["bit-manipulation"]
+tags: ["and-gate", "digital-logic"]
+languages: []
+difficulty: "beginner"
+puzzles: ["and-gate-table"]
+---
+
+An **AND gate** has two inputs and one output. The output is `1` only when **both** inputs are `1`:
+
+| A | B | A AND B |
+| ---: | ---: | ---: |
+| 0 | 0 | 0 |
+| 0 | 1 | 0 |
+| 1 | 0 | 0 |
+| 1 | 1 | 1 |
+
+That makes AND useful for conditions such as “the button is pressed **and** the machine is enabled.” One missing requirement keeps the result off.
+
+<ReactDemo
+  title="Two requirements"
+  code={`function Demo() {
+  const [values, setValues] = React.useState([false, false]);
+  const result = values[0] && values[1];
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <div style={{ display: 'flex', gap: 8 }}>{values.map((value, index) => <button key={index} onClick={() => setValues(values.map((old, i) => i === index ? !old : old))} style={{ padding: 12, borderRadius: 8, border: '1px solid', background: value ? '#2dd4bf' : 'transparent', color: 'inherit' }}>Input {index === 0 ? 'A' : 'B'} = {value ? '1' : '0'}</button>)}</div>
+    <p><code>A AND B</code> = <strong style={{ color: result ? '#0f766e' : '#b91c1c' }}>{result ? '1' : '0'}</strong></p>
+    <small>Try turning on only one requirement. The output stays off.</small>
+  </div>;
+}`}
+  />
+
+The [AND gate table quiz](/puzzles/and-gate-table?lesson=the-and-gate&course=intro-to-computer-engineering) asks you to complete a few rows before we start wiring gates together.

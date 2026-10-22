@@ -1,0 +1,48 @@
+---
+title: "Putting It Together: Design a Circuit from a Specification"
+order: 12
+summary: "Turn a plain-language requirement into a Boolean rule, a truth table, and a small circuit design."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["simulation", "math"]
+tags: ["specification", "circuit-design", "capstone"]
+languages: []
+difficulty: "beginner"
+puzzles: ["circuit:majority-from-nand", "binary-addition"]
+---
+
+Design starts before you place a gate. Translate the request into a contract:
+
+1. Name every input and output.
+2. Write the rule in plain language.
+3. Express the rule with Boolean operations.
+4. Make a truth table for every possible input combination.
+5. Build the circuit and compare its output with the table.
+
+Here is a small specification: **turn on the output when at least two of three sensors are on.** A Boolean expression for that rule is:
+
+```text
+Q = (A AND B) OR (A AND C) OR (B AND C)
+```
+
+Each AND term identifies one pair of sensors that is on. The OR combines those possible pairs. This is a complete design at the level of gates; it does not require us to guess what the sensors represent.
+
+<ReactDemo
+  title="Check a three-input specification"
+  code={`function Demo() {
+  const [values, setValues] = React.useState([false, false, false]);
+  const total = values.filter(Boolean).length;
+  const output = total >= 2;
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    {values.map((value, index) => <button key={index} onClick={() => setValues(values.map((old, i) => i === index ? !old : old))} style={{ marginRight: 6, padding: 10, borderRadius: 8, border: '1px solid', background: value ? '#2dd4bf' : 'transparent', color: 'inherit' }}>Sensor {String.fromCharCode(65 + index)} = {value ? '1' : '0'}</button>)}
+    <p>Number of sensors on: <strong>{total}</strong></p>
+    <p>Specification result: <strong>{output ? '1 — output on' : '0 — output off'}</strong></p>
+  </div>;
+}`}
+  />
+
+The [majority-from-NAND circuit puzzle](/circuits/majority-from-nand?lesson=designing-a-circuit-from-a-specification&course=intro-to-computer-engineering) is the final design challenge. You receive the inputs, output, and behavior; your job is to turn the specification into a working NAND-only circuit. The [binary addition quiz](/puzzles/binary-addition?lesson=designing-a-circuit-from-a-specification&course=intro-to-computer-engineering) is an optional bridge to the next course: arithmetic is also a circuit specification built from Boolean operations.
+
+## Where to go next
+
+You now have the vocabulary to study adders, multiplexers, registers, memory, and eventually a CPU datapath. Those topics are natural follow-ups, but the core habit remains the same: define inputs and outputs, write the rule, and test every case you can name.

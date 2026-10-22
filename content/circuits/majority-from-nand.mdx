@@ -1,0 +1,44 @@
+---
+title: "Build a Three-Input Majority Circuit"
+summary: "Design a NAND-only circuit whose output is on when at least two of three inputs are on."
+difficulty: beginner
+areas: [programming-fundamentals]
+topics: [bit-manipulation]
+tags: [majority, nand, circuit-design]
+available: true
+puzzlePorts:
+  inputs: [input_a, input_b, input_c]
+  outputs: [led_out]
+testCases:
+  - input: [false, false, false]
+    expected: [false]
+  - input: [false, false, true]
+    expected: [false]
+  - input: [false, true, false]
+    expected: [false]
+  - input: [false, true, true]
+    expected: [true]
+  - input: [true, false, false]
+    expected: [false]
+  - input: [true, false, true]
+    expected: [true]
+  - input: [true, true, false]
+    expected: [true]
+  - input: [true, true, true]
+    expected: [true]
+starterCircuit:
+  components:
+    - { id: input_a, kind: INPUT, label: A, x: 60, y: 100, value: false }
+    - { id: input_b, kind: INPUT, label: B, x: 60, y: 240, value: false }
+    - { id: input_c, kind: INPUT, label: C, x: 60, y: 380, value: false }
+    - { id: led_out, kind: LED, label: Q, x: 820, y: 240 }
+  connections: []
+  chips: {}
+---
+
+Build a circuit for this specification: **Q is on when at least two of A, B,
+and C are on.**
+
+First write the Boolean expression or truth table on paper. Then use NAND gates
+to implement it and test every possible input combination. The fixed inputs and
+LED cannot be deleted, but you may place and wire the gates between them.

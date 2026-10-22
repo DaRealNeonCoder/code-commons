@@ -1,0 +1,35 @@
+---
+title: "Overflow and Arithmetic Limits"
+order: 14
+summary: "Recognize when an answer needs more bits than a circuit provides and distinguish a carry from a valid signed result."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "bit-manipulation"]
+tags: ["overflow", "bit-width", "arithmetic"]
+languages: []
+difficulty: "beginner"
+puzzles: ["overflow-limits"]
+---
+
+A 4-bit unsigned circuit can represent only 0 through 15. If it computes `14 + 5 = 19`, the low four bits contain `0011` and the extra carry is `1`. The hardware did not fail; the chosen width was too small to hold the full answer.
+
+Signed two’s-complement values have a different range. With 4 bits, the usual range is `-8` through `7`. Overflow can happen when adding two positive values produces a negative-looking sign bit, or two negative values produce a positive-looking sign bit.
+
+<ReactDemo
+  title="See a four-bit result wrap"
+  code={`function Demo() {
+  const [a, setA] = React.useState(14);
+  const [b, setB] = React.useState(5);
+  const total = a + b;
+  const result = total & 15;
+  const overflow = total > 15;
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <label>A <input type='range' min='0' max='15' value={a} onChange={event => setA(+event.target.value)} /></label><br />
+    <label>B <input type='range' min='0' max='15' value={b} onChange={event => setB(+event.target.value)} /></label>
+    <p>{a} + {b} = {total}; four-bit result: <strong>{result.toString(2).padStart(4, '0')}</strong></p>
+    <p>{overflow ? 'Overflow: an extra carry was produced.' : 'No overflow.'}</p>
+  </div>;
+}`}
+  />
+
+The [overflow and limits quiz](/puzzles/overflow-limits?lesson=overflow-and-arithmetic-limits&course=intro-to-computer-engineering-part-2) asks which bits are retained and when an overflow flag should be raised.

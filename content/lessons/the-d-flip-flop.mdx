@@ -1,0 +1,39 @@
+---
+title: "The D Flip-Flop"
+order: 6
+summary: "See how a D flip-flop captures one data bit on a clock edge and holds it until the next edge."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["simulation", "bit-manipulation"]
+tags: ["d-flip-flop", "clock", "memory"]
+languages: []
+difficulty: "beginner"
+puzzles: ["d-flip-flop"]
+---
+
+A **D flip-flop** is a one-bit storage element with a data input `D`, a clock, and an output `Q`. On the chosen clock edge, it copies `D` to `Q`. At other times, `Q` holds.
+
+This gives us a clean promise:
+
+```text
+Q(next tick) = D(at the edge)
+```
+
+The D flip-flop hides the awkward set/reset combination from the previous lesson and is a common building block for registers.
+
+<ReactDemo
+  title="Capture D on the edge"
+  code={`function Demo() {
+  const [d, setD] = React.useState(false);
+  const [q, setQ] = React.useState(false);
+  const [tick, setTick] = React.useState(0);
+  const edge = () => { setQ(d); setTick(tick + 1); };
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <button onClick={() => setD(!d)} style={{ padding: 9, marginRight: 7 }}>D = {d ? '1' : '0'}</button><button onClick={edge} style={{ padding: 9, background: '#fbbf24', border: 0, borderRadius: 6 }}>Clock edge</button>
+    <p>tick {tick} · Q = <strong>{q ? '1' : '0'}</strong></p>
+    <small>Change D without pressing the clock. Q changes only at the edge.</small>
+  </div>;
+}`}
+  />
+
+The [D flip-flop puzzle](/puzzles/d-flip-flop?lesson=the-d-flip-flop&course=intro-to-computer-engineering-part-2) is a timeline exercise: identify the value captured at each rising edge.

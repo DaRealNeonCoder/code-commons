@@ -1,0 +1,32 @@
+---
+title: "Build a One-to-Two Demultiplexer"
+summary: "Route one data input to exactly one of two outputs with a select bit."
+difficulty: beginner
+areas: [programming-fundamentals]
+topics: [bit-manipulation]
+tags: [demultiplexer, routing, nand]
+available: true
+puzzlePorts:
+  inputs: [input_d, input_select]
+  outputs: [led_y0, led_y1]
+testCases:
+  - input: [false, false]
+    expected: [false, false]
+  - input: [false, true]
+    expected: [false, false]
+  - input: [true, false]
+    expected: [true, false]
+  - input: [true, true]
+    expected: [false, true]
+starterCircuit:
+  components:
+    - { id: input_d, kind: INPUT, label: D, x: 60, y: 160, value: false }
+    - { id: input_select, kind: INPUT, label: S, x: 60, y: 340, value: false }
+    - { id: led_y0, kind: LED, label: Y0, x: 680, y: 140 }
+    - { id: led_y1, kind: LED, label: Y1, x: 680, y: 360 }
+  connections: []
+  chips: {}
+---
+
+Build a 1-to-2 demultiplexer. When `D` is on, `S=0` should light `Y0` and
+`S=1` should light `Y1`. When `D` is off, both outputs should be off.

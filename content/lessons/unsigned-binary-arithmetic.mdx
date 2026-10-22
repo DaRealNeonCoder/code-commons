@@ -1,0 +1,43 @@
+---
+title: "Unsigned Binary Arithmetic"
+order: 9
+summary: "Practice adding unsigned binary values and separate the result bits from the carry that leaves the chosen width."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "bit-manipulation"]
+tags: ["binary-arithmetic", "carry", "unsigned"]
+languages: []
+difficulty: "beginner"
+puzzles: ["unsigned-arithmetic"]
+---
+
+Unsigned binary arithmetic follows the same column-by-column pattern as decimal arithmetic. The difference is that each column has only two digits, so `1 + 1` produces a zero in that column and a carry of one into the next.
+
+For example:
+
+```text
+   0111   (7)
++  0011   (3)
+--------
+   1010   (10)
+```
+
+The carry is not an annoyance added after the fact. It is one of the outputs the hardware must produce so the next column can use it.
+
+<ReactDemo
+  title="Add two four-bit values"
+  code={`function Demo() {
+  const [a, setA] = React.useState(7);
+  const [b, setB] = React.useState(3);
+  const total = a + b;
+  const bits = total.toString(2).padStart(5, '0');
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <label>A <input type='range' min='0' max='15' value={a} onChange={event => setA(+event.target.value)} /></label><br />
+    <label>B <input type='range' min='0' max='15' value={b} onChange={event => setB(+event.target.value)} /></label>
+    <p>{a} + {b} = <strong>{total}</strong> · five output bits: <code>{bits}</code></p>
+    <small>The leftmost bit is the carry beyond four result bits.</small>
+  </div>;
+}`}
+  />
+
+The [unsigned arithmetic quiz](/puzzles/unsigned-arithmetic?lesson=unsigned-binary-arithmetic&course=intro-to-computer-engineering-part-2) gives you small additions before we build the gates that perform them.

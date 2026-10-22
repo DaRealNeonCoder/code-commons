@@ -1,0 +1,34 @@
+---
+title: "Binary Numbers and Bit Width"
+order: 8
+summary: "Connect the number of stored bits to the range of unsigned values a register can represent."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "bit-manipulation"]
+tags: ["binary", "bit-width", "number-bases"]
+languages: []
+difficulty: "beginner"
+puzzles: ["bit-width"]
+---
+
+With `n` bits, there are `2^n` possible bit patterns. If we interpret every pattern as an unsigned number, the range is:
+
+```text
+0 through 2^n - 1
+```
+
+So 3 bits represent 8 patterns, from `000` (0) through `111` (7). Adding a fourth bit doubles the number of patterns and raises the largest value to 15.
+
+<ReactDemo
+  title="Change the register width"
+  code={`function Demo() {
+  const [width, setWidth] = React.useState(3);
+  const count = 2 ** width;
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <label>bits: <input aria-label='bit width' type='range' min='1' max='8' value={width} onChange={event => setWidth(+event.target.value)} /></label>
+    <p><strong>{width}</strong> bits → <strong>{count}</strong> patterns → unsigned values 0 through <strong>{count - 1}</strong>.</p>
+  </div>;
+}`}
+  />
+
+The [bit-width puzzle](/puzzles/bit-width?lesson=binary-numbers-and-bit-width&course=intro-to-computer-engineering-part-2) gives you small powers of two to calculate without needing advanced mathematics.

@@ -1,0 +1,37 @@
+---
+title: "Demultiplexers and Decoding"
+order: 16
+summary: "Reverse the multiplexer idea: route one input to one of several outputs according to a select bit."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["bit-manipulation", "simulation"]
+tags: ["demultiplexer", "routing", "data-selection"]
+languages: []
+difficulty: "beginner"
+puzzles: ["circuit:one-to-two-demultiplexer"]
+---
+
+A **demultiplexer**, or demux, takes one data input and routes it to one selected output. For a 1-to-2 demux:
+
+```text
+Y0 = D AND NOT S
+Y1 = D AND S
+```
+
+Only one output can receive the active data bit for a valid select value. If `D` is zero, both outputs are zero.
+
+<ReactDemo
+  title="Route one bit"
+  code={`function Demo() {
+  const [data, setData] = React.useState(true);
+  const [select, setSelect] = React.useState(false);
+  const y0 = data && !select;
+  const y1 = data && select;
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <button onClick={() => setData(!data)} style={{ padding: 8, marginRight: 5 }}>D = {data ? '1' : '0'}</button><button onClick={() => setSelect(!select)} style={{ padding: 8 }}>S = {select ? '1' : '0'}</button>
+    <p>Y0 = <strong>{y0 ? '1' : '0'}</strong> · Y1 = <strong>{y1 ? '1' : '0'}</strong></p>
+  </div>;
+}`}
+  />
+
+The [one-to-two demultiplexer puzzle](/circuits/one-to-two-demultiplexer?lesson=demultiplexers-and-decoding&course=intro-to-computer-engineering-part-2) checks both outputs. A circuit that turns both LEDs on at once has not routed the data correctly.

@@ -1,0 +1,40 @@
+---
+title: "Connecting Computer Components"
+order: 22
+summary: "Bring together storage, arithmetic, selection, and control signals to see how a small computer datapath is organized."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["simulation", "math", "bit-manipulation"]
+tags: ["datapath", "computer-architecture", "capstone"]
+languages: []
+difficulty: "beginner"
+puzzles: ["connecting-components"]
+---
+
+A small computer is not one giant circuit. It is a conversation between components:
+
+```text
+registers → buses → ALU → MUX → registers
+     ↑         ↑      ↑      ↑
+   clock   control signals  decoder
+```
+
+The details become more advanced later, but the roles are already familiar. Registers remember. Buses carry bits. The ALU computes. Multiplexers select. Decoders create control signals. A clock keeps updates coordinated.
+
+<ReactDemo
+  title="Trace one datapath step"
+  code={`function Demo() {
+  const [step, setStep] = React.useState(0);
+  const stages = ['read registers', 'select inputs', 'compute in ALU', 'write result on clock edge'];
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <button onClick={() => setStep((step + 1) % stages.length)} style={{ padding: 9, background: '#fbbf24', border: 0, borderRadius: 6 }}>Next stage</button>
+    <ol>{stages.map((stage, index) => <li key={stage} style={{ marginTop: 6, fontWeight: index === step ? 700 : 400, color: index === step ? '#0f766e' : 'inherit' }}>{stage}{index === step ? ' ← now' : ''}</li>)}</ol>
+  </div>;
+}`}
+  />
+
+The [connecting components puzzle](/puzzles/connecting-components?lesson=connecting-computer-components&course=intro-to-computer-engineering-part-2) is a final systems check. It asks you to identify which component should handle each step, not to memorize a particular CPU design.
+
+## Next steps
+
+You now have a foundation for studying instruction formats, control units, memory buses, and a complete tiny CPU. Those are natural Part 3 topics; the important habit is to keep each component’s interface and timing explicit.

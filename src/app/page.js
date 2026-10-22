@@ -1,54 +1,9 @@
 /* 
 
 
-
-
-
-
-
-
-
-HARDWARE COURSE
-
-Create a new **Introduction to Computer Engineering** course for codeloop.
-
-The course should introduce learners to the fundamental concepts behind digital computers, starting with how information is represented and how simple logic gates work. Build a strong foundation without trying to cover the entire process of building a computer in one course. More advanced topics, such as CPU architecture and instruction execution, can be covered in a separate follow-up course.
-
-### Topics to cover
-
-- **Number systems:** binary, decimal, hexadecimal, binary conversion, and representing integers.
-- **Boolean logic:** Boolean operators, truth tables, Boolean expressions, and basic Boolean algebra.
-- **Logic gates:** AND, OR, NOT, NAND, NOR, XOR, and XNOR, including how to combine them.
-- **Combinational circuits:** building circuits from gates, simplifying logic, multiplexers, decoders, and encoders.
-- **Binary arithmetic:** binary addition and subtraction, half adders, full adders, and how circuits perform arithmetic.
-- **Sequential logic:** the difference between combinational and sequential circuits, clock signals, latches, flip-flops, and basic registers.
-- **Digital information storage:** how bits can be stored, how registers work, and an introductory look at memory.
-- **Putting concepts together:** progressively larger circuits that demonstrate how simple components combine into useful digital systems.
-
-### Lessons, puzzles, and interactive demos
-
-First, inspect codeloop's existing logic simulator, math puzzle system, and course conventions. Use the existing capabilities wherever possible instead of duplicating functionality.
-
-Use both **logic puzzles** and **math puzzles** where appropriate:
-
-- Logic puzzles for constructing circuits, satisfying truth tables, connecting gates, and designing circuits with specified behavior.
-- Math puzzles for binary conversions, Boolean algebra, simplifying expressions, and solving binary arithmetic problems.
-
-Create interactive demos that let learners manipulate inputs, observe outputs, inspect truth tables, and understand how signals propagate through circuits. Gradually increase the complexity of the challenges as new components are introduced.
-
-Ensure that learners understand not only how to connect components, but also why the resulting circuit behaves as it does.
-
-### Scope and progression
-
-Keep this course beginner-friendly and focused on digital logic and foundational computer engineering. Assume no prior knowledge of electronics or computer architecture, and introduce the necessary mathematics as it becomes relevant.
-
-End with learners able to design and understand small digital circuits, including arithmetic circuits and simple stateful components. Do not attempt to cover a complete CPU, assembly language, operating systems, or the full process of building a computer. Leave those topics for a dedicated follow-up course.
-
-Before creating content, assess the existing tools and plan a coherent learning progression. Then create the lessons, puzzles, and demos needed to deliver it, following codeloop's established conventions and avoiding unnecessary duplication.
-
-
 license-renewal-tracker. tipwise
-
+gamengine works great. but the preview takes a minute to load for somereason. up until that point, periodically, the console flashed "the graphics preview timed out
+" it seems like something (webgl? something else?) hasn't loaded, 
 */ 
  
 "use client"; 

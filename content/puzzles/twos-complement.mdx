@@ -1,0 +1,36 @@
+---
+title: "Two's Complement"
+order: 310
+available: true
+summary: "Find small two's-complement encodings and use them to describe subtraction."
+areas: ["programming-fundamentals"]
+topics: ["math", "bit-manipulation"]
+tags: ["twos-complement", "subtraction"]
+languages: []
+difficulty: "beginner"
+kind: "math-quiz"
+mathQuiz:
+  version: 1
+  questions:
+    - id: "q1"
+      prompt: "What is the four-bit two's complement of 0011? Enter its decimal bit pattern."
+      type: "numeric"
+      answer: "13"
+    - id: "q2"
+      prompt: "What four-bit pattern represents -1 in two's complement? Enter its decimal value."
+      type: "numeric"
+      answer: "15"
+    - id: "q3"
+      prompt: "A - B can be computed as A plus which transformation of B?"
+      type: "choice"
+      choices:
+        - id: "a"
+          label: "invert B and add 1"
+        - id: "b"
+          label: "add 1 to A only"
+        - id: "c"
+          label: "discard B"
+      answer: "a"
+---
+
+The width matters: these answers are specifically four-bit patterns.

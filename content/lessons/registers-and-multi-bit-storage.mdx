@@ -1,0 +1,32 @@
+---
+title: "Registers and Multi-Bit Storage"
+order: 7
+summary: "Combine one-bit storage elements into a register that captures a whole binary value together."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["bit-manipulation", "simulation"]
+tags: ["register", "memory", "bit-width"]
+languages: []
+difficulty: "beginner"
+puzzles: ["register-storage"]
+---
+
+A **register** is a group of flip-flops that share a clock and a load control. A 4-bit register stores four bits, such as `0110`, at the same time.
+
+The bits are usually treated as one value when we move them around, but each bit still has its own storage element. A register does not need to understand whether its bits represent a number, a character, or a set of flags.
+
+<ReactDemo
+  title="Load a four-bit register"
+  code={`function Demo() {
+  const [input, setInput] = React.useState([0, 1, 1, 0]);
+  const [stored, setStored] = React.useState([0, 0, 0, 0]);
+  const toggle = index => setInput(input.map((bit, i) => i === index ? 1 - bit : bit));
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <p>Input bus: {input.map((bit, i) => <button key={i} onClick={() => toggle(i)} style={{ padding: 7, marginRight: 4, background: bit ? '#2dd4bf' : 'transparent', color: 'inherit' }}>{bit}</button>)}</p>
+    <button onClick={() => setStored(input)} style={{ padding: 9, background: '#fbbf24', border: 0, borderRadius: 6 }}>Load register</button>
+    <p>Stored register: <strong>{stored.join('')}</strong></p>
+  </div>;
+}`}
+  />
+
+The [register storage puzzle](/puzzles/register-storage?lesson=registers-and-multi-bit-storage&course=intro-to-computer-engineering-part-2) checks which bus value is visible after each load edge.

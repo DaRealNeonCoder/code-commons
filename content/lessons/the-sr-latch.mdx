@@ -1,0 +1,43 @@
+---
+title: "The SR Latch"
+order: 3
+summary: "Meet a simple set-reset latch that can hold one bit, and learn the small truth table that describes its controls."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["simulation", "bit-manipulation"]
+tags: ["sr-latch", "memory", "feedback"]
+languages: []
+difficulty: "beginner"
+puzzles: ["sr-latch-table"]
+---
+
+An **SR latch** has two control inputs:
+
+- **S**, for set: ask the latch to store `1`.
+- **R**, for reset: ask the latch to store `0`.
+
+When neither control is active, the latch holds its previous output. That “hold” row is the reason it can remember. A simplified active-high table looks like this:
+
+| S | R | Next Q |
+| ---: | ---: | ---: |
+| 0 | 0 | hold |
+| 1 | 0 | 1 |
+| 0 | 1 | 0 |
+| 1 | 1 | avoid |
+
+The last row is not a useful command: asking to set and reset at the same time makes the intended next state ambiguous. Different physical designs use different conventions, so beginners should treat it as an invalid input combination here.
+
+<ReactDemo
+  title="Set, reset, or hold"
+  code={`function Demo() {
+  const [q, setQ] = React.useState(false);
+  const [message, setMessage] = React.useState('hold');
+  const apply = (action) => { if (action === 'set') setQ(true); if (action === 'reset') setQ(false); setMessage(action); };
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <button onClick={() => apply('set')} style={{ padding: 9, marginRight: 6 }}>Set</button><button onClick={() => apply('reset')} style={{ padding: 9, marginRight: 6 }}>Reset</button><button onClick={() => setMessage('hold')} style={{ padding: 9 }}>Hold</button>
+    <p>Last command: <strong>{message}</strong> · Q = <strong>{q ? '1' : '0'}</strong></p>
+  </div>;
+}`}
+  />
+
+The [SR latch table puzzle](/puzzles/sr-latch-table?lesson=the-sr-latch&course=intro-to-computer-engineering-part-2) checks the set, reset, hold, and invalid cases.

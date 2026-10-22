@@ -1,0 +1,36 @@
+---
+title: "The NOT Gate"
+order: 4
+summary: "See how one input can be inverted, and use a NOT gate to turn an on signal into an off signal or vice versa."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["bit-manipulation"]
+tags: ["not-gate", "inversion"]
+languages: []
+difficulty: "beginner"
+puzzles: ["not-gate-table"]
+---
+
+A **NOT gate** has one input and one output. Its rule is simple:
+
+| Input A | NOT A |
+| ---: | ---: |
+| 0 | 1 |
+| 1 | 0 |
+
+The small circle often drawn at the output of a gate means “invert this.” In everyday terms, a NOT gate can make a warning light turn on when a sensor is *not* active.
+
+<ReactDemo
+  title="Invert a signal"
+  code={`function Demo() {
+  const [input, setInput] = React.useState(false);
+  const output = !input;
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <button onClick={() => setInput(!input)} style={{ padding: 10, borderRadius: 8, border: '1px solid', background: input ? '#2dd4bf' : 'transparent', color: 'inherit' }}>Input A = {input ? '1' : '0'}</button>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 16 }}><span>A</span><span>→</span><strong style={{ padding: 12, border: '2px solid', borderRadius: 8 }}>NOT</strong><span>→</span><span style={{ padding: 10, borderRadius: 8, background: output ? '#fbbf24' : '#334155' }}>Q = {output ? '1' : '0'}</span></div>
+    <p>The output always has the opposite value from the input.</p>
+  </div>;
+}`}
+  />
+
+The [NOT gate table quiz](/puzzles/not-gate-table?lesson=the-not-gate&course=intro-to-computer-engineering) is a two-question warm-up. Being able to predict one gate at a time will make larger circuits much less mysterious.

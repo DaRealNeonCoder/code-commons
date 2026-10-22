@@ -1,0 +1,36 @@
+---
+title: "SR Latch Table"
+order: 303
+available: true
+summary: "Complete the set, reset, hold, and invalid rows of an SR latch."
+areas: ["programming-fundamentals"]
+topics: ["simulation", "bit-manipulation"]
+tags: ["sr-latch", "memory"]
+languages: []
+difficulty: "beginner"
+kind: "math-quiz"
+mathQuiz:
+  version: 1
+  questions:
+    - id: "q1"
+      prompt: "For an active-high SR latch, S=1 and R=0 makes Q what?"
+      type: "numeric"
+      answer: "1"
+    - id: "q2"
+      prompt: "For an active-high SR latch, S=0 and R=1 makes Q what?"
+      type: "numeric"
+      answer: "0"
+    - id: "q3"
+      prompt: "When S=0 and R=0, does the latch set, reset, or hold?"
+      type: "choice"
+      choices:
+        - id: "a"
+          label: "Hold"
+        - id: "b"
+          label: "Set"
+        - id: "c"
+          label: "Reset"
+      answer: "a"
+---
+
+Treat S=1 and R=1 as an invalid command in this beginner model.

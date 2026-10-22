@@ -1,0 +1,35 @@
+---
+title: "Build a Half Adder from NAND Gates"
+summary: "Add two one-bit inputs and expose both the sum and the carry using NAND gates."
+difficulty: beginner
+areas: [programming-fundamentals]
+topics: [bit-manipulation]
+tags: [half-adder, nand, binary-arithmetic]
+available: true
+puzzlePorts:
+  inputs: [input_a, input_b]
+  outputs: [led_sum, led_carry]
+testCases:
+  - input: [false, false]
+    expected: [false, false]
+  - input: [false, true]
+    expected: [true, false]
+  - input: [true, false]
+    expected: [true, false]
+  - input: [true, true]
+    expected: [false, true]
+starterCircuit:
+  components:
+    - { id: input_a, kind: INPUT, label: A, x: 60, y: 100, value: false }
+    - { id: input_b, kind: INPUT, label: B, x: 60, y: 280, value: false }
+    - { id: led_sum, kind: LED, label: SUM, x: 680, y: 120 }
+    - { id: led_carry, kind: LED, label: CARRY, x: 680, y: 300 }
+  connections: []
+  chips: {}
+---
+
+Build a **half adder** from NAND gates. The `SUM` LED should implement
+`A XOR B`, while the `CARRY` LED should implement `A AND B`.
+
+You need two outputs, so check both LEDs for every input combination. The fixed
+inputs and LEDs cannot be deleted.

@@ -1,0 +1,36 @@
+---
+title: "Why Computers Need Memory"
+order: 1
+summary: "See why a circuit that only reacts to its current inputs cannot remember a password, a count, or the last step of a program."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["simulation", "bit-manipulation"]
+tags: ["memory", "state", "computer-engineering"]
+languages: []
+difficulty: "beginner"
+puzzles: ["memory-or-logic"]
+---
+
+In Part 1, every circuit was **combinational**: change the inputs and the output changes according to the same rule. That is useful, but it cannot remember what happened a moment ago.
+
+Memory gives a computer a past. A stored bit can represent “the user is logged in,” “the counter reached 7,” or “this instruction is waiting to run.” The important distinction is not that memory is mysterious; it is that the output can depend on both current inputs and a previously stored value.
+
+<ReactDemo
+  title="A current calculation and a stored value"
+  code={`function Demo() {
+  const [input, setInput] = React.useState(false);
+  const [stored, setStored] = React.useState(false);
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <button onClick={() => setInput(!input)} style={{ padding: 10, marginRight: 8, borderRadius: 8, border: '1px solid', background: input ? '#2dd4bf' : 'transparent', color: 'inherit' }}>Input = {input ? '1' : '0'}</button>
+    <button onClick={() => setStored(input)} style={{ padding: 10, borderRadius: 8, border: '1px solid', background: '#fbbf24', color: '#111827' }}>Store input</button>
+    <p>Current input: <strong>{input ? '1' : '0'}</strong></p>
+    <p>Stored bit: <strong>{stored ? '1' : '0'}</strong></p>
+    <small>Change the input after storing it. The stored bit stays unchanged.</small>
+  </div>;
+}`}
+  />
+
+> [!TIP]
+> “What is the output now?” describes combinational logic. “What was stored earlier?” introduces state.
+
+The [memory or logic quiz](/puzzles/memory-or-logic?lesson=why-computers-need-memory&course=intro-to-computer-engineering-part-2) asks you to identify which examples need memory. We will build the smallest memory elements next.

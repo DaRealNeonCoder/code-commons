@@ -1,0 +1,18 @@
+{
+  "title": "Intro to Computer Engineering",
+  "summary": "Learn how computers represent information and make decisions, starting with bits and Boolean logic and building toward small digital circuits. No electronics or computer engineering background is required.",
+  "lessons": [
+    "what-is-a-computer-made-of",
+    "bits-binary-and-digital-signals",
+    "true-false-and-boolean-logic",
+    "the-not-gate",
+    "the-and-gate",
+    "the-or-gate",
+    "the-nand-gate",
+    "the-xor-gate",
+    "truth-tables-and-circuit-reasoning",
+    "combining-gates",
+    "combinational-logic-versus-state",
+    "designing-a-circuit-from-a-specification"
+  ]
+}

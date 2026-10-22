@@ -1,0 +1,40 @@
+---
+title: "Building a Simple Arithmetic Logic Unit"
+order: 18
+summary: "Combine an arithmetic block, a logic block, and a multiplexer into a small ALU that chooses an operation."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "bit-manipulation", "simulation"]
+tags: ["alu", "arithmetic", "datapath"]
+languages: []
+difficulty: "beginner"
+puzzles: ["circuit:one-bit-alu"]
+---
+
+An **arithmetic logic unit**, or ALU, is a combinational component that performs an operation selected by control bits. A deliberately small ALU can choose between:
+
+```text
+OP = 0 → A AND B
+OP = 1 → A + B + CIN
+```
+
+The ALU needs a result output and a carry output. The result multiplexer chooses which operation’s result becomes visible; a small control rule keeps carry at zero during the AND operation.
+
+<ReactDemo
+  title="Select an ALU operation"
+  code={`function Demo() {
+  const [a, setA] = React.useState(true);
+  const [b, setB] = React.useState(false);
+  const [cin, setCin] = React.useState(false);
+  const [op, setOp] = React.useState(false);
+  const total = Number(a) + Number(b) + Number(cin);
+  const result = op ? total % 2 === 1 : a && b;
+  const carry = op && total >= 2;
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <button onClick={() => setA(!a)} style={{ padding: 7, marginRight: 4 }}>A={a ? '1' : '0'}</button><button onClick={() => setB(!b)} style={{ padding: 7, marginRight: 4 }}>B={b ? '1' : '0'}</button><button onClick={() => setCin(!cin)} style={{ padding: 7, marginRight: 4 }}>CIN={cin ? '1' : '0'}</button><button onClick={() => setOp(!op)} style={{ padding: 7, background: '#fbbf24', border: 0, borderRadius: 5 }}>OP={op ? 'ADD' : 'AND'}</button>
+    <p>RESULT: <strong>{result ? '1' : '0'}</strong> · COUT: <strong>{carry ? '1' : '0'}</strong></p>
+  </div>;
+}`}
+  />
+
+The [one-bit ALU puzzle](/circuits/one-bit-alu?lesson=building-a-simple-arithmetic-logic-unit&course=intro-to-computer-engineering-part-2) is a compact capstone for combinational logic. Build both operations, then select between them.

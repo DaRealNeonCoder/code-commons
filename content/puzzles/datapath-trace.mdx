@@ -1,0 +1,30 @@
+---
+title: "Datapath Trace"
+order: 313
+available: true
+summary: "Follow a register, ALU, and load-control sequence one clock edge at a time."
+areas: ["programming-fundamentals"]
+topics: ["math", "simulation"]
+tags: ["datapath", "register", "alu"]
+languages: []
+difficulty: "beginner"
+kind: "math-quiz"
+mathQuiz:
+  version: 1
+  questions:
+    - id: "q1"
+      prompt: "A register holds 2 and the ALU adds input 3. What candidate value is produced?"
+      type: "numeric"
+      answer: "5"
+    - id: "q2"
+      prompt: "If LOAD=0 at the clock edge, does the register take the candidate value?"
+      type: "choice"
+      choices:
+        - id: "a"
+          label: "Yes"
+        - id: "b"
+          label: "No"
+      answer: "b"
+---
+
+The ALU can calculate a candidate without changing the register until control allows a write.

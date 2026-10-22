@@ -1,0 +1,40 @@
+---
+title: "The OR Gate"
+order: 6
+summary: "Learn the OR rule: the output is on when at least one input is on, including the difference between OR and exclusive OR."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["bit-manipulation"]
+tags: ["or-gate", "digital-logic"]
+languages: []
+difficulty: "beginner"
+puzzles: ["or-gate-table"]
+---
+
+An **OR gate** has an output of `1` when **at least one** input is `1`:
+
+| A | B | A OR B |
+| ---: | ---: | ---: |
+| 0 | 0 | 0 |
+| 0 | 1 | 1 |
+| 1 | 0 | 1 |
+| 1 | 1 | 1 |
+
+This is the inclusive meaning of OR. If two fire alarms are connected with OR, either alarm—or both—can turn on the warning.
+
+Do not confuse this with **XOR**, which means “one or the other, but not both.” XOR comes later because it is especially useful for detecting differences.
+
+<ReactDemo
+  title="At least one input"
+  code={`function Demo() {
+  const [values, setValues] = React.useState([false, false]);
+  const result = values[0] || values[1];
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    {values.map((value, index) => <button key={index} onClick={() => setValues(values.map((old, i) => i === index ? !old : old))} style={{ marginRight: 8, padding: 10, borderRadius: 8, border: '1px solid', background: value ? '#2dd4bf' : 'transparent', color: 'inherit' }}>Input {index === 0 ? 'A' : 'B'} = {value ? '1' : '0'}</button>)}
+    <p><code>A OR B</code> = <strong>{result ? '1' : '0'}</strong></p>
+    <small>Both inputs can be on at the same time and the output is still 1.</small>
+  </div>;
+}`}
+  />
+
+The [OR gate table quiz](/puzzles/or-gate-table?lesson=the-or-gate&course=intro-to-computer-engineering) gives you practice predicting outputs without drawing a physical circuit.

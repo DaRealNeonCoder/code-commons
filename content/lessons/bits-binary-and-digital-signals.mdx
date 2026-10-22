@@ -1,0 +1,51 @@
+---
+title: "Bits, Binary, and Digital Signals"
+order: 2
+summary: "Learn how a bit represents two choices, how binary place values work, and why digital circuits use clear low and high signal levels."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "bit-manipulation"]
+tags: ["binary", "number-bases", "digital-logic"]
+languages: []
+difficulty: "beginner"
+puzzles: ["binary-place-values", "binary-to-decimal"]
+---
+
+A **bit** is a small piece of information with two possible values: `0` or `1`. We can describe the values in several equivalent ways:
+
+| Bit | Signal level | Everyday meaning |
+| --- | --- | --- |
+| `0` | low | no / false / off |
+| `1` | high | yes / true / on |
+
+The bit is an abstraction. Inside a particular device, “low” and “high” are ranges of voltages rather than perfect mathematical points. We use `0` and `1` because the two ranges are easier to distinguish reliably than many different levels.
+
+## Binary place values
+
+Binary is base 2, so each position is a power of 2. From right to left, the places are 1, 2, 4, 8, and so on:
+
+```text
+1 0 1 1
+8 4 2 1   <- place values
+```
+
+The binary number `1011` means `1×8 + 0×4 + 1×2 + 1×1 = 11`. A group of four bits can represent 16 different patterns, from `0000` to `1111`.
+
+<ReactDemo
+  title="Turn bits on and off"
+  code={`function Demo() {
+  const places = [8, 4, 2, 1];
+  const [bits, setBits] = React.useState([1, 0, 1, 1]);
+  const value = bits.reduce((sum, bit, index) => sum + bit * places[index], 0);
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>{bits.map((bit, index) => <button key={places[index]} onClick={() => setBits(bits.map((old, i) => i === index ? 1 - old : old))} style={{ minWidth: 60, padding: 10, borderRadius: 8, border: '1px solid', background: bit ? '#2dd4bf' : 'transparent', color: 'inherit' }}><strong>{bit}</strong><br /><small>{places[index]}s place</small></button>)}</div>
+    <p><code>{bits.join('')}</code> in binary = <strong>{value}</strong> in decimal.</p>
+  </div>;
+}`}
+  />
+
+## Digital does not mean magical
+
+A digital signal still travels through a physical wire. “Digital” means we agree to interpret a range of physical measurements as one of two logical values. That agreement gives circuits room to tolerate small amounts of noise.
+
+The [binary place values quiz](/puzzles/binary-place-values?lesson=bits-binary-and-digital-signals&course=intro-to-computer-engineering) gives you a few conversions to do by hand. The [Binary to Decimal puzzle](/puzzles/binary-to-decimal?lesson=bits-binary-and-digital-signals&course=intro-to-computer-engineering) is an optional coding exercise if you want to automate the same reasoning.

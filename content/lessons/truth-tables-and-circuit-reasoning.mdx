@@ -1,0 +1,36 @@
+---
+title: "Truth Tables and Reasoning About Circuits"
+order: 9
+summary: "Use a truth table as a complete, honest description of a small circuit and trace outputs one gate at a time."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["math", "simulation"]
+tags: ["truth-tables", "circuit-reasoning"]
+languages: []
+difficulty: "beginner"
+puzzles: ["truth-table-reasoning"]
+---
+
+A **truth table** lists every possible input combination and the output produced by a rule. Two inputs have four combinations, so a two-input table has four rows. Three inputs have eight combinations.
+
+For a circuit such as `Q = (A AND B) OR C`, work from the inside out. First calculate `A AND B`, then combine that temporary result with `C` using OR. Naming intermediate results prevents a long expression from becoming a guessing game.
+
+<ReactDemo
+  title="Trace one row at a time"
+  code={`function Demo() {
+  const rows = [[0, 0, 0], [0, 1, 1], [1, 0, 0], [1, 1, 1]];
+  const [row, setRow] = React.useState(0);
+  const [a, b, c] = rows[row];
+  const andResult = a && b;
+  const output = Boolean(andResult || c);
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <label>Input row <input aria-label='row' type='range' min='0' max='3' value={row} onChange={event => setRow(+event.target.value)} /></label>
+    <table style={{ marginTop: 12, borderCollapse: 'collapse' }}><tbody><tr><th style={{ padding: 5 }}>A</th><th style={{ padding: 5 }}>B</th><th style={{ padding: 5 }}>C</th><th style={{ padding: 5 }}>A AND B</th><th style={{ padding: 5 }}>Q</th></tr><tr><td style={{ padding: 5, textAlign: 'center' }}>{a}</td><td style={{ padding: 5, textAlign: 'center' }}>{b}</td><td style={{ padding: 5, textAlign: 'center' }}>{c}</td><td style={{ padding: 5, textAlign: 'center' }}>{andResult ? 1 : 0}</td><td style={{ padding: 5, textAlign: 'center' }}><strong>{output ? 1 : 0}</strong></td></tr></tbody></table>
+    <p>We evaluated <code>(A AND B) OR C</code> from left to right through its intermediate result.</p>
+  </div>;
+}`}
+  />
+
+Truth tables are also a debugging tool. If your circuit is wrong, find the first row where its output disagrees with the specification. Then trace the gate feeding that output instead of staring at the whole diagram.
+
+The [truth-table reasoning quiz](/puzzles/truth-table-reasoning?lesson=truth-tables-and-circuit-reasoning&course=intro-to-computer-engineering) lets you practice intermediate values and final outputs.

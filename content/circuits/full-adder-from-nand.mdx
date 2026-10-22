@@ -1,0 +1,44 @@
+---
+title: "Build a Full Adder from NAND Gates"
+summary: "Add two bits and an incoming carry, producing a sum and an outgoing carry."
+difficulty: beginner
+areas: [programming-fundamentals]
+topics: [bit-manipulation]
+tags: [full-adder, nand, binary-arithmetic]
+available: true
+puzzlePorts:
+  inputs: [input_a, input_b, input_cin]
+  outputs: [led_sum, led_cout]
+testCases:
+  - input: [false, false, false]
+    expected: [false, false]
+  - input: [false, false, true]
+    expected: [true, false]
+  - input: [false, true, false]
+    expected: [true, false]
+  - input: [false, true, true]
+    expected: [false, true]
+  - input: [true, false, false]
+    expected: [true, false]
+  - input: [true, false, true]
+    expected: [false, true]
+  - input: [true, true, false]
+    expected: [false, true]
+  - input: [true, true, true]
+    expected: [true, true]
+starterCircuit:
+  components:
+    - { id: input_a, kind: INPUT, label: A, x: 60, y: 80, value: false }
+    - { id: input_b, kind: INPUT, label: B, x: 60, y: 220, value: false }
+    - { id: input_cin, kind: INPUT, label: CIN, x: 60, y: 360, value: false }
+    - { id: led_sum, kind: LED, label: SUM, x: 820, y: 140 }
+    - { id: led_cout, kind: LED, label: COUT, x: 820, y: 320 }
+  connections: []
+  chips: {}
+---
+
+Build a **full adder** from NAND gates. Add `A`, `B`, and `CIN`; send the low
+bit to `SUM` and the carry to `COUT`.
+
+You can reason about the design as two half adders followed by an OR gate. The
+checker covers all eight input combinations.

@@ -1,0 +1,39 @@
+---
+title: "Combining Gates to Build More Complex Logic"
+order: 10
+summary: "Compose small gates into a larger rule, name intermediate signals, and see how a circuit can express a useful requirement."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["bit-manipulation", "simulation"]
+tags: ["combinational-logic", "composition"]
+languages: []
+difficulty: "beginner"
+puzzles: ["circuit:enabled-or"]
+---
+
+One gate usually expresses one small condition. Real circuits become useful when we connect them. For example:
+
+```text
+Q = ENABLE AND (A OR B)
+```
+
+Read the parentheses first. `A OR B` creates a temporary signal—“at least one request exists.” The AND gate then requires the separate `ENABLE` signal too.
+
+This is **combinational logic**: the output depends on the inputs currently present. There is no hidden memory and no special order in which the gates need to be “run”; a change propagates through the wires until the output settles.
+
+<ReactDemo
+  title="Build a permission rule"
+  code={`function Demo() {
+  const [values, setValues] = React.useState({ enable: false, a: false, b: false });
+  const request = values.a || values.b;
+  const output = values.enable && request;
+  const toggle = key => setValues({ ...values, [key]: !values[key] });
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    {Object.keys(values).map(key => <button key={key} onClick={() => toggle(key)} style={{ margin: 4, padding: 9, borderRadius: 8, border: '1px solid', background: values[key] ? '#2dd4bf' : 'transparent', color: 'inherit' }}>{key} = {values[key] ? '1' : '0'}</button>)}
+    <p>temporary signal <code>A OR B</code> = {request ? '1' : '0'}</p>
+    <p>final signal <code>ENABLE AND (A OR B)</code> = <strong>{output ? '1' : '0'}</strong></p>
+  </div>;
+}`}
+  />
+
+The [enabled-or circuit puzzle](/circuits/enabled-or?lesson=combining-gates&course=intro-to-computer-engineering) gives you three inputs and one LED. Use only NAND gates to satisfy the specification and test all eight input combinations.

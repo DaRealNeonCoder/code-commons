@@ -1,0 +1,42 @@
+---
+title: "The XOR Gate and Detecting Differences"
+order: 8
+summary: "Use exclusive OR to detect when two bits differ, and connect that behavior to parity and comparison."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["bit-manipulation"]
+tags: ["xor", "parity-bit", "comparison"]
+languages: []
+difficulty: "beginner"
+puzzles: ["circuit:xor-from-nand", "differ-by-one-bit"]
+---
+
+**XOR**, or exclusive OR, is on when its inputs are different. It is the “one, but not both” rule:
+
+| A | B | A XOR B |
+| ---: | ---: | ---: |
+| 0 | 0 | 0 |
+| 0 | 1 | 1 |
+| 1 | 0 | 1 |
+| 1 | 1 | 0 |
+
+That makes XOR useful for comparing bits. If you XOR two equal bits, the result is `0`; if you XOR two different bits, the result is `1`. Applying XOR position by position lets us count or locate differences between bit patterns.
+
+<ReactDemo
+  title="Highlight the differences"
+  code={`function Demo() {
+  const [left, setLeft] = React.useState([1, 0, 1, 1]);
+  const [right, setRight] = React.useState([1, 1, 0, 1]);
+  const differences = left.map((bit, index) => bit !== right[index]);
+  const count = differences.filter(Boolean).length;
+  const flip = (side, index) => (side === 'left' ? setLeft(left.map((bit, i) => i === index ? 1 - bit : bit)) : setRight(right.map((bit, i) => i === index ? 1 - bit : bit)));
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <p>Click a bit to change it.</p>
+    <div style={{ display: 'flex', gap: 5 }}>{left.map((bit, index) => <button key={'l' + index} onClick={() => flip('left', index)} style={{ padding: 8, background: differences[index] ? '#fbbf24' : 'transparent', color: 'inherit' }}>{bit}</button>)}</div>
+    <div style={{ display: 'flex', gap: 5, marginTop: 5 }}>{right.map((bit, index) => <button key={'r' + index} onClick={() => flip('right', index)} style={{ padding: 8, background: differences[index] ? '#fbbf24' : 'transparent', color: 'inherit' }}>{bit}</button>)}</div>
+    <p>XOR pattern: <code>{differences.map(value => value ? 1 : 0).join('')}</code> · differences: <strong>{count}</strong></p>
+  </div>;
+}`}
+  />
+
+The [Build XOR from NAND gates puzzle](/circuits/xor-from-nand?lesson=the-xor-gate&course=intro-to-computer-engineering) asks you to build this behavior from the universal NAND gate. The [Differ by One Bit puzzle](/puzzles/differ-by-one-bit?lesson=the-xor-gate&course=intro-to-computer-engineering) gives you a small bit-comparison exercise.

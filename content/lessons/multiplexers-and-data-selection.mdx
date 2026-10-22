@@ -1,0 +1,37 @@
+---
+title: "Multiplexers and Data Selection"
+order: 15
+summary: "Use a select bit to choose one of two data inputs, turning Boolean gates into a controllable data path."
+available: true
+areas: ["programming-fundamentals"]
+topics: ["bit-manipulation", "simulation"]
+tags: ["multiplexer", "data-selection", "datapath"]
+languages: []
+difficulty: "beginner"
+puzzles: ["circuit:two-to-one-multiplexer"]
+---
+
+A **multiplexer**, or MUX, chooses one input and forwards it to an output. A 2-to-1 MUX has `D0`, `D1`, and a select bit `S`:
+
+```text
+S = 0 → Y = D0
+S = 1 → Y = D1
+```
+
+The select bit is control information. It does not become the output itself; it decides which data path is connected.
+
+<ReactDemo
+  title="Choose a data input"
+  code={`function Demo() {
+  const [d0, setD0] = React.useState(false);
+  const [d1, setD1] = React.useState(true);
+  const [select, setSelect] = React.useState(false);
+  const output = select ? d1 : d0;
+  return <div style={{ fontFamily: 'system-ui', padding: 16, color: 'CanvasText' }}>
+    <button onClick={() => setD0(!d0)} style={{ padding: 8, marginRight: 5 }}>D0 = {d0 ? '1' : '0'}</button><button onClick={() => setD1(!d1)} style={{ padding: 8, marginRight: 5 }}>D1 = {d1 ? '1' : '0'}</button><button onClick={() => setSelect(!select)} style={{ padding: 8, background: '#fbbf24', border: 0, borderRadius: 5 }}>S = {select ? '1' : '0'}</button>
+    <p>Y = <strong>{output ? '1' : '0'}</strong> · selected input: <strong>{select ? 'D1' : 'D0'}</strong></p>
+  </div>;
+}`}
+  />
+
+Build the [two-to-one multiplexer](/circuits/two-to-one-multiplexer?lesson=multiplexers-and-data-selection&course=intro-to-computer-engineering-part-2) from NAND gates. This is the first component in the series that routes data based on a control signal.
