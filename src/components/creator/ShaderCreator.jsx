@@ -12,6 +12,11 @@ import useProjectAutosave from "@/components/creator/useProjectAutosave";
 import usePublishState from "@/components/creator/usePublishState";
 import ShaderPuzzleEditor from "@/components/creator/ShaderPuzzleEditor";
 import { getShaderPuzzle } from "@/lib/shaders/puzzle";
+import {
+  defaultProgrammableFiles,
+  normalizeProgrammableFiles,
+  PROGRAMMABLE_3D_MODE,
+} from "@/lib/shaders/programmable3d";
 
 // Shader lessons aren't categorised; the save route still expects these keys,
 // so send empty defaults.
@@ -62,6 +67,7 @@ export default function ShaderCreator({
   publishState: initialPublishState = "draft",
 }) {
   const saved = project.data ?? {};
+  const initialMode = saved.mode === PROGRAMMABLE_3D_MODE ? PROGRAMMABLE_3D_MODE : "fragment";
 
   // The workspace is the default view; the Markdown creator is one tab away.
   const [view, setView] = useState("workspace");
@@ -73,6 +79,9 @@ export default function ShaderCreator({
   const [baselineCode] = useState(() => saved.code ?? DEFAULT_SHADER);
   const [code, setCode] = useState(baselineCode);
   const [seed, setSeed] = useState(baselineCode);
+  const [mode, setMode] = useState(initialMode);
+  const [files, setFiles] = useState(() => normalizeProgrammableFiles(saved.files ?? defaultProgrammableFiles()));
+  const [baselineFiles] = useState(() => normalizeProgrammableFiles(saved.files ?? defaultProgrammableFiles()));
 
   const [title, setTitle] = useState(project.title ?? "");
   const [summary, setSummary] = useState(saved.summary ?? "");
@@ -93,15 +102,23 @@ export default function ShaderCreator({
 
   let puzzleConfig = null;
   let puzzleError = null;
-  if (puzzleEnabled) {
+  if (puzzleEnabled && mode !== PROGRAMMABLE_3D_MODE) {
     try {
       puzzleConfig = getShaderPuzzle(puzzle);
     } catch (error) {
       puzzleError = error.message;
     }
   }
-  const draftData = { summary, code, blocks, puzzle, puzzleEnabled };
-  const puzzleReady = !puzzleEnabled || Boolean(puzzleConfig);
+  const draftData = {
+    summary,
+    code,
+    files,
+    ...(mode === PROGRAMMABLE_3D_MODE ? { mode } : {}),
+    blocks,
+    puzzle,
+    puzzleEnabled: mode === PROGRAMMABLE_3D_MODE ? false : puzzleEnabled,
+  };
+  const puzzleReady = mode === PROGRAMMABLE_3D_MODE || !puzzleEnabled || Boolean(puzzleConfig);
 
   const saveState = useProjectAutosave({
     projectId: project.id,
@@ -120,6 +137,10 @@ export default function ShaderCreator({
     setView(next);
   }
 
+  function handleModeChange(nextMode) {
+    setMode(nextMode);
+  }
+
   async function handlePublish() {
     const snap = JSON.stringify({ title, data: draftData }); // what this publish actually sends
     setStatus("saving");
@@ -134,6 +155,8 @@ export default function ShaderCreator({
           summary,
           ...NO_SELECTION,
           starterCode: code,
+          mode,
+          files: mode === PROGRAMMABLE_3D_MODE ? files : undefined,
           puzzle: puzzleConfig,
           blocks,
         }),
@@ -217,9 +240,13 @@ export default function ShaderCreator({
         // playground always measures a visible container.
         <div className="flex min-h-0 flex-1 flex-col bg-zinc-950">
           <ShaderPlayground
+            mode={mode}
             initialCode={seed}
             resetCode={baselineCode}
             onCodeChange={setCode}
+            initialFiles={files}
+            resetFiles={baselineFiles}
+            onFilesChange={setFiles}
             puzzle={puzzleConfig}
             {...lessonProps}
           />
@@ -236,7 +263,9 @@ export default function ShaderCreator({
 
             <div className="mt-6 flex items-center justify-between gap-3 rounded-md border border-zinc-200 px-5 py-3 dark:border-zinc-800">
               <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                Starter shader: {code.split("\n").length} lines
+                {mode === PROGRAMMABLE_3D_MODE
+                  ? `3D project: ${Object.values(files).join("\n").split("\n").length} source lines`
+                  : `Starter shader: ${code.split("\n").length} lines`}
               </p>
 
               <button
@@ -255,8 +284,22 @@ export default function ShaderCreator({
               {/* Lesson details */}
               <section className="mt-6 rounded-md border border-zinc-200 p-5 dark:border-zinc-800">
                 <h2 className="mb-4 font-mono text-sm text-zinc-500">
-                  lesson details
+                  lesson details &amp; rendering mode
                 </h2>
+
+                <label className="block text-sm font-medium" htmlFor="shader-mode">Workflow</label>
+                <select
+                  id="shader-mode"
+                  value={mode}
+                  onChange={(event) => handleModeChange(event.target.value)}
+                  className="mt-1 mb-2 w-full rounded border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+                >
+                  <option value="fragment">Simple fragment shader</option>
+                  <option value={PROGRAMMABLE_3D_MODE}>Programmable 3D scene</option>
+                </select>
+                <p className="mb-4 text-xs text-zinc-500">
+                  Simple shaders stay one file. Choose 3D when you need CPU JavaScript, geometry, camera transforms, and separate vertex/fragment files.
+                </p>
 
                 <label
                   className="block text-sm font-medium"
@@ -295,13 +338,13 @@ export default function ShaderCreator({
                 accent="fuchsia"
               />
 
-              <ShaderPuzzleEditor
+              {mode === "fragment" && <ShaderPuzzleEditor
                 enabled={puzzleEnabled}
                 onEnabledChange={setPuzzleEnabled}
                 puzzle={puzzle}
                 onPuzzleChange={setPuzzle}
                 code={code}
-              />
+              />}
 
               {/* Markdown preview */}
               <details className="mt-6 rounded-md border border-zinc-200 p-4 dark:border-zinc-800">

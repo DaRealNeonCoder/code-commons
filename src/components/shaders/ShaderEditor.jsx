@@ -57,10 +57,10 @@ function registerGlslLanguage(monaco) {
 // `code` / `onChange` naming matches the existing CodeEditor component for
 // consistency, even though this is a separate component — shaders don't
 // need CodeEditor's language switcher or run button, just Monaco itself.
-export default function ShaderEditor({ code, onChange }) {
+export default function ShaderEditor({ code, onChange, language = "glsl" }) {
   return (
     <Editor
-      language="glsl"
+      language={language}
       theme="vs-dark"
       value={code}
       onChange={(nextValue) => onChange(nextValue ?? "")}

@@ -1,0 +1,97 @@
+---
+title: "General Binary Trees and Traversals"
+order: 10
+summary: "Represent arbitrary binary trees and trace preorder, inorder, postorder, and level-order traversals without assuming BST ordering."
+available: true
+areas: ["algorithms"]
+topics: ["trees", "traversals", "recursion"]
+tags: ["binary-tree", "preorder", "inorder", "postorder"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["binary-tree-traversals"]
+---
+
+A **general binary tree** is made of nodes with zero, one, or two child links. Unlike a binary search tree, it does not promise that left values are smaller or right values are larger. This lesson focuses on reading an already-shaped tree and visiting every node in useful orders; it deliberately does not repeat BST insertion or search from the [Searching Algorithms course](/courses/searching-algorithms).
+
+## The shape is part of the data
+
+One node representation is a small object or dictionary:
+
+```python
+class Node:
+    def __init__(self, value, left=None, right=None):
+        self.value = value
+        self.left = left
+        self.right = right
+
+
+root = Node("A", Node("B"), Node("C", Node("D"), None))
+```
+
+There is no valid general-tree rule that lets us place a new value by comparing it with `root.value`. A caller must provide the child links, a level-order description, or another shape specification. Duplicate values are allowed, and a missing child is represented by `None`.
+
+## Four ways to visit
+
+Depth-first traversals differ only in when they record the current node:
+
+```python
+def preorder(node, result):
+    if node is None:
+        return
+    result.append(node.value)       # node, left, right
+    preorder(node.left, result)
+    preorder(node.right, result)
+
+
+def inorder(node, result):
+    if node is None:
+        return
+    inorder(node.left, result)     # left, node, right
+    result.append(node.value)
+    inorder(node.right, result)
+
+
+def postorder(node, result):
+    if node is None:
+        return
+    postorder(node.left, result)
+    postorder(node.right, result)
+    result.append(node.value)      # left, right, node
+```
+
+Preorder is useful for recording a root before its children, and postorder is useful when children must be processed before a parent. Inorder has a sorted result **only when the tree is a valid BST**; for an arbitrary tree it is simply one left-to-right visit order. **Level-order** traversal uses a queue and visits one depth at a time.
+
+<ReactDemo
+  title="Choose a traversal order"
+  code={`function Demo() {
+  const tree = { value: "A", left: { value: "B", left: { value: "D" }, right: { value: "E" } }, right: { value: "C" } };
+  const [order, setOrder] = React.useState("preorder");
+  const visit = (node, result) => {
+    if (!node) return;
+    if (order === "preorder") result.push(node.value);
+    visit(node.left, result);
+    if (order === "inorder") result.push(node.value);
+    visit(node.right, result);
+    if (order === "postorder") result.push(node.value);
+  };
+  const result = [];
+  visit(tree, result);
+  const node = (value, left, right) => React.createElement("div", { style: { textAlign: "center", margin: 8 } }, React.createElement("span", { style: { display: "inline-block", padding: "6px 10px", borderRadius: 16, background: "#38bdf8", color: "#0f172a" } }, value), left || right ? React.createElement("div", { style: { display: "flex", justifyContent: "center" } }, left || React.createElement("span", { style: { width: 50 } }), right || React.createElement("span", { style: { width: 50 } })) : null);
+  return React.createElement("div", { style: { fontFamily: "system-ui", padding: 16, color: "CanvasText" } },
+    React.createElement("select", { value: order, onChange: e => setOrder(e.target.value) }, React.createElement("option", null, "preorder"), React.createElement("option", null, "inorder"), React.createElement("option", null, "postorder")),
+    React.createElement("p", null, "visit: ", React.createElement("code", null, result.join(" → "))),
+    React.createElement("p", null, "The same shape gives different sequences because the recording point moves."),
+    node("A", node("B", node("D"), node("E")), node("C"))
+  );
+}`}
+  />
+
+## Complexity, recursion, and edge cases
+
+Every traversal visits each of `n` nodes once, so it takes **O(n) time**. Recursive depth-first traversal uses **O(h) call-stack space**, where `h` is the tree height, and its output uses O(n) space. A balanced tree has h = O(log n), while a one-sided chain has h = O(n). An iterative traversal can avoid language recursion limits by managing its own stack. Level-order traversal uses **O(w)** queue space, where `w` is the largest level.
+
+The traversal invariant is: every node removed from the work stack or queue is recorded exactly once, and every child is scheduled exactly once. The empty tree returns an empty sequence. A leaf has no children and appears once. A node with only a right child must not be treated as if it had a left child. Repeated values are separate nodes, so do not use a value set to decide whether a node was visited unless the input is a graph with shared references.
+
+## Practice
+
+The [Binary Tree Traversals puzzle](/puzzles/binary-tree-traversals?lesson=general-binary-trees-and-traversals&course=data-structures-and-algorithms) gives you a tree shape directly in level-order form. Produce all three depth-first orders, including empty, skewed, and duplicate-valued trees, without applying BST insertion or search rules.

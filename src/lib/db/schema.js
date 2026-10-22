@@ -112,7 +112,11 @@ export const shaders = pgTable(
   "shaders",
   {
     ...contentColumns(),
+    // "fragment" is the compatibility default; programmable-3d stores its
+    // CPU, vertex, and fragment sources in sourceFiles.
+    runtime: text("runtime").notNull().default("fragment"),
     starterCode: text("starter_code").notNull().default(""),
+    sourceFiles: jsonb("source_files"),
     // { referenceImage, width, height, tolerance, requiredMatch }.
     // The reference is public because learners need to see the target image.
     puzzleConfig: jsonb("puzzle_config"),

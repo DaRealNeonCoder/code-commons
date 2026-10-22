@@ -1,0 +1,42 @@
+---
+title: "Dynamic Programming Rewards"
+order: 514
+available: true
+areas: ["algorithms"]
+topics: ["dynamic-programming", "optimization"]
+tags: ["tabulation", "state-transition"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def max_non_adjacent(rewards):
+      # Return the largest sum possible without choosing neighbors.
+      # Choosing no rewards is allowed, so the result is never negative.
+      pass
+
+  n = int(input())
+  rewards = list(map(int, input().split())) if n else []
+  print(max_non_adjacent(rewards))
+testCases:
+  - input: "5\n2 7 9 3 1"
+    expected: "12"
+    hidden: false
+  - input: "0\n"
+    expected: "0"
+    hidden: true
+  - input: "1\n8"
+    expected: "8"
+    hidden: true
+  - input: "4\n5 1 1 5"
+    expected: "10"
+    hidden: true
+  - input: "5\n-3 -2 -7 -1 -4"
+    expected: "0"
+    hidden: true
+  - input: "6\n4 10 3 1 8 2"
+    expected: "18"
+    hidden: true
+---
+
+Return the greatest total reward from a list when neighboring positions cannot both be chosen. You may choose no positions. Print only the best total.
+
+Define `best[i]` as the best total using the first `i` rewards. For the next reward, compare skipping it with taking it plus `best[i - 2]`. The empty prefix is a base case, negative values are allowed, and the input list should not need to be sorted or mutated. A bottom-up solution takes O(n) time; keeping the whole table uses O(n) space, while two previous totals are enough for the final answer.

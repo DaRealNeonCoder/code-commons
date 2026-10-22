@@ -1,0 +1,82 @@
+---
+title: "Recursion and Divide-and-Conquer"
+order: 6
+summary: "Design recursive functions with a base case, then sort by splitting, solving, and merging subproblems."
+available: true
+areas: ["algorithms"]
+topics: ["recursion", "divide-and-conquer", "sorting"]
+tags: ["recursion", "merge-sort"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["merge-sort-recursion"]
+---
+
+A recursive function solves a problem by calling itself on a smaller version of that problem. Every useful recursive design has three parts:
+
+This lesson assumes Intro to Python familiarity with functions, conditionals, lists, and slicing. The goal is to make the call stack and the shrinking problem visible before using recursion in a larger algorithm.
+
+1. a **base case** that can be answered immediately,
+2. progress toward that base case, and
+3. a combination step that turns smaller answers into the full answer.
+
+For a list, an empty list or a one-item list is already sorted. That is a natural base case for merge sort. A recursive call must receive a strictly smaller slice or range; otherwise the call stack never reaches the base case.
+
+## Divide, solve, combine
+
+**Merge sort** divides a list near its midpoint, recursively sorts both halves, and merges the two sorted halves:
+
+```python
+def merge_sort(values):
+    if len(values) <= 1:
+        return values
+
+    middle = len(values) // 2
+    left = merge_sort(values[:middle])
+    right = merge_sort(values[middle:])
+
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    return result + left[i:] + right[j:]
+```
+
+At each merge, the two inputs are already sorted. Compare their first remaining items and move the smaller one into the result. When one input is empty, append the rest of the other input; it is already in order.
+
+<ReactDemo
+  title="Explore the recursive split"
+  code={`function Demo() {
+  const [depth, setDepth] = React.useState(0);
+  const tree = (start, end, level) => {
+    if (level > depth || end - start <= 1) return null;
+    const middle = Math.floor((start + end) / 2);
+    return React.createElement("div", { key: start + ":" + end, style: { margin: "6px 0", paddingLeft: level * 18 } },
+      React.createElement("code", null, "[" + start + ", " + end + ") → [" + start + ", " + middle + ") + [" + middle + ", " + end + ")"),
+      tree(start, middle, level + 1), tree(middle, end, level + 1)
+    );
+  };
+  return React.createElement("div", { style: { fontFamily: "system-ui", padding: 16, color: "CanvasText" } },
+    React.createElement("button", { onClick: () => setDepth(Math.min(3, depth + 1)) }, "split one level"),
+    React.createElement("button", { onClick: () => setDepth(0), style: { marginLeft: 8 } }, "reset"),
+    React.createElement("p", null, "visible recursion depth: ", depth),
+    tree(0, 8, 0) || React.createElement("small", null, "Press the button to divide [0, 8).")
+  );
+}`}
+ />
+
+## Complexity and invariants
+
+There are about `log n` levels because each split halves the input. At one level, all merges together inspect O(n) values. Therefore merge sort takes **O(n log n)** time. The simple slice-based version uses O(n) extra space for copied halves and result lists. Recursion also uses O(log n) call-stack space.
+
+The merge invariant is: before each comparison, `result` contains the smallest items from the two prefixes already consumed, in sorted order. When the loop ends, at least one input is empty, so appending the other remainder preserves sorted order. The top-level invariant is that every recursive return is a sorted permutation of its input.
+
+Empty and one-item inputs must return immediately. Repeated values are allowed; choosing the left item on `<=` keeps equal values in their original relative order, a property called stability. Be careful with midpoint ranges: using half-open `[start, end)` ranges makes the left and right pieces meet without overlap or gaps.
+
+## Practice
+
+The [Merge Sort Recursion puzzle](/puzzles/merge-sort-recursion?lesson=recursion-and-divide-and-conquer&course=data-structures-and-algorithms) asks you to implement the split, recursive calls, and merge. Hidden tests include empty input, duplicate values, negative values, and already sorted data.

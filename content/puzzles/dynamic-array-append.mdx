@@ -1,0 +1,42 @@
+---
+title: "Dynamic Array Append"
+order: 502
+available: true
+areas: ["algorithms"]
+topics: ["arrays", "amortized-analysis"]
+tags: ["dynamic-array", "append"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def append_trace(values):
+      # Return (the final values, copied_items, capacity_after_each_append).
+      # Start with capacity 0. When full, double it; the first capacity is 1.
+      pass
+
+  n = int(input())
+  values = list(map(int, input().split())) if n else []
+  result, copied, capacities = append_trace(values)
+  print(" ".join(map(str, result)))
+  print(copied)
+  print(" ".join(map(str, capacities)))
+testCases:
+  - input: "5\n10 20 30 40 50"
+    expected: "10 20 30 40 50\n7\n1 2 4 4 8"
+    hidden: false
+  - input: "0\n"
+    expected: "\n0\n"
+    hidden: true
+  - input: "1\n42"
+    expected: "42\n0\n1"
+    hidden: true
+  - input: "4\n1 2 3 4"
+    expected: "1 2 3 4\n3\n1 2 4 4"
+    hidden: true
+  - input: "6\n-2 0 -2 8 9 10"
+    expected: "-2 0 -2 8 9 10\n7\n1 2 4 4 8 8"
+    hidden: true
+---
+
+Simulate a dynamic array that starts with capacity `0`. Before each append, if `length == capacity`, allocate a new backing array: capacity `1` for the first item, then double the old capacity. Count how many existing items are copied during every resize.
+
+Return the values in order, the total number of copied items, and the capacity after each append. The input count `n` matches the number of values. This is a simulation of amortized append, not an invitation to use Python's list capacity internals.

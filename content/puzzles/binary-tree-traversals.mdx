@@ -1,0 +1,52 @@
+---
+title: "Binary Tree Traversals"
+order: 510
+available: true
+areas: ["algorithms"]
+topics: ["trees", "traversals"]
+tags: ["binary-tree", "preorder", "inorder", "postorder"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  class Node:
+      def __init__(self, value, left=None, right=None):
+          self.value = value
+          self.left = left
+          self.right = right
+
+  def build_tree(tokens, index=0):
+      # tokens use # for a missing node and otherwise describe an array-shaped tree:
+      # children of index i are 2*i+1 and 2*i+2.
+      if index >= len(tokens) or tokens[index] == "#":
+          return None
+      return Node(tokens[index], build_tree(tokens, 2 * index + 1), build_tree(tokens, 2 * index + 2))
+
+  def traversals(root):
+      # Return (preorder, inorder, postorder) lists.
+      pass
+
+  n = int(input())
+  tokens = input().split() if n else []
+  preorder, inorder, postorder = traversals(build_tree(tokens))
+  print("|".join(" ".join(order) for order in (preorder, inorder, postorder)))
+testCases:
+  - input: "7\nA B C # D # E"
+    expected: "A B D C E|B D A C E|D B E C A"
+    hidden: false
+  - input: "0\n"
+    expected: "||"
+    hidden: true
+  - input: "1\nroot"
+    expected: "root|root|root"
+    hidden: true
+  - input: "5\nA # B # #"
+    expected: "A B|A B|B A"
+    hidden: true
+  - input: "7\n2 2 2 # 2 # 2"
+    expected: "2 2 2 2 2|2 2 2 2 2|2 2 2 2 2"
+    hidden: true
+---
+
+Build the supplied general binary tree from its array-shaped description, where `#` means missing and the children of index `i` are at `2*i + 1` and `2*i + 2`. Return and print preorder (node, left, right), inorder (left, node, right), and postorder (left, right, node), separated by `|`.
+
+Do not insert values into a binary search tree: the shape is already given, values may repeat, and an inorder result is not promised to be sorted. Each traversal should visit every existing node exactly once in O(n) time. The empty tree produces three empty sequences.

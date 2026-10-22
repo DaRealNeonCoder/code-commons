@@ -1,0 +1,39 @@
+---
+title: "Complexity Tradeoffs"
+order: 501
+available: true
+areas: ["algorithms"]
+topics: ["complexity", "performance"]
+tags: ["big-o", "time-space-tradeoff"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def membership_cost(values, targets):
+      # Return "found linear_checks indexed_checks".
+      # Count each value inspected by the repeated linear scans.
+      # The indexed approach costs len(values) to build plus one check per target.
+      pass
+
+  first_line = input().split()
+  values = list(map(int, first_line)) if first_line else []
+  second_line = input().split()
+  targets = list(map(int, second_line)) if second_line else []
+  print(membership_cost(values, targets))
+testCases:
+  - input: "4 7 2 9\n2 8 4"
+    expected: "2 8 7"
+    hidden: false
+  - input: "\n"
+    expected: "0 0 0"
+    hidden: true
+  - input: "5 5 5\n5 5 6"
+    expected: "2 5 6"
+    hidden: true
+  - input: "1 2 3 4\n9"
+    expected: "0 4 5"
+    hidden: true
+---
+
+Compare two ways to answer membership questions. For every target, a linear scan checks values from the beginning until it finds the target or reaches the end. An indexed approach builds a set once, so its simple cost model is `len(values) + len(targets)`.
+
+Return three space-separated numbers: how many targets were found, how many value comparisons all linear scans made, and the indexed approach's setup-plus-query cost. Count a target only once even when `values` contains duplicates. Empty input is valid.

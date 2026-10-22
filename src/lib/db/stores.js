@@ -12,7 +12,7 @@ export const puzzleStore = createContentStore(puzzles, {
 
 export const shaderStore = createContentStore(shaders, {
   fallback: "shader",
-  heavy: ["starterCode", "puzzleConfig"],
+  heavy: ["starterCode", "sourceFiles", "puzzleConfig"],
   listExtra: { isPuzzle: sql`${shaders.puzzleConfig} is not null`.mapWith(Boolean) },
 });
 export const circuitStore = createContentStore(circuits, {

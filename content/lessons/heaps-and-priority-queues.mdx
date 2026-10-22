@@ -1,0 +1,87 @@
+---
+title: "Heaps and Priority Queues"
+order: 9
+summary: "Represent a priority queue with a binary heap and maintain the parent-child invariant through push and pop operations."
+available: true
+areas: ["algorithms"]
+topics: ["heaps", "priority-queues", "arrays"]
+tags: ["min-heap", "sift-up", "sift-down"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["priority-queue-heap"]
+---
+
+A **priority queue** removes the most urgent item rather than the oldest item. A min-heap gives a compact implementation: the smallest priority is at the root, while the rest of the items only need to satisfy a local parent-child rule. A heap is not a fully sorted list; it is just ordered enough to expose the next item quickly.
+
+## Array representation
+
+Store a complete binary tree in a zero-based list. For an item at index `i`, its children are at `2 * i + 1` and `2 * i + 2`, and its parent is at `(i - 1) // 2`. There are no pointers or empty gaps between levels.
+
+The min-heap invariant is: every parent priority is less than or equal to each existing child's priority. To insert, append at the end and **sift up** while the new item is smaller than its parent. To remove the minimum, save the root, move the last item to the root, and **sift down** by swapping with the smaller child until the invariant returns:
+
+```python
+def push(heap, item):
+    heap.append(item)
+    child = len(heap) - 1
+    while child > 0:
+        parent = (child - 1) // 2
+        if heap[parent] <= heap[child]:
+            break
+        heap[parent], heap[child] = heap[child], heap[parent]
+        child = parent
+
+
+def pop_min(heap):
+    if not heap:
+        return None
+    heap[0], heap[-1] = heap[-1], heap[0]
+    result = heap.pop()
+    child = 0
+    while True:
+        left = 2 * child + 1
+        right = left + 1
+        smallest = child
+        if left < len(heap) and heap[left] < heap[smallest]:
+            smallest = left
+        if right < len(heap) and heap[right] < heap[smallest]:
+            smallest = right
+        if smallest == child:
+            break
+        heap[child], heap[smallest] = heap[smallest], heap[child]
+        child = smallest
+    return result
+```
+
+The height of a complete tree is O(log n), so `push` and `pop_min` take **O(log n)** time. Looking at the root is **O(1)**. Repeatedly inserting n items costs O(n log n), while bottom-up heap construction can build a heap in O(n). The array uses **O(n) space**.
+
+## Priorities, ties, and practical queues
+
+A heap item can be a tuple such as `(priority, sequence, task)`. Comparing the sequence number after priority makes equal-priority tasks FIFO and avoids relying on task names as an accidental tie-breaker. A max-priority queue can store negative priorities or reverse its comparison. Python's `heapq` supplies a tested min-heap; implementing the operations once makes its invariant easier to understand.
+
+<ReactDemo
+  title="Keep the smallest item at the root"
+  code={`function Demo() {
+  const [heap, setHeap] = React.useState([2, 4, 6, 9, 7]);
+  const insert = () => setHeap(current => [1].concat(current));
+  const remove = () => setHeap(current => current.length ? current.slice(1) : current);
+  const cells = heap.map((value, index) => React.createElement("span", { key: index, style: { display: "inline-grid", placeItems: "center", width: 38, height: 34, marginRight: 5, borderRadius: 5, background: index === 0 ? "#38bdf8" : "#cbd5e1", color: "#0f172a" } }, value));
+  return React.createElement("div", { style: { fontFamily: "system-ui", padding: 16, color: "CanvasText" } },
+    React.createElement("p", null, "root (next out): ", heap.length ? heap[0] : "empty"),
+    React.createElement("div", null, cells.length ? cells : "empty"),
+    React.createElement("p", null, "array view: a real sift would repair the shape after each operation"),
+    React.createElement("button", { onClick: insert }, "push priority 1"),
+    React.createElement("button", { onClick: remove, style: { marginLeft: 8 } }, "pop minimum"),
+    React.createElement("small", { style: { display: "block", marginTop: 8 } }, "Only the root is guaranteed to be the minimum; siblings are not fully sorted.")
+  );
+}`}
+  />
+
+## Boundaries and invariants
+
+An empty heap has no root, so `peek` or `pop` needs a defined empty result. A one-item heap becomes empty after its only pop. During sift-down, choose the smaller existing child; comparing a missing right child is an indexing error. Duplicate and negative priorities are valid. If stable tie behavior matters, keep a monotonic sequence field in each item.
+
+The complete-tree shape is another invariant: after every push, the new item is at the next open level-order position; after every pop, the last item fills the root's old position. Sifting repairs priority order without changing that shape. Do not confuse a heap with a binary search tree: a heap only orders parent against children, so an in-order traversal is not sorted and arbitrary search is still O(n).
+
+## Practice
+
+In the [Priority Queue Heap puzzle](/puzzles/priority-queue-heap?lesson=heaps-and-priority-queues&course=data-structures-and-algorithms), implement push, pop, empty handling, and FIFO ordering for equal priorities using a list-backed min-heap.

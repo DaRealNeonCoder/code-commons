@@ -1,0 +1,43 @@
+---
+title: "Greedy Interval Scheduling"
+order: 513
+available: true
+areas: ["algorithms"]
+topics: ["greedy-algorithms", "optimization"]
+tags: ["interval-scheduling", "greedy"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def schedule(activities):
+      # Each activity is [start, end, label].
+      # Return labels for a maximum-size compatible schedule.
+      # Activities that start when the previous one ends are compatible.
+      pass
+
+  n = int(input())
+  activities = []
+  for _ in range(n):
+      start, end, label = input().split()
+      activities.append([int(start), int(end), label])
+  print(" ".join(schedule(activities)))
+testCases:
+  - input: "4\n1 4 A\n3 5 B\n0 6 C\n5 7 D"
+    expected: "A D"
+    hidden: false
+  - input: "0"
+    expected: ""
+    hidden: true
+  - input: "5\n0 2 first\n2 4 second\n1 3 overlap\n4 4 instant\n4 6 last"
+    expected: "first second instant last"
+    hidden: true
+  - input: "4\n1 3 A\n2 3 B\n3 5 C\n0 1 D"
+    expected: "D A C"
+    hidden: true
+  - input: "3\n0 10 long\n1 2 short\n2 3 finish"
+    expected: "short finish"
+    hidden: true
+---
+
+Choose a maximum number of non-overlapping labeled activities. Sort by increasing finish time, then accept an activity when its start is at least the finish time of the last accepted activity. Print the selected labels in the order they are chosen.
+
+The greedy invariant is that the accepted prefix is compatible and the last accepted activity finishes as early as the rule permits. Sorting is part of the algorithm; do not select activities in their input order.

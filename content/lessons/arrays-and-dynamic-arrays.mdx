@@ -1,0 +1,75 @@
+---
+title: "Arrays and Dynamic Arrays"
+order: 2
+summary: "Understand constant-time array indexing, shifting costs, and why dynamic-array append is amortized O(1)."
+available: true
+areas: ["algorithms"]
+topics: ["arrays", "dynamic-arrays", "amortized-analysis"]
+tags: ["arrays", "amortized-analysis"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["dynamic-array-append"]
+---
+
+An **array** stores items in a row of neighboring slots. Because the slots have a regular size, the address of item `i` can be calculated directly from the start address and `i`. That is why array indexing is O(1): reading `items[700]` does not require walking through the first 700 items.
+
+Python's `list` behaves like a **dynamic array**. It gives us array-style indexing while growing its internal storage when an append would run out of room. You can use Python lists directly after [Intro to Python](/courses/intro-to-python); here we are learning the idea that makes their common operations have different costs.
+
+## Operations have different shapes
+
+| Operation | Dynamic-array cost | Why |
+| --- | --- | --- |
+| read or assign by index | O(1) | calculate one slot |
+| append with room | O(1) | write at the end |
+| insert or remove at the front | O(n) | shift later items |
+| search by value | O(n) | values may need to be checked one by one |
+| resize and copy | O(n) for that append | move all existing items |
+
+Inserting at index 0 changes the position of every existing item:
+
+```python
+items = ["B", "C"]
+items.insert(0, "A")  # ["A", "B", "C"]
+```
+
+The result is convenient, but the work grows with the list. If a program repeatedly needs both-end insertion, a deque may be a better structure.
+
+## Why append is amortized O(1)
+
+Imagine a private array with capacity 4:
+
+```text
+values:  [A][B][C][D]
+capacity:     4
+```
+
+When the next append arrives, allocate a larger array, often twice as large, and copy the four items. That one append is O(n), but the next several appends use the unused slots. With doubling, the copies over `n` appends cost at most `1 + 2 + 4 + ...`, which is less than `2n`. Spread over all appends, the average cost is **amortized O(1)**.
+
+The word “amortized” does not mean every append is constant-time. It means a long sequence has constant average work per append. A resize can still cause a visible pause, and the spare capacity uses memory.
+
+<ReactDemo
+  title="Watch capacity grow"
+  code={`function Demo() {
+  const [count, setCount] = React.useState(0);
+  const capacity = count === 0 ? 0 : Math.pow(2, Math.ceil(Math.log2(count)));
+  const slots = Math.max(capacity, 1);
+  const cells = Array.from({ length: slots }, (_, i) => React.createElement("span", { key: i, style: { display: "inline-block", width: 34, padding: "8px 0", marginRight: 3, textAlign: "center", border: "1px solid #94a3b8", background: i < count ? "#38bdf8" : "transparent" } }, i < count ? "x" : ""));
+  return React.createElement("div", { style: { fontFamily: "system-ui", padding: 16, color: "CanvasText" } },
+    React.createElement("button", { onClick: () => setCount(count + 1) }, "append"),
+    React.createElement("button", { onClick: () => setCount(0), style: { marginLeft: 8 } }, "clear"),
+    React.createElement("p", null, "length ", count, " / capacity ", capacity),
+    React.createElement("div", null, cells),
+    React.createElement("small", null, "Unused slots make most appends cheap; crossing a power of two grows the backing array.")
+  );
+}`}
+ />
+
+## The invariant and the boundaries
+
+For a dynamic array, maintain `0 <= length <= capacity`. The occupied slots are exactly indices `0` through `length - 1`; slots after that are available storage. Before an append, either there is room or the resize step creates room. After the append, length increases by one and all earlier values stay in order.
+
+An empty array has length and capacity zero in our simplified model. Appending its first item needs a first allocation. If a list is full, resizing before writing prevents overwriting a live item. When discussing complexity, distinguish a single worst-case resize from the amortized cost of many appends.
+
+## Practice
+
+The [Dynamic Array Append puzzle](/puzzles/dynamic-array-append?lesson=arrays-and-dynamic-arrays&course=data-structures-and-algorithms) asks you to simulate doubling capacity, preserve order, and count the items copied during resizes. Test the empty sequence and the append that lands exactly on a capacity boundary.

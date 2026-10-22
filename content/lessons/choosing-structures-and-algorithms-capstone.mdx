@@ -1,0 +1,70 @@
+---
+title: "Choosing Structures and Algorithms: Capstone"
+order: 14
+summary: "Use workload, invariants, and constraints to choose a data structure and algorithm, then justify the resulting complexity."
+available: true
+areas: ["algorithms"]
+topics: ["data-structures", "algorithm-design", "complexity"]
+tags: ["tradeoffs", "capstone", "problem-solving"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["structure-choice-capstone"]
+---
+
+There is no universally best data structure or algorithm. The right choice follows from the questions a program asks, how often it asks them, the data's shape, and the resources it can spend. This capstone turns the course's separate techniques into a repeatable design process.
+
+## Start with operations and constraints
+
+Write the important operations before choosing a container:
+
+| Dominant operation | First structure to consider | Typical cost |
+| --- | --- | --- |
+| index by position and preserve order | dynamic array / list | index O(1), search O(n) |
+| add and remove at both ends | deque | O(1) per end operation |
+| key lookup or membership | dictionary / set | average O(1) |
+| repeatedly remove the smallest priority | min-heap | peek O(1), push/pop O(log n) |
+| visit relationships | adjacency list | BFS/DFS O(V + E) |
+| process a fixed tree shape | node links plus traversal | O(n) to visit all nodes |
+
+Then ask what the contract requires. Does order matter? Are duplicates meaningful? Must equal keys retain their order? Is the input already sorted? Is memory limited? Will there be one query or millions of repeated queries? Sorting before one lookup may cost more than linear search, while an index or sorted order can pay for itself across many queries.
+
+## A design workflow
+
+1. **Name the output and edge cases.** Decide what empty, missing, duplicate, cancelled, or disconnected data means.
+2. **List the hot operations.** Estimate whether each is occasional or inside a large loop.
+3. **Choose a representation.** Make order, identity, links, and mutability visible in the data model.
+4. **State an invariant.** Examples include “active IDs map to their current task,” “the heap root is the smallest priority,” or “a visited vertex is enqueued at most once.”
+5. **Choose the algorithm.** Use insertion sort for a tiny nearly sorted list, merge sort for predictable stable sorting, BFS for unweighted shortest paths, and DFS when reachability or components are the question.
+6. **Check complexity and measure.** Worst-case and average-case bounds guide the design, but real constants, cache behavior, and workload shape still matter.
+
+The choice is often a combination. A priority work queue may use a dictionary for direct task lookup and a heap for the next task. A graph may use an adjacency list and a queue for BFS. A stable sort may spend O(n) result space to preserve a simpler invariant. Good design explains the tradeoff rather than naming a favorite structure.
+
+<ReactDemo
+  title="Match the operation to a structure"
+  code={`function Demo() {
+  const scenarios = {
+    "many key lookups": ["dictionary", "average O(1) lookup"],
+    "next smallest task": ["min-heap", "O(log n) push/pop"],
+    "fewest unweighted links": ["adjacency list + BFS", "O(V + E)"],
+    "preserve equal-key order": ["stable merge/insertion sort", "O(n log n) or O(n²)"]
+  };
+  const [scenario, setScenario] = React.useState(Object.keys(scenarios)[0]);
+  const answer = scenarios[scenario];
+  return React.createElement("div", { style: { fontFamily: "system-ui", padding: 16, color: "CanvasText" } },
+    React.createElement("label", null, "workload ", React.createElement("select", { value: scenario, onChange: e => setScenario(e.target.value) }, Object.keys(scenarios).map(name => React.createElement("option", { key: name, value: name }, name)))),
+    React.createElement("p", null, "structure / algorithm: ", React.createElement("strong", null, answer[0])),
+    React.createElement("p", null, "main reason: ", answer[1]),
+    React.createElement("small", null, "Change the workload and the sensible choice changes with it.")
+  );
+}`}
+  />
+
+## Invariants and failure states are part of the design
+
+An invariant is a compact correctness argument. For a dictionary-plus-heap task board, an active task ID should map to exactly one current record, while stale heap entries must be ignored. For BFS, each discovered vertex has its shortest known distance. For a stable sort, equal keys retain their original sequence. If you cannot state the invariant, the representation probably has not been chosen clearly enough.
+
+Test the boundaries that expose a bad choice: empty input, one item, all duplicate keys, a missing key, a full or empty queue, a graph with isolated vertices, a disconnected target, and a worst-case tree shape. Also check mutation: an in-place sort is efficient in memory but may surprise another caller holding the same list. Complexity is a promise about growth, not a guarantee that every constant or workload favors the theoretically smaller bound.
+
+## Practice
+
+The [Structure Choice Capstone puzzle](/puzzles/structure-choice-capstone?lesson=choosing-structures-and-algorithms-capstone&course=data-structures-and-algorithms) implements a small task board. It uses direct lookup for active IDs and a min-heap for priority order, including cancellation, replacement, ties, and empty operations. As you solve it, write down the invariant and explain why each chosen operation has its stated cost.

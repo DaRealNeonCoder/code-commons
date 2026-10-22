@@ -1,0 +1,42 @@
+---
+title: "Merge Sort Recursion"
+order: 506
+available: true
+areas: ["algorithms"]
+topics: ["recursion", "divide-and-conquer", "sorting"]
+tags: ["merge-sort", "recursion"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def merge_sort(values):
+      # Return a sorted copy using recursive split, recursive sort,
+      # and a linear merge. Do not call sorted() or list.sort().
+      pass
+
+  n = int(input())
+  values = list(map(int, input().split())) if n else []
+  print(" ".join(map(str, merge_sort(values))))
+testCases:
+  - input: "6\n9 2 7 2 5 1"
+    expected: "1 2 2 5 7 9"
+    hidden: false
+  - input: "0\n"
+    expected: ""
+    hidden: true
+  - input: "1\n-4"
+    expected: "-4"
+    hidden: true
+  - input: "5\n3 3 3 3 3"
+    expected: "3 3 3 3 3"
+    hidden: true
+  - input: "7\n-2 8 0 -5 4 4 1"
+    expected: "-5 -2 0 1 4 4 8"
+    hidden: true
+  - input: "4\n1 2 3 4"
+    expected: "1 2 3 4"
+    hidden: true
+---
+
+Implement merge sort recursively. Split a list into two smaller lists until each has at most one item, recursively sort both halves, and merge the sorted halves by repeatedly taking the smaller front item.
+
+Return a sorted copy and leave the input list unchanged. The empty and one-item cases are the base cases. Do not call Python's built-in sorting methods: the purpose is to practice divide-and-conquer and the merge invariant. The expected running time is O(n log n) with O(n) extra list space.

@@ -1,0 +1,85 @@
+---
+title: "Complexity Analysis and Tradeoffs"
+order: 1
+summary: "Learn to describe how an algorithm grows with its input and choose sensible time and space tradeoffs."
+available: true
+areas: ["algorithms"]
+topics: ["complexity", "performance", "algorithms"]
+tags: ["big-o", "tradeoffs"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["complexity-tradeoffs"]
+---
+
+An algorithm is a recipe for turning input into output. **Complexity analysis** asks how much work and memory that recipe needs as the input gets larger. This is useful before timing a program: a laptop can make a small slow algorithm look fine, while a larger input exposes its growth.
+
+This course assumes you have completed [Intro to Python](/courses/intro-to-python). You should recognize lists, loops, functions, and dictionaries. We will use those tools to reason about programs rather than re-teach their syntax.
+
+## Count growth, not seconds
+
+Let `n` stand for the number of input items. A loop that visits every item does about `n` steps, so we call it **O(n)**, read “order n.” Two loops one after another do about `n + n`, which is still O(n). A loop inside a loop can do about `n * n`, or **O(n²)**.
+
+Big O describes an upper growth shape while ignoring constant factors and smaller terms. An O(2n) algorithm can be faster than an O(n²) algorithm for the inputs you actually have, especially when `n` is small. The notation is a prediction tool, not a stopwatch.
+
+| Pattern | Typical growth | Example |
+| --- | --- | --- |
+| fixed number of operations | O(1) | read `items[0]` |
+| one pass | O(n) | scan for a matching value |
+| nested passes | O(n²) | compare every pair |
+| repeatedly halve the choices | O(log n) | search a sorted range |
+| visit each item while splitting and combining | O(n log n) | merge sort |
+
+The same program can have different best and worst cases. A scan finds its target immediately in the best case, but an absent target requires checking every item in the worst case. Unless we say otherwise, complexity usually means the worst-case growth.
+
+## Time and space are both resources
+
+Suppose we need to answer many membership questions about a list. Scanning the list for every question uses little extra memory, but each question can take O(n) time. Building a set first costs O(n) time and O(n) extra space, then each average membership check is close to O(1). The set is a time-for-space tradeoff.
+
+```python
+def count_with_scan(values, targets):
+    found = 0
+    for target in targets:
+        for value in values:
+            if value == target:
+                found += 1
+                break
+    return found
+
+
+def count_with_set(values, targets):
+    known = set(values)       # O(n) work and space once
+    return sum(target in known for target in targets)  # about O(1) each
+```
+
+The exact constant cost of a set, the cost of hashing, and the memory limit still matter. Complexity tells us what to investigate; it does not replace knowing the workload.
+
+<ReactDemo
+  title="See growth as the input gets larger"
+  code={`function Demo() {
+  const [n, setN] = React.useState(16);
+  const scan = n;
+  const pair = n * n;
+  const width = 240;
+  const scale = width / Math.max(pair, n, 1);
+  const bar = (label, value, color) => React.createElement("div", { style: { margin: "8px 0" } },
+    React.createElement("div", null, label + " ", React.createElement("code", null, String(value) + " steps")),
+    React.createElement("div", { style: { height: 18, width: Math.max(2, value * scale), background: color, borderRadius: 4 } })
+  );
+  return React.createElement("div", { style: { fontFamily: "system-ui", padding: 16, color: "CanvasText" } },
+    React.createElement("label", null, "n = ", React.createElement("input", { type: "range", min: 1, max: 40, value: n, onChange: e => setN(Number(e.target.value)) }), " ", n),
+    bar("one pass O(n)", scan, "#38bdf8"),
+    bar("nested pass O(n²)", pair, "#f97316"),
+    React.createElement("small", null, "The bars share a scale, so a quadratic algorithm quickly outgrows a linear one.")
+  );
+}`}
+ />
+
+## Invariants and edge cases
+
+An **invariant** is a statement that stays true while an algorithm runs. In the scan above, before each target is checked, `found` equals the number of earlier targets that were present. The inner loop has another invariant: values before its current position have already been compared.
+
+Write down empty input explicitly. A scan of an empty list performs zero comparisons and finds zero targets. Also ask whether duplicates count once or once per occurrence, whether input order matters, and whether building an index is worth its memory. These questions turn a vague “fast” solution into a precise contract.
+
+## Practice
+
+In the [Complexity Tradeoffs puzzle](/puzzles/complexity-tradeoffs?lesson=complexity-analysis-and-tradeoffs&course=data-structures-and-algorithms), compare the work of repeated linear membership checks with building one set. The output makes the one-time memory and setup cost visible alongside the query work.

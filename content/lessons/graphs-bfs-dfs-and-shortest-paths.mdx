@@ -1,0 +1,85 @@
+---
+title: "Graphs: Representations, BFS, DFS, and Shortest Paths"
+order: 11
+summary: "Model relationships with adjacency lists, explore them with BFS and DFS, count connected components, and find unweighted shortest paths."
+available: true
+areas: ["algorithms"]
+topics: ["graphs", "bfs", "dfs", "shortest-paths"]
+tags: ["adjacency-list", "breadth-first-search", "depth-first-search"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["graph-bfs-components"]
+---
+
+A graph models objects and relationships: vertices are objects, and edges connect related objects. A list search asks whether a value appears in one sequence; graph search asks which vertices are reachable by following links. That is the connection to the existing [Search Algorithms course](/courses/searching-algorithms): linear and binary search choose candidates from an array, while BFS and DFS explore a network. BFS below is for unweighted shortest paths, not binary search on a sorted list.
+
+## Representing a graph
+
+An **adjacency list** maps each vertex to its neighbors:
+
+```python
+def adjacency_list(vertex_count, edges):
+    graph = {vertex: [] for vertex in range(vertex_count)}
+    for left, right in edges:
+        graph[left].append(right)
+        graph[right].append(left)  # remove this line for a directed graph
+    for neighbors in graph.values():
+        neighbors.sort()
+    return graph
+```
+
+An adjacency list uses O(V + E) space for an undirected graph and is efficient when most possible pairs are not edges. An adjacency matrix uses O(V²) space but answers “is there an edge?” in O(1), which can be useful for dense graphs. Choose based on the operations and density, not on the label “graph.”
+
+## BFS and unweighted distance
+
+Breadth-first search uses a FIFO queue. Mark a vertex visited **when enqueuing it**, not when removing it, so multiple edges cannot enqueue the same vertex repeatedly. The frontier invariant is: vertices already removed are processed in nondecreasing distance from the start, and every queued vertex has its shortest distance recorded.
+
+```python
+from collections import deque
+
+
+def distances(graph, start):
+    distance = {start: 0}
+    queue = deque([start])
+    while queue:
+        current = queue.popleft()
+        for neighbor in graph[current]:
+            if neighbor not in distance:
+                distance[neighbor] = distance[current] + 1
+                queue.append(neighbor)
+    return distance
+```
+
+The first time BFS discovers a vertex is along a shortest path because all edges have equal cost. A target's distance is therefore its fewest number of edges, or `-1` if it is not discovered. Weighted edges require a different method such as Dijkstra's algorithm; do not use BFS distances for arbitrary weights.
+
+## DFS and connected components
+
+Depth-first search follows one branch as far as possible before backtracking. A recursive DFS is compact; an explicit stack avoids recursion-depth limits. Both visit each reachable vertex once. For an undirected graph, start a new DFS from every unvisited vertex to count **connected components**. Isolated vertices each form a component.
+
+<ReactDemo
+  title="Watch a breadth-first frontier"
+  code={`function Demo() {
+  const edges = { A: ["B", "C"], B: ["A", "D"], C: ["A", "D"], D: ["B", "C", "E"], E: ["D"] };
+  const levels = [["A"], ["B", "C"], ["D"], ["E"]];
+  const [level, setLevel] = React.useState(0);
+  const reached = levels.slice(0, level + 1).flat();
+  const links = Object.keys(edges).map(name => React.createElement("div", { key: name, style: { margin: "4px 0", opacity: reached.includes(name) ? 1 : 0.35 } }, React.createElement("strong", null, name), " → ", edges[name].join(", ")));
+  return React.createElement("div", { style: { fontFamily: "system-ui", padding: 16, color: "CanvasText" } },
+    React.createElement("p", null, "frontier depth: ", level, "; reached: ", reached.join(", ")),
+    links,
+    React.createElement("button", { onClick: () => setLevel(Math.min(levels.length - 1, level + 1)) }, "expand next level"),
+    React.createElement("button", { onClick: () => setLevel(0), style: { marginLeft: 8 } }, "reset"),
+    React.createElement("small", { style: { display: "block", marginTop: 8 } }, "BFS reaches every vertex at distance d before distance d + 1.")
+  );
+}`}
+  />
+
+With adjacency lists and a visited set, BFS or DFS takes **O(V + E)** time and O(V) auxiliary space. Sorting neighbor lists adds a one-time ordering cost but makes examples and tests deterministic. BFS uses queue space for its frontier; DFS uses stack or recursion space proportional to the deepest path. A graph can contain cycles, so “keep following links” is not enough: the visited invariant is what guarantees termination.
+
+## Boundaries and coordination
+
+An empty graph has zero components. In a graph with vertices but no edges, every vertex is an isolated component. If `start == target`, the unweighted distance is zero. A missing target has distance `-1`; a missing start should be rejected or represented explicitly rather than accidentally adding a phantom vertex. Self-loops and duplicate edges do not create new reachable vertices. For directed graphs, reachability follows arrow direction and “connected component” needs a directed definition such as weak or strongly connected components.
+
+## Practice
+
+The [Graph BFS Components puzzle](/puzzles/graph-bfs-components?lesson=graphs-bfs-dfs-and-shortest-paths&course=data-structures-and-algorithms) combines an adjacency-list representation with deterministic BFS, DFS, component counting, and an unweighted shortest-path distance. It complements, rather than repeats, the array-focused linear and binary search lessons.

@@ -59,7 +59,9 @@ export default async function ShaderDetailPage({ params, searchParams }) {
               <ContentAuthor itemType="shader" itemId={shader.id} tone="dark" />
             </>
           }
-          initialCode={shader.starterCode}
+           initialCode={shader.starterCode}
+           mode={shader.runtime ?? "fragment"}
+           initialFiles={shader.sourceFiles}
           aiContext={shader.content}
           contextType="shader"
           contextTitle={shader.title}

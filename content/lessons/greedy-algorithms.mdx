@@ -1,0 +1,69 @@
+---
+title: "Greedy Algorithms"
+order: 12
+summary: "Make locally best choices, recognize when an exchange argument proves them safe, and schedule the most compatible work."
+available: true
+areas: ["algorithms"]
+topics: ["greedy-algorithms", "optimization", "sorting"]
+tags: ["greedy", "interval-scheduling", "exchange-argument"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["greedy-interval-scheduling"]
+---
+
+A **greedy algorithm** builds an answer one choice at a time. At each step it takes the option that looks best right now, without revisiting earlier choices. Greedy methods can be wonderfully simple, but a locally attractive choice is not automatically part of a globally optimal answer.
+
+This course already used sorting as a tool in earlier lessons. Here sorting exposes the order in which a greedy algorithm should consider choices. The important skill is not memorizing “always choose the smallest” or “always choose the earliest”; it is finding a reason that the choice cannot damage the best possible remainder.
+
+## Interval scheduling
+
+Suppose each activity has a start and finish time, and two selected activities may not overlap. To schedule as many activities as possible:
+
+1. Sort activities by increasing finish time.
+2. Select the first activity that starts at or after the last selected finish time.
+3. Continue through the sorted list.
+
+Choosing the activity that finishes earliest leaves at least as much room for every later activity as any other compatible first choice. This is an **exchange argument**: take an optimal schedule, replace its first activity with the earliest-finishing compatible activity, and the number of activities does not decrease. Then solve the same problem after that finish time.
+
+```python
+def schedule(activities):
+    activities = sorted(activities, key=lambda activity: activity[1])
+    chosen = []
+    finish = None
+    for start, end, label in activities:
+        if finish is None or start >= finish:
+            chosen.append(label)
+            finish = end
+    return chosen
+```
+
+The sort costs O(n log n), and the scan costs O(n), so the complete algorithm is O(n log n) time. The copied sorted list and chosen result use O(n) space; an in-place sort can change that tradeoff. Touching at a boundary is allowed here: an activity starting at time 4 is compatible with one ending at time 4.
+
+<ReactDemo
+  title="Choose the next compatible activity"
+  code={`function Demo() {
+  const activities = [[1, 3, "A"], [2, 5, "B"], [4, 7, "C"], [6, 8, "D"], [8, 10, "E"]];
+  const [step, setStep] = React.useState(0);
+  const chosen = [];
+  let finish = -Infinity;
+  activities.forEach(([start, end, label], index) => { if (index < step && start >= finish) { chosen.push(label); finish = end; } });
+  const cards = activities.map(([start, end, label], index) => React.createElement("div", { key: label, style: { display: "inline-block", width: 64, margin: 4, padding: "8px 4px", textAlign: "center", borderRadius: 5, background: chosen.includes(label) ? "#38bdf8" : index < step ? "#fed7aa" : "#cbd5e1", color: "#0f172a" } }, label + " " + start + "–" + end));
+  return React.createElement("div", { style: { fontFamily: "system-ui", padding: 16, color: "CanvasText" } },
+    React.createElement("p", null, "chosen: ", chosen.join(", ") || "none"),
+    React.createElement("div", null, cards),
+    React.createElement("button", { onClick: () => setStep(Math.min(activities.length, step + 1)) }, "consider next"),
+    React.createElement("button", { onClick: () => setStep(0), style: { marginLeft: 8 } }, "reset"),
+    React.createElement("small", { style: { display: "block", marginTop: 8 } }, "blue activities are accepted; orange activities were skipped because they overlap.")
+  );
+}`}
+  />
+
+## When greedy is not enough
+
+The proof above depends on the exact objective and compatibility rule. If activities have different values and the goal is maximum total value, earliest finish alone is not enough; weighted interval scheduling needs dynamic programming. If a coin system is unusual, repeatedly taking the largest coin can also miss the fewest-coin answer. Test a proposed greedy rule against small counterexamples before trusting it.
+
+The invariant for interval scheduling is: after each scan position, `finish` is the finish time of the last chosen activity, and `chosen` is a compatible schedule. The empty input selects nothing. Duplicate intervals, equal finish times, and zero-length activities should follow the stated tie and compatibility rules rather than accidental implementation behavior.
+
+## Practice
+
+In the [Greedy Interval Scheduling puzzle](/puzzles/greedy-interval-scheduling?lesson=greedy-algorithms&course=data-structures-and-algorithms), sort labeled activities by finish time and return the largest compatible schedule. The tests include boundary-touching intervals, overlaps, and equal finish times.

@@ -1,0 +1,40 @@
+---
+title: "Stack, Queue, and Ring Buffer"
+order: 504
+available: true
+areas: ["algorithms"]
+topics: ["stacks", "queues", "circular-buffers"]
+tags: ["lifo", "fifo", "ring-buffer"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def run_operations(capacity, operations):
+      # Operations are: push x, pop, enqueue x, dequeue, or clear.
+      # Return one result per operation: push/enqueue/clear -> ok;
+      # pop/dequeue -> the value, or empty; a full enqueue -> full.
+      pass
+
+  capacity, count = map(int, input().split())
+  operations = [input() for _ in range(count)]
+  print("\n".join(run_operations(capacity, operations)))
+testCases:
+  - input: "3 6\npush A\npush B\npop\nenqueue 1\ndequeue\ndequeue"
+    expected: "ok\nok\nB\nok\n1\nempty"
+    hidden: false
+  - input: "2 4\nenqueue 5\nenqueue 6\nenqueue 7\ndequeue"
+    expected: "ok\nok\nfull\n5"
+    hidden: true
+  - input: "2 6\nenqueue a\nenqueue b\ndequeue\nenqueue c\ndequeue\ndequeue"
+    expected: "ok\nok\na\nok\nb\nc"
+    hidden: true
+  - input: "1 5\npop\ndequeue\nenqueue 9\nenqueue 8\ndequeue"
+    expected: "empty\nempty\nok\nfull\n9"
+    hidden: true
+  - input: "3 5\npush x\nenqueue y\nclear\npop\ndequeue"
+    expected: "ok\nok\nok\nempty\nempty"
+    hidden: true
+---
+
+Implement two structures in one command processor. The stack uses LIFO order for `push` and `pop`. The queue uses a fixed-size circular buffer for `enqueue` and `dequeue`; it must not shift all remaining values after a dequeue.
+
+Track queue `head`, `tail`, and `size`. Use modular arithmetic when an index reaches the capacity. A queue at size zero is empty, and a queue at size equal to capacity is full. Capacity is positive in the tests. `clear` empties both structures and resets the queue indices.

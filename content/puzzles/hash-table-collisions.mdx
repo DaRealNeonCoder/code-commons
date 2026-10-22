@@ -1,0 +1,37 @@
+---
+title: "Hash Table Collisions"
+order: 505
+available: true
+areas: ["algorithms"]
+topics: ["hash-tables", "collisions", "load-factor"]
+tags: ["hashing", "separate-chaining"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def hash_operations(capacity, operations):
+      # Use sum(ord(character) for character in key) % capacity.
+      # Operations are: set key value, get key, delete key, or stats.
+      # Return one result per operation.
+      pass
+
+  capacity, count = map(int, input().split())
+  operations = [input() for _ in range(count)]
+  print("\n".join(hash_operations(capacity, operations)))
+testCases:
+  - input: "4 6\nset ab 7\nset ba 9\nget ab\nstats\ndelete ab\nget ab"
+    expected: "ok\nok\n7\n2 1 0.50\nok\nmissing"
+    hidden: false
+  - input: "3 5\nget missing\nset Ada 4\nset Ada 8\nstats\nget Ada"
+    expected: "missing\nok\nok\n1 1 0.33\n8"
+    hidden: true
+  - input: "1 7\nset a 1\nset b 2\nstats\nget a\ndelete b\nstats\nget b"
+    expected: "ok\nok\n2 1 2.00\n1\nok\n1 1 1.00\nmissing"
+    hidden: true
+  - input: "5 4\nset aa -3\nset bb 0\ndelete aa\nstats"
+    expected: "ok\nok\nok\n1 1 0.20"
+    hidden: true
+---
+
+Implement a separate-chaining hash table with a fixed positive bucket count. The deterministic hash is the sum of the key characters' Unicode code points modulo `capacity`.
+
+`set` inserts or updates an integer value and returns `ok`. `get` returns the value or `missing`. `delete` removes a key and returns `ok`, or returns `missing` when it was absent. `stats` returns three space-separated fields: number of stored keys, number of non-empty buckets, and load factor formatted with two decimal places. Colliding keys must remain independent.

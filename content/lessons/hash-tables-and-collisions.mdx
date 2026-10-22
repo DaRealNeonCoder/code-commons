@@ -1,0 +1,70 @@
+---
+title: "Hash Tables, Collisions, and Load Factor"
+order: 5
+summary: "See how hashing maps keys to buckets, why collisions are unavoidable, and how load factor affects lookup."
+available: true
+areas: ["algorithms"]
+topics: ["hash-tables", "collisions", "complexity"]
+tags: ["hashing", "load-factor", "separate-chaining"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["hash-table-collisions"]
+---
+
+A **hash table** stores key-value pairs so a key can usually find its value quickly. A hash function turns a key into an integer. Taking that integer modulo the number of buckets chooses a bucket:
+
+This lesson assumes Intro to Python familiarity with dictionaries, lists, loops, and strings. We will open up the lookup idea instead of treating a dictionary as magic.
+
+```python
+def bucket_for(key, bucket_count):
+    return sum(ord(character) for character in key) % bucket_count
+```
+
+Real Python dictionaries use a carefully engineered hash table; this small function is only for making the mechanism visible. Different keys can produce the same bucket. That event is a **collision**, and it is normal: there are usually more possible keys than buckets.
+
+## Separate chaining
+
+One simple collision strategy gives every bucket a small list of key-value pairs. To get `key`, compute its bucket and scan only that chain. If the chain is short, the average lookup is close to O(1). If many keys collide, a chain can become long and the worst case is O(n).
+
+```python
+buckets = [[] for _ in range(4)]
+buckets[3].append(("ab", 7))
+buckets[3].append(("ba", 9))  # same bucket for the sample hash
+```
+
+The table must compare the full key after choosing a bucket. A hash match is not a key match. Updating an existing key changes its value without adding a second pair.
+
+## Load factor and resizing
+
+The **load factor** is `α = number of stored keys / number of buckets`. As α grows, chains tend to grow too. A table can allocate more buckets and reinsert every pair when α crosses a chosen threshold. Rehashing costs O(n) at that moment, but it keeps future operations near constant time on average.
+
+<ReactDemo
+  title="Watch collisions fill buckets"
+  code={`function Demo() {
+  const bucketCount = 4;
+  const names = ["ab", "ba", "Ada", "Lin", "cat"];
+  const hash = text => Array.from(text).reduce((total, letter) => total + letter.charCodeAt(0), 0) % bucketCount;
+  const [count, setCount] = React.useState(0);
+  const buckets = Array.from({ length: bucketCount }, () => []);
+  names.slice(0, count).forEach(name => buckets[hash(name)].push(name));
+  return React.createElement("div", { style: { fontFamily: "system-ui", padding: 16, color: "CanvasText" } },
+    React.createElement("button", { onClick: () => setCount(Math.min(names.length, count + 1)) }, "insert next"),
+    React.createElement("button", { onClick: () => setCount(0), style: { marginLeft: 8 } }, "clear"),
+    React.createElement("p", null, "load factor α = ", (count / bucketCount).toFixed(2)),
+    buckets.map((bucket, i) => React.createElement("div", { key: i, style: { margin: "5px 0" } }, React.createElement("code", null, "bucket " + i + ": "), bucket.length ? bucket.join(" → ") : "empty")),
+    React.createElement("small", null, "ab and ba intentionally collide with this sample hash.")
+  );
+}`}
+ />
+
+## Invariants and edge cases
+
+For separate chaining, every stored key-value pair appears in exactly one bucket, and that bucket is the hash of its key. A lookup returns the value only after comparing keys. Deleting a key removes its pair but leaves unrelated colliding keys available.
+
+An empty table has load factor zero. A missing key must not be confused with a stored value such as `0`; use a clear `missing` result or a sentinel. The bucket count must be positive before taking modulo. Duplicate `set` operations update rather than increase the number of stored keys.
+
+Hash-table complexity is an average-case statement that depends on a good hash distribution and controlled load factor. Memory for buckets buys fast lookup, while resizing spends occasional O(n) work to preserve that tradeoff.
+
+## Practice
+
+Implement these ideas in the [Hash Table Collisions puzzle](/puzzles/hash-table-collisions?lesson=hash-tables-and-collisions&course=data-structures-and-algorithms). It uses a deterministic hash so you can inspect collisions, separate chaining, updates, deletion, and the reported load factor.

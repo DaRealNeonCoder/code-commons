@@ -1,0 +1,62 @@
+---
+title: "Dynamic Programming"
+order: 13
+summary: "Turn overlapping recursive subproblems into a table, choose a state, and reuse answers instead of recomputing them."
+available: true
+areas: ["algorithms"]
+topics: ["dynamic-programming", "recursion", "optimization"]
+tags: ["memoization", "tabulation", "state-transition"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["dynamic-programming-rewards"]
+---
+
+**Dynamic programming (DP)** is a way to solve optimization and counting problems whose smaller subproblems overlap. Start with the recursive question, identify the information that completely describes a subproblem, and store each answer so it is computed once.
+
+## State and transition
+
+Imagine a row of houses with rewards. You may not choose neighboring houses. Let `best[i]` mean the largest reward obtainable from the first `i` houses. For the next house, there are only two meaningful choices:
+
+- skip it, keeping `best[i - 1]`, or
+- take it, which adds its reward to `best[i - 2]` because the neighbor must be skipped.
+
+The transition is:
+
+```python
+best[0] = 0
+best[1] = max(0, rewards[0])
+for i in range(2, len(rewards) + 1):
+    best[i] = max(best[i - 1], best[i - 2] + rewards[i - 1])
+```
+
+The table is **tabulation**, a bottom-up form of dynamic programming. A top-down recursive solution with a dictionary cache is **memoization**. Both replace an exponential tree of repeated calls with one answer per state. Unlike a greedy rule, DP compares the alternatives required by the recurrence, so it can handle choices whose best local option blocks a better later combination.
+
+<ReactDemo
+  title="Fill a dynamic-programming table"
+  code={`function Demo() {
+  const rewards = [2, 7, 9, 3, 1];
+  const [count, setCount] = React.useState(0);
+  const table = [0];
+  for (let i = 1; i <= rewards.length; i += 1) table.push(i === 1 ? rewards[0] : Math.max(table[i - 1], table[i - 2] + rewards[i - 1]));
+  const cells = table.map((value, index) => React.createElement("span", { key: index, style: { display: "inline-block", minWidth: 42, padding: 8, marginRight: 4, textAlign: "center", border: "1px solid #94a3b8", background: index <= count ? "#38bdf8" : "transparent" } }, index + ": " + (index <= count ? value : "?")));
+  return React.createElement("div", { style: { fontFamily: "system-ui", padding: 16, color: "CanvasText" } },
+    React.createElement("p", null, "rewards: ", rewards.join(", "), " · states filled: ", count),
+    React.createElement("div", null, cells),
+    React.createElement("button", { onClick: () => setCount(Math.min(rewards.length, count + 1)) }, "fill next state"),
+    React.createElement("button", { onClick: () => setCount(0), style: { marginLeft: 8 } }, "reset"),
+    React.createElement("small", { style: { display: "block", marginTop: 8 } }, "Each state reuses the two earlier answers instead of exploring every subset again.")
+  );
+}`}
+  />
+
+## Complexity and correctness
+
+For `n` rewards, the table has O(n) states and each state takes O(1) work, so the algorithm takes O(n) time and O(n) space. If only the final value is needed, keep two previous values and reduce auxiliary space to O(1); if the actual chosen houses are needed, retain decisions or reconstruct them by walking backward through the table.
+
+The state definition is the main correctness tool: `best[i]` must describe every legal solution using the first `i` items. The transition considers the complete mutually exclusive cases “skip” and “take,” and the base cases describe zero and one item. Negative rewards require an explicit policy; this lesson treats choosing no houses as allowed, so the answer never needs to be below zero.
+
+DP is not a synonym for recursion. Recursion supplies a way to describe subproblems; memoization or tabulation supplies reuse. Look for a small state, repeated subproblems, and an optimal-substructure relationship. If states cannot be identified or the input is too large for the table, a different technique may be better.
+
+## Practice
+
+The [Dynamic Programming Rewards puzzle](/puzzles/dynamic-programming-rewards?lesson=dynamic-programming&course=data-structures-and-algorithms) asks you to implement the recurrence, handle empty and single-item inputs, and return the best value without choosing adjacent rewards.

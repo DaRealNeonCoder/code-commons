@@ -1,0 +1,42 @@
+---
+title: "Elementary Sorting"
+order: 507
+available: true
+areas: ["algorithms"]
+topics: ["sorting", "insertion-sort", "stability"]
+tags: ["elementary-sorting", "stable-sort"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def stable_insertion(records):
+      # records contains [key, label] pairs.
+      # Sort records in place by key, keeping equal-key labels in input order.
+      # Do not call sorted() or list.sort().
+      pass
+
+  n = int(input())
+  tokens = input().split() if n else []
+  records = [[int(key), label] for key, label in (token.split(":", 1) for token in tokens)]
+  stable_insertion(records)
+  print(" ".join(label for _, label in records))
+testCases:
+  - input: "4\n2:first 1:low 2:second 1:lowest"
+    expected: "low lowest first second"
+    hidden: false
+  - input: "0\n"
+    expected: ""
+    hidden: true
+  - input: "5\n-1:a -1:b 3:c 0:d -1:e"
+    expected: "a b e d c"
+    hidden: true
+  - input: "4\n1:a 2:b 3:c 4:d"
+    expected: "a b c d"
+    hidden: true
+  - input: "3\n7:x 7:y 7:z"
+    expected: "x y z"
+    hidden: true
+---
+
+Sort the `[key, label]` records in place by their integer key using insertion-sort logic. Equal keys must keep their original label order, so the result for `2:first 1:low 2:second` starts with `low first second`. Do not use Python's built-in sorting methods. The empty input is valid.
+
+The intended invariant is that the records before the current index are sorted and are a permutation of the records originally seen. Shift only records with a strictly larger key; shifting equal keys would make the algorithm needlessly unstable. The expected time is O(n²) in the worst case and O(n) for already sorted input, with O(1) extra space beyond the list.

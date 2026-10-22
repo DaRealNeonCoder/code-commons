@@ -1,0 +1,45 @@
+---
+title: "Quicksort Partition"
+order: 508
+available: true
+areas: ["algorithms"]
+topics: ["sorting", "partitioning", "quicksort"]
+tags: ["lomuto-partition", "pivot"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def partition(values, low, high):
+      # Use values[high] as the pivot and partition in place.
+      # Return the pivot's final index. Values on the left are no greater
+      # than the pivot; values on the right are greater than the pivot.
+      pass
+
+  n = int(input())
+  values = list(map(int, input().split())) if n else []
+  if not values:
+      print(-1)
+  else:
+      pivot_index = partition(values, 0, len(values) - 1)
+      print(pivot_index)
+      print(" ".join(map(str, values)))
+testCases:
+  - input: "7\n9 3 7 1 8 2 5"
+    expected: "3\n3 1 2 5 8 7 9"
+    hidden: false
+  - input: "0\n"
+    expected: "-1"
+    hidden: true
+  - input: "5\n4 4 4 4 4"
+    expected: "4\n4 4 4 4 4"
+    hidden: true
+  - input: "1\n-8"
+    expected: "0\n-8"
+    hidden: true
+  - input: "6\n1 2 3 4 5 6"
+    expected: "5\n1 2 3 4 5 6"
+    hidden: true
+---
+
+Implement one Lomuto partition on the full list. Use the last value as the pivot, scan the other values, move each value less than or equal to the pivot into the next left position, and finally swap the pivot into its boundary. Print the returned index followed by the mutated list. The empty list prints only `-1`.
+
+At the scan boundary, values before it are no greater than the pivot and values between the boundary and the scan cursor are greater than the pivot. Duplicates must still advance the boundary so the scan always progresses. Partitioning takes O(n) time and O(1) extra space; it is one step of quicksort, not a complete sort.

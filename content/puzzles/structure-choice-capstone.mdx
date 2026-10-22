@@ -1,0 +1,61 @@
+---
+title: "Structure Choice Capstone"
+order: 512
+available: true
+areas: ["algorithms"]
+topics: ["data-structures", "heaps", "complexity"]
+tags: ["capstone", "priority-queue", "hash-map"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def run_board(commands):
+      # Commands are:
+      # add task_id priority, cancel task_id, next, has task_id, count.
+      # add replaces an active task with the new priority.
+      # Return one output string for every command.
+      active = {}
+      heap = []
+      sequence = 0
+      results = []
+
+      def push(item):
+          pass
+
+      def pop_min():
+          pass
+
+      for command in commands:
+          parts = command.split()
+          if parts[0] == "add":
+              pass
+          elif parts[0] == "cancel":
+              pass
+          elif parts[0] == "next":
+              pass
+          elif parts[0] == "has":
+              results.append("yes" if parts[1] in active else "no")
+          else:
+              results.append(str(len(active)))
+      return results
+
+  count = int(input())
+  commands = [input() for _ in range(count)]
+  print("\n".join(run_board(commands)))
+testCases:
+  - input: "8\nadd alpha 3\nadd beta 1\nhas alpha\nnext\ncount\nadd alpha 0\nnext\nnext"
+    expected: "yes\nbeta 1\n1\nalpha 0\nempty"
+    hidden: false
+  - input: "9\nadd a 2\nadd b 2\ncancel a\nnext\nhas a\ncount\nnext\ncancel b\ncount"
+    expected: "cancelled\nb 2\nno\n0\nempty\nmissing\n0"
+    hidden: true
+  - input: "6\nadd task 5\nadd task 1\nhas task\ncount\nnext\nnext"
+    expected: "yes\n1\ntask 1\nempty"
+    hidden: true
+  - input: "4\ncancel absent\nnext\ncount\nhas absent"
+    expected: "missing\nempty\n0\nno"
+    hidden: true
+---
+
+Build a task board from the operations in the starter code. Use a dictionary for active task IDs and a min-heap for priority order. `add task_id priority` inserts or replaces an active task and produces no output. `cancel` returns `cancelled` or `missing`; `next` returns `task_id priority` for the smallest active priority or `empty`; `has` returns `yes` or `no`; and `count` returns the number of active tasks.
+
+Replacing or cancelling a task may leave an old entry in the heap. You can use lazy deletion: when popping, discard an entry unless it still matches the dictionary's current `(priority, sequence)` record. The dictionary invariant is one current record per active ID; the heap contains enough entries to find the next record after stale entries are skipped. Average dictionary operations are O(1), heap insertion and cleanup are O(log n) per entry, and active records use O(n) space.

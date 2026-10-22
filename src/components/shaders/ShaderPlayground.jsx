@@ -1,14 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import AITutor from "@/components/AITutor";
 import { DEFAULT_SHADER } from "@/lib/shaders/defaultShader";
 import { compareShaderRender } from "@/lib/shaders/puzzle";
 import { renderShaderToDataUrl } from "@/lib/shaders/webgl";
+import { defaultProgrammableFiles, normalizeProgrammableFiles, PROGRAMMABLE_3D_MODE } from "@/lib/shaders/programmable3d";
 
 const ShaderEditor = dynamic(() => import("./ShaderEditor"), { ssr: false, loading: () => <div className="h-full bg-zinc-950" /> });
+const ShaderFilesEditor = dynamic(() => import("./ShaderFilesEditor"), { ssr: false, loading: () => <div className="h-full bg-zinc-950" /> });
 const ShaderCanvas = dynamic(() => import("./ShaderCanvas"), { ssr: false, loading: () => <div className="h-full bg-black" /> });
+const ProgrammableCanvas = dynamic(() => import("./ProgrammableCanvas"), { ssr: false, loading: () => <div className="h-full bg-black" /> });
 
 const DEBOUNCE_MS = 400;
 
@@ -43,9 +46,17 @@ export default function ShaderPlayground({
   aiContext = null,
   contextType = "shader",
   contextTitle = lessonTitle,
+  mode = "fragment",
+  initialFiles = null,
+  resetFiles = null,
+  onFilesChange = null,
 }) {
+  const isProgrammable = mode === PROGRAMMABLE_3D_MODE;
+  const startingFiles = normalizeProgrammableFiles(initialFiles ?? defaultProgrammableFiles());
   const [code, setCode] = useState(() => initialCode ?? DEFAULT_SHADER);
   const [debouncedCode, setDebouncedCode] = useState(() => initialCode ?? DEFAULT_SHADER);
+  const [files, setFiles] = useState(startingFiles);
+  const [debouncedFiles, setDebouncedFiles] = useState(startingFiles);
   const [error, setError] = useState(null);
   const [saveStatus, setSaveStatus] = useState(null); // null | "saving" | { savedAt } | { error }
   const [checkStatus, setCheckStatus] = useState(null); // null | "checking" | { solved, matchRatio } | { error }
@@ -60,6 +71,7 @@ export default function ShaderPlayground({
   const outputRef = useRef(null);
   const checkVersion = useRef(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const clearError = useCallback(() => setError(null), []);
 
   useEffect(() => {
     if (initialCode != null) return;
@@ -86,6 +98,11 @@ export default function ShaderPlayground({
     return () => clearTimeout(timer);
   }, [code]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedFiles(files), DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [files]);
+
   // Keep isFullscreen in sync, including when the user exits with Esc.
   useEffect(() => {
     function onFullscreenChange() {
@@ -101,6 +118,14 @@ export default function ShaderPlayground({
     setCheckStatus(null);
     setSaveStatus(null); // a stale "saved" message would be misleading after further edits
     onCodeChange?.(nextCode);
+  }
+
+  function handleFilesChange(nextFiles) {
+    checkVersion.current += 1;
+    setFiles(nextFiles);
+    setCheckStatus(null);
+    setSaveStatus(null);
+    onFilesChange?.(nextFiles);
   }
 
   async function markSolved() {
@@ -122,7 +147,7 @@ export default function ShaderPlayground({
   }
 
   async function handleCheckPuzzle() {
-    if (!puzzle || checkStatus === "checking") return;
+    if (isProgrammable || !puzzle || checkStatus === "checking") return;
     const version = ++checkVersion.current;
     setCheckStatus("checking");
     try {
@@ -228,7 +253,7 @@ export default function ShaderPlayground({
             </button>
           )}
 
-          {puzzle && (
+          {puzzle && !isProgrammable && (
             <button
               type="button"
               onClick={handleCheckPuzzle}
@@ -251,7 +276,10 @@ export default function ShaderPlayground({
 
           <button
             type="button"
-            onClick={() => handleCodeChange(resetCode ?? initialCode ?? DEFAULT_SHADER)}
+            onClick={() => {
+              if (isProgrammable) handleFilesChange(resetFiles ?? startingFiles);
+              else handleCodeChange(resetCode ?? initialCode ?? DEFAULT_SHADER);
+            }}
             className="rounded border border-zinc-700 px-3 py-1 font-mono text-xs text-zinc-300 transition-colors hover:border-fuchsia-400 hover:text-fuchsia-400"
           >
             reset
@@ -294,10 +322,16 @@ export default function ShaderPlayground({
             ref={outputRef}
             className={`relative min-h-0 min-w-0 flex-1 overflow-hidden bg-black ${showOutput ? "" : "hidden"}`}
           >
-            <ShaderCanvas fragmentSource={debouncedCode} onError={setError} onCompiled={() => setError(null)} />
+            {isProgrammable ? (
+              <ProgrammableCanvas files={debouncedFiles} onError={setError} onCompiled={clearError} />
+            ) : (
+              <ShaderCanvas fragmentSource={debouncedCode} onError={setError} onCompiled={clearError} />
+            )}
 
             <div className="pointer-events-none absolute bottom-2 left-2 max-w-[calc(100%-1rem)] rounded border border-zinc-700/70 bg-black/70 px-2 py-1 font-mono text-[10px] leading-relaxed text-zinc-400 backdrop-blur-sm">
-              shift-drag / middle-drag: pan · wheel: zoom · click preview, then WASD / arrows: move · +/-: zoom · 0: reset (shaders using iCamera)
+              {isProgrammable
+                ? "CPU scene + vertex/fragment shaders · edit any file to update the isolated WebGL preview"
+                : "shift-drag / middle-drag: pan · wheel: zoom · click preview, then WASD / arrows: move · +/-: zoom · 0: reset (shaders using iCamera)"}
             </div>
 
             <button
@@ -329,7 +363,11 @@ export default function ShaderPlayground({
             }`}
           >
             <div className="flex-1 min-h-0 overflow-hidden">
-              <ShaderEditor code={code} onChange={handleCodeChange} />
+              {isProgrammable ? (
+                <ShaderFilesEditor files={files} onChange={handleFilesChange} />
+              ) : (
+                <ShaderEditor code={code} onChange={handleCodeChange} />
+              )}
             </div>
             <div className="h-28 shrink-0 overflow-y-auto border-t border-zinc-800 bg-black p-4 font-mono text-sm">
               {error ? (
@@ -344,8 +382,8 @@ export default function ShaderPlayground({
       {aiContext && (
         <AITutor
           lessonContent={aiContext}
-          code={code}
-          language="GLSL fragment shader"
+          code={isProgrammable ? files.cpu : code}
+          language={isProgrammable ? "JavaScript + WebGL shaders" : "GLSL fragment shader"}
           contextType={contextType}
           contextTitle={contextTitle}
         />

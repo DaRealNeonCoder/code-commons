@@ -1,0 +1,54 @@
+---
+title: "Priority Queue Heap"
+order: 509
+available: true
+areas: ["algorithms"]
+topics: ["heaps", "priority-queues"]
+tags: ["min-heap", "heap-operations"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  def priority_results(operations):
+      # Operations are: push priority label, or pop.
+      # Pop the smallest priority; equal priorities are FIFO.
+      heap = []
+      sequence = 0
+      results = []
+
+      def push(priority, label, order):
+          pass
+
+      def pop_min():
+          pass
+
+      for operation in operations:
+          parts = operation.split()
+          if parts[0] == "push":
+              push(int(parts[1]), parts[2], sequence)
+              sequence += 1
+          else:
+              item = pop_min()
+              results.append("empty" if item is None else item[1])
+      return results
+
+  count = int(input())
+  operations = [input() for _ in range(count)]
+  print("\n".join(priority_results(operations)))
+testCases:
+  - input: "6\npush 3 wash\npush 1 urgent\npop\npush 1 retry\npop\npop"
+    expected: "urgent\nretry\nwash"
+    hidden: false
+  - input: "7\npop\npush 2 first\npush 2 second\npush -1 now\npop\npop\npop"
+    expected: "empty\nnow\nfirst\nsecond"
+    hidden: true
+  - input: "4\npush 5 only\npop\npop\npop"
+    expected: "only\nempty\nempty"
+    hidden: true
+  - input: "5\npush 0 zero\npush -3 low\npush 8 high\npop\npop"
+    expected: "low\nzero"
+    hidden: true
+---
+
+Implement a list-backed min-heap for the commands `push priority label` and `pop`. A pop returns the label with the smallest priority. When priorities tie, return the label that was pushed first. Popping an empty queue returns `empty`.
+
+Store entries as `(priority, sequence, label)` so Python's tuple comparison gives the required order. After appending, sift up; after removing the root, move the last entry to the root and sift down using the smaller child. The heap invariant is that every parent entry is no greater than its children. Each push and pop should take O(log n) time and use O(1) extra working space beyond the heap.

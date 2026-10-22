@@ -1,0 +1,77 @@
+---
+title: "Linked Lists and Pointer Rewiring"
+order: 3
+summary: "Represent a sequence with linked nodes and reverse it safely by rewiring one pointer at a time."
+available: true
+areas: ["algorithms"]
+topics: ["linked-lists", "pointers", "invariants"]
+tags: ["linked-list", "pointer-rewiring"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["pointer-rewiring"]
+---
+
+A linked list stores a sequence as separate **nodes**. Each node contains a value and a reference to the next node. The nodes do not have to sit beside one another in memory; following `next` links gives the order.
+
+This lesson assumes Intro to Python familiarity with classes, variables, loops, and `None`. The new idea is to treat an object reference as an arrow that can be rewired.
+
+```python
+class Node:
+    def __init__(self, value, next_node=None):
+        self.value = value
+        self.next = next_node
+
+
+tail = Node(30)
+middle = Node(20, tail)
+head = Node(10, middle)
+```
+
+This represents `10 -> 20 -> 30 -> None`. The `head` reference is the entry point. Unlike an array, a linked list cannot jump to “index 2” without following two links, so indexing is O(n). Finding a value is also O(n). If we already have the node or the position where a change belongs, changing a link can be O(1).
+
+## Reversing means changing arrows
+
+To reverse `A -> B -> C -> None`, do not overwrite `B`'s link before saving where it used to point. Keep three references:
+
+```python
+previous = None
+current = head
+while current is not None:
+    following = current.next
+    current.next = previous
+    previous = current
+    current = following
+head = previous
+```
+
+At the end of each loop, `previous` is the head of a reversed prefix and `current` is the first node not yet processed. `following` protects the rest of the original list while the arrow is rewired. This is a pointer operation, not a copy of every value.
+
+<ReactDemo
+  title="Step through a reversal"
+  code={`function Demo() {
+  const values = ["A", "B", "C", "D"];
+  const [step, setStep] = React.useState(0);
+  const reversed = values.slice(0, step).reverse();
+  const remaining = values.slice(step);
+  const show = (items, color) => React.createElement("span", null, items.map((value, i) => React.createElement("span", { key: value, style: { display: "inline-block", padding: "8px 10px", marginRight: 4, border: "1px solid #94a3b8", color: color } }, value + (i < items.length - 1 ? " →" : ""))));
+  return React.createElement("div", { style: { fontFamily: "system-ui", padding: 16, color: "CanvasText" } },
+    React.createElement("p", null, "reversed prefix: ", show(reversed, "#0f766e")),
+    React.createElement("p", null, "unvisited suffix: ", show(remaining, "#b45309")),
+    React.createElement("button", { onClick: () => setStep(Math.min(values.length, step + 1)) }, step === values.length ? "done" : "rewire next"),
+    React.createElement("button", { onClick: () => setStep(0), style: { marginLeft: 8 } }, "reset"),
+    React.createElement("p", null, step === values.length ? "The new head is D." : "Save current.next, point current backward, then advance.")
+  );
+}`}
+ />
+
+## Invariants and edge cases
+
+During reversal, the nodes in the reversed prefix point backward in their final order, while `current` still reaches every unvisited node in the original order. The two parts are separate: there is no accidental cycle between them. When `current` becomes `None`, every original link has been handled and `previous` is the new head.
+
+An empty list has `head = None` and reverses to `None`. A one-node list points to `None` before and after. Always save the next reference before changing a link; otherwise the rest of the list becomes unreachable. A traversal should stop at `None`, not assume a fixed number of nodes.
+
+Reversal takes O(n) time and O(1) extra references. Building nodes from an input sequence takes O(n) time, but the rewiring itself does not need a second list.
+
+## Practice
+
+In the [Pointer Rewiring puzzle](/puzzles/pointer-rewiring?lesson=linked-lists-and-pointer-rewiring&course=data-structures-and-algorithms), build a singly linked list and reverse its links in place. The tests include no nodes, one node, repeated values, and a longer chain.

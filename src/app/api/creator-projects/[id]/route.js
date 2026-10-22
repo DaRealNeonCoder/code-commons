@@ -1,6 +1,7 @@
 import { getRequestAccess } from "@/lib/access";
-import { updateProject, deleteProject } from "@/lib/creatorProjects";
+import { getProject, updateProject, deleteProject } from "@/lib/creatorProjects";
 import { validateReactDemoDrafts } from "@/lib/reactDemo";
+import { validateShaderProjectData } from "@/lib/shaders/programmable3d";
 
 const MAX_DATA_CHARS = 2_000_000;
 
@@ -29,6 +30,11 @@ export async function PUT(request, { params }) {
   }
   const demoError = validateReactDemoDrafts(body.data.reactDemos);
   if (demoError) return Response.json({ error: demoError }, { status: 400 });
+  const existingProject = await getProject(id);
+  if (existingProject?.type === "shader") {
+    const shaderError = validateShaderProjectData(body.data);
+    if (shaderError) return Response.json({ error: shaderError }, { status: 400 });
+  }
 
   try {
     // The WHERE clause includes user_id, so you can only ever write to your own projects.

@@ -1,0 +1,74 @@
+---
+title: "Merge Sort and Quicksort Partitioning"
+order: 8
+summary: "Compare merge sort's ordered merge with quicksort's pivot partition, including stability, space, and worst-case tradeoffs."
+available: true
+areas: ["algorithms"]
+topics: ["sorting", "divide-and-conquer", "partitioning"]
+tags: ["merge-sort", "quicksort", "partition"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["quicksort-partition"]
+---
+
+The previous lesson used a sorted prefix to build an answer one item at a time. This lesson compares two divide-and-conquer families. **Merge sort** solves two smaller sorted problems and combines them. **Quicksort** chooses a pivot, rearranges the current range around it, and recursively solves the ranges on either side. The earlier recursion lesson introduced the call-stack pattern; here the important distinction is the work done at the combine or partition boundary.
+
+## Merge sort: combine two sorted ranges
+
+After recursively sorting the left and right halves, merge sort walks through both fronts and copies the smaller front item into a result. Its key invariant is that the result already contains the smallest items consumed from the two sorted inputs, in order. Choosing from the left when the values are equal, with `<=`, makes this merge stable.
+
+With balanced halves there are O(log n) levels, and all merges at one level inspect O(n) items, so the running time is **O(n log n)** in the best, average, and worst cases. A straightforward list implementation uses **O(n) extra space** for the merge result, in addition to O(log n) recursion stack space. It is a strong default when predictable time and stability matter.
+
+## Quicksort: partition around a pivot
+
+Quicksort can partition a range in place. With the Lomuto scheme, use the last item as the pivot. Keep `boundary` as the first position where a value no greater than the pivot belongs, and scan `cursor` through the range:
+
+```python
+def partition(values, low, high):
+    pivot = values[high]
+    boundary = low
+    for cursor in range(low, high):
+        if values[cursor] <= pivot:
+            values[boundary], values[cursor] = values[cursor], values[boundary]
+            boundary += 1
+    values[boundary], values[high] = values[high], values[boundary]
+    return boundary
+```
+
+Before each iteration, the partition invariant is: `values[low:boundary]` contains values `<= pivot`, `values[boundary:cursor]` contains values `> pivot`, and the pivot is still at `high`. When the scan ends, swapping the pivot into `boundary` leaves every item on the left no greater than it and every item on the right greater than it. The returned index is the pivot's final position for this partition; it is not necessarily the final position of every value when duplicates exist.
+
+Quicksort spends O(n) time partitioning one range. Balanced partitions produce **O(n log n)** average or expected time, but repeatedly choosing a smallest or largest pivot produces **O(n²)** worst-case time. The partition itself uses O(1) extra space; recursive calls use O(log n) stack space on balanced input and O(n) in the worst case. Standard quicksort is not stable because swaps can cross equal-key records. Randomized or median-based pivots reduce the chance of bad splits without changing the partition invariant.
+
+<ReactDemo
+  title="Move the partition boundary"
+  code={`function Demo() {
+  const values = [6, 2, 7, 3, 5, 4];
+  const pivot = values[values.length - 1];
+  const [cursor, setCursor] = React.useState(0);
+  const boundary = values.slice(0, cursor).filter(value => value <= pivot).length;
+  const labels = values.map((value, index) => {
+    const color = index === values.length - 1 ? "#a78bfa" : index < cursor && value <= pivot ? "#38bdf8" : index < cursor ? "#f97316" : "#94a3b8";
+    return React.createElement("div", { key: index, style: { display: "inline-flex", flexDirection: "column", alignItems: "center", marginRight: 8 } },
+      React.createElement("div", { style: { width: 38, height: 38, display: "grid", placeItems: "center", background: color, borderRadius: 5 } }, value),
+      React.createElement("small", null, index === values.length - 1 ? "pivot" : index === cursor ? "cursor" : "")
+    );
+  });
+  return React.createElement("div", { style: { fontFamily: "system-ui", padding: 16, color: "CanvasText" } },
+    React.createElement("p", null, "pivot = ", pivot, "; boundary = ", boundary),
+    React.createElement("div", { style: { display: "flex", alignItems: "flex-end" } }, labels),
+    React.createElement("button", { onClick: () => setCursor(Math.min(values.length - 1, cursor + 1)) }, "scan next"),
+    React.createElement("button", { onClick: () => setCursor(0), style: { marginLeft: 8 } }, "reset"),
+    React.createElement("small", { style: { display: "block", marginTop: 8 } }, "blue values belong before the pivot; orange values belong after it.")
+  );
+}`}
+  />
+
+## Choosing between them
+
+Merge sort makes its extra result space explicit and gives predictable O(n log n) time plus stability. Quicksort can keep the rearrangement in place and often has good cache behavior, but its pivot choice affects the worst case and it does not preserve equal-key order by default. Neither algorithm is automatically best: consider input size, memory limits, whether the input may be nearly sorted, stability, and whether a library implementation already handles pivot selection safely.
+
+Empty ranges and one-item ranges are already sorted and should stop recursion. In a partition, `low == high` should return `low`, and `low > high` should be rejected or skipped by the caller rather than indexing an invalid pivot. Repeated values must still make progress: using `<=` moves the boundary even when many values equal the pivot. Negative values are ordinary comparisons. Keep range conventions consistent, such as inclusive `[low, high]` bounds for the partition above.
+
+## Practice
+
+The [Quicksort Partition puzzle](/puzzles/quicksort-partition?lesson=merge-sort-and-quicksort&course=data-structures-and-algorithms) isolates the partition invariant. It asks you to mutate one range, return the pivot index, and handle duplicate, sorted, and empty inputs without calling Python's built-in sort.

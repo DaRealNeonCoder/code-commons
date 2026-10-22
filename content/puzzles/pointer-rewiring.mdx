@@ -1,0 +1,44 @@
+---
+title: "Pointer Rewiring"
+order: 503
+available: true
+areas: ["algorithms"]
+topics: ["linked-lists", "pointers"]
+tags: ["reverse-linked-list"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  class Node:
+      def __init__(self, value, next_node=None):
+          self.value = value
+          self.next = next_node
+
+  def reverse_values(values):
+      # Build a singly linked list, reverse its links in place,
+      # and return the values reached from the new head.
+      pass
+
+  n = int(input())
+  values = list(map(int, input().split())) if n else []
+  print(" ".join(map(str, reverse_values(values))))
+testCases:
+  - input: "3\n10 20 30"
+    expected: "30 20 10"
+    hidden: false
+  - input: "0\n"
+    expected: ""
+    hidden: true
+  - input: "1\n7"
+    expected: "7"
+    hidden: true
+  - input: "5\n4 4 2 9 1"
+    expected: "1 9 2 4 4"
+    hidden: true
+  - input: "4\n-3 0 8 -1"
+    expected: "-1 8 0 -3"
+    hidden: true
+---
+
+Create nodes in the order given, then reverse the singly linked list by rewiring `next` references. Return the values reached from the new head. Do not sort the values and do not rely on slicing to reverse the input.
+
+While reversing, save `current.next` before assigning `current.next = previous`. The empty input returns an empty list. A correct solution takes O(n) time and O(1) extra pointer space after the nodes have been built.

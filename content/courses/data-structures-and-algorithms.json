@@ -1,0 +1,20 @@
+{
+  "title": "Data Structures & Algorithms",
+  "summary": "Build practical intuition for organizing data, analyzing efficiency, and solving computational problems with Python through visual lessons and hands-on coding puzzles.",
+  "lessons": [
+    "complexity-analysis-and-tradeoffs",
+    "arrays-and-dynamic-arrays",
+    "linked-lists-and-pointer-rewiring",
+    "stacks-queues-and-circular-buffers",
+    "hash-tables-and-collisions",
+    "recursion-and-divide-and-conquer",
+    "elementary-sorting",
+    "merge-sort-and-quicksort",
+    "heaps-and-priority-queues",
+    "general-binary-trees-and-traversals",
+    "graphs-bfs-dfs-and-shortest-paths",
+    "greedy-algorithms",
+    "dynamic-programming",
+    "choosing-structures-and-algorithms-capstone"
+  ]
+}

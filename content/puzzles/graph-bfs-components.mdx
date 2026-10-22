@@ -1,0 +1,51 @@
+---
+title: "Graph BFS, DFS, and Components"
+order: 511
+available: true
+areas: ["algorithms"]
+topics: ["graphs", "bfs", "dfs", "shortest-paths"]
+tags: ["adjacency-list", "connected-components"]
+languages: ["python"]
+difficulty: "beginner"
+starterCode: |
+  from collections import deque
+
+  def graph_report(vertex_count, edges, start, target):
+      # Edges are undirected pairs. Visit neighbors in ascending order.
+      # Return (bfs_order, dfs_order, component_count, distance_to_target).
+      graph = [[] for _ in range(vertex_count)]
+      for left, right in edges:
+          graph[left].append(right)
+          graph[right].append(left)
+      for neighbors in graph:
+          neighbors.sort()
+
+      # Fill in BFS order, DFS order, component count, and shortest distance.
+      pass
+
+  data = list(map(int, input().split()))
+  vertex_count, edge_count, start, target = data
+  edges = [tuple(map(int, input().split())) for _ in range(edge_count)]
+  bfs_order, dfs_order, components, distance = graph_report(vertex_count, edges, start, target)
+  print("BFS " + " ".join(map(str, bfs_order)))
+  print("DFS " + " ".join(map(str, dfs_order)))
+  print("components " + str(components))
+  print("distance " + str(distance))
+testCases:
+  - input: "6 4 0 3\n0 1\n0 2\n1 3\n2 3"
+    expected: "BFS 0 1 2 3\nDFS 0 1 3 2\ncomponents 2\ndistance 2"
+    hidden: false
+  - input: "5 2 0 4\n0 1\n2 3"
+    expected: "BFS 0 1\nDFS 0 1\ncomponents 3\ndistance -1"
+    hidden: true
+  - input: "1 0 0 0"
+    expected: "BFS 0\nDFS 0\ncomponents 1\ndistance 0"
+    hidden: true
+  - input: "4 4 0 3\n0 1\n1 2\n2 3\n0 3"
+    expected: "BFS 0 1 3 2\nDFS 0 1 2 3\ncomponents 1\ndistance 1"
+    hidden: true
+---
+
+For an undirected graph, build an adjacency list, visit neighbors in ascending order, and return four results: BFS order from `start`, DFS preorder from `start`, the number of connected components, and the unweighted shortest distance from `start` to `target` (or `-1` when unreachable). Print the results in the format shown by the starter code.
+
+Mark vertices visited when they are discovered. BFS's queue invariant makes the first discovered distance shortest; DFS needs only a visited set to avoid cycles. To count components, start another traversal from every vertex not reached yet. The expected time is O(V + E) and the adjacency list uses O(V + E) space. Isolated vertices count as components.

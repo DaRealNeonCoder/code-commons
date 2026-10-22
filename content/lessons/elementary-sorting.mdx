@@ -1,0 +1,91 @@
+---
+title: "Elementary Sorting: Selection and Insertion"
+order: 7
+summary: "Sort small collections by growing a sorted prefix, then compare stability, in-place updates, and the cost of selection versus insertion."
+available: true
+areas: ["algorithms"]
+topics: ["sorting", "arrays", "invariants"]
+tags: ["selection-sort", "insertion-sort", "stability"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["elementary-sorting"]
+---
+
+Sorting is the act of rearranging values into a chosen order. The two elementary algorithms in this lesson both maintain a **sorted prefix**, but they grow it in different ways. They are useful for learning invariants and for small or nearly sorted inputs, even though faster general-purpose sorts are usually better for large collections.
+
+This lesson builds on the list and complexity ideas from the first half of the course. It also prepares you for the divide-and-conquer comparison in the next lesson. We will sort numbers first, then use records with a key to make stability visible.
+
+## Selection sort: choose the next item
+
+Selection sort treats the part before `start` as finished. It scans the remaining suffix for its smallest item, swaps that item into position `start`, and repeats:
+
+```python
+def selection_sort(values):
+    for start in range(len(values) - 1):
+        smallest = start
+        for index in range(start + 1, len(values)):
+            if values[index] < values[smallest]:
+                smallest = index
+        values[start], values[smallest] = values[smallest], values[start]
+    return values
+```
+
+After the iteration with index `start`, the prefix `values[:start + 1]` contains the smallest `start + 1` values in sorted order. The scan always examines the rest of the list, so selection sort takes **O(n²)** comparisons in the best, average, and worst cases. It uses **O(1) extra space** and at most `n - 1` swaps, which can make it useful when writes are expensive.
+
+## Insertion sort: place the next item
+
+Insertion sort also starts with a sorted prefix, but it takes the next item and shifts larger prefix values right until the item has a place:
+
+```python
+def insertion_sort(values):
+    for index in range(1, len(values)):
+        item = values[index]
+        position = index - 1
+        while position >= 0 and values[position] > item:
+            values[position + 1] = values[position]
+            position -= 1
+        values[position + 1] = item
+    return values
+```
+
+The invariant is: before each outer-loop iteration, `values[:index]` is sorted and contains exactly the original prefix's items. Inserting one item can require `O(index)` shifts, so the worst-case time is **O(n²)**. An already sorted list needs only one comparison per item, giving **O(n)** best-case time. Like selection sort, the implementation uses **O(1) extra space** and mutates the input.
+
+## Stability is about equal keys
+
+An algorithm is **stable** when equal-key records stay in their original relative order. For example, sorting `[(2, "first"), (1, "low"), (2, "second")]` by the first field should produce `low, first, second` if stability matters. The insertion code above is stable because it shifts only values that are strictly greater than `item`; an equal value stops the shift.
+
+The simple selection sort swaps a later minimum over the items between it and `start`. That can change the order of equal records, so it is generally **not stable**. A stable selection variant can remove the minimum and shift the gap closed, but those extra shifts give up its small-swap advantage. Stability is a contract to choose deliberately, not a property that every sorting algorithm has automatically.
+
+<ReactDemo
+  title="Grow a sorted prefix"
+  code={`function Demo() {
+  const [algorithm, setAlgorithm] = React.useState("selection");
+  const [step, setStep] = React.useState(0);
+  const values = [5, 2, 4, 1, 3];
+  const prefix = algorithm === "selection" ? Math.min(step, values.length) : Math.min(step + 1, values.length);
+  const bars = values.map((value, index) => React.createElement("div", { key: index, style: { display: "inline-flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "center", width: 42, height: 120, marginRight: 5 } },
+    React.createElement("div", { style: { height: value * 16, width: 30, background: index < prefix ? "#38bdf8" : "#f97316", borderRadius: 4 } }),
+    React.createElement("small", null, value)
+  ));
+  return React.createElement("div", { style: { fontFamily: "system-ui", padding: 16, color: "CanvasText" } },
+    React.createElement("label", null, "method ", React.createElement("select", { value: algorithm, onChange: e => { setAlgorithm(e.target.value); setStep(0); } },
+      React.createElement("option", { value: "selection" }, "selection"), React.createElement("option", { value: "insertion" }, "insertion")
+    )),
+    React.createElement("p", null, "blue = sorted prefix; orange = not processed"),
+    React.createElement("div", { style: { display: "flex", alignItems: "flex-end" } }, bars),
+    React.createElement("button", { onClick: () => setStep(Math.min(values.length, step + 1)) }, "process next"),
+    React.createElement("button", { onClick: () => setStep(0), style: { marginLeft: 8 } }, "reset"),
+    React.createElement("small", { style: { display: "block", marginTop: 8 } }, "Insertion is especially efficient when the input is nearly sorted.")
+  );
+}`}
+  />
+
+## In-place tradeoffs and edge cases
+
+**In-place** usually means the algorithm uses only constant extra storage for the rearrangement. It does not mean the input is unchanged: both examples mutate `values`. `sorted(values)` instead creates a separate result and preserves the input, spending O(n) space. Ask whether callers share the list, whether records must keep equal-key order, and whether comparisons or writes are the expensive operation.
+
+The empty and one-item lists are already sorted and must not cause an invalid index access. Duplicate values should remain present; a sort is a permutation, not a deduplication step. Negative values work with ordinary comparisons. For insertion sort, use `>` rather than `>=` when stability is required. For selection sort, do not assume the list changes on every pass: if `smallest == start`, the swap is a harmless self-swap.
+
+## Practice
+
+The [Elementary Sorting puzzle](/puzzles/elementary-sorting?lesson=elementary-sorting&course=data-structures-and-algorithms) asks you to sort keyed records in place with stable insertion logic. Equal keys in the tests make the stability contract observable.

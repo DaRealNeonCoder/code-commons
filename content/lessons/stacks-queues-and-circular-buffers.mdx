@@ -1,0 +1,71 @@
+---
+title: "Stacks, Queues, and Circular Buffers"
+order: 4
+summary: "Use LIFO and FIFO invariants, then implement a fixed-size queue without shifting items."
+available: true
+areas: ["algorithms"]
+topics: ["stacks", "queues", "circular-buffers"]
+tags: ["lifo", "fifo", "ring-buffer"]
+languages: ["python"]
+difficulty: "beginner"
+puzzles: ["stack-queue-ring-buffer"]
+---
+
+A **stack** and a **queue** are defined by the order in which items leave. A stack is **LIFO**: last in, first out. A queue is **FIFO**: first in, first out. Their simple rules make them useful for different jobs.
+
+This lesson assumes Intro to Python familiarity with lists, function calls, and importing a standard-library type. We will focus on the ordering rules and the invariants that make each operation safe.
+
+```python
+stack = []
+stack.append("page A")
+stack.append("page B")
+last_page = stack.pop()       # page B
+
+from collections import deque
+queue = deque(["task A"])
+queue.append("task B")
+first_task = queue.popleft()  # task A
+```
+
+Appending and popping at the end of a Python list are usually O(1). Removing index 0 from a list is O(n), because all remaining items shift left. `deque` supports both ends efficiently. A circular buffer gives a queue the same idea using a fixed array and three numbers.
+
+## A queue in a circle
+
+Keep an array `buffer`, a `head` index for the oldest item, a `tail` index for the next free slot, and `size`. After using a slot, advance with modular arithmetic:
+
+```python
+tail = (tail + 1) % capacity
+head = (head + 1) % capacity
+```
+
+The queue invariant is `0 <= size <= capacity`. If `size == 0`, dequeue is empty. If `size == capacity`, enqueue is full. When neither boundary applies, enqueue writes at `tail` and increments size; dequeue reads at `head` and increments head. The indices can wrap around without moving any other item.
+
+<ReactDemo
+  title="Move through a ring buffer"
+  code={`function Demo() {
+  const capacity = 6;
+  const [items, setItems] = React.useState(["A", "B"]);
+  const enqueue = () => setItems(items.length === capacity ? items : items.concat(String.fromCharCode(65 + items.length + 2)));
+  const dequeue = () => setItems(items.slice(1));
+  const cells = Array.from({ length: capacity }, (_, i) => React.createElement("span", { key: i, style: { display: "inline-block", width: 34, padding: "8px 0", marginRight: 3, textAlign: "center", border: "1px solid #94a3b8", background: i < items.length ? "#a7f3d0" : "transparent" } }, items[i] || "·"));
+  return React.createElement("div", { style: { fontFamily: "system-ui", padding: 16, color: "CanvasText" } },
+    React.createElement("p", null, "oldest → newest: ", items.join(" → ") || "empty"),
+    React.createElement("div", null, cells),
+    React.createElement("button", { onClick: enqueue }, "enqueue"),
+    React.createElement("button", { onClick: dequeue, style: { marginLeft: 8 } }, "dequeue"),
+    React.createElement("small", { style: { display: "block", marginTop: 8 } }, items.length === capacity ? "full: enqueue is rejected" : "free slot: enqueue can write at tail")
+  );
+}`}
+ />
+
+The visual uses a compact row to show the queue order. A real ring may have the oldest item in the middle of the physical array after several dequeues; `head` and `tail`, not visual left-to-right order, define the meaning.
+
+## Edge cases and cost
+
+For a stack, popping an empty stack needs a defined result such as `empty` or an exception. For a queue, distinguish empty from full even when `head == tail`; `size` supplies that missing information. A capacity of one still needs to wrap correctly. A capacity of zero can never accept an item and should be rejected or reported as full before taking a modulo.
+
+Push, pop, enqueue, and dequeue are O(1) when the structure has the right representation. A fixed circular buffer uses O(capacity) space and never shifts the stored items. The tradeoff is a fixed limit, unless the buffer itself is resized.
+
+## Practice
+
+The [Stack Queue Ring Buffer puzzle](/puzzles/stack-queue-ring-buffer?lesson=stacks-queues-and-circular-buffers&course=data-structures-and-algorithms) combines stack commands with a fixed circular queue. Test empty operations, a full queue, and a dequeue followed by an enqueue that wraps around.
