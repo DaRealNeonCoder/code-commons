@@ -20,11 +20,13 @@ function message(type, nonce, extra = {}) {
 }
 
 function demoHeight() {
-  const bodyHeight = document.body?.scrollHeight || 0;
-  const documentHeight = document.documentElement?.scrollHeight || 0;
+  const demoRoot = document.getElementById("demo-root");
+  const status = document.querySelector(".runner-status");
+  const demoBottom = demoRoot?.getBoundingClientRect().bottom || 0;
+  const statusBottom = status?.getBoundingClientRect().bottom || 0;
   return Math.min(
     MAX_DEMO_HEIGHT,
-    Math.max(MIN_DEMO_HEIGHT, Math.ceil(Math.max(bodyHeight, documentHeight)))
+    Math.max(MIN_DEMO_HEIGHT, Math.ceil(Math.max(demoBottom, statusBottom)))
   );
 }
 
@@ -49,8 +51,9 @@ function Runner() {
       });
     };
     const resizeObserver = new ResizeObserver(reportSize);
-    resizeObserver.observe(document.documentElement);
     if (document.body) resizeObserver.observe(document.body);
+    const demoRoot = document.getElementById("demo-root");
+    if (demoRoot) resizeObserver.observe(demoRoot);
 
     function report(value) {
       const text = String(value?.message || value || "The demo could not be rendered.").slice(0, 500);

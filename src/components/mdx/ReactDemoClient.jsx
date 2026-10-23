@@ -16,7 +16,11 @@ import {
 } from "@/lib/reactDemo";
 
 let activeDemoCount = 0;
-const DEFAULT_REACT_DEMO_HEIGHT = 480;
+// Start compact while the runner measures the rendered demo. A fixed 480px
+// starting height made short demos look like they had been placed in an
+// oversized box, and the runner's first resize could not correct that until
+// after the initial frame had already been shown.
+const DEFAULT_REACT_DEMO_HEIGHT = MIN_REACT_DEMO_HEIGHT;
 
 export default function ReactDemo({ code = "", data = "", title = "Interactive React demo", allowValidation = false }) {
   const frameRef = useRef(null);
