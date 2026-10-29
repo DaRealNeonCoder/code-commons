@@ -134,7 +134,7 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
   function programFor(vertex, fragment) {
     var key=vertex+"\\n"+fragment; var entry=programs.find(function(p){return p.key===key;});
     if(!entry){ if(programs.length>=16){ programs.forEach(function(p){gl.deleteProgram(p.program);}); programs=[]; } entry={key:key,program:link(vertex,fragment)}; programs.push(entry); }
-    return program;
+    return entry.program;
   }
   function explainShaderError(data, message) {
     try { gl.deleteShader(compile(gl.VERTEX_SHADER,data.vertex)); } catch(e) { fail("vertex",e.message); return; }
