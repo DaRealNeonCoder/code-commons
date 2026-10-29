@@ -17,9 +17,10 @@ const MAX_ATTEMPTS = 3;
 // Each milestone is reported by the runner, so the bar moves when real work
 // finishes. The bar hides on the first drawn frame, not on "ready".
 const STAGES = {
-  starting: { label: "Starting the isolated WebGL runner…", progress: 20 },
-  compiling: { label: "Compiling your scene…", progress: 55 },
-  drawing: { label: "Drawing the first frame…", progress: 85 },
+  starting: { label: "Starting the isolated WebGL runner…", progress: 15 },
+  scene: { label: "Running your setup(engine) code…", progress: 40 },
+  shaders: { label: "Compiling shaders on the GPU…", progress: 70 },
+  drawing: { label: "Drawing the first frame…", progress: 90 },
 };
 
 export default function ProgrammableCanvas({ files, onError, onCompiled }) {
@@ -41,6 +42,9 @@ export default function ProgrammableCanvas({ files, onError, onCompiled }) {
     // True once this iframe has set up the scene. Any later init message is
     // redundant (e.g. the load event firing after the boot handshake already ran).
     let ready = false;
+    // The boot handshake is the reliable init trigger; the load event only
+    // helps when the boot message was missed.
+    let booted = false;
 
     function armTimeout() {
       clearTimeout(timerRef.current);
@@ -81,12 +85,14 @@ export default function ProgrammableCanvas({ files, onError, onCompiled }) {
       // parent's effect subscribes to their load event. The boot handshake
       // makes the init message reliable in both cached and cold-load cases.
       if (event.data?.type === "programmable-3d:boot") {
-        setStage("compiling");
+        booted = true;
         send();
         return;
       }
       if (!event.data || event.data.nonce !== nonce) return;
-      if (event.data.type === "programmable-3d:error") {
+      if (event.data.type === "programmable-3d:progress") {
+        if (STAGES[event.data.stage]) setStage(event.data.stage);
+      } else if (event.data.type === "programmable-3d:error") {
         clearTimeout(timerRef.current);
         const file = event.data.file ? `${event.data.file}: ` : "";
         const message = `${file}${String(event.data.message || "Graphics preview failed.").slice(0, 700)}`;
@@ -108,12 +114,15 @@ export default function ProgrammableCanvas({ files, onError, onCompiled }) {
     }
 
     window.addEventListener("message", onMessage);
-    frame.addEventListener("load", send);
+    function onFrameLoad() {
+      if (!booted) send();
+    }
+    frame.addEventListener("load", onFrameLoad);
     send();
     return () => {
       clearTimeout(timerRef.current);
       window.removeEventListener("message", onMessage);
-      frame.removeEventListener("load", send);
+      frame.removeEventListener("load", onFrameLoad);
     };
   }, [files, nonce, frameKey, onCompiled, onError]);
 
@@ -124,11 +133,14 @@ export default function ProgrammableCanvas({ files, onError, onCompiled }) {
     <div className="relative h-full w-full bg-black" aria-busy={showOverlay}>
       <iframe
         key={frameKey}
-        ref={frameRef}
+        ref={(el) => {
+          frameRef.current = el;
+          // React warns about boolean-style attributes, so set this one directly.
+          el?.setAttribute("credentialless", "");
+        }}
         title="Programmable 3D graphics preview"
         srcDoc={documentSource}
         sandbox="allow-scripts"
-        credentialless="true"
         referrerPolicy="no-referrer"
         className="block h-full w-full border-0"
       />

@@ -146,7 +146,7 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
     try { scene.forEach(function(object){ var mat=object.material; programFor(mat.vertexShader,mat.fragmentShader); if(!object._gpu)object._gpu=upload(object.geometry); }); return true; }
     catch(e) { fail("program",e.message); app=null; return false; }
   }
-  function render(time) {
+  function renderFrame(time) {
     resize(); if(!gl||!app)return; var now=time/1000, delta=Math.min(.1,(time-last)/1000); last=time; frame++;
     try { if(app.update) app.update({time:now-(start/1000),delta:delta,frame:frame,input:input});
       gl.enable(gl.DEPTH_TEST); gl.clearColor(0,0,0,1); gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
@@ -154,21 +154,31 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
       scene.forEach(function(object){if(!object.visible)return; var mat=object.material, program=programFor(mat.vertexShader,mat.fragmentShader); if(!object._gpu)object._gpu=upload(object.geometry); gl.useProgram(program); bindAttributes(program,object._gpu); setUniform(program,"u_model",modelMatrix(object)); setUniform(program,"u_view",view); setUniform(program,"u_projection",projection); setUniform(program,"u_cameraPosition",vec(camera.position)); setUniform(program,"u_time",now-(start/1000)); setUniform(program,"u_resolution",[canvas.width,canvas.height,1]); Object.keys(mat.uniforms).forEach(function(name){setUniform(program,name,mat.uniforms[name]);}); gl.drawElements(gl.TRIANGLES,object._gpu.count,gl.UNSIGNED_SHORT,0); });
     } catch(e) { fail("program",e.message); app=null; }
     if (app) report("programmable-3d:frame");
-    requestAnimationFrame(render);
   }
+  function render(time) { renderFrame(time); requestAnimationFrame(render); }
+  // Each load gets a token. A CPU script from an earlier load may still finish
+  // after a newer one has started; its onload must not run setup() again, or the
+  // scene gets a second copy of every object and only the last one is animated.
+  var loadToken=0;
   function load(data) {
+    var token=++loadToken;
     project=data; scene=[]; app=null; start=performance.now(); last=start; frame=0;
     try { programFor(data.vertex, data.fragment); }
     catch(e) { explainShaderError(data, e.message); return; }
     try {
       if (cpuScript) cpuScript.remove();
-      var cpuUrl=URL.createObjectURL(new Blob(["(function(){\\n"+data.cpu+"\\nif(typeof setup !== 'function') throw new Error('Define setup(engine) in the CPU file.');\\nglobalThis.__PROGRAMMABLE_SETUP__=setup;\\n}());"],{type:"text/javascript"}));
+      var cpuUrl=URL.createObjectURL(new Blob(["(function(){\\n"+data.cpu+"\\nif(typeof setup !== 'function') throw new Error('Define setup(engine) in the CPU file.');\\nglobalThis.__PROGRAMMABLE_SETUP_"+token+"=setup;\\n}());"],{type:"text/javascript"}));
       var script=document.createElement("script"); cpuScript=script;
       script.onload=function(){
         URL.revokeObjectURL(cpuUrl);
+        var slot="__PROGRAMMABLE_SETUP_"+token; var setup=globalThis[slot]; delete globalThis[slot];
+        if(token!==loadToken) return;
         try {
-          var setup=globalThis.__PROGRAMMABLE_SETUP__; if(typeof setup!=="function")throw new Error("Define setup(engine) in the CPU file.");
-          var engine=makeEngine(); var result=setup(engine); app=typeof result==="function"?{update:result}:result||{}; if(warm()) report("programmable-3d:ready");
+          if(typeof setup!=="function")throw new Error("Define setup(engine) in the CPU file.");
+          report("programmable-3d:progress",{stage:"scene"});
+          var engine=makeEngine(); var result=setup(engine); app=typeof result==="function"?{update:result}:result||{};
+          report("programmable-3d:progress",{stage:"shaders"});
+          if(warm()){ report("programmable-3d:ready"); renderFrame(performance.now()); }
         } catch(e) { fail("cpu",e.message); app=null; }
       };
       script.onerror=function(){URL.revokeObjectURL(cpuUrl); fail("cpu","CPU code could not be loaded.");}; script.src=cpuUrl; document.head.appendChild(script);
