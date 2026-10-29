@@ -12,6 +12,7 @@ function toCourse(row) {
     summary: row.summary,
     available: row.available,
     lessons: row.lessonIds,
+    courses: row.courseIds,
     projectId: row.projectId,
     ownerId: row.ownerId, // server-side only
     createdAt: row.createdAt,
@@ -44,12 +45,13 @@ export async function listCoursesWithLesson(lessonId) {
   return rows.map(toCourse);
 }
 
-export async function saveCourse({ ownerId, projectId = null, slug = null, title, summary = "", lessons, available = true }) {
+export async function saveCourse({ ownerId, projectId = null, slug = null, title, summary = "", lessons, courses: courseIds = [], available = true }) {
   const values = {
     title: title.slice(0, LIMITS.title),
     summary: summary.slice(0, LIMITS.summary),
     available,
     lessonIds: lessons,
+    courseIds,
   };
   return upsertWithSlug(courses, { values, ownerId, projectId, pinnedSlug: slug, title, fallback: "course" });
 }

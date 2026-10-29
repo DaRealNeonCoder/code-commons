@@ -1,0 +1,9 @@
+{
+  "title": "Machine Learning (Unified)",
+  "summary": "A complete learning path combining beginner foundations with advanced techniques. Embedding intro and advanced ML courses for a seamless progression from basics to production systems.",
+  "lessons": [],
+  "courses": [
+    "intro-to-ai-machine-learning",
+    "advanced-machine-learning"
+  ]
+}

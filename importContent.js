@@ -130,6 +130,7 @@ async function main() {
       title: str(data.title) || file,
       summary: str(data.summary),
       lessons: arr(data.lessons),
+      courses: arr(data.courses),
     });
     report("course", file, result);
   }

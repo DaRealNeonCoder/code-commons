@@ -28,3 +28,11 @@ export async function getCoursesForLesson(lessonId) {
 export async function getCourseForLesson(lessonId) {
   return (await getCoursesForLesson(lessonId))[0] ?? null;
 }
+
+// Validate that all course IDs exist and are available.
+export async function findMissingCourseIds(courseIds) {
+  if (!Array.isArray(courseIds) || courseIds.length === 0) return [];
+  const courses = await getAllCourses();
+  const existingIds = new Set(courses.map((c) => c.id));
+  return courseIds.filter((id) => !existingIds.has(id));
+}

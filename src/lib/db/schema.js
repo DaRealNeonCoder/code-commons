@@ -166,12 +166,15 @@ export const courses = pgTable(
     available: boolean("available").notNull().default(true),
     // Ordered lesson slugs. A course points at lessons, it never copies them.
     lessonIds: text("lesson_ids").array().notNull().default(emptyTextArray),
+    // Ordered course slugs for nested courses. Allows embedding other courses.
+    courseIds: text("course_ids").array().notNull().default(emptyTextArray),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
     index("courses_owner_idx").on(t.ownerId),
     index("courses_lessons_idx").using("gin", t.lessonIds),
+    index("courses_courses_idx").using("gin", t.courseIds),
   ]
 );
 

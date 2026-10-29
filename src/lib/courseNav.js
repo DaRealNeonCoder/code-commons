@@ -9,14 +9,46 @@ import {
   LESSON_ID_PATTERN,
 } from "@/lib/lessonPuzzles";
 
+// Recursively expand a course's lessons, including nested courses.
+// Returns a flat array of lesson objects in order.
+async function expandCourseLessons(course, visitedCourses = new Set()) {
+  if (visitedCourses.has(course.id)) {
+    // Circular reference protection
+    return [];
+  }
+  visitedCourses.add(course.id);
+
+  const allLessons = [];
+
+  // Add direct lessons first
+  if (course.lessons && course.lessons.length > 0) {
+    const byId = await getLessonsByIds(course.lessons);
+    const directLessons = course.lessons.map((id) => byId.get(id)).filter(Boolean);
+    allLessons.push(...directLessons);
+  }
+
+  // Then expand nested courses in order
+  if (course.courses && course.courses.length > 0) {
+    for (const nestedCourseId of course.courses) {
+      const nestedCourse = await getCourseById(nestedCourseId);
+      if (nestedCourse) {
+        const nestedLessons = await expandCourseLessons(nestedCourse, new Set(visitedCourses));
+        allLessons.push(...nestedLessons);
+      }
+    }
+  }
+
+  return allLessons;
+}
+
 // Display-only snapshot of a course: lessons in order, each with its typed
 // puzzle chain. Puzzle refs can point at puzzle, shader, or circuit tables.
+// Recursively includes lessons from nested courses.
 export async function getCourseOutline(courseId) {
   const course = await getCourseById(courseId);
   if (!course) return null;
 
-  const byId = await getLessonsByIds(course.lessons);
-  const lessons = course.lessons.map((id) => byId.get(id)).filter(Boolean);
+  const lessons = await expandCourseLessons(course);
 
   const puzzleRefs = [...new Set(lessons.flatMap((l) => normalizePuzzleIds(l.puzzles)))];
   const puzzlesByRef = await getPuzzleChoicesByRefs(puzzleRefs);

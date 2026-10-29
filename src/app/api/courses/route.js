@@ -1,6 +1,7 @@
 import { getRequestAccess } from "@/lib/access";
 import { getProject } from "@/lib/creatorProjects";
 import { findMissingLessonIds } from "@/lib/lessonStore";
+import { findMissingCourseIds } from "@/lib/courses";
 import { saveCourse } from "@/lib/db/courses";
 import { saveErrorResponse } from "@/lib/publish";
 import { notifyPublished } from "@/lib/notifications";
@@ -34,19 +35,34 @@ export async function POST(request) {
   const lessons = Array.isArray(body.lessons)
     ? [...new Set(body.lessons.filter((id) => typeof id === "string"))]
     : [];
-  if (lessons.length === 0) {
-    return Response.json({ error: "Add at least one lesson." }, { status: 400 });
+
+  // Keep the author's order for nested courses, drop duplicates.
+  const courseIds = Array.isArray(body.courseIds)
+    ? [...new Set(body.courseIds.filter((id) => typeof id === "string"))]
+    : [];
+
+  // A course must have at least one lesson or one nested course.
+  if (lessons.length === 0 && courseIds.length === 0) {
+    return Response.json({ error: "Add at least one lesson or nested course." }, { status: 400 });
   }
   if (lessons.length > 200) {
     return Response.json({ error: "A course can have at most 200 lessons." }, { status: 400 });
   }
-
-  const missing = await findMissingLessonIds(lessons);
-  if (missing.length > 0) {
-    return Response.json({ error: `No lesson found with ID: ${missing.join(", ")}.` }, { status: 400 });
+  if (courseIds.length > 50) {
+    return Response.json({ error: "A course can have at most 50 nested courses." }, { status: 400 });
   }
 
-  const result = await saveCourse({ ownerId: user.id, projectId: project.id, title, summary, lessons });
+  const missingLessons = await findMissingLessonIds(lessons);
+  if (missingLessons.length > 0) {
+    return Response.json({ error: `No lesson found with ID: ${missingLessons.join(", ")}.` }, { status: 400 });
+  }
+
+  const missingCourses = await findMissingCourseIds(courseIds);
+  if (missingCourses.length > 0) {
+    return Response.json({ error: `No course found with ID: ${missingCourses.join(", ")}.` }, { status: 400 });
+  }
+
+  const result = await saveCourse({ ownerId: user.id, projectId: project.id, title, summary, lessons, courses: courseIds });
   if (!result.ok) return saveErrorResponse(result);
 
   await notifyPublished({ actorId: user.id, itemType: "course", itemId: result.slug, title });

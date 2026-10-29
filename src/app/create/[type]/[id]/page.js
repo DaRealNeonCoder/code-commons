@@ -53,7 +53,18 @@ async function getCourseEditorProps(projectId) {
     };
   });
 
-  return { lessons, publishedId: published?.id ?? null };
+  // Also pass available courses for nested course selection
+  const availableCourses = courses
+    .filter((c) => c.id !== published?.id)
+    .map((c) => ({
+      id: c.id,
+      title: c.title,
+      summary: c.summary || "",
+      lessonCount: c.lessons.length,
+      nestedCourseCount: (c.courses || []).length,
+    }));
+
+  return { lessons, courses: availableCourses, publishedId: published?.id ?? null };
 }
 
 // The initial lesson-editor payload is deliberately capped. Search requests
