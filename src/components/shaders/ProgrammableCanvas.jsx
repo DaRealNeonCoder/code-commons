@@ -4,37 +4,68 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createProgrammableNonce } from "@/lib/shaders/programmable3d";
 import { createProgrammableRunnerDocument } from "@/lib/shaders/programmable3dRunner";
 
-// WebGL startup is synchronous once the runner receives its project, but the
-// sandboxed iframe can take a little while to boot on a cold page. Keep the
-// watchdog long enough for that first boot without hiding real failures.
+// Start-up covers creating the iframe, the WebGL context and the first compile.
+// On a cold page that can be slow while the editor is still initializing, so
+// the start-up window is generous. Once the scene is running, a stall means the
+// render loop has stopped, which is a shorter window.
+const BOOT_TIMEOUT_MS = 20000;
 const RUN_TIMEOUT_MS = 10000;
+// A stalled start is restarted quietly. Only repeated failures are reported,
+// so a slow first boot doesn't flash errors in the editor.
+const MAX_ATTEMPTS = 3;
+
+// The runner can't report a percentage, so progress is shown per milestone.
+const STAGES = {
+  starting: { label: "Starting the isolated WebGL runner…", progress: 25 },
+  compiling: { label: "Compiling your scene…", progress: 70 },
+};
 
 export default function ProgrammableCanvas({ files, onError, onCompiled }) {
   const frameRef = useRef(null);
   const timerRef = useRef(null);
+  const attemptRef = useRef(1);
   const nonce = useMemo(() => createProgrammableNonce(), []);
   const documentSource = useMemo(() => createProgrammableRunnerDocument(), []);
   const [error, setError] = useState(null);
   const [status, setStatus] = useState("loading");
+  const [stage, setStage] = useState("starting");
+  const [attempt, setAttempt] = useState(1);
   const [frameKey, setFrameKey] = useState(0);
 
   useEffect(() => {
     const frame = frameRef.current;
     if (!frame) return undefined;
 
+    // True once this iframe has set up the scene. Any later init message is
+    // redundant (e.g. the load event firing after the boot handshake already ran).
+    let ready = false;
+
     function armTimeout() {
       clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => {
-        const message = "The graphics preview timed out and was reset.";
-        setStatus("error");
-        setError(message);
-        onError?.(message);
+      timerRef.current = setTimeout(onStall, ready ? RUN_TIMEOUT_MS : BOOT_TIMEOUT_MS);
+    }
+
+    function onStall() {
+      if (attemptRef.current < MAX_ATTEMPTS) {
+        attemptRef.current += 1;
+        setAttempt(attemptRef.current);
+        setStage("starting");
+        setStatus("loading");
         setFrameKey((key) => key + 1);
-      }, RUN_TIMEOUT_MS);
+        return;
+      }
+      // Give up without remounting, so nothing keeps retrying in the background.
+      // The next edit or page reload starts a fresh attempt.
+      attemptRef.current = 1;
+      setAttempt(1);
+      const message = "The graphics preview did not respond after several attempts. Reload the page to try again.";
+      setStatus("error");
+      setError(message);
+      onError?.(message);
     }
 
     function send() {
-      setStatus("loading");
+      if (ready) return;
       frame.contentWindow?.postMessage({
         type: "programmable-3d:init",
         nonce,
@@ -49,6 +80,7 @@ export default function ProgrammableCanvas({ files, onError, onCompiled }) {
       // parent's effect subscribes to their load event. The boot handshake
       // makes the init message reliable in both cached and cold-load cases.
       if (event.data?.type === "programmable-3d:boot") {
+        setStage("compiling");
         send();
         return;
       }
@@ -61,11 +93,15 @@ export default function ProgrammableCanvas({ files, onError, onCompiled }) {
         setError(message);
         onError?.(message);
       } else if (event.data.type === "programmable-3d:ready") {
+        ready = true;
+        attemptRef.current = 1;
+        setAttempt(1);
         armTimeout();
         setStatus("ready");
         setError(null);
         onCompiled?.();
       } else if (event.data.type === "programmable-3d:frame") {
+        ready = true;
         armTimeout();
         setStatus("ready");
       }
@@ -80,6 +116,8 @@ export default function ProgrammableCanvas({ files, onError, onCompiled }) {
       frame.removeEventListener("load", send);
     };
   }, [files, nonce, frameKey, onCompiled, onError]);
+
+  const current = STAGES[stage];
 
   return (
     <div className="relative h-full w-full bg-black" aria-busy={status === "loading"}>
@@ -96,11 +134,23 @@ export default function ProgrammableCanvas({ files, onError, onCompiled }) {
       {status === "loading" && !error && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/70 px-6 text-center text-zinc-300 backdrop-blur-[1px]">
           <div className="w-full max-w-xs">
-            <p className="font-mono text-xs uppercase tracking-[0.16em]">Loading graphics preview</p>
-            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-800" role="progressbar" aria-label="Loading graphics preview" aria-valuetext="Loading">
-              <div className="h-full w-1/3 animate-pulse rounded-full bg-fuchsia-400" />
+            <p className="font-mono text-xs uppercase tracking-[0.16em]">
+              {attempt > 1 ? `Restarting preview · attempt ${attempt} of ${MAX_ATTEMPTS}` : "Loading graphics preview"}
+            </p>
+            <div
+              className="mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-800"
+              role="progressbar"
+              aria-label="Loading graphics preview"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={current.progress}
+            >
+              <div
+                className={`h-full rounded-full bg-fuchsia-400 transition-[width] duration-500 ease-out ${stage === "starting" ? "animate-pulse" : ""}`}
+                style={{ width: `${current.progress}%` }}
+              />
             </div>
-            <p className="mt-2 text-xs text-zinc-500">Starting the isolated WebGL runner…</p>
+            <p className="mt-2 text-xs text-zinc-500">{current.label}</p>
           </div>
         </div>
       )}

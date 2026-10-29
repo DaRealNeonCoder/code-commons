@@ -12,6 +12,7 @@ import ShaderCreator from "@/components/creator/ShaderCreator";
 import CircuitCreator from "@/components/creator/CircuitCreator";
 import BuildCreator from "@/components/creator/BuildCreator";
 import CourseCreator from "@/components/creator/CourseCreator";
+import WebCreator from "@/components/creator/WebCreator";
 
 const EDITORS = {
   lesson: LessonCreator,
@@ -20,6 +21,7 @@ const EDITORS = {
   circuit: CircuitCreator,
   project: BuildCreator, // "coding project" type id is unchanged; BuildCreator replaces CodingProjectCreator
   course: CourseCreator,
+  web: WebCreator,
 };
 
 // Everything the course editor needs from the published content: every lesson

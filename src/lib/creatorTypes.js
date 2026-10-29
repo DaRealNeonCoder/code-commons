@@ -69,6 +69,15 @@ export const PROJECT_TYPES = [
     hoverBorder: "hover:border-rose-400",
     badge: "border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-400",
   },
+  {
+    id: "web",
+    label: "Web project",
+    path: "07_web/",
+    description: "Build web pages with HTML, CSS, and JavaScript with live preview.",
+    accent: "text-orange-600 dark:text-orange-400",
+    hoverBorder: "hover:border-orange-400",
+    badge: "border-orange-500/40 bg-orange-500/10 text-orange-600 dark:text-orange-400",
+  },
 ];
 
 // `projectType` allows menu presets (such as Math puzzle) to reuse the
