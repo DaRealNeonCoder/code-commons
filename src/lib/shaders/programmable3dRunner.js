@@ -129,22 +129,37 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
   function bindAttributes(program, gpu) {
     [["a_position",gpu.positions,3],["a_normal",gpu.normals,3],["a_uv",gpu.uvs,2]].forEach(function(item){var loc=gl.getAttribLocation(program,item[0]); if(loc<0)return; gl.bindBuffer(gl.ARRAY_BUFFER,item[1]); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,item[2],gl.FLOAT,false,0,0);}); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,gpu.indices);
   }
+  // Linking a program is the slow GPU step (driver shader compile), so it is
+  // done here, once per distinct shader pair, instead of on the first drawn frame.
+  function programFor(vertex, fragment) {
+    var key=vertex+"\\n"+fragment; var entry=programs.find(function(p){return p.key===key;});
+    if(!entry){ if(programs.length>=16){ programs.forEach(function(p){gl.deleteProgram(p.program);}); programs=[]; } entry={key:key,program:link(vertex,fragment)}; programs.push(entry); }
+    return program;
+  }
+  function explainShaderError(data, message) {
+    try { gl.deleteShader(compile(gl.VERTEX_SHADER,data.vertex)); } catch(e) { fail("vertex",e.message); return; }
+    try { gl.deleteShader(compile(gl.FRAGMENT_SHADER,data.fragment)); } catch(e) { fail("fragment",e.message); return; }
+    fail("program",message);
+  }
+  // Prepare everything the first frame needs, so "ready" means "can draw now".
+  function warm() {
+    try { scene.forEach(function(object){ var mat=object.material; programFor(mat.vertexShader,mat.fragmentShader); if(!object._gpu)object._gpu=upload(object.geometry); }); return true; }
+    catch(e) { fail("program",e.message); app=null; return false; }
+  }
   function render(time) {
     resize(); if(!gl||!app)return; var now=time/1000, delta=Math.min(.1,(time-last)/1000); last=time; frame++;
     try { if(app.update) app.update({time:now-(start/1000),delta:delta,frame:frame,input:input});
       gl.enable(gl.DEPTH_TEST); gl.clearColor(0,0,0,1); gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
       var view=lookAt(camera.position,camera.target), projection=perspective(camera.fov,canvas.width/Math.max(canvas.height,1),camera.near,camera.far);
-      scene.forEach(function(object){if(!object.visible)return; var mat=object.material, key=mat.vertexShader+"\\n"+mat.fragmentShader, entry=programs.find(function(p){return p.key===key;}); if(!entry){entry={key:key,program:link(mat.vertexShader,mat.fragmentShader)}; programs.push(entry);} if(!object._gpu)object._gpu=upload(object.geometry); gl.useProgram(entry.program); bindAttributes(entry.program,object._gpu); setUniform(entry.program,"u_model",modelMatrix(object)); setUniform(entry.program,"u_view",view); setUniform(entry.program,"u_projection",projection); setUniform(entry.program,"u_cameraPosition",vec(camera.position)); setUniform(entry.program,"u_time",now-(start/1000)); setUniform(entry.program,"u_resolution",[canvas.width,canvas.height,1]); Object.keys(mat.uniforms).forEach(function(name){setUniform(entry.program,name,mat.uniforms[name]);}); gl.drawElements(gl.TRIANGLES,object._gpu.count,gl.UNSIGNED_SHORT,0); });
+      scene.forEach(function(object){if(!object.visible)return; var mat=object.material, program=programFor(mat.vertexShader,mat.fragmentShader); if(!object._gpu)object._gpu=upload(object.geometry); gl.useProgram(program); bindAttributes(program,object._gpu); setUniform(program,"u_model",modelMatrix(object)); setUniform(program,"u_view",view); setUniform(program,"u_projection",projection); setUniform(program,"u_cameraPosition",vec(camera.position)); setUniform(program,"u_time",now-(start/1000)); setUniform(program,"u_resolution",[canvas.width,canvas.height,1]); Object.keys(mat.uniforms).forEach(function(name){setUniform(program,name,mat.uniforms[name]);}); gl.drawElements(gl.TRIANGLES,object._gpu.count,gl.UNSIGNED_SHORT,0); });
     } catch(e) { fail("program",e.message); app=null; }
     if (app) report("programmable-3d:frame");
     requestAnimationFrame(render);
   }
   function load(data) {
-    project=data; scene=[]; programs.forEach(function(p){gl.deleteProgram(p.program);}); programs=[]; app=null; start=performance.now(); last=start; frame=0;
-    try { var checkedVertex=compile(gl.VERTEX_SHADER,data.vertex); gl.deleteShader(checkedVertex); }
-    catch(e) { fail("vertex",e.message); return; }
-    try { var checkedFragment=compile(gl.FRAGMENT_SHADER,data.fragment); gl.deleteShader(checkedFragment); }
-    catch(e) { fail("fragment",e.message); return; }
+    project=data; scene=[]; app=null; start=performance.now(); last=start; frame=0;
+    try { programFor(data.vertex, data.fragment); }
+    catch(e) { explainShaderError(data, e.message); return; }
     try {
       if (cpuScript) cpuScript.remove();
       var cpuUrl=URL.createObjectURL(new Blob(["(function(){\\n"+data.cpu+"\\nif(typeof setup !== 'function') throw new Error('Define setup(engine) in the CPU file.');\\nglobalThis.__PROGRAMMABLE_SETUP__=setup;\\n}());"],{type:"text/javascript"}));
@@ -153,7 +168,7 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
         URL.revokeObjectURL(cpuUrl);
         try {
           var setup=globalThis.__PROGRAMMABLE_SETUP__; if(typeof setup!=="function")throw new Error("Define setup(engine) in the CPU file.");
-          var engine=makeEngine(); var result=setup(engine); app=typeof result==="function"?{update:result}:result||{}; report("programmable-3d:ready");
+          var engine=makeEngine(); var result=setup(engine); app=typeof result==="function"?{update:result}:result||{}; if(warm()) report("programmable-3d:ready");
         } catch(e) { fail("cpu",e.message); app=null; }
       };
       script.onerror=function(){URL.revokeObjectURL(cpuUrl); fail("cpu","CPU code could not be loaded.");}; script.src=cpuUrl; document.head.appendChild(script);

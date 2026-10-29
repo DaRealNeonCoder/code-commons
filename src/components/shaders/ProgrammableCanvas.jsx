@@ -14,10 +14,12 @@ const RUN_TIMEOUT_MS = 10000;
 // so a slow first boot doesn't flash errors in the editor.
 const MAX_ATTEMPTS = 3;
 
-// The runner can't report a percentage, so progress is shown per milestone.
+// Each milestone is reported by the runner, so the bar moves when real work
+// finishes. The bar hides on the first drawn frame, not on "ready".
 const STAGES = {
-  starting: { label: "Starting the isolated WebGL runner…", progress: 25 },
-  compiling: { label: "Compiling your scene…", progress: 70 },
+  starting: { label: "Starting the isolated WebGL runner…", progress: 20 },
+  compiling: { label: "Compiling your scene…", progress: 55 },
+  drawing: { label: "Drawing the first frame…", progress: 85 },
 };
 
 export default function ProgrammableCanvas({ files, onError, onCompiled }) {
@@ -27,7 +29,7 @@ export default function ProgrammableCanvas({ files, onError, onCompiled }) {
   const nonce = useMemo(() => createProgrammableNonce(), []);
   const documentSource = useMemo(() => createProgrammableRunnerDocument(), []);
   const [error, setError] = useState(null);
-  const [status, setStatus] = useState("loading");
+  const [drawn, setDrawn] = useState(false);
   const [stage, setStage] = useState("starting");
   const [attempt, setAttempt] = useState(1);
   const [frameKey, setFrameKey] = useState(0);
@@ -50,7 +52,7 @@ export default function ProgrammableCanvas({ files, onError, onCompiled }) {
         attemptRef.current += 1;
         setAttempt(attemptRef.current);
         setStage("starting");
-        setStatus("loading");
+        setDrawn(false);
         setFrameKey((key) => key + 1);
         return;
       }
@@ -59,7 +61,6 @@ export default function ProgrammableCanvas({ files, onError, onCompiled }) {
       attemptRef.current = 1;
       setAttempt(1);
       const message = "The graphics preview did not respond after several attempts. Reload the page to try again.";
-      setStatus("error");
       setError(message);
       onError?.(message);
     }
@@ -87,7 +88,6 @@ export default function ProgrammableCanvas({ files, onError, onCompiled }) {
       if (!event.data || event.data.nonce !== nonce) return;
       if (event.data.type === "programmable-3d:error") {
         clearTimeout(timerRef.current);
-        setStatus("error");
         const file = event.data.file ? `${event.data.file}: ` : "";
         const message = `${file}${String(event.data.message || "Graphics preview failed.").slice(0, 700)}`;
         setError(message);
@@ -96,14 +96,14 @@ export default function ProgrammableCanvas({ files, onError, onCompiled }) {
         ready = true;
         attemptRef.current = 1;
         setAttempt(1);
+        setStage("drawing");
         armTimeout();
-        setStatus("ready");
         setError(null);
         onCompiled?.();
       } else if (event.data.type === "programmable-3d:frame") {
         ready = true;
         armTimeout();
-        setStatus("ready");
+        setDrawn(true);
       }
     }
 
@@ -118,9 +118,10 @@ export default function ProgrammableCanvas({ files, onError, onCompiled }) {
   }, [files, nonce, frameKey, onCompiled, onError]);
 
   const current = STAGES[stage];
+  const showOverlay = !drawn && !error;
 
   return (
-    <div className="relative h-full w-full bg-black" aria-busy={status === "loading"}>
+    <div className="relative h-full w-full bg-black" aria-busy={showOverlay}>
       <iframe
         key={frameKey}
         ref={frameRef}
@@ -131,7 +132,7 @@ export default function ProgrammableCanvas({ files, onError, onCompiled }) {
         referrerPolicy="no-referrer"
         className="block h-full w-full border-0"
       />
-      {status === "loading" && !error && (
+      {showOverlay && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/70 px-6 text-center text-zinc-300 backdrop-blur-[1px]">
           <div className="w-full max-w-xs">
             <p className="font-mono text-xs uppercase tracking-[0.16em]">
