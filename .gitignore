@@ -46,3 +46,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .neon
+
+# local Claude Code / preview tool config (stays on this machine)
+/.claude/
