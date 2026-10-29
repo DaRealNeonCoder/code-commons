@@ -15,7 +15,7 @@ The programmable runner currently supports:
   `scale` vectors.
 - `engine.geometry.cube()`, `.plane()`, `.triangle()`, and
   `.from({ positions, normals, uvs, indices })`.
-- `engine.material({ uniforms, vertexShader, fragmentShader })`.
+- `engine.material({ uniforms, vertex, fragment })`, where `vertex` and `fragment` name project shader files.
 - `engine.camera.position`, `.target`, `.fov`, `.near`, `.far`, and
   `.lookAt(x, y, z)`.
 - Engine uniforms `u_model`, `u_view`, `u_projection`, `u_cameraPosition`,

@@ -6,11 +6,12 @@ Shader projects have two first-class workflows:
   has one fragment file, and codeloop supplies the fullscreen vertex shader and
   the familiar `iResolution`, `iTime`, `iMouse`, and `iCamera` uniforms.
 - **Programmable 3D scene** is opt-in from the project’s rendering-mode
-  selector. It adds one CPU JavaScript file plus separate vertex and fragment
-  shader files.
+  selector. It holds any number of JavaScript scripts, vertex shaders, and
+  fragment shaders. See [Multiple files](#multiple-files).
 
-The CPU file runs in a sandboxed, opaque iframe. It cannot use imports,
-`require`, cookies, local storage, or network connections. The server applies
+Scripts run in a sandboxed, opaque iframe. They cannot use `import`/`export`,
+cookies, local storage, or network connections. They can load other project
+scripts with `require`. The server applies
 source-size limits before saving or publishing, and the preview reports errors
 with the file/stage that failed.
 
@@ -49,9 +50,10 @@ indices })`. `positions` and `indices` are required flat arrays; normals and UVs
 default to zeroes when omitted. Custom meshes are bounded to 300,000 flat
 position/index entries and 65,535 vertices per geometry.
 
-`engine.material({ uniforms })` uses the project’s vertex and fragment files.
-Uniform values may be numbers or arrays of two, three, four, or sixteen
-numbers. The engine supplies these uniforms when a shader declares them:
+`engine.material({ vertex, fragment, uniforms })` picks shaders by file name.
+Without `vertex` or `fragment`, the first `.vert` or `.frag` file in the project
+is used. Uniform values may be numbers or arrays of two, three, four, or
+sixteen numbers. The engine supplies these uniforms when a shader declares them:
 
 | Uniform | Meaning |
 | --- | --- |
@@ -72,6 +74,49 @@ samplers or textures yet.
 This boundary is intentional for the first course: procedural materials can
 still use UVs, time, normals, and uniforms, while texture loading, filtering,
 shadow maps, and extra vertex attributes remain optional future engine work.
+
+## Multiple files
+
+Each file’s type comes from its extension:
+
+| Extension | Kind | Notes |
+| --- | --- | --- |
+| `.js` | Script | Runs on the CPU side. Limit 30,000 characters. |
+| `.vert` | Vertex shader | GLSL ES. Limit 20,000 characters. |
+| `.frag` | Fragment shader | GLSL ES. Limit 20,000 characters. |
+
+`scene.js` is the entry point and must define `setup(engine)`. Project limits
+are 24 files and 150,000 characters in total. File names use letters, numbers,
+`-` and `_`, may include folders separated by `/`, and must end in one of the
+extensions above.
+
+Scripts load each other with `require`, relative to the project root:
+
+```js
+// scene.js
+const { spin } = require("./lib/motion.js");
+
+function setup(engine) {
+  const cube = engine.scene.add({
+    geometry: engine.geometry.cube(),
+    material: engine.material({
+      vertex: "shaders/glow.vert",
+      fragment: "shaders/glow.frag",
+      uniforms: { u_color: [1.0, 0.6, 0.2] },
+    }),
+  });
+  return { update({ time }) { cube.rotation.y = spin(time); } };
+}
+```
+
+```js
+// lib/motion.js
+module.exports.spin = (time) => time * 0.8;
+```
+
+A `require` of a missing file, or a `material` that names a missing shader,
+reports an error on the file that caused it. Each script runs once, and the
+exports of a script are shared with every script that requires it.
 
 ## Persistence and publishing
 

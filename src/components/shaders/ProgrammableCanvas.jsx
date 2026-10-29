@@ -74,7 +74,7 @@ export default function ProgrammableCanvas({ files, onError, onCompiled }) {
       frame.contentWindow?.postMessage({
         type: "programmable-3d:init",
         nonce,
-        project: files,
+        project: { files },
       }, "*");
       armTimeout();
     }

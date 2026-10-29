@@ -6,7 +6,7 @@ import AITutor from "@/components/AITutor";
 import { DEFAULT_SHADER } from "@/lib/shaders/defaultShader";
 import { compareShaderRender } from "@/lib/shaders/puzzle";
 import { renderShaderToDataUrl } from "@/lib/shaders/webgl";
-import { defaultProgrammableFiles, normalizeProgrammableFiles, PROGRAMMABLE_3D_MODE } from "@/lib/shaders/programmable3d";
+import { defaultProgrammableFiles, normalizeProgrammableFiles, PROGRAMMABLE_3D_MODE, PROGRAMMABLE_ENTRY } from "@/lib/shaders/programmable3d";
 
 const ShaderEditor = dynamic(() => import("./ShaderEditor"), { ssr: false, loading: () => <div className="h-full bg-zinc-950" /> });
 const ShaderFilesEditor = dynamic(() => import("./ShaderFilesEditor"), { ssr: false, loading: () => <div className="h-full bg-zinc-950" /> });
@@ -330,7 +330,7 @@ export default function ShaderPlayground({
 
             <div className="pointer-events-none absolute bottom-2 left-2 max-w-[calc(100%-1rem)] rounded border border-zinc-700/70 bg-black/70 px-2 py-1 font-mono text-[10px] leading-relaxed text-zinc-400 backdrop-blur-sm">
               {isProgrammable
-                ? "CPU scene + vertex/fragment shaders · edit any file to update the isolated WebGL preview"
+                ? "Scripts + vertex/fragment shaders · edit any file to update the isolated WebGL preview"
                 : "shift-drag / middle-drag: pan · wheel: zoom · click preview, then WASD / arrows: move · +/-: zoom · 0: reset (shaders using iCamera)"}
             </div>
 
@@ -382,7 +382,7 @@ export default function ShaderPlayground({
       {aiContext && (
         <AITutor
           lessonContent={aiContext}
-          code={isProgrammable ? files.cpu : code}
+          code={isProgrammable ? files[PROGRAMMABLE_ENTRY] : code}
           language={isProgrammable ? "JavaScript + WebGL shaders" : "GLSL fragment shader"}
           contextType={contextType}
           contextTitle={contextTitle}

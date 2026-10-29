@@ -298,7 +298,7 @@ export default function ShaderCreator({
                   <option value={PROGRAMMABLE_3D_MODE}>Programmable 3D scene</option>
                 </select>
                 <p className="mb-4 text-xs text-zinc-500">
-                  Simple shaders stay one file. Choose 3D when you need CPU JavaScript, geometry, camera transforms, and separate vertex/fragment files.
+                  Simple shaders stay one file. Choose 3D when you need JavaScript scripts, geometry, camera transforms, and any number of vertex/fragment shader files.
                 </p>
 
                 <label

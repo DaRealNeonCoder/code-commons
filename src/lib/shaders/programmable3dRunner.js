@@ -1,6 +1,7 @@
 // The runner is intentionally a plain document. It is loaded in a
 // sandbox="allow-scripts" iframe, so creator JavaScript never shares the main
 // application's DOM, cookies, storage, or JavaScript globals.
+import { PROGRAMMABLE_ENTRY } from "./programmable3d.js";
 
 export function createProgrammableRunnerDocument() {
   return `<!doctype html>
@@ -12,6 +13,7 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 </style></head><body><canvas id="canvas"></canvas><script>
 (function () {
   "use strict";
+  var ENTRY = ${JSON.stringify(PROGRAMMABLE_ENTRY)};
   var canvas = document.getElementById("canvas");
   var gl = null;
   var project = null;
@@ -19,34 +21,44 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
   var scene = [];
   var programs = [];
   var app = null;
-  var cpuScript = null;
   var start = performance.now();
   var last = start;
   var frame = 0;
   var input = { x: 0, y: 0, down: false, clickX: 0, clickY: 0 };
+  // Script modules: each project .js file is registered by name, then runs the
+  // first time something requires it. The entry script's exports hold setup().
+  var definitions = {};
+  var moduleCache = {};
+  var loadingFile = null;
+  var brokenLoad = false;
+  var loadToken = 0;
 
   function report(type, data) { window.parent.postMessage(Object.assign({ type: type, nonce: project && project.nonce }, data || {}), "*"); }
-  function fail(file, message) { report("programmable-3d:error", { file: file, message: String(message || "Unknown graphics error.").slice(0, 700) }); }
-  function compile(type, source) {
+  function errorMessage(e) { return String((e && e.message) || e || "Unknown graphics error.").slice(0, 700); }
+  function fileError(file, message) { var error = new Error(message); error.file = file; return error; }
+  function fail(file, message) { report("programmable-3d:error", { file: file, message: errorMessage(message) }); }
+  function endsWith(name, extension) { return String(name).slice(-extension.length) === extension; }
+  function compile(type, source, file) {
     var shader = gl.createShader(type);
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
       var log = gl.getShaderInfoLog(shader) || "Shader failed to compile.";
       gl.deleteShader(shader);
-      throw new Error(log);
+      throw fileError(file, log);
     }
     return shader;
   }
-  function link(vertex, fragment) {
-    var vs = compile(gl.VERTEX_SHADER, vertex);
-    var fs = compile(gl.FRAGMENT_SHADER, fragment);
+  function link(vertexName, vertex, fragmentName, fragment) {
+    var vs = compile(gl.VERTEX_SHADER, vertex, vertexName);
+    var fs;
+    try { fs = compile(gl.FRAGMENT_SHADER, fragment, fragmentName); } catch (e) { gl.deleteShader(vs); throw e; }
     var program = gl.createProgram();
     gl.attachShader(program, vs); gl.attachShader(program, fs); gl.linkProgram(program);
     gl.deleteShader(vs); gl.deleteShader(fs);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       var log = gl.getProgramInfoLog(program) || "Shader program failed to link.";
-      gl.deleteProgram(program); throw new Error(log);
+      gl.deleteProgram(program); throw fileError("program", log);
     }
     return program;
   }
@@ -112,14 +124,34 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
     if (typeof value === "number") gl.uniform1f(u,value);
     else if (Array.isArray(value)) { if(value.length===16) gl.uniformMatrix4fv(u,false,new Float32Array(value)); else if(value.length===4) gl.uniform4fv(u,new Float32Array(value)); else if(value.length===3) gl.uniform3fv(u,new Float32Array(value)); else if(value.length===2) gl.uniform2fv(u,new Float32Array(value)); else if(value.length===1) gl.uniform1f(u,value[0]); }
   }
-  function material(options) { options=options||{}; return { vertexShader:options.vertexShader || project.vertex, fragmentShader:options.fragmentShader || project.fragment, uniforms:Object.assign({},options.uniforms||{}) }; }
+  // Materials name their shaders as project files. Without a name, the first
+  // .vert or .frag file in project order is used.
+  function defaultShader(extension) {
+    var names = Object.keys(project.files).filter(function (name) { return endsWith(name, extension); });
+    return names[0] || null;
+  }
+  function shaderSource(name, extension, label) {
+    var source = typeof name === "string" && endsWith(name, extension) ? project.files[name] : undefined;
+    if (typeof source !== "string") throw new Error("Unknown " + label + " shader \\"" + name + "\\". Add a " + extension + " file to the project.");
+    return source;
+  }
+  function material(options) {
+    options=options||{};
+    var vertex = options.vertex || defaultShader(".vert");
+    var fragment = options.fragment || defaultShader(".frag");
+    if (!vertex) throw new Error("This project has no vertex shader (.vert file).");
+    if (!fragment) throw new Error("This project has no fragment shader (.frag file).");
+    shaderSource(vertex, ".vert", "vertex");
+    shaderSource(fragment, ".frag", "fragment");
+    return { vertex: vertex, fragment: fragment, uniforms: Object.assign({}, options.uniforms || {}) };
+  }
   function makeObject(options) {
     options=options||{}; var object={ geometry: options.geometry || geometry("cube"), material: options.material || material(), position:v3(options.position,[0,0,0]), rotation:v3(options.rotation,[0,0,0]), scale:v3(options.scale,[1,1,1]), visible:true, _gpu:null };
     object.position.set=object.position.set.bind(object.position); object.rotation.set=object.rotation.set.bind(object.rotation); object.scale.set=object.scale.set.bind(object.scale); return object;
   }
   function makeEngine() {
     camera={ position:v3([0,0,5],[0,0,5]), target:v3([0,0,0],[0,0,0]), fov:45, near:.1, far:100, lookAt:function(x,y,z){this.target.set(x,y,z);} };
-    return { shaders:{vertex:project.vertex, fragment:project.fragment}, camera:camera,
+    return { camera:camera,
       geometry:{cube:function(){return geometry("cube");}, plane:function(){return geometry("plane");}, triangle:function(){return geometry("triangle");}, from:customGeometry},
       material:material, scene:{ objects:scene, add:function(o){var object=makeObject(o); scene.push(object); return object;}, remove:function(o){var i=scene.indexOf(o); if(i>=0) scene.splice(i,1);}, clear:function(){scene.length=0;} },
       input:input
@@ -131,66 +163,103 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
   }
   // Linking a program is the slow GPU step (driver shader compile), so it is
   // done here, once per distinct shader pair, instead of on the first drawn frame.
-  function programFor(vertex, fragment) {
+  function programFor(vertexName, fragmentName) {
+    var vertex=shaderSource(vertexName,".vert","vertex"), fragment=shaderSource(fragmentName,".frag","fragment");
     var key=vertex+"\\n"+fragment; var entry=programs.find(function(p){return p.key===key;});
-    if(!entry){ if(programs.length>=16){ programs.forEach(function(p){gl.deleteProgram(p.program);}); programs=[]; } entry={key:key,program:link(vertex,fragment)}; programs.push(entry); }
+    if(!entry){ if(programs.length>=16){ programs.forEach(function(p){gl.deleteProgram(p.program);}); programs=[]; } entry={key:key,program:link(vertexName,vertex,fragmentName,fragment)}; programs.push(entry); }
     return entry.program;
   }
-  function explainShaderError(data, message) {
-    try { gl.deleteShader(compile(gl.VERTEX_SHADER,data.vertex)); } catch(e) { fail("vertex",e.message); return; }
-    try { gl.deleteShader(compile(gl.FRAGMENT_SHADER,data.fragment)); } catch(e) { fail("fragment",e.message); return; }
-    fail("program",message);
+  // Scripts are registered with a blob per file so a syntax error points at
+  // the file that caused it. Each file runs only when it is required.
+  function scriptBlob(name, source) {
+    var wrapped = "__programmableDefine(" + JSON.stringify(name) + ", function (module, exports, require) {\\n" + source +
+      "\\n;if (typeof setup === 'function') module.exports.setup = setup;\\n});";
+    return URL.createObjectURL(new Blob([wrapped], { type: "text/javascript" }));
+  }
+  function moduleName(request) {
+    var name = String(request).replace(/^\\.\\//, "");
+    return /\\.js$/.test(name) ? name : name + ".js";
+  }
+  function requireModule(request) {
+    var name = moduleName(request);
+    if (!Object.prototype.hasOwnProperty.call(definitions, name)) {
+      throw new Error("Cannot find \\"" + request + "\\". Add it to the project as a .js file.");
+    }
+    if (moduleCache[name]) return moduleCache[name].exports;
+    var module = { exports: {} };
+    moduleCache[name] = module;
+    try { definitions[name](module, module.exports, requireModule); }
+    catch (e) { delete moduleCache[name]; if (e && typeof e === "object" && !e.file) e.file = name; throw e; }
+    return module.exports;
   }
   // Prepare everything the first frame needs, so "ready" means "can draw now".
   function warm() {
-    try { scene.forEach(function(object){ var mat=object.material; programFor(mat.vertexShader,mat.fragmentShader); if(!object._gpu)object._gpu=upload(object.geometry); }); return true; }
-    catch(e) { fail("program",e.message); app=null; return false; }
+    try { scene.forEach(function(object){ var mat=object.material; programFor(mat.vertex,mat.fragment); if(!object._gpu)object._gpu=upload(object.geometry); }); return true; }
+    catch(e) { fail(e.file || "program", e); app=null; return false; }
   }
   function renderFrame(time) {
     resize(); if(!gl||!app)return; var now=time/1000, delta=Math.min(.1,(time-last)/1000); last=time; frame++;
     try { if(app.update) app.update({time:now-(start/1000),delta:delta,frame:frame,input:input});
       gl.enable(gl.DEPTH_TEST); gl.clearColor(0,0,0,1); gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
       var view=lookAt(camera.position,camera.target), projection=perspective(camera.fov,canvas.width/Math.max(canvas.height,1),camera.near,camera.far);
-      scene.forEach(function(object){if(!object.visible)return; var mat=object.material, program=programFor(mat.vertexShader,mat.fragmentShader); if(!object._gpu)object._gpu=upload(object.geometry); gl.useProgram(program); bindAttributes(program,object._gpu); setUniform(program,"u_model",modelMatrix(object)); setUniform(program,"u_view",view); setUniform(program,"u_projection",projection); setUniform(program,"u_cameraPosition",vec(camera.position)); setUniform(program,"u_time",now-(start/1000)); setUniform(program,"u_resolution",[canvas.width,canvas.height,1]); Object.keys(mat.uniforms).forEach(function(name){setUniform(program,name,mat.uniforms[name]);}); gl.drawElements(gl.TRIANGLES,object._gpu.count,gl.UNSIGNED_SHORT,0); });
-    } catch(e) { fail("program",e.message); app=null; }
+      scene.forEach(function(object){if(!object.visible)return; var mat=object.material, program=programFor(mat.vertex,mat.fragment); if(!object._gpu)object._gpu=upload(object.geometry); gl.useProgram(program); bindAttributes(program,object._gpu); setUniform(program,"u_model",modelMatrix(object)); setUniform(program,"u_view",view); setUniform(program,"u_projection",projection); setUniform(program,"u_cameraPosition",vec(camera.position)); setUniform(program,"u_time",now-(start/1000)); setUniform(program,"u_resolution",[canvas.width,canvas.height,1]); Object.keys(mat.uniforms).forEach(function(name){setUniform(program,name,mat.uniforms[name]);}); gl.drawElements(gl.TRIANGLES,object._gpu.count,gl.UNSIGNED_SHORT,0); });
+    } catch(e) { fail(e.file || "program", e); app=null; }
     if (app) report("programmable-3d:frame");
   }
   function render(time) { renderFrame(time); requestAnimationFrame(render); }
-  // Each load gets a token. A CPU script from an earlier load may still finish
-  // after a newer one has started; its onload must not run setup() again, or the
-  // scene gets a second copy of every object and only the last one is animated.
-  var loadToken=0;
+  function finishLoad(token) {
+    if (token !== loadToken) return;
+    try {
+      var entry = requireModule(ENTRY);
+      if (typeof entry.setup !== "function") throw fileError(ENTRY, "Define setup(engine) in " + ENTRY + ".");
+      report("programmable-3d:progress",{stage:"scene"});
+      var engine=makeEngine(); var result=entry.setup(engine); app=typeof result==="function"?{update:result}:result||{};
+      report("programmable-3d:progress",{stage:"shaders"});
+      if(warm()){ report("programmable-3d:ready"); renderFrame(performance.now()); }
+    } catch(e) { fail(e.file || ENTRY, e); app=null; }
+  }
+  // Scripts load one at a time so each error can be attributed to its file.
+  // A load from an older project snapshot stops as soon as a newer load starts.
+  function loadScripts(token, names, index) {
+    if (token !== loadToken || brokenLoad) return;
+    if (index >= names.length) { finishLoad(token); return; }
+    var name = names[index];
+    var url = scriptBlob(name, project.files[name]);
+    var script = document.createElement("script");
+    loadingFile = name;
+    script.onload = function () {
+      URL.revokeObjectURL(url); script.remove();
+      loadingFile = null;
+      loadScripts(token, names, index + 1);
+    };
+    script.onerror = function () {
+      URL.revokeObjectURL(url); loadingFile = null; brokenLoad = true;
+      fail(name, "Script could not be loaded.");
+    };
+    script.src = url; document.head.appendChild(script);
+  }
+  // Syntax errors in a classic script reach window, not the script element.
+  window.addEventListener("error", function (event) {
+    if (loadingFile === null) return;
+    var file = loadingFile; loadingFile = null; brokenLoad = true;
+    fail(file, event.message || "Script failed to load.");
+  });
+  window.__programmableDefine = function (name, factory) { definitions[name] = factory; };
   function load(data) {
     var token=++loadToken;
-    project=data; scene=[]; app=null; start=performance.now(); last=start; frame=0;
-    try { programFor(data.vertex, data.fragment); }
-    catch(e) { explainShaderError(data, e.message); return; }
-    try {
-      if (cpuScript) cpuScript.remove();
-      var cpuUrl=URL.createObjectURL(new Blob(["(function(){\\n"+data.cpu+"\\nif(typeof setup !== 'function') throw new Error('Define setup(engine) in the CPU file.');\\nglobalThis.__PROGRAMMABLE_SETUP_"+token+"=setup;\\n}());"],{type:"text/javascript"}));
-      var script=document.createElement("script"); cpuScript=script;
-      script.onload=function(){
-        URL.revokeObjectURL(cpuUrl);
-        var slot="__PROGRAMMABLE_SETUP_"+token; var setup=globalThis[slot]; delete globalThis[slot];
-        if(token!==loadToken) return;
-        try {
-          if(typeof setup!=="function")throw new Error("Define setup(engine) in the CPU file.");
-          report("programmable-3d:progress",{stage:"scene"});
-          var engine=makeEngine(); var result=setup(engine); app=typeof result==="function"?{update:result}:result||{};
-          report("programmable-3d:progress",{stage:"shaders"});
-          if(warm()){ report("programmable-3d:ready"); renderFrame(performance.now()); }
-        } catch(e) { fail("cpu",e.message); app=null; }
-      };
-      script.onerror=function(){URL.revokeObjectURL(cpuUrl); fail("cpu","CPU code could not be loaded.");}; script.src=cpuUrl; document.head.appendChild(script);
-    }
-    catch(e) { fail("cpu",e.message); }
+    project=data; scene=[]; app=null; definitions={}; moduleCache={}; brokenLoad=false; loadingFile=null;
+    start=performance.now(); last=start; frame=0;
+    var files = data.files || {};
+    if (!Object.prototype.hasOwnProperty.call(files, ENTRY)) { fail(ENTRY, ENTRY + " is required."); return; }
+    var names = Object.keys(files).filter(function (name) { return endsWith(name, ".js"); });
+    loadScripts(token, names, 0);
   }
   canvas.addEventListener("pointermove",function(e){var r=canvas.getBoundingClientRect();input.x=(e.clientX-r.left)/r.width;input.y=1-(e.clientY-r.top)/r.height;});
   canvas.addEventListener("pointerdown",function(e){input.down=true;input.clickX=input.x;input.clickY=input.y;}); canvas.addEventListener("pointerup",function(){input.down=false;});
   // Install the message listener before announcing that the runner is alive.
   // The parent can miss an iframe load event on cached navigations, so this
   // boot message gives it a reliable opportunity to send the project again.
-  window.addEventListener("message",function(e){if(e.source!==window.parent||!e.data||e.data.type!=="programmable-3d:init")return; var next=Object.assign({},e.data.project,{nonce:e.data.nonce}); project=next; try{if(!gl)gl=canvas.getContext("webgl2",{alpha:false})||canvas.getContext("webgl",{alpha:false}); if(!gl)throw new Error("WebGL is not supported in this browser."); load(next); }catch(err){fail("runtime",err.message);}});
+  window.addEventListener("message",function(e){if(e.source!==window.parent||!e.data||e.data.type!=="programmable-3d:init")return; var next=Object.assign({},e.data.project,{nonce:e.data.nonce}); project=next; try{if(!gl)gl=canvas.getContext("webgl2",{alpha:false})||canvas.getContext("webgl",{alpha:false}); if(!gl)throw new Error("WebGL is not supported in this browser."); load(next); }catch(err){fail("runtime",err);}});
   window.addEventListener("resize",resize); if(typeof ResizeObserver === "function") new ResizeObserver(resize).observe(canvas);
   window.parent.postMessage({type:"programmable-3d:boot"},"*"); requestAnimationFrame(render);
 }());

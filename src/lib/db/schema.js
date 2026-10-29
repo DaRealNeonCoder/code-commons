@@ -113,7 +113,7 @@ export const shaders = pgTable(
   {
     ...contentColumns(),
     // "fragment" is the compatibility default; programmable-3d stores its
-    // CPU, vertex, and fragment sources in sourceFiles.
+    // named source files (scripts, vertex, and fragment shaders) in sourceFiles.
     runtime: text("runtime").notNull().default("fragment"),
     starterCode: text("starter_code").notNull().default(""),
     sourceFiles: jsonb("source_files"),

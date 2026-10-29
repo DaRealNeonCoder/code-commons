@@ -6,6 +6,7 @@ import {
   FRAGMENT_SHADER_MODE,
   PROGRAMMABLE_3D_MODE,
   normalizeProgrammableFiles,
+  primaryFragmentSource,
   validateProgrammableFiles,
 } from "@/lib/shaders/programmable3d";
 
@@ -49,7 +50,7 @@ export async function POST(request) {
     ...p.selection,
     payload: {
       runtime,
-      starterCode: runtime === FRAGMENT_SHADER_MODE ? starterCode : sourceFiles.fragment,
+      starterCode: runtime === FRAGMENT_SHADER_MODE ? starterCode : primaryFragmentSource(sourceFiles),
       sourceFiles,
       puzzleConfig: runtime === FRAGMENT_SHADER_MODE ? puzzleConfig : null,
     },
