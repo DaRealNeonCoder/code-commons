@@ -1,0 +1,75 @@
+---
+title: "Numbers, Strings, and Booleans"
+order: 24
+summary: "Learn JavaScript's three basic kinds of value, how to join text with template literals, and how to check a value's type."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+puzzles: ["web-types"]
+---
+
+Every value in JavaScript has a **type**. Three of the most common are:
+
+- **Number**: `42`, `3.14`, `-7`. No quotes.
+- **String**: text, always in quotes: `"Ada"` or `'Ada'`. Either works, as long as the quotes match.
+- **Boolean**: `true` or `false`. No quotes, and only those two values.
+
+```javascript
+const age = 36;
+const name = "Ada";
+const isStudent = false;
+```
+
+## Numbers
+
+Numbers do arithmetic with the usual symbols: `+`, `-`, `*` for multiply, and `/` for divide. Use `%` for the remainder after division, which is handy for checking whether something is even:
+
+```javascript
+const apples = 10 + 5;   // 15
+const half = 15 / 2;     // 7.5
+const remainder = 15 % 2; // 1
+```
+
+## Strings
+
+You can join strings with `+`:
+
+```javascript
+const greeting = "Hello, " + name + "!";
+```
+
+Template literals are easier to read. Use backticks, and put any value inside `${ }`:
+
+```javascript
+const intro = `My name is ${name} and I am ${age}.`;
+```
+
+Template literals keep the text in one piece, so you can see the sentence the visitor will read.
+
+## Booleans
+
+Booleans answer yes-or-no questions. They're the result of comparisons, which lesson 25 covers:
+
+```javascript
+const isAdult = age >= 18;   // true
+```
+
+## Checking the type
+
+`typeof` reports a value's type as text:
+
+```javascript
+typeof age;        // "number"
+typeof name;       // "string"
+typeof isStudent;  // "boolean"
+```
+
+> [!WARNING]
+> Numbers and strings look alike on screen, but they are not the same. `"5" + 5` gives `"55"`, because `+` joins text when one side is a string. `5 + 5` gives `10`. When you get strange results, check `typeof` first.
+
+## Your puzzle
+
+In the JavaScript tab, create three constants: `name` holding `"Ada"`, `age` holding `36`, and `isStudent` holding `false`. Then create `intro` with a template literal that makes the sentence `My name is Ada and I am 36`. The checks read each value, and the `typeof` of `age`.

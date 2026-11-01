@@ -1,0 +1,85 @@
+---
+title: "A Responsive Container"
+order: 19
+summary: "Limit a container's width and add a background color with a media query."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Practice</title>
+      </head>
+      <body>
+        <div class="container">
+          <h1>Responsive Page</h1>
+          <p>Resize me!</p>
+        </div>
+      </body>
+      </html>
+    css: |
+      /* 1. Keep .container no wider than 600px with max-width.
+         2. Inside a media query for (max-width: 900px), give it a
+            background-color of rgb(230, 240, 255). */
+    js: ""
+  checks:
+    - type: element
+      selector: "meta[name='viewport']"
+    - type: style
+      selector: ".container"
+      property: "max-width"
+      value: "600px"
+    - type: style
+      selector: ".container"
+      property: "background-color"
+      value: "rgb(230, 240, 255)"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Practice</title>
+      </head>
+      <body>
+        <div class="container">
+          <h1>Responsive Page</h1>
+          <p>Resize me!</p>
+        </div>
+      </body>
+      </html>
+    css: |
+      .container {
+        max-width: 600px;
+      }
+
+      @media (max-width: 900px) {
+        .container {
+          background-color: rgb(230, 240, 255);
+        }
+      }
+    js: ""
+---
+
+The page should adapt to its width:
+
+1. Give `.container` a `max-width` of `600px`. On wide screens it stops at 600 pixels, and on small screens it shrinks.
+2. Add a media query, `@media (max-width: 900px)`, and put a rule inside it for `.container` with a `background-color` of `rgb(230, 240, 255)`.
+
+The viewport `<meta>` line is already there. Leave it in place, because phones need it.
+
+The check runs the page at 800 pixels wide, which falls inside the 900 pixel query, so the background applies.
+
+> [!TIP]
+> A media query is a rule with a condition in front of it. The rules inside it only apply when the condition is true.

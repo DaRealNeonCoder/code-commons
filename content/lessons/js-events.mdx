@@ -1,0 +1,75 @@
+---
+title: "Events"
+order: 33
+summary: "Respond to clicks and other user actions by attaching event listeners to elements."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["html", "javascript"]
+difficulty: "beginner"
+puzzles: ["web-click-events"]
+---
+
+An **event** is something that happens on the page: a click, a key press, the mouse moving over something, a form being sent. JavaScript reacts to events with **event listeners**: a function you attach to an element, which runs whenever the event happens.
+
+```javascript
+const button = document.querySelector("#like");
+
+button.addEventListener("click", function () {
+  console.log("Clicked!");
+});
+```
+
+- `button` is the element to watch.
+- `"click"` is the event name.
+- The function is the **handler**. It runs each time the click happens.
+
+## Arrow functions as handlers
+
+Handlers are often written as arrow functions, which are shorter:
+
+```javascript
+button.addEventListener("click", () => {
+  console.log("Clicked!");
+});
+```
+
+Both versions work the same way.
+
+## Changing the page on an event
+
+A handler can do anything JavaScript can do, including changing the page:
+
+```javascript
+const count = document.querySelector("#count");
+
+button.addEventListener("click", () => {
+  count.textContent = "1 like";
+});
+```
+
+Each click runs the handler and updates the text.
+
+## The event object
+
+The browser passes the handler an **event object** that describes what happened. Name it in the parentheses if you want to use it:
+
+```javascript
+button.addEventListener("click", (event) => {
+  console.log(event.target);   // the element that was clicked
+});
+```
+
+## Other common events
+
+- `"input"` fires whenever a text box changes, so you can respond while the visitor types.
+- `"submit"` fires when a form is sent. Call `event.preventDefault()` in the handler to stop the page from reloading.
+- `"mouseenter"` and `"mouseleave"` fire when the pointer moves onto or off an element.
+
+> [!TIP]
+> Attach listeners to the element that actually receives the action. A button's click belongs on the button, not on the page's `body`, which makes the code easier to read and to test.
+
+## Your puzzle
+
+The body has a button with the id `like` and a paragraph with the id `count` that says `0 likes`. In the JavaScript tab, add a click listener to the button that changes the paragraph's text to `1 like`. The check clicks the button, then reads the paragraph.

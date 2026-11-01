@@ -1,0 +1,70 @@
+---
+title: "Tables"
+order: 9
+summary: "Show data in rows and columns with table, tr, th, and td elements."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+puzzles: ["web-score-table"]
+---
+
+Some information is naturally a grid: a timetable, a price list, a set of scores. HTML tables show that kind of data, and they are for data only. Don't use a table to lay out a page. Lesson 17 shows the modern way to do layout.
+
+## The parts of a table
+
+```html
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Score</th>
+  </tr>
+  <tr>
+    <td>Ada</td>
+    <td>95</td>
+  </tr>
+  <tr>
+    <td>Grace</td>
+    <td>98</td>
+  </tr>
+</table>
+```
+
+- **`<table>`** wraps the whole grid.
+- **`<tr>`** (table row) is one horizontal row.
+- **`<th>`** (table header) is a heading cell. It's bold by default and tells screen readers what the column means.
+- **`<td>`** (table data) is an ordinary cell that holds a value.
+
+Count the rows from the top and the cells from the left, and you can always find a cell.
+
+## Captions
+
+A `<caption>` gives the table a title. It must be the first thing inside the table:
+
+```html
+<table>
+  <caption>Quiz scores</caption>
+  <!-- rows go here -->
+</table>
+```
+
+> [!TIP]
+> Every table should have a header row with `<th>`. A screen reader reads each data cell together with its column heading, so headers make the table understandable to everyone.
+
+## Spanning cells
+
+A cell can cover more than one column with `colspan`, or more than one row with `rowspan`:
+
+```html
+<tr>
+  <th colspan="2">Team totals</th>
+</tr>
+```
+
+Use spanning cells sparingly. They make tables harder to read and harder to style.
+
+## Your puzzle
+
+Build a table with a header row of `Name` and `Score`, and two data rows: `Ada` with `95`, and `Grace` with `98`. The checks count the rows and header cells, and read the first name cell.

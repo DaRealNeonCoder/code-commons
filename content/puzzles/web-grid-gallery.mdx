@@ -1,0 +1,79 @@
+---
+title: "A Grid Gallery"
+order: 18
+summary: "Arrange three items in a two-column grid with a row gap."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <div class="gallery">
+          <div>1</div>
+          <div>2</div>
+          <div>3</div>
+        </div>
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: style
+      selector: ".gallery"
+      property: "display"
+      value: "grid"
+    - type: style
+      selector: ".gallery"
+      property: "grid-template-columns"
+      value: "100px 200px"
+    - type: style
+      selector: ".gallery"
+      property: "row-gap"
+      value: "8px"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <div class="gallery">
+          <div>1</div>
+          <div>2</div>
+          <div>3</div>
+        </div>
+      </body>
+      </html>
+    css: |
+      .gallery {
+        display: grid;
+        grid-template-columns: 100px 200px;
+        row-gap: 8px;
+      }
+    js: ""
+---
+
+The `div` with the class `gallery` holds three boxes. Turn it into a grid:
+
+- `display: grid` makes it a grid.
+- `grid-template-columns: 100px 200px` defines two columns, 100 and 200 pixels wide.
+- `row-gap: 8px` leaves 8 pixels between the rows.
+
+The third box has no column of its own, so the grid starts a new row for it. That's how grids handle extra items.
+
+> [!TIP]
+> Columns are listed left to right, separated by spaces. Each number is the width of one column.

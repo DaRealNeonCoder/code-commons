@@ -1,0 +1,68 @@
+---
+title: "Colors"
+order: 13
+summary: "Give a box a background color and a text color."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <div class="box">Hello</div>
+      </body>
+      </html>
+    css: |
+      /* Give .box a background color of #003366 and a text color of white */
+    js: ""
+  checks:
+    - type: style
+      selector: ".box"
+      property: "background-color"
+      value: "rgb(0, 51, 102)"
+    - type: style
+      selector: ".box"
+      property: "color"
+      value: "rgb(255, 255, 255)"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <div class="box">Hello</div>
+      </body>
+      </html>
+    css: |
+      .box {
+        background-color: #003366;
+        color: white;
+      }
+    js: ""
+---
+
+Style the `div` with the class `box`:
+
+- Set its `background-color` to `#003366`, a deep blue.
+- Set its `color` (the text color) to `white`.
+
+Both values go in one rule, inside curly braces, with a selector of `.box`.
+
+The checks read the colors the browser calculates, so any written form that means the same color passes.
+
+> [!TIP]
+> White text on a dark blue background is easy to read. Try swapping in a light background with the same white text, and notice how hard it becomes to read. That's the contrast rule from the lesson.

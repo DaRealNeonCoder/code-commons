@@ -1,0 +1,79 @@
+---
+title: "Types"
+order: 24
+summary: "Create a number, a string, a boolean, and a template literal, and check each one's type."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p>Types</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      // Create a constant named name that holds "Ada"
+      // Create a constant named age that holds 36
+      // Create a constant named isStudent that holds false
+      // Create a constant named intro that uses a template literal:
+      // My name is Ada and I am 36
+  checks:
+    - type: script
+      expression: "name"
+      expected: "Ada"
+    - type: script
+      expression: "age"
+      expected: 36
+    - type: script
+      expression: "isStudent"
+      expected: false
+    - type: script
+      expression: "intro"
+      expected: "My name is Ada and I am 36"
+    - type: script
+      expression: "typeof age"
+      expected: "number"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p>Types</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      const name = "Ada";
+      const age = 36;
+      const isStudent = false;
+      const intro = `My name is ${name} and I am ${age}`;
+---
+
+Create four constants in the JavaScript tab:
+
+1. `name`, holding the string `"Ada"`.
+2. `age`, holding the number `36`.
+3. `isStudent`, holding the boolean `false`.
+4. `intro`, a template literal that makes the sentence `My name is Ada and I am 36`. Use `${name}` and `${age}` inside it, so the sentence is built from the other two values.
+
+The checks read each value, and also the type of `age`, which should be `"number"`.
+
+> [!TIP]
+> Numbers never get quotes, and strings always do. The quotes around `"Ada"` are part of the string. Without them, JavaScript would look for a variable called `Ada`.

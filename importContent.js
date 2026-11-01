@@ -20,6 +20,7 @@ import { parseCircuit, EMPTY_CIRCUIT } from "./src/lib/circuits/circuitData";
 import { getPuzzlePorts, getPuzzleTests, validatePuzzleCircuit } from "./src/lib/circuits/puzzle";
 import { getShaderPuzzle } from "./src/lib/shaders/puzzle";
 import { normalizeMathQuiz } from "./src/lib/mathQuiz";
+import { normalizeWebConfig } from "./src/lib/web/webPuzzle";
 
 const ROOT = process.cwd();
 const str = (v) => (typeof v === "string" ? v : "");
@@ -84,6 +85,11 @@ function puzzlePayload(data) {
       testCases: normalizeTestCases(data.testCases),
       quizConfig: null,
     };
+  }
+  if (kind === "web") {
+    const webConfig = normalizeWebConfig(data.webConfig);
+    if (!webConfig) throw new Error("invalid web puzzle configuration");
+    return { kind, starterCode: "", testCases: [], quizConfig: null, webConfig };
   }
   if (kind === "math-quiz") {
     const quizConfig = normalizeMathQuiz(data.mathQuiz);

@@ -1,0 +1,81 @@
+---
+title: "Which Rule Wins"
+order: 21
+summary: "Predict the winning color when an id, a class, and an element all target the same paragraph."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p class="note" id="special">Read this.</p>
+        <p class="note">Also read this.</p>
+      </body>
+      </html>
+    css: |
+      /* Write three rules: p is black, .note is green, #special is purple */
+    js: ""
+  checks:
+    - type: style
+      selector: "#special"
+      property: "color"
+      value: "rgb(128, 0, 128)"
+    - type: style
+      selector: "p:nth-of-type(2)"
+      property: "color"
+      value: "rgb(0, 128, 0)"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p class="note" id="special">Read this.</p>
+        <p class="note">Also read this.</p>
+      </body>
+      </html>
+    css: |
+      p {
+        color: black;
+      }
+
+      .note {
+        color: green;
+      }
+
+      #special {
+        color: purple;
+      }
+    js: ""
+---
+
+Write three rules, in this order:
+
+1. `p` sets the color to `black`.
+2. `.note` sets the color to `green`.
+3. `#special` sets the color to `purple`.
+
+Both paragraphs match the `p` rule and the `.note` rule. Only the first one also matches `#special`. Work out the result before you run it:
+
+- The first paragraph is **purple**, because an id beats a class, which beats an element.
+- The second paragraph is **green**, because a class beats an element.
+
+The checks confirm both results.
+
+> [!TIP]
+> Rule order matters only when the specificity is equal. Here, each rule is more specific than the one before it, so the order in the file doesn't change the result.

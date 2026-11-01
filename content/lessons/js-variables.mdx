@@ -1,0 +1,68 @@
+---
+title: "Variables"
+order: 23
+summary: "Store values under names with let and const, choose good names, and understand when a value can change."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+puzzles: ["web-variables"]
+---
+
+A **variable** is a named box that holds a value. You give the box a name, put something in it, and use the name wherever you need the value. The name can then change its value later, or stay the same.
+
+```javascript
+let score = 10;
+const bonus = 5;
+
+score = score + bonus;   // score is now 15
+```
+
+## let and const
+
+- **`const`** creates a name whose value can't be reassigned. Use it by default. Most values in a program don't change.
+- **`let`** creates a name that can change. Use it when the value will be updated, such as a score or a counter.
+
+```javascript
+const maxPlayers = 4;   // stays 4
+let players = 0;        // will change as people join
+
+players = players + 1;  // fine
+maxPlayers = 5;         // error: maxPlayers is a const
+```
+
+Older code uses `var`. Avoid it in new code, because its rules are more confusing.
+
+## Naming
+
+Good names describe the value. JavaScript names are case sensitive, so `score` and `Score` are different names. The common style is:
+
+- Start with a lowercase letter.
+- Use `camelCase` for longer names: `totalScore`, `isLoggedIn`.
+- Don't start with a number, and don't use spaces.
+
+```javascript
+let x = 3;               // works, but says nothing
+let itemsInCart = 3;     // clear
+```
+
+> [!TIP]
+> Read your code aloud. If a name doesn't sound like what it holds, rename it. Renaming is cheap in JavaScript, and it makes every later line easier to follow.
+
+## Using variables
+
+Once a variable exists, you can use it anywhere below it:
+
+```javascript
+const price = 12;
+const quantity = 3;
+const total = price * quantity;   // 36
+```
+
+Using a name before it's declared with `let` or `const` causes an error, so declare variables at the top of their part of the code.
+
+## Your puzzle
+
+In the JavaScript tab, create a variable named `score` that holds `10`, and a constant named `bonus` that holds `5`. The checks read `score`, `bonus`, and `score + bonus`, which should be 15.

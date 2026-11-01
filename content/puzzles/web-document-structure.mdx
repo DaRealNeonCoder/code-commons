@@ -1,0 +1,62 @@
+---
+title: "Document Structure"
+order: 2
+summary: "Give a page a title and confirm its language and character set."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+      </head>
+      <body>
+        <p>Welcome to my page.</p>
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: element
+      selector: "title"
+    - type: text
+      selector: "title"
+      text: "My Web Page"
+    - type: attribute
+      selector: "html"
+      attribute: "lang"
+      value: "en"
+    - type: attribute
+      selector: "meta"
+      attribute: "charset"
+      value: "UTF-8"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>My Web Page</title>
+      </head>
+      <body>
+        <p>Welcome to my page.</p>
+      </body>
+      </html>
+    css: ""
+    js: ""
+---
+
+The starter page has a language, a character set, and a paragraph, but no title. Add a `<title>` element inside the `<head>` with the text `My Web Page`.
+
+Leave the `lang`, the `charset`, and the paragraph as they are. The checks confirm they're still there.
+
+> [!TIP]
+> The title goes between `<head>` and `</head>`, next to the `meta` line. It's the name the browser shows on the tab.

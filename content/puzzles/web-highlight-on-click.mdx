@@ -1,0 +1,93 @@
+---
+title: "Highlight on Click"
+order: 34
+summary: "Add a class from JavaScript when a button is clicked, and let CSS style the result."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["html", "css", "javascript"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <div id="alert" class="box">Saved!</div>
+        <button id="toggle">Highlight</button>
+      </body>
+      </html>
+    css: |
+      .box {
+        padding: 12px;
+        border: 1px solid gray;
+      }
+
+      /* Added to #alert by your JavaScript */
+      .highlight {
+        background-color: yellow;
+      }
+    js: |
+      // When #toggle is clicked:
+      // add the class highlight to #alert, and set its text to "Highlighted!"
+  checks:
+    - type: click
+      selector: "#toggle"
+      target: "#alert"
+      text: "Highlighted!"
+    - type: script
+      expression: 'document.querySelector("#alert").classList.contains("highlight")'
+      expected: true
+    - type: style
+      selector: "#alert"
+      property: "background-color"
+      value: "rgb(255, 255, 0)"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <div id="alert" class="box">Saved!</div>
+        <button id="toggle">Highlight</button>
+      </body>
+      </html>
+    css: |
+      .box {
+        padding: 12px;
+        border: 1px solid gray;
+      }
+
+      .highlight {
+        background-color: yellow;
+      }
+    js: |
+      const alertBox = document.querySelector("#alert");
+
+      document.querySelector("#toggle").addEventListener("click", function () {
+        alertBox.classList.add("highlight");
+        alertBox.textContent = "Highlighted!";
+      });
+---
+
+The **Highlight** button should change the box with the id `alert`:
+
+1. When `#toggle` is clicked, add the class `highlight` to `#alert` with `classList.add`.
+2. In the same handler, change the text of `#alert` to `Highlighted!`.
+
+The starter CSS already has a `.highlight` class with a yellow background. Your JavaScript only needs to add the class, and the browser does the rest.
+
+The checks click the button first, then look at what changed: the text, whether the class is there, and the calculated background color.
+
+> [!TIP]
+> `classList.add` adds a class without removing the others. `classList.toggle` switches the class on and off with each click, which is useful for a button that turns something on and off.

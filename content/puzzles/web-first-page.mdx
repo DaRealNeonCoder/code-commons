@@ -1,0 +1,55 @@
+---
+title: "Your First Page"
+order: 1
+summary: "Add a heading to a blank HTML page."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <!-- Add an h1 heading that says Hello, Web! -->
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: element
+      selector: "h1"
+    - type: text
+      selector: "h1"
+      text: "Hello, Web!"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <h1>Hello, Web!</h1>
+      </body>
+      </html>
+    css: ""
+    js: ""
+---
+
+Add an `<h1>` heading inside the `<body>` with the text `Hello, Web!`.
+
+The checks look for an `h1` on the page and read its text, so the spelling and punctuation must match exactly.
+
+> [!TIP]
+> Put the heading between `<body>` and `</body>`, and replace the comment. Comments are ignored by the browser, so they don't need to be removed.

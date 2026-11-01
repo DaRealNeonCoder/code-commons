@@ -1,0 +1,63 @@
+---
+title: "The Box Model"
+order: 15
+summary: "Understand how every element is a box made of content, padding, border, and margin, and use each part to space things out."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+puzzles: ["web-box-model"]
+---
+
+Every element on a page is a rectangular box. Four layers wrap around the content, from the inside out:
+
+1. **Content**: the text or image itself.
+2. **Padding**: space between the content and the border. It takes on the element's background color.
+3. **Border**: a line around the padding.
+4. **Margin**: space outside the border, between this element and its neighbors.
+
+```css
+.card {
+  padding: 20px;
+  border: 2px solid black;
+  margin: 16px;
+}
+```
+
+## Shorthand
+
+Padding and margin can be written with one value to set all four sides at once, or with several values to set them individually:
+
+```css
+padding: 20px;             /* all four sides */
+padding: 10px 20px;        /* top and bottom, then left and right */
+padding: 5px 10px 15px 20px; /* top, right, bottom, left (clockwise) */
+```
+
+You can also set one side: `margin-top: 8px;`, or `padding-left: 12px;`.
+
+## Border
+
+A border needs three things: a width, a style, and a color. Leave out the style and nothing shows, because the default style is `none`:
+
+```css
+border: 2px solid black;
+```
+
+Common styles are `solid`, `dashed`, and `dotted`.
+
+## Margin and padding
+
+A simple way to remember it:
+
+- **Padding** moves the content away from the border. Use it when you want room *inside* a box.
+- **Margin** moves the box away from its neighbors. Use it when you want room *between* boxes.
+
+> [!WARNING]
+> Adjacent vertical margins collapse. When two boxes stack, the gap between them is the larger of the two margins, not their sum. This surprises almost everyone the first time.
+
+## Your puzzle
+
+The body has a `div` with the class `card` containing the text `Padded card`. Give the card 20 pixels of padding on every side, a 16 pixel margin on every side, and a 2 pixel solid black border. The checks read the top values, so the same numbers on all four sides will pass.

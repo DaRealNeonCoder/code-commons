@@ -1,0 +1,76 @@
+---
+title: "Making Decisions"
+order: 26
+summary: "Use if and else for a plan, and a ternary for an umbrella choice."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p>Weather</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      const isRaining = true;
+
+      // Write an if and else that sets plan to "stay in" when it is raining,
+      // and to "go out" otherwise.
+
+      // Write a ternary that sets umbrella to "take it" when it is raining,
+      // and to "leave it" otherwise.
+  checks:
+    - type: script
+      expression: "plan"
+      expected: "stay in"
+    - type: script
+      expression: "umbrella"
+      expected: "take it"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p>Weather</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      const isRaining = true;
+      let plan;
+
+      if (isRaining) {
+        plan = "stay in";
+      } else {
+        plan = "go out";
+      }
+
+      const umbrella = isRaining ? "take it" : "leave it";
+---
+
+The starter defines `isRaining` as `true`. Add two pieces of code:
+
+1. An `if` and `else` that sets `plan`, declared with `let plan;`, to `"stay in"` when it's raining and `"go out"` when it isn't.
+2. A ternary that sets `umbrella` to `"take it"` when it's raining and `"leave it"` when it isn't.
+
+The checks read `plan` and `umbrella`. Both should match what happens when it's raining.
+
+> [!TIP]
+> Try changing `isRaining` to `false` and running it again in your head. Both `plan` and `umbrella` should change to the other choice. The checks only test the raining case, so you can prove the other branch works by reading your code.

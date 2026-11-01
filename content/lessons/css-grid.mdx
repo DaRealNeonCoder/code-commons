@@ -1,0 +1,70 @@
+---
+title: "Grid"
+order: 18
+summary: "Build two-dimensional layouts with CSS grid: define columns and rows, then place items into them."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+puzzles: ["web-grid-gallery"]
+---
+
+Flexbox arranges items in one direction at a time. **CSS grid** arranges them in rows *and* columns at once, which is ideal for galleries, dashboards, and page layouts.
+
+```html
+<div class="gallery">
+  <div>1</div>
+  <div>2</div>
+  <div>3</div>
+</div>
+```
+
+```css
+.gallery {
+  display: grid;
+  grid-template-columns: 100px 200px;
+  row-gap: 8px;
+}
+```
+
+## Defining the grid
+
+`display: grid` turns the container into a grid. `grid-template-columns` defines the columns, and each number is the width of one column:
+
+```css
+grid-template-columns: 100px 200px;   /* two columns, 100px and 200px wide */
+grid-template-columns: 1fr 1fr 1fr;   /* three equal columns that share the space */
+```
+
+`fr` means a share of the free space. `1fr 2fr` makes the second column twice as wide as the first.
+
+Items fill the grid left to right, then top to bottom. When there are more items than cells, the grid adds rows for them automatically.
+
+## Gaps
+
+`row-gap` and `column-gap` set the space between rows and columns, the same as in flexbox:
+
+```css
+.gallery {
+  gap: 16px;    /* both at once */
+}
+```
+
+## Repeat
+
+For many equal columns, `repeat()` saves typing:
+
+```css
+grid-template-columns: repeat(3, 1fr);
+```
+
+That's the same as writing `1fr 1fr 1fr`.
+
+> [!TIP]
+> Use flexbox for a row of buttons or a menu, where the items decide their own size. Use grid when you care about the columns and rows themselves, such as a gallery or a page with a sidebar.
+
+## Your puzzle
+
+The body has a `div` with the class `gallery` holding three smaller `div`s. Make the gallery a grid, give it two columns that are 100 pixels and 200 pixels wide, and leave 8 pixels between the rows. The checks read the computed values of each.

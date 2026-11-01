@@ -1,0 +1,60 @@
+---
+title: "Your First Script"
+order: 22
+summary: "Create a constant and use it to change a heading with JavaScript."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["html", "javascript"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <h1>Hello</h1>
+      </body>
+      </html>
+    css: ""
+    js: |
+      // Create a constant named message that holds "Hello, JavaScript!"
+      // Then set the heading's text to message
+  checks:
+    - type: text
+      selector: "h1"
+      text: "Hello, JavaScript!"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <h1>Hello</h1>
+      </body>
+      </html>
+    css: ""
+    js: |
+      const message = "Hello, JavaScript!";
+      document.querySelector("h1").textContent = message;
+---
+
+In the JavaScript tab:
+
+1. Create a constant named `message` that holds the text `Hello, JavaScript!`.
+2. Use `document.querySelector("h1")` to find the heading, and set its `textContent` to `message`.
+
+The check reads the heading's text after your script has run.
+
+> [!TIP]
+> The script runs as soon as the browser reaches it, at the end of the body. Your heading already exists by then, so `querySelector` can find it.

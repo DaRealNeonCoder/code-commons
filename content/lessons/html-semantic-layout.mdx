@@ -1,0 +1,57 @@
+---
+title: "Semantic Page Layout"
+order: 7
+summary: "Use header, nav, main, article, and footer to describe what each part of a page is for."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+puzzles: ["web-semantic-layout"]
+---
+
+Early web pages were built from generic boxes. Modern HTML adds **semantic** elements: tags whose names say what the content *is*, not just how it should look.
+
+```html
+<header>
+  <h1>My Blog</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <article>
+    <h2>First Post</h2>
+    <p>Today I started building a website.</p>
+  </article>
+</main>
+
+<footer>
+  <p>Thanks for reading.</p>
+</footer>
+```
+
+## The main landmarks
+
+- **`<header>`** holds introductory content: the site title, a logo, and often the main navigation.
+- **`<nav>`** holds groups of navigation links.
+- **`<main>`** holds the central content of the page. Use only one per page.
+- **`<article>`** holds a piece of content that makes sense on its own, such as a blog post or a news story.
+- **`<section>`** groups related content that belongs under one heading.
+- **`<footer>`** holds closing information: copyright, contact details, and links to policies.
+
+## Why it matters
+
+Each semantic element gives meaning to the content inside it. Browsers use this to build an accessibility tree, and screen readers use that tree to let people jump straight to the navigation or the main content. Search engines use it too.
+
+The same content can be built from `<div>` elements. It will look the same, but the meaning is lost. Prefer the semantic element when one fits, and use `<div>` (lesson 8) when none does.
+
+> [!TIP]
+> A simple test: if you can give the part of the page a clear name, like "navigation" or "main content", there is probably an element for it.
+
+## Your puzzle
+
+Build a page with four landmarks: a `<header>` containing an `<h1>` that says `My Blog`, a `<main>` containing an `<article>` with an `<h2>` that says `First Post`, and a `<footer>`. The checks look for each landmark and read the two headings.

@@ -1,0 +1,86 @@
+---
+title: "Loops"
+order: 29
+summary: "Repeat work with for and while loops, and use a counter to visit every item in an array."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+puzzles: ["web-loops"]
+---
+
+A **loop** repeats a block of code. Use it when the same work has to happen many times, such as adding up a list of prices or checking every item in a menu.
+
+## for loops
+
+A `for` loop is the one to reach for when you know how many times to repeat:
+
+```javascript
+for (let i = 1; i <= 3; i++) {
+  console.log(i);
+}
+// prints 1, 2, 3
+```
+
+The three parts in the parentheses are:
+
+1. **Start**: `let i = 1` creates the counter.
+2. **Test**: `i <= 3` is checked before each round. The loop stops when it's false.
+3. **Step**: `i++` runs after each round. `i++` adds 1 to `i`.
+
+## while loops
+
+A `while` loop repeats as long as its condition is `true`. Use it when you don't know in advance how many rounds you need:
+
+```javascript
+let n = 3;
+while (n > 0) {
+  console.log(n);
+  n = n - 1;
+}
+```
+
+Every `while` loop needs something inside it that eventually makes the condition false. Here, `n = n - 1` does that. Without it, the loop would never end and would freeze the page.
+
+> [!WARNING]
+> An infinite loop freezes the tab. The course's checks stop waiting after four seconds, but the page itself will be stuck. If your page stops responding, check the condition in your loop first.
+
+## Building up a result
+
+A common pattern is an **accumulator**: a variable that starts with a value and grows as the loop runs.
+
+```javascript
+let total = 0;
+for (let i = 1; i <= 4; i++) {
+  total = total + i;   // 1 + 2 + 3 + 4
+}
+// total is 10
+```
+
+## Looping over an array
+
+A `for` loop can walk through an array one item at a time. `i < fruits.length` makes it stop after the last item:
+
+```javascript
+const fruits = ["apple", "banana", "cherry"];
+
+for (let i = 0; i < fruits.length; i++) {
+  console.log(fruits[i]);
+}
+```
+
+Notice that the counter starts at `0`, because arrays start at index 0.
+
+> [!TIP]
+> Use `<` with `length`, not `<=`. `i <= fruits.length` goes one past the end, and `fruits[3]` is `undefined`.
+
+## Your puzzle
+
+The starter creates `total` as `0` and `countdown` as an empty string. In the JavaScript tab:
+
+1. Use a `for` loop to add the numbers 1 to 10 into `total`. The result is 55.
+2. Use a `while` loop to build `countdown` as `"3,2,1"`. Start with `n = 3`, add each number to `countdown`, add a comma after every number except the last, and count down.
+
+The checks read `total` and `countdown`.

@@ -1,0 +1,82 @@
+---
+title: "Arrays"
+order: 28
+summary: "Store lists of values in an array, read items by index, and add or count them."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+puzzles: ["web-arrays"]
+---
+
+An **array** holds an ordered list of values in a single variable. The values can be any type, and they can be mixed.
+
+```javascript
+const fruits = ["apple", "banana", "cherry"];
+```
+
+## Reading by index
+
+Each item has a position, called its **index**. Counting starts at `0`, not `1`:
+
+```javascript
+fruits[0];   // "apple"
+fruits[1];   // "banana"
+fruits[2];   // "cherry"
+```
+
+The first item is index 0, so the last item is always `length - 1`.
+
+## Length
+
+`length` tells you how many items the array holds:
+
+```javascript
+fruits.length;   // 3
+```
+
+## Adding items
+
+`push` adds an item to the end:
+
+```javascript
+fruits.push("date");
+fruits.length;   // 4
+```
+
+To change an item, assign to its index:
+
+```javascript
+fruits[0] = "apricot";
+```
+
+> [!WARNING]
+> `const` stops you from reassigning the *variable* `fruits`, but it does not stop you from changing the items inside. `push` and index assignments are allowed on a `const` array.
+
+## Finding items
+
+`indexOf` returns the position of a value, or `-1` if it's not in the array:
+
+```javascript
+fruits.indexOf("banana");   // 1
+fruits.indexOf("mango");    // -1
+```
+
+`includes` answers the simpler question, is it here at all?
+
+```javascript
+fruits.includes("cherry");  // true
+```
+
+## Looping over arrays
+
+Lesson 29 covers loops in detail, and lesson 30 covers the most useful array methods. For now, remember that arrays are the usual way to hold a group of related things, such as the scores in a game or the items in a cart.
+
+> [!TIP]
+> Give a list a plural name: `fruits`, `scores`, `students`. Then `scores[0]` reads naturally, as "the first score".
+
+## Your puzzle
+
+The starter creates an array named `fruits` holding `"apple"` and `"banana"`. In the JavaScript tab, add `"cherry"` to the end with `push`, then create a variable `count` holding the number of items, and `second` holding the item at index 1. The checks read `fruits.length`, `count`, `second`, and `fruits[2]`.

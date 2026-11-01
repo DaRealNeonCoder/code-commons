@@ -1,0 +1,72 @@
+---
+title: "Tags, Elements, and Attributes"
+order: 3
+summary: "Understand how HTML tags, elements, and attributes fit together, and how nesting works."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+puzzles: ["web-tags-and-attributes"]
+---
+
+HTML is made of **elements**. An element is a piece of the page, written as an opening **tag**, the content, and a closing tag:
+
+```html
+<p>I am learning HTML.</p>
+```
+
+- `<p>` is the **opening tag**.
+- `</p>` is the **closing tag**. It has a slash before the name.
+- `I am learning HTML.` is the **content**.
+
+Together they make one **element**. The name in the tag (`p`) says what kind of element it is. `p` is short for paragraph.
+
+## Some tags don't wrap anything
+
+A few elements have no content and no closing tag. The most common is the line break:
+
+```html
+<p>Line one<br>Line two</p>
+```
+
+## Nesting
+
+Elements can sit inside other elements. This is called **nesting**:
+
+```html
+<div>
+  <p>This paragraph is inside the div.</p>
+</div>
+```
+
+Nesting must be complete. Close the inner element before you close the outer one:
+
+```html
+<p>This is <strong>bold</strong> text.</p>   <!-- correct -->
+<p>This is <strong>bold</p></strong>         <!-- wrong: tags cross -->
+```
+
+> [!WARNING]
+> Crossed tags are the most common beginner mistake in HTML. If a page looks strange, check that every tag you open is closed in the right order.
+
+## Attributes
+
+An **attribute** gives an element extra information. It goes inside the opening tag, as a name and a value in quotes:
+
+```html
+<p id="intro" class="lead">Welcome!</p>
+```
+
+- `id="intro"` gives the element a unique name on the page.
+- `class="lead"` puts the element into a group you can style later.
+
+Attributes are part of how CSS and JavaScript find elements. Lessons 8, 12, and 32 use them a lot.
+
+> [!TIP]
+> Always put attribute values in quotes. `class="lead"` is safe. `class=lead` works in simple cases, but breaks as soon as the value has a space.
+
+## Your puzzle
+
+Write one paragraph with the `id` `intro`, and make its text `I am learning HTML.` The checks look for exactly one `<p>` on the page, so don't add any other paragraphs.

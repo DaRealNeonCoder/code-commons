@@ -1,0 +1,64 @@
+---
+title: "Forms"
+order: 10
+summary: "Collect information from visitors with form, label, input, and button elements, and learn what each attribute does."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+puzzles: ["web-sign-up-form"]
+---
+
+A form lets a visitor type information and send it to a site: a search box, a login, a message. HTML provides the form controls, and the browser takes care of the typing, the cursor, and the keyboard.
+
+```html
+<form>
+  <label for="name">Name</label>
+  <input type="text" id="name" name="name" placeholder="Your name">
+
+  <label for="email">Email</label>
+  <input type="email" id="email" name="email" required>
+
+  <button type="submit">Sign up</button>
+</form>
+```
+
+## The form
+
+The `<form>` wraps all the controls. When the visitor presses the submit button, the browser gathers every control that has a `name` and sends them to the address in the form's `action` attribute.
+
+## Inputs
+
+An `<input>` is one field. Its `type` decides what it looks like and what the browser checks:
+
+- `type="text"` for a single line of text.
+- `type="email"` for an email address. The browser checks the format.
+- `type="number"` for a number.
+- `type="checkbox"` and `type="radio"` for choices.
+
+Give every input a `name`. Without it, the value is not sent.
+
+## Labels
+
+A `<label>` names an input. Connect it with the input's `id` through `for`:
+
+```html
+<label for="name">Name</label>
+<input type="text" id="name">
+```
+
+Clicking the label now moves the cursor into the input, and screen readers announce the label when the input has focus. A `placeholder` is not a replacement for a label, because it disappears as soon as the visitor starts typing.
+
+## Required fields and buttons
+
+- `required` stops the form being sent until the field has a value. The browser shows the message itself.
+- `<button type="submit">` sends the form. A `<button>` with no type inside a form also submits it, so set the type to be clear.
+
+> [!WARNING]
+> Browsers validate forms, but never trust that check on a real site. Anyone can send a request without your form. Check everything again on the server.
+
+## Your puzzle
+
+Build a sign-up form. Add a text input with the `id` and `name` `name` and the `placeholder` `Your name`, a label `Name` pointing at it with `for`, and a button with the text `Sign up`. The checks look for each part. Note that the form has no action yet, and that's fine for this puzzle.

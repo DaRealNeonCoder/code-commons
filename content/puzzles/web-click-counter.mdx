@@ -1,0 +1,97 @@
+---
+title: "Click Counter"
+order: 35
+summary: "Build a counter with Plus and Reset buttons, styled with CSS."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["html", "css", "javascript"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Click Counter</title>
+      </head>
+      <body>
+        <h1>Click Counter</h1>
+        <p id="count">0</p>
+        <button id="plus">+1</button>
+        <button id="reset">Reset</button>
+      </body>
+      </html>
+    css: |
+      /* Make #count's font size 48px */
+    js: |
+      // Clicking #plus adds one to the count
+      // Clicking #reset sets the count back to 0
+  checks:
+    - type: style
+      selector: "#count"
+      property: "font-size"
+      value: "48px"
+    - type: click
+      selector: "#plus"
+      target: "#count"
+      text: "1"
+    - type: click
+      selector: "#plus"
+      target: "#count"
+      text: "2"
+    - type: click
+      selector: "#reset"
+      target: "#count"
+      text: "0"
+    - type: click
+      selector: "#plus"
+      target: "#count"
+      text: "1"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Click Counter</title>
+      </head>
+      <body>
+        <h1>Click Counter</h1>
+        <p id="count">0</p>
+        <button id="plus">+1</button>
+        <button id="reset">Reset</button>
+      </body>
+      </html>
+    css: |
+      #count {
+        font-size: 48px;
+      }
+    js: |
+      const count = document.querySelector("#count");
+      let total = 0;
+
+      document.querySelector("#plus").addEventListener("click", function () {
+        total = total + 1;
+        count.textContent = total;
+      });
+
+      document.querySelector("#reset").addEventListener("click", function () {
+        total = 0;
+        count.textContent = total;
+      });
+---
+
+Finish the counter from the capstone lesson, using all three languages:
+
+1. **CSS:** make `#count` 48 pixels in font size.
+2. **JavaScript:** keep a `total` variable starting at 0. Clicking `#plus` adds 1 to it, and clicking `#reset` sets it back to 0. After each change, show the new value in `#count`.
+
+The checks run in order. They click **+1**, then **+1** again, then **Reset**, then **+1** once more. They read the number after each click, and they check the font size. The final **+1** must show `1`, which proves the total really went back to 0.
+
+> [!TIP]
+> Keep the number in a variable, and update the page from that variable. Changing `count.textContent` directly would lose track of the real value.

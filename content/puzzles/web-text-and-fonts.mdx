@@ -1,0 +1,75 @@
+---
+title: "Text and Fonts"
+order: 14
+summary: "Set the font size and alignment of a heading and a paragraph."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <h1>Big Title</h1>
+        <p>Some body text that is easy to read.</p>
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: style
+      selector: "h1"
+      property: "font-size"
+      value: "48px"
+    - type: style
+      selector: "h1"
+      property: "text-align"
+      value: "center"
+    - type: style
+      selector: "p"
+      property: "font-size"
+      value: "20px"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <h1>Big Title</h1>
+        <p>Some body text that is easy to read.</p>
+      </body>
+      </html>
+    css: |
+      h1 {
+        font-size: 48px;
+        text-align: center;
+      }
+
+      p {
+        font-size: 20px;
+      }
+    js: ""
+---
+
+Style the two text elements on the page:
+
+- The `h1` gets a `font-size` of `48px` and is centered with `text-align: center`.
+- The `p` gets a `font-size` of `20px`.
+
+Use element selectors, `h1` and `p`, for both.
+
+> [!TIP]
+> `text-align` controls the horizontal position of text inside its box. It doesn't move the box itself. That's a job for the box model and layout lessons.

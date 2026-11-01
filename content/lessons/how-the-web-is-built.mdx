@@ -1,0 +1,77 @@
+---
+title: "How the Web Is Built"
+order: 1
+summary: "See the three languages every web page is made from, and how a browser turns them into the page you see."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html", "css", "javascript"]
+difficulty: "beginner"
+puzzles: ["web-first-page"]
+---
+
+Every web page you have ever visited is built from three languages, and each one has a different job:
+
+| Language | Job | Think of it as |
+| --- | --- | --- |
+| **HTML** | Structure: what is on the page | the bones |
+| **CSS** | Style: how the page looks | the clothes |
+| **JavaScript** | Behavior: what the page does when you use it | the muscles |
+
+You don't need to know any of them yet. This course teaches them in that order, one small piece at a time.
+
+## Your browser builds the page
+
+When you visit a site, your browser (Chrome, Firefox, Safari, Edge) downloads a file of HTML. It reads that file from top to bottom and builds a page out of it. Any CSS and JavaScript it finds are applied to that page as well.
+
+You can see the result of every puzzle in this course right next to the code, in the **preview** panel. Change the code, and the preview updates a moment later.
+
+## A tiny page
+
+Here is a complete page written in HTML alone:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>My First Page</title>
+  </head>
+  <body>
+    <h1>Hello, Web!</h1>
+  </body>
+</html>
+```
+
+Your browser shows the heading `Hello, Web!` in the preview. The tab title comes from the `<title>` line.
+
+## Adding style and behavior
+
+The same page can gain a color and a click handler without changing the HTML much:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Styled Page</title>
+    <style>
+      h1 { color: teal; }
+    </style>
+  </head>
+  <body>
+    <h1 id="greeting">Hello, Web!</h1>
+    <script>
+      document.querySelector("#greeting").textContent = "Hello again!";
+    </script>
+  </body>
+</html>
+```
+
+The `<style>` block is CSS. The `<script>` block is JavaScript. Both are covered in later lessons.
+
+> [!TIP]
+> In this course, the HTML file is the whole document. Your CSS and JavaScript are placed into it automatically, so you can focus on one language at a time.
+
+## Your first puzzle
+
+Open the puzzle below. The starter code is a page with a comment in it. Add an `<h1>` heading with the text `Hello, Web!` inside the `<body>`. The checks look for exactly that heading.

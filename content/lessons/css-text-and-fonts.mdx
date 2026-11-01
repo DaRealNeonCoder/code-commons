@@ -1,0 +1,57 @@
+---
+title: "Text and Fonts"
+order: 14
+summary: "Control the size, alignment, and typeface of text, and understand why font-size and line-height make pages easier to read."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+puzzles: ["web-text-and-fonts"]
+---
+
+Text is most of what people read on the web, so the text properties are some of the most useful in CSS.
+
+```css
+p {
+  font-family: Georgia, serif;
+  font-size: 18px;
+  line-height: 1.6;
+  text-align: left;
+}
+```
+
+## Font family
+
+`font-family` picks the typeface. List a few choices in order, and end with a generic family. The browser uses the first one it has:
+
+```css
+body {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+```
+
+Generic families are `serif` (with little feet on the letters), `sans-serif` (without), and `monospace` (every letter the same width). Quote any font name that has a space in it.
+
+## Size and weight
+
+- `font-size` sets how big the letters are. `16px` is a common body size.
+- `font-weight` sets how thick they are. `normal` is 400, `bold` is 700.
+
+Headings are often bigger than body text. Use a size that matches the job: a page title might be `48px`, and body text `18px`.
+
+## Spacing lines
+
+`line-height` sets the distance between lines of text. A unitless value such as `1.6` means "1.6 times the font size", which keeps the spacing in proportion when the size changes. Generous line height makes long paragraphs easier to read.
+
+## Alignment
+
+`text-align` lines the text up: `left`, `center`, `right`, or `justify`. Left alignment is the easiest to read for paragraphs, so use centering for short things like titles.
+
+> [!TIP]
+> Units matter. `px` is a fixed number of screen pixels. `em` and `rem` scale with the font size, which helps people who set a larger text size in their browser. This course uses `px` for clarity, and you can explore the others later.
+
+## Your puzzle
+
+The body has an `h1` and a `p`. Give the heading a font size of 48 pixels and center it. Give the paragraph a font size of 20 pixels. The checks read the calculated size and alignment, so the browser must agree with your values.

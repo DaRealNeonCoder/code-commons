@@ -1,0 +1,70 @@
+---
+title: "Finding and Changing Elements"
+order: 32
+summary: "Use the document object to find elements on the page, then read and change their text and HTML."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["html", "javascript"]
+difficulty: "beginner"
+puzzles: ["web-change-the-page"]
+---
+
+JavaScript changes a page by finding elements in it and then changing them. The `document` object is the whole page, and `querySelector` finds the first element that matches a CSS selector. You already know CSS selectors from lesson 12, so you know how to ask for an element.
+
+```html
+<h1 id="title">Old title</h1>
+<p class="message">Waiting...</p>
+```
+
+```javascript
+const title = document.querySelector("#title");
+const message = document.querySelector(".message");
+```
+
+`querySelector` returns the element itself, which is an object with properties and methods. If nothing matches, it returns `null`.
+
+## Reading and changing text
+
+`textContent` is the text inside an element. Read it to see what's there, and assign to it to replace the text:
+
+```javascript
+title.textContent;             // "Old title"
+title.textContent = "New title";
+```
+
+Setting `textContent` is safe. It treats the value as plain text, even if it contains angle brackets.
+
+## Changing HTML
+
+`innerHTML` reads and sets the HTML inside an element, tags included:
+
+```javascript
+message.innerHTML = "<strong>Done!</strong>";
+```
+
+Use `innerHTML` when you want to insert markup. Never put text from a visitor or another person into `innerHTML`, because the browser will run any tags it contains. For plain text, use `textContent`.
+
+> [!WARNING]
+> `innerHTML` with user-written content is how many security bugs start. Prefer `textContent` unless you're sure the content is safe.
+
+## Finding several elements
+
+`querySelectorAll` returns every match, as a list you can loop over:
+
+```javascript
+const items = document.querySelectorAll("li");
+items.length;   // how many list items there are
+```
+
+## When the code runs
+
+In this course, your script runs after the page has been read, so every element already exists when the code reaches it. If you move a script to the top of the page, `querySelector` would return `null`, because the elements haven't been read yet.
+
+> [!TIP]
+> If you get an error like "cannot read properties of null", the selector didn't match anything. Check the spelling of the id or class, and the `#` or `.` in front of it.
+
+## Your puzzle
+
+The body has an `h1` with the id `title` and a paragraph with the class `message`. In the JavaScript tab, use `querySelector` to set the heading's text to `New title`, and set the paragraph's HTML to `<strong>Done!</strong>`. The checks read the heading text, the paragraph's text, and check for a `strong` element inside the paragraph.

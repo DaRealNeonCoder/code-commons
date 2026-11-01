@@ -59,13 +59,21 @@ export default function Home() {
               100% free and open source, Always. 
             </p> 
  
-           <div className="mt-8">
+           <div className="mt-8 flex flex-wrap items-center gap-4">
                 <Link
                     href="/courses/intro-to-python"
                     className="inline-block rounded-md bg-amber-500 px-5 py-2.5 font-mono text-sm font-medium text-zinc-950 transition-colors hover:bg-amber-400"
                 >
                     $ start learning
                 </Link>
+                <a
+                    href="https://github.com/DaRealNeonCoder/code-commons"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-sm text-zinc-400 transition-colors hover:text-white"
+                >
+                    $ view on github
+                </a>
             </div>
           </div> 
  

@@ -1,0 +1,85 @@
+---
+title: "Button Hover"
+order: 20
+summary: "Style a button with a pointer cursor, a transition, and a hover state."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <button class="btn">Hover me</button>
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: style
+      selector: ".btn"
+      property: "background-color"
+      value: "rgb(0, 0, 128)"
+    - type: style
+      selector: ".btn"
+      property: "color"
+      value: "rgb(255, 255, 255)"
+    - type: style
+      selector: ".btn"
+      property: "cursor"
+      value: "pointer"
+    - type: style
+      selector: ".btn"
+      property: "transition-duration"
+      value: "0.3s"
+    - type: script
+      expression: 'Array.from(document.styleSheets[0].cssRules).some(function (rule) { return rule.selectorText && rule.selectorText.indexOf(":hover") !== -1; })'
+      expected: true
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <button class="btn">Hover me</button>
+      </body>
+      </html>
+    css: |
+      .btn {
+        background-color: navy;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn:hover {
+        background-color: red;
+      }
+    js: ""
+---
+
+Style the button with the class `btn`:
+
+- A `navy` background and `white` text.
+- `cursor: pointer`, so the mouse shows a hand.
+- A transition of `0.3s` on `background-color`, so the color changes smoothly.
+
+Then add a second rule, `.btn:hover`, that makes the background `red` while the mouse is over the button.
+
+The browser can't be asked "is the mouse over this button?" from a check, so the last check looks for a `:hover` rule in your stylesheet instead.
+
+> [!TIP]
+> Put the `:hover` rule after the `.btn` rule. Both have the same specificity, so the later one wins when the mouse is over the button.

@@ -1,0 +1,81 @@
+---
+title: "Changing Classes and Styles"
+order: 34
+summary: "Change how an element looks from JavaScript by adding and removing classes, which keeps the styling in CSS where it belongs."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["html", "css", "javascript"]
+difficulty: "beginner"
+puzzles: ["web-highlight-on-click"]
+---
+
+JavaScript can change an element's look in two ways. It can set styles directly, or it can add and remove a class and let CSS do the styling. The second way is usually better, because the design lives in one place: your stylesheet.
+
+## Changing a class
+
+`classList` is the list of classes on an element. It has methods for adding, removing, and checking classes:
+
+```css
+.highlight {
+  background-color: yellow;
+}
+```
+
+```javascript
+const box = document.querySelector("#alert");
+
+box.classList.add("highlight");      // the box is now yellow
+box.classList.remove("highlight");   // and back to normal
+box.classList.toggle("highlight");   // add it if missing, remove it if present
+box.classList.contains("highlight"); // true or false
+```
+
+`toggle` is the handy one. Call it from a button, and the element switches on and off each time.
+
+## Setting a style directly
+
+`style` changes one CSS property inline. Property names with a dash are written in camel case in JavaScript:
+
+```javascript
+box.style.backgroundColor = "yellow";   // same as background-color: yellow
+box.style.fontSize = "24px";            // same as font-size: 24px
+```
+
+Direct styles are fine for a quick change, such as a progress bar's width. For anything that will be reused, prefer a class.
+
+> [!TIP]
+> Ask yourself: "Is this a look, or a state?" A look (such as a highlight) belongs in a class. A value that changes constantly (such as a width from a slider) is a good fit for `style`.
+
+## Creating elements
+
+`createElement` builds a new element, and `appendChild` puts it on the page:
+
+```javascript
+const note = document.createElement("p");
+note.textContent = "Saved!";
+note.classList.add("highlight");
+document.body.appendChild(note);
+```
+
+Building elements in JavaScript is how many pages add items to a list or a message without a reload.
+
+## Putting it together
+
+A common pattern is a button that toggles a class on a panel:
+
+```javascript
+const panel = document.querySelector("#panel");
+const button = document.querySelector("#toggle");
+
+button.addEventListener("click", () => {
+  panel.classList.toggle("open");
+});
+```
+
+Each click opens or closes the panel, and CSS decides what "open" looks like.
+
+## Your puzzle
+
+The body has a `div` with the id `alert` and the class `box`, reading `Saved!`, and a button with the id `toggle`. The starter CSS includes a `.highlight` class that sets a yellow background. In the JavaScript tab, add a click listener to the button that adds the class `highlight` to `#alert` and changes its text to `Highlighted!`. The checks click the button, then read the text, the class, and the computed background color.

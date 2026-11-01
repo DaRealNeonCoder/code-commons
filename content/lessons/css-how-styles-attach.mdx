@@ -1,0 +1,71 @@
+---
+title: "How Styles Attach to a Page"
+order: 11
+summary: "Write your first CSS rule, learn the selector-property-value pattern, and see how the browser connects a stylesheet to HTML."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+puzzles: ["web-style-heading"]
+---
+
+HTML says *what* is on the page. CSS (Cascading Style Sheets) says *how it looks*: colors, sizes, spacing, and layout. Your HTML stays the same while the CSS changes its appearance.
+
+## A rule
+
+A CSS rule has three parts:
+
+```css
+h1 {
+  color: red;
+}
+```
+
+- The **selector**, `h1`, picks which elements the rule applies to.
+- The **property**, `color`, is the thing you want to change.
+- The **value**, `red`, is what you want the property to be.
+
+The property and value are written as a pair with a colon, and each pair ends with a semicolon. The curly braces group the pairs together. A rule can have as many pairs as you like:
+
+```css
+h1 {
+  color: red;
+  text-align: center;
+}
+```
+
+## Attaching CSS to HTML
+
+The browser needs to know where your CSS is. There are three ways to attach it:
+
+1. **Inline styles** go on one element with the `style` attribute: `<p style="color: blue;">`. Quick, but hard to maintain.
+2. **A `<style>` element** in the `<head>` holds CSS for the whole page. This is what this course uses.
+3. **An external file** is linked with `<link rel="stylesheet" href="style.css">`. This is what real sites use, so one stylesheet can be shared by every page.
+
+```html
+<head>
+  <style>
+    h1 { color: red; }
+  </style>
+</head>
+```
+
+> [!TIP]
+> In this course, your CSS file is placed into the `<head>` for you. Write rules in the CSS tab and they apply to the page in the preview.
+
+## Comments
+
+CSS comments use `/*` and `*/`. Use them to explain a rule to yourself later:
+
+```css
+/* Make every heading stand out */
+h1 {
+  color: red;
+}
+```
+
+## Your puzzle
+
+The body has a heading that says `Styled Heading`. Write a CSS rule that makes every `h1` on the page red. The check looks at the color the browser calculates, so `red`, `#ff0000`, and `rgb(255, 0, 0)` all pass.

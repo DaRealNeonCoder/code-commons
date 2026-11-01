@@ -1,0 +1,70 @@
+---
+title: "Objects"
+order: 31
+summary: "Create a book object with properties, then change one of them."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p>Books</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      // Create a constant named book holding an object with
+      // title "Dune", pages 412, and read set to false.
+      // Then set book.read to true.
+  checks:
+    - type: script
+      expression: "book.title"
+      expected: "Dune"
+    - type: script
+      expression: "book.pages"
+      expected: 412
+    - type: script
+      expression: "book.read"
+      expected: true
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p>Books</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      const book = { title: "Dune", pages: 412, read: false };
+      book.read = true;
+---
+
+Create an object called `book` with three properties:
+
+- `title`, set to `"Dune"`.
+- `pages`, set to `412`.
+- `read`, set to `false`.
+
+Then set `book.read` to `true`, because you finished the book.
+
+The checks read the title, the pages, and `book.read`, which should now be `true`.
+
+> [!TIP]
+> Properties are separated by commas, and the whole object is wrapped in curly braces. Use a colon between each name and its value.

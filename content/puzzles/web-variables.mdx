@@ -1,0 +1,66 @@
+---
+title: "Variables"
+order: 23
+summary: "Declare a variable and a constant, then check their values."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p>Variables</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      // Create a variable named score that holds 10
+      // Create a constant named bonus that holds 5
+  checks:
+    - type: script
+      expression: "score"
+      expected: 10
+    - type: script
+      expression: "bonus"
+      expected: 5
+    - type: script
+      expression: "score + bonus"
+      expected: 15
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p>Variables</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      let score = 10;
+      const bonus = 5;
+---
+
+In the JavaScript tab:
+
+- Create a variable named `score` with `let`, holding `10`.
+- Create a constant named `bonus` with `const`, holding `5`.
+
+The checks read `score`, `bonus`, and `score + bonus`. The last one should be `15`.
+
+> [!TIP]
+> Use `const` unless the value needs to change later. Here `score` uses `let` because a game would usually update it. `bonus` never changes, so it's a constant.

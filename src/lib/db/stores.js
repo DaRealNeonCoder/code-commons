@@ -6,7 +6,7 @@ import { createContentStore } from "./content";
 // testCount lets list pages know a puzzle is checkable without selecting the answers.
 export const puzzleStore = createContentStore(puzzles, {
   fallback: "puzzle",
-  heavy: ["starterCode", "testCases", "quizConfig"],
+  heavy: ["starterCode", "testCases", "quizConfig", "webConfig"],
   listExtra: { testCount: sql`jsonb_array_length(${puzzles.testCases})`.mapWith(Number) },
 });
 

@@ -1,0 +1,69 @@
+---
+title: "Running JavaScript"
+order: 22
+summary: "Add JavaScript to a page with a script element, run your first statements, and understand how the browser reads code from top to bottom."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["html", "javascript"]
+difficulty: "beginner"
+puzzles: ["web-first-script"]
+---
+
+JavaScript is the language that makes a page respond. It can read what the visitor did, change the content and style of the page, and remember things while the page is open.
+
+## Where the code goes
+
+In this course your JavaScript goes in the JavaScript tab. The page places it at the end of the body, which is where it belongs on a real site. In a plain HTML file you would write it between `<script>` tags:
+
+```html
+<body>
+  <h1>Hello</h1>
+  <script>
+    console.log("The page is ready");
+  </script>
+</body>
+```
+
+Scripts run from top to bottom, one statement after another, when the browser reads them.
+
+## Statements and semicolons
+
+A **statement** is one instruction. Most end with a semicolon:
+
+```javascript
+let name = "Ada";
+console.log("Hello, " + name);
+```
+
+Semicolons are optional in many cases, but this course uses them so the endings are always clear.
+
+## Comments
+
+Two slashes start a comment that the browser ignores. Use comments to explain *why* the code does something:
+
+```javascript
+// Greet the visitor by name
+console.log("Hello, Ada");
+
+/* Comments can also
+   run across several lines */
+```
+
+## Changing the page
+
+JavaScript reaches the page through the `document` object. This statement finds the first `<h1>` and changes its text:
+
+```javascript
+document.querySelector("h1").textContent = "Hello from JavaScript!";
+```
+
+Lesson 32 explains this in detail. For now, notice that the script changes the page as soon as it runs.
+
+> [!TIP]
+> `console.log()` prints a message to the browser's developer tools (press F12 and open the Console tab). It's the simplest way to check what a value is while you're learning.
+
+## Your puzzle
+
+The page has an `h1` that says `Hello`. In the JavaScript tab, create a constant named `message` with the text `Hello, JavaScript!`, then change the heading's text to that message. The check reads the heading's text.

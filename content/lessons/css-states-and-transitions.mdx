@@ -1,0 +1,66 @@
+---
+title: "States and Transitions"
+order: 20
+summary: "Style elements for hover and focus, and animate changes smoothly with transition."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+puzzles: ["web-button-hover"]
+---
+
+Elements change state all the time. A button is hovered, a link is focused, a field is disabled. CSS can react to those states with **pseudo-classes**, and make the change smooth with **transitions**.
+
+```css
+.btn {
+  background-color: navy;
+  color: white;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: crimson;
+}
+```
+
+Now the button turns crimson while the mouse is over it, and goes back to navy when the mouse leaves.
+
+## Common states
+
+- **`:hover`** applies while the pointer is over the element.
+- **`:focus`** applies when the element is selected with the keyboard or by clicking into it. Keyboard users rely on focus, so never remove the focus outline without replacing it with something visible.
+- **`:active`** applies while the element is being pressed.
+- **`:disabled`** applies to form controls that can't be used.
+
+```css
+input:focus {
+  outline: 3px solid orange;
+}
+```
+
+## Cursors
+
+`cursor: pointer` changes the mouse pointer to a hand. Use it on things that are clickable, and leave it alone elsewhere. Most links and buttons already get it from the browser, but styled `div`s do not.
+
+## Transitions
+
+Without a transition, a change is instant. A `transition` makes it animate over time:
+
+```css
+.btn {
+  transition: background-color 0.3s ease;
+}
+```
+
+- The first part names the property to animate.
+- `0.3s` is the duration, three tenths of a second.
+- `ease` is the speed curve: slow, fast, then slow again.
+
+> [!TIP]
+> Animate only what you need. `background-color`, `color`, `opacity`, and `transform` are cheap to animate. Animating layout properties such as `width` makes the page work harder.
+
+## Your puzzle
+
+The body has a button with the class `btn` that says `Hover me`. Give it a navy background, white text, and a pointer cursor. Make it change to `red` when hovered, and give it a transition of 0.3 seconds on its background color. The checks read the cursor and transition on the button, and check your stylesheet for a `:hover` rule.

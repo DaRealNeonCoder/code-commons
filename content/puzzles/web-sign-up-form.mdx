@@ -1,0 +1,77 @@
+---
+title: "A Sign-Up Form"
+order: 10
+summary: "Build a form with a labeled text input and a submit button."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <!-- Build a form. Inside it: a label that says Name for the input id name,
+             a text input with id and name "name" and placeholder "Your name",
+             and a submit button that says Sign up. -->
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: element
+      selector: "form"
+    - type: text
+      selector: "label[for='name']"
+      text: "Name"
+    - type: attribute
+      selector: "input#name"
+      attribute: "type"
+      value: "text"
+    - type: attribute
+      selector: "input#name"
+      attribute: "placeholder"
+      value: "Your name"
+    - type: text
+      selector: "button"
+      text: "Sign up"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <form>
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" placeholder="Your name">
+          <button type="submit">Sign up</button>
+        </form>
+      </body>
+      </html>
+    css: ""
+    js: ""
+---
+
+Build a sign-up form with three parts:
+
+1. A `<form>` element that holds everything else.
+2. A `<label>` that says `Name`, connected to the input with `for="name"`.
+3. A text `<input>` with `id="name"`, `name="name"`, `type="text"`, and `placeholder="Your name"`.
+4. A `<button>` with the text `Sign up` and `type="submit"`.
+
+The checks look for each part and read the label and button text.
+
+> [!TIP]
+> The `for` on the label must match the `id` on the input exactly. That link is what makes clicking the label move the cursor into the field.

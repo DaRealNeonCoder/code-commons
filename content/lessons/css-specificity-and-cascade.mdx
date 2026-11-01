@@ -1,0 +1,71 @@
+---
+title: "Specificity and the Cascade"
+order: 21
+summary: "Understand why one CSS rule beats another, how specificity is calculated, and how to keep your styles predictable."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+puzzles: ["web-specificity"]
+---
+
+The "C" in CSS stands for **cascading**. Several rules can match the same element, and the browser has to pick one value for each property. It does that with three things, in order: importance, specificity, and then source order.
+
+```css
+p {
+  color: black;
+}
+
+.note {
+  color: green;
+}
+
+#special {
+  color: purple;
+}
+```
+
+A paragraph with `class="note"` and `id="special"` is purple. The id rule wins.
+
+## Specificity
+
+Specificity is a score for how precise a selector is. Think of it as three counts:
+
+- **IDs** (`#special`) count the most.
+- **Classes, attributes, and pseudo-classes** (`.note`, `[type]`, `:hover`) count next.
+- **Element names** (`p`, `h1`) and pseudo-elements (`::before`) count least.
+
+Compare the scores from the most to the least significant count:
+
+| Selector | IDs | Classes | Elements | Score |
+| --- | --- | --- | --- | --- |
+| `p` | 0 | 0 | 1 | 0-0-1 |
+| `.note` | 0 | 1 | 0 | 0-1-0 |
+| `#special` | 1 | 0 | 0 | 1-0-0 |
+| `#nav .link` | 1 | 1 | 0 | 1-1-0 |
+
+One id beats any number of classes, and one class beats any number of element names. Count the classes, not the lines of code.
+
+## Source order
+
+When two rules have the same specificity, the one written later wins:
+
+```css
+p { color: black; }
+p { color: green; }  /* this one applies */
+```
+
+This is why a stylesheet that is read from top to bottom is easy to follow: later rules override earlier ones.
+
+> [!WARNING]
+> Avoid `!important`. It forces a rule to win, and the only way to beat it later is with another `!important`. Almost every case where people reach for it is better solved by using a class.
+
+## Inheritance
+
+Some properties, such as `color` and `font-family`, are passed down to children automatically. Set `color` on `body`, and every element inside it inherits that color, unless a rule says otherwise. Properties like `margin` and `border` are not inherited.
+
+## Your puzzle
+
+The body has two paragraphs. The first has the class `note` and the id `special`. The second has the class `note`. Write three rules: `p` black, `.note` green, and `#special` purple. Then check the results. The first paragraph should be purple, because the id wins, and the second should be green, because the class wins over the element name.

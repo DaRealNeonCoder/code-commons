@@ -24,6 +24,10 @@ async function handleCheck(request, { params }) {
   if (puzzle.kind === "math-quiz") {
     return Response.json({ error: "Use the Math Quiz answer checker for this puzzle." }, { status: 400 });
   }
+  if (puzzle.kind === "web") {
+    // Web pages run and are checked in the learner's browser, never on the server.
+    return Response.json({ error: "Web puzzles are checked in the browser." }, { status: 400 });
+  }
   if (puzzle.testCases.length === 0) {
     console.warn(
       `[puzzle check] "${id}" loaded with 0 test cases. Frontmatter keys: ${Object.keys(puzzle).join(", ")}`

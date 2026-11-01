@@ -1,0 +1,67 @@
+---
+title: "The Structure of an HTML Document"
+order: 2
+summary: "Learn the parts every HTML page needs: the doctype, html, head, and body, plus the title and character set."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+puzzles: ["web-document-structure"]
+---
+
+Every HTML page follows the same outline. Learn the outline once, and you can read any page on the web.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>My Web Page</title>
+  </head>
+  <body>
+    <p>Welcome to my page.</p>
+  </body>
+</html>
+```
+
+## The four main parts
+
+- **`<!DOCTYPE html>`** tells the browser this is an HTML5 page. It always goes on the first line and has no closing tag.
+- **`<html>`** wraps the whole page. The `lang="en"` attribute says the page is in English, which helps screen readers and translation tools.
+- **`<head>`** holds information *about* the page that the visitor doesn't see directly.
+- **`<body>`** holds everything the visitor sees.
+
+## What goes in the head
+
+- **`<title>`** is the name shown on the browser tab and in search results.
+- **`<meta charset="UTF-8">`** tells the browser which characters the file uses. Put it near the top, so accents and emoji display correctly.
+
+Anything you put in `<head>` is invisible on the page. Only the `<body>` shows up.
+
+> [!WARNING]
+> Text placed directly inside `<html>` but outside `<head>` and `<body>` is not in a valid place. Browsers will guess what you meant, but the result can be surprising. Keep the four parts in order.
+
+## Indentation
+
+HTML doesn't care about spaces and line breaks, so these two pages work the same way:
+
+```html
+<body><p>Hi</p></body>
+```
+
+```html
+<body>
+  <p>Hi</p>
+</body>
+```
+
+Indent each element one level deeper than its parent. It costs nothing, and it makes the structure easy to see.
+
+> [!TIP]
+> Keep a skeleton like the one above in a file you can copy. Almost every page you build will start from it.
+
+## Your puzzle
+
+The starter page has a paragraph but no title. Add a `<title>` inside `<head>` that reads `My Web Page`. Leave the paragraph in the body as it is.

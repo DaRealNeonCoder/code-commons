@@ -177,6 +177,27 @@
         "programming-fundamentals",
         "algorithms"
       ]
+    },
+    {
+      "id": "html",
+      "label": "HTML",
+      "areas": [
+        "web-development"
+      ]
+    },
+    {
+      "id": "css",
+      "label": "CSS",
+      "areas": [
+        "web-development"
+      ]
+    },
+    {
+      "id": "javascript",
+      "label": "JavaScript",
+      "areas": [
+        "web-development"
+      ]
     }
   ],
   "tags": [
@@ -1164,6 +1185,14 @@
     {
       "id": "cpp",
       "label": "C++"
+    },
+    {
+      "id": "html",
+      "label": "HTML"
+    },
+    {
+      "id": "css",
+      "label": "CSS"
     },
     {
       "id": "javascript",

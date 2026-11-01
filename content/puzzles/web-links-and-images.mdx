@@ -1,0 +1,70 @@
+---
+title: "Links and Images"
+order: 6
+summary: "Add a link with an href and an image with a src and alt text."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <!-- Add a link with the text MDN and href https://developer.mozilla.org -->
+        <!-- Add an image with src cat.jpg and alt text A cat -->
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: attribute
+      selector: "a"
+      attribute: "href"
+      value: "https://developer.mozilla.org"
+    - type: text
+      selector: "a"
+      text: "MDN"
+    - type: attribute
+      selector: "img"
+      attribute: "src"
+      value: "cat.jpg"
+    - type: attribute
+      selector: "img"
+      attribute: "alt"
+      value: "A cat"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <a href="https://developer.mozilla.org">MDN</a>
+        <img src="cat.jpg" alt="A cat">
+      </body>
+      </html>
+    css: ""
+    js: ""
+---
+
+Add two elements to the page:
+
+1. A link, `<a>`, with the text `MDN` and an `href` of `https://developer.mozilla.org`.
+2. An image, `<img>`, with a `src` of `cat.jpg` and an `alt` of `A cat`.
+
+The image file doesn't exist in this puzzle, so the preview shows the alt text where the picture would be. That's expected.
+
+> [!TIP]
+> The `img` element has no closing tag. Write it as `<img src="..." alt="...">`.

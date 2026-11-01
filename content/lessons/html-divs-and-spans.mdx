@@ -1,0 +1,74 @@
+---
+title: "Divs, Spans, Classes, and IDs"
+order: 8
+summary: "Group content with generic div and span elements, and label them with class and id attributes so CSS and JavaScript can find them."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+puzzles: ["web-card-highlight"]
+---
+
+Sometimes no semantic element fits. You want a box around some content, or a word in the middle of a sentence that should look different. That is what `<div>` and `<span>` are for. They have no meaning of their own, so they are the generic containers of HTML.
+
+- **`<div>`** is a block container. It starts on a new line, like a paragraph.
+- **`<span>`** is an inline container. It sits inside a line of text, like a word.
+
+```html
+<div>
+  <p>Use <span>semicolons</span> carefully.</p>
+</div>
+```
+
+On their own they look the same as plain text. Their power comes from attributes.
+
+## Classes
+
+A `class` names a group of elements. Many elements can share one class:
+
+```html
+<div class="card">
+  <h2>Tip</h2>
+  <p>Save your work often.</p>
+</div>
+```
+
+Classes are how you style groups of elements in CSS. You will use them a lot starting in lesson 11.
+
+## IDs
+
+An `id` names one element. Each `id` must be unique on the page:
+
+```html
+<p id="welcome">Welcome to the page!</p>
+```
+
+Use an `id` when you want to refer to one specific element, and a `class` when you want to refer to a group.
+
+## Class or id?
+
+| | `class` | `id` |
+| --- | --- | --- |
+| How many elements? | Many | One |
+| Used in CSS as | `.name` | `#name` |
+| Used in JavaScript as | `querySelector(".name")` | `querySelector("#name")` |
+
+> [!WARNING]
+> Don't use the same `id` twice. Browsers accept it, but JavaScript will only find the first match, and the bug is hard to spot.
+
+## Putting it together
+
+A common pattern: a `<div>` with a class wraps a heading, a paragraph, and a `<span>` that highlights one word.
+
+```html
+<div class="card">
+  <h2>Tip</h2>
+  <p>Use <span class="highlight">semicolons</span> carefully.</p>
+</div>
+```
+
+## Your puzzle
+
+Build a card: a `<div>` with the class `card`, containing an `<h2>` that says `Tip` and a paragraph that says `Use semicolons carefully.`. Wrap the word `semicolons` in a `<span>` with the class `highlight`. The checks look for each piece, including the span.

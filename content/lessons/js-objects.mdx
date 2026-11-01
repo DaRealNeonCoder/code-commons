@@ -1,0 +1,93 @@
+---
+title: "Objects"
+order: 31
+summary: "Group related values under named properties with object literals, and read or change them with dot notation."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+puzzles: ["web-objects"]
+---
+
+An array is a list of values in order. An **object** is a set of values, each with a name. Objects are how you describe one thing: a book, a user, a product.
+
+```javascript
+const book = {
+  title: "Dune",
+  pages: 412,
+  read: false,
+};
+```
+
+- The curly braces create the object.
+- Each line is a **property**: a name, a colon, and a value.
+- The names are called **keys**.
+
+## Reading properties
+
+Use a dot to read a property by name:
+
+```javascript
+book.title;   // "Dune"
+book.pages;   // 412
+```
+
+You can also use square brackets with a string, which is handy when the name is in a variable:
+
+```javascript
+const field = "pages";
+book[field];   // 412
+```
+
+## Changing properties
+
+Assign to a property to change it. Properties can also be added at any time:
+
+```javascript
+book.read = true;
+book.rating = 5;   // a new property
+```
+
+Like `const` arrays, a `const` object can have its properties changed, even though the variable can't be pointed at a different object.
+
+## Objects and arrays together
+
+Objects often sit in arrays, forming a list of records:
+
+```javascript
+const books = [
+  { title: "Dune", pages: 412 },
+  { title: "Emma", pages: 474 },
+];
+
+books[1].title;   // "Emma"
+books.map((b) => b.pages);   // [412, 474]
+```
+
+`books.map((b) => b.pages)` is the array method from lesson 30, pulling one property out of each object.
+
+## Methods
+
+A property can hold a function. A function stored on an object is called a **method**:
+
+```javascript
+const counter = {
+  count: 0,
+  increase() {
+    this.count = this.count + 1;
+  },
+};
+
+counter.increase();   // counter.count is now 1
+```
+
+`this` refers to the object the method was called on. You'll rarely need it in this course, so don't worry if it feels strange now.
+
+> [!TIP]
+> Use an object when a set of values belongs together. `book.title` and `book.pages` say what they are. Three separate variables named `bookTitle`, `bookPages`, and `bookRead` say the same thing, but with more to keep in step.
+
+## Your puzzle
+
+In the JavaScript tab, create a constant named `book` holding an object with `title` set to `"Dune"`, `pages` set to `412`, and `read` set to `false`. Then set `book.read` to `true`. The checks read the three properties, and `read` should now be `true`.

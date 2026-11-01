@@ -1,0 +1,65 @@
+---
+title: "A List of Languages"
+order: 5
+summary: "Write an unordered list with three items."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <!-- Add an unordered list with three items: HTML, CSS, JavaScript -->
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: element
+      selector: "ul"
+    - type: count
+      selector: "ul > li"
+      count: 3
+    - type: text
+      selector: "ul li:nth-child(1)"
+      text: "HTML"
+    - type: text
+      selector: "ul li:nth-child(3)"
+      text: "JavaScript"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <ul>
+          <li>HTML</li>
+          <li>CSS</li>
+          <li>JavaScript</li>
+        </ul>
+      </body>
+      </html>
+    css: ""
+    js: ""
+---
+
+Write an unordered list, `<ul>`, with three list items, `<li>`, in this order: `HTML`, `CSS`, and `JavaScript`.
+
+The checks count the items and read the first and third one.
+
+> [!TIP]
+> Every `<li>` goes directly inside the `<ul>`. Don't add bullet characters yourself, because the browser draws them.

@@ -1,0 +1,64 @@
+---
+title: "Click to Like"
+order: 33
+summary: "Attach a click listener to a button that updates a paragraph."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["html", "javascript"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <button id="like">Like</button>
+        <p id="count">0 likes</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      // Add a click listener to #like that sets #count's text to "1 like"
+  checks:
+    - type: click
+      selector: "#like"
+      target: "#count"
+      text: "1 like"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <button id="like">Like</button>
+        <p id="count">0 likes</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      document.querySelector("#like").addEventListener("click", function () {
+        document.querySelector("#count").textContent = "1 like";
+      });
+---
+
+Make the **Like** button do something when it's clicked:
+
+1. Find the button with the id `like`.
+2. Call `addEventListener` on it with the event name `"click"` and a function.
+3. Inside the function, change the text of the paragraph with the id `count` to `1 like`.
+
+The check clicks the button, then reads the paragraph. The click runs your listener, so the text must change to `1 like`.
+
+> [!TIP]
+> The second argument to `addEventListener` is a function. Write it as `function () { ... }` or as `() => { ... }`. Either works here.

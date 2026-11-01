@@ -1,0 +1,92 @@
+---
+title: "Array Methods: map, filter, and reduce"
+order: 30
+summary: "Transform, select, and combine array items with map, filter, and reduce, and use short functions to say what you mean."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+puzzles: ["web-array-methods"]
+---
+
+Most loops over arrays do one of three jobs: change every item, keep some of the items, or combine them into one value. JavaScript has a method for each job, and each takes a function that describes what to do with one item at a time.
+
+```javascript
+const prices = [4, 10, 7, 25];
+```
+
+## map: change every item
+
+`map` returns a new array with the same length, where each item has been transformed:
+
+```javascript
+const doubled = prices.map((price) => price * 2);
+// [8, 20, 14, 50]
+```
+
+The arrow function runs once for each item, and its return value becomes the new item.
+
+## filter: keep some items
+
+`filter` returns a new array with only the items that pass a test. The test returns `true` to keep an item:
+
+```javascript
+const expensive = prices.filter((price) => price > 6);
+// [10, 7, 25]
+```
+
+## reduce: combine into one value
+
+`reduce` folds the whole array into a single value. It takes a function and a starting value. The function receives the running total and the current item:
+
+```javascript
+const total = prices.reduce((sum, price) => sum + price, 0);
+// 46
+```
+
+The `0` at the end is the starting total. Without it, the first item would be the starting total, which is usually not what you want.
+
+## forEach: do something for each item
+
+`forEach` runs a function on every item but returns nothing. Use it when the goal is an effect, such as updating the page:
+
+```javascript
+prices.forEach((price) => {
+  console.log(price);
+});
+```
+
+## Chaining
+
+Methods can be chained, one after another. Each returns an array that the next one works on:
+
+```javascript
+const bigTotal = prices
+  .filter((price) => price > 6)
+  .reduce((sum, price) => sum + price, 0);
+// 42
+```
+
+> [!TIP]
+> Name the function's parameter after one item, not the whole list. `(price) => price * 2` reads as "for each price, double it". That single habit makes these methods much easier to read.
+
+## Choosing a method
+
+| I want to | Use |
+| --- | --- |
+| Change each item | `map` |
+| Keep some items | `filter` |
+| Get one value from all of them | `reduce` |
+| Do something for each item | `forEach` |
+
+## Your puzzle
+
+The starter defines `prices`. In the JavaScript tab, create:
+
+- `doubled` with `map`, doubling each price.
+- `expensive` with `filter`, keeping prices greater than 6.
+- `total` with `reduce`, adding all the prices, starting from 0.
+
+The checks read all three.

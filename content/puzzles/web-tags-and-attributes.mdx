@@ -1,0 +1,58 @@
+---
+title: "Tags and Attributes"
+order: 3
+summary: "Write a paragraph with an id attribute and text content."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <!-- Add one paragraph with the id intro that says I am learning HTML. -->
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: element
+      selector: "p#intro"
+    - type: text
+      selector: "p#intro"
+      text: "I am learning HTML."
+    - type: count
+      selector: "p"
+      count: 1
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p id="intro">I am learning HTML.</p>
+      </body>
+      </html>
+    css: ""
+    js: ""
+---
+
+Write one paragraph element. Give it the attribute `id="intro"`, and make its text `I am learning HTML.`
+
+The checks also count the paragraphs on the page, so write only one `<p>`.
+
+> [!TIP]
+> The attribute goes inside the opening tag: `<p id="intro">`. The text goes between the opening and closing tags.

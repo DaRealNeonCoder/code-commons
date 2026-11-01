@@ -1,0 +1,72 @@
+---
+title: "Operators"
+order: 25
+summary: "Use the remainder, greater-than, and logical operators on two numbers."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p>Operators</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      const a = 7;
+      const b = 3;
+
+      // Create a constant named remainder that holds a % b
+      // Create a constant named isBigger that holds a > b
+  checks:
+    - type: script
+      expression: "remainder"
+      expected: 1
+    - type: script
+      expression: "isBigger"
+      expected: true
+    - type: script
+      expression: "isBigger && remainder === 1"
+      expected: true
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p>Operators</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      const a = 7;
+      const b = 3;
+
+      const remainder = a % b;
+      const isBigger = a > b;
+---
+
+The starter defines `a` as `7` and `b` as `3`. Add two constants below them:
+
+1. `remainder`, holding `a % b`, the leftover after dividing `a` by `b`.
+2. `isBigger`, holding `a > b`, which is `true` only when `a` is greater.
+
+The checks read both values, and also `isBigger && remainder === 1`, which combines them with `&&` and should be `true`.
+
+> [!TIP]
+> `%` gives the leftover after division. `7 % 3` is `1`, because 3 goes into 7 twice with 1 left over.

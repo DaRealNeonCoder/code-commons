@@ -1,0 +1,73 @@
+---
+title: "Flexbox"
+order: 17
+summary: "Arrange items in a row or column with display flex, and control their spacing and alignment."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+puzzles: ["web-flexbox-menu"]
+---
+
+Before flexbox, lining things up in a row took tricks with floats and inline blocks. Flexbox makes it direct. Give a container `display: flex`, and its children line up in a row, ready to be spaced and aligned.
+
+```html
+<nav class="menu">
+  <a href="#">Home</a>
+  <a href="#">About</a>
+  <a href="#">Contact</a>
+</nav>
+```
+
+```css
+.menu {
+  display: flex;
+}
+```
+
+Without any other rules, the three links now sit side by side. The container is the **flex container**, and its children are the **flex items**.
+
+## Main axis and cross axis
+
+Flexbox has two directions:
+
+- The **main axis** runs along the row by default.
+- The **cross axis** runs at right angles to it.
+
+Two properties control the main axis and the cross axis:
+
+- `justify-content` spreads items along the main axis.
+- `align-items` lines them up on the cross axis.
+
+```css
+.menu {
+  display: flex;
+  justify-content: space-between; /* first at the left, last at the right */
+  align-items: center;            /* vertically centered in the row */
+}
+```
+
+Useful `justify-content` values: `flex-start` (the default), `center`, `space-between`, and `space-around`.
+
+## Gaps
+
+`column-gap` (the space between items in a row) and `row-gap` (between rows) add space without margins on each item:
+
+```css
+.menu {
+  column-gap: 12px;
+}
+```
+
+## Columns
+
+Change `flex-direction: column` to stack the items vertically instead. Everything you've learned still applies, with the axes swapped.
+
+> [!TIP]
+> When you're unsure how to line something up, reach for flexbox. Pick `display: flex`, then add `justify-content` and `align-items` until it looks right.
+
+## Your puzzle
+
+The body has a `nav` with the class `menu` holding three links. Make the menu a flex container, spread its items to the two ends with `space-between`, center them vertically with `align-items: center`, and leave 12 pixels of space between items with `column-gap`. The checks read each of those computed values.

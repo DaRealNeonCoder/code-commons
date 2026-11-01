@@ -1,0 +1,68 @@
+---
+title: "Functions"
+order: 27
+summary: "Write a function that returns a value, and an arrow function that builds a greeting."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p>Functions</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      // Write a function named double that takes n and returns n * 2
+
+      // Write an arrow function named greet that takes name
+      // and returns "Hello, " + name + "!"
+  checks:
+    - type: script
+      expression: "double(21)"
+      expected: 42
+    - type: script
+      expression: 'greet("Ada")'
+      expected: "Hello, Ada!"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p>Functions</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      function double(n) {
+        return n * 2;
+      }
+
+      const greet = (name) => "Hello, " + name + "!";
+---
+
+Write two functions in the JavaScript tab:
+
+1. A regular function named `double` that takes one parameter, `n`, and returns `n * 2`.
+2. An arrow function named `greet` that takes one parameter, `name`, and returns `"Hello, "` followed by the name and an exclamation mark.
+
+The checks call both: `double(21)` should be `42`, and `greet("Ada")` should be `"Hello, Ada!"`.
+
+> [!TIP]
+> Use `return` to send the result back. A function without `return` gives back `undefined`, which the check will report as a mismatch.

@@ -1,0 +1,73 @@
+---
+title: "map, filter, and reduce"
+order: 30
+summary: "Double, select, and add up a list of prices with array methods."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p>Prices</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      const prices = [4, 10, 7, 25];
+
+      // Create doubled with map: each price times 2
+      // Create expensive with filter: prices greater than 6
+      // Create total with reduce: the sum of all prices, starting from 0
+  checks:
+    - type: script
+      expression: "doubled"
+      expected: [8, 20, 14, 50]
+    - type: script
+      expression: "expensive"
+      expected: [10, 7, 25]
+    - type: script
+      expression: "total"
+      expected: 46
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p>Prices</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      const prices = [4, 10, 7, 25];
+
+      const doubled = prices.map((price) => price * 2);
+      const expensive = prices.filter((price) => price > 6);
+      const total = prices.reduce((sum, price) => sum + price, 0);
+---
+
+The starter defines `prices`. Create three new constants with array methods:
+
+1. `doubled` with `map`, which doubles each price.
+2. `expensive` with `filter`, which keeps the prices greater than 6.
+3. `total` with `reduce`, which adds all the prices together, starting from `0`.
+
+The checks read all three. Their values should be `[8, 20, 14, 50]`, `[10, 7, 25]`, and `46`.
+
+> [!TIP]
+> `reduce` needs the starting value `0` at the end. Its function receives the running sum first, then the current price.

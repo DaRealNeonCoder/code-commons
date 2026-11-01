@@ -1,0 +1,83 @@
+---
+title: "Selectors"
+order: 12
+summary: "Target elements by tag, class, id, and relationship, so one rule can style exactly the parts of the page you mean."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+puzzles: ["web-selectors"]
+---
+
+A selector decides which elements a rule applies to. Choosing the right selector is most of the work in CSS.
+
+## Basic selectors
+
+| Selector | Matches | Example |
+| --- | --- | --- |
+| `p` | every element with that tag | every paragraph |
+| `.sale` | every element with `class="sale"` | any element in the sale group |
+| `#main` | the one element with `id="main"` | just that element |
+| `*` | every element | everything (use sparingly) |
+
+```css
+p {
+  font-family: Georgia, serif;
+}
+
+.sale {
+  color: blue;
+}
+
+#main {
+  font-weight: bold;
+}
+```
+
+The `.` means class, and `#` means id. Remember which is which: `class` can be shared, `id` is unique.
+
+## Combining selectors
+
+You can combine selectors to be more specific:
+
+```css
+p.sale {
+  color: blue;        /* only paragraphs with class sale */
+}
+
+h1 span {
+  color: green;       /* a span anywhere inside an h1 */
+}
+
+ul > li {
+  margin-bottom: 4px; /* only li directly inside a ul */
+}
+```
+
+- A space means "inside, at any depth" (a descendant).
+- `>` means "directly inside" (a child).
+
+## Pseudo-classes
+
+A pseudo-class selects an element based on its state or position, and starts with a colon:
+
+```css
+li:first-child {
+  font-weight: bold;
+}
+
+p:nth-of-type(2) {
+  color: gray;
+}
+```
+
+`:first-child` matches the first item in its parent. `:nth-of-type(2)` matches the second paragraph in its parent. Lesson 20 covers `:hover`.
+
+> [!TIP]
+> Prefer classes for styling. A class can be reused, and it doesn't carry the weight of an id, which makes rules easy to override later.
+
+## Your puzzle
+
+The body has a heading, a paragraph with the class `sale`, a paragraph with the id `main`, and a plain paragraph. Make the heading green, make the `sale` paragraph blue, and make the `main` paragraph bold. The checks read the computed color and weight of each one.

@@ -1,0 +1,85 @@
+---
+title: "A Flexible Menu"
+order: 17
+summary: "Lay out a row of menu links with flexbox."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <nav class="menu">
+          <a href="#">Home</a>
+          <a href="#">About</a>
+          <a href="#">Contact</a>
+        </nav>
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: style
+      selector: ".menu"
+      property: "display"
+      value: "flex"
+    - type: style
+      selector: ".menu"
+      property: "justify-content"
+      value: "space-between"
+    - type: style
+      selector: ".menu"
+      property: "align-items"
+      value: "center"
+    - type: style
+      selector: ".menu"
+      property: "column-gap"
+      value: "12px"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <nav class="menu">
+          <a href="#">Home</a>
+          <a href="#">About</a>
+          <a href="#">Contact</a>
+        </nav>
+      </body>
+      </html>
+    css: |
+      .menu {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        column-gap: 12px;
+      }
+    js: ""
+---
+
+Turn the `nav` with the class `menu` into a flex container:
+
+- `display: flex` makes its links sit in a row.
+- `justify-content: space-between` pushes the first link to the left edge and the last one to the right.
+- `align-items: center` centers the links vertically.
+- `column-gap: 12px` leaves 12 pixels between items.
+
+The checks read each of those four values.
+
+> [!TIP]
+> `justify-content` works along the row, and `align-items` works across it. If the links are not where you expect, check which property you used.

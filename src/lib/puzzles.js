@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { puzzleStore } from "./db/stores";
 import { getClientMathQuizInfo, normalizeMathQuiz } from "./mathQuiz";
+import { normalizeWebConfig } from "./web/webPuzzle";
 
 const SLUG = /^[a-z0-9][a-z0-9_-]*$/i;
 
@@ -34,6 +35,7 @@ export const getPuzzleById = cache(async (id) => {
     ...row,
     testCases: normalizeTestCases(row.testCases),
     quizConfig: row.kind === "math-quiz" ? normalizeMathQuiz(row.quizConfig) : null,
+    webConfig: row.kind === "web" ? normalizeWebConfig(row.webConfig) : null,
   };
 });
 

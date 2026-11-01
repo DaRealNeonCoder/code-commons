@@ -1,0 +1,75 @@
+---
+title: "Padding, Margin, and Border"
+order: 15
+summary: "Space out a card with padding, a margin, and a border."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <div class="card">Padded card</div>
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: style
+      selector: ".card"
+      property: "padding-top"
+      value: "20px"
+    - type: style
+      selector: ".card"
+      property: "margin-top"
+      value: "16px"
+    - type: style
+      selector: ".card"
+      property: "border-top-style"
+      value: "solid"
+    - type: style
+      selector: ".card"
+      property: "border-top-color"
+      value: "rgb(0, 0, 0)"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <div class="card">Padded card</div>
+      </body>
+      </html>
+    css: |
+      .card {
+        padding: 20px;
+        margin: 16px;
+        border: 2px solid black;
+      }
+    js: ""
+---
+
+Give the `div` with the class `card` three box-model properties in one rule:
+
+- `padding: 20px;` for space inside the box, between the text and the border.
+- `margin: 16px;` for space outside the box, around it.
+- `border: 2px solid black;` for a visible line around the padding.
+
+The checks read the top side of the padding and margin, and the style and color of the border. One value that applies to all four sides is enough.
+
+> [!TIP]
+> A border only shows when it has a style. Leave out `solid` and the border's default style is `none`, so nothing appears.

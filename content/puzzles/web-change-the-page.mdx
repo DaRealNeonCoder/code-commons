@@ -1,0 +1,67 @@
+---
+title: "Change the Page"
+order: 32
+summary: "Find two elements with querySelector and change their text and HTML."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["html", "javascript"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <h1 id="title">Old title</h1>
+        <p class="message">Waiting...</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      // Use document.querySelector to find #title and set its textContent to "New title"
+      // Find .message and set its innerHTML to <strong>Done!</strong>
+  checks:
+    - type: text
+      selector: "#title"
+      text: "New title"
+    - type: text
+      selector: ".message"
+      text: "Done!"
+    - type: element
+      selector: ".message strong"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <h1 id="title">Old title</h1>
+        <p class="message">Waiting...</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      document.querySelector("#title").textContent = "New title";
+      document.querySelector(".message").innerHTML = "<strong>Done!</strong>";
+---
+
+The page has a heading with the id `title` and a paragraph with the class `message`. In the JavaScript tab:
+
+1. Use `document.querySelector` to find the `#title` heading, and set its `textContent` to `New title`.
+2. Find the `.message` paragraph, and set its `innerHTML` to `<strong>Done!</strong>`, so the word appears in bold.
+
+The checks read the heading, the paragraph's text, and look for the `strong` element inside the paragraph.
+
+> [!WARNING]
+> Use `textContent` for plain text and `innerHTML` only when you're writing markup you control. Never put text from a visitor into `innerHTML`.

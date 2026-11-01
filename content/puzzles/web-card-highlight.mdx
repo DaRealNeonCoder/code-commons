@@ -1,0 +1,72 @@
+---
+title: "A Card with a Highlight"
+order: 8
+summary: "Build a div card, and highlight one word with a span and a class."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <!-- Build a div with the class card. Inside it, put an h2 that says Tip,
+             and a paragraph that says Use semicolons carefully.
+             Wrap the word semicolons in a span with the class highlight. -->
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: element
+      selector: "div.card h2"
+    - type: text
+      selector: "div.card h2"
+      text: "Tip"
+    - type: text
+      selector: "div.card p"
+      text: "Use semicolons carefully."
+    - type: element
+      selector: "div.card p span.highlight"
+    - type: text
+      selector: "span.highlight"
+      text: "semicolons"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <div class="card">
+          <h2>Tip</h2>
+          <p>Use <span class="highlight">semicolons</span> carefully.</p>
+        </div>
+      </body>
+      </html>
+    css: ""
+    js: ""
+---
+
+Build a card that groups its content together:
+
+- A `<div>` with the class `card`.
+- Inside it, an `<h2>` that says `Tip`.
+- A paragraph that says `Use semicolons carefully.`, where the word `semicolons` is wrapped in a `<span>` with the class `highlight`.
+
+The span changes nothing about how the words look yet. Lesson 8 explains why it's useful: CSS will style the span in the next part of the course.
+
+> [!TIP]
+> Put the `<span>` inside the `<p>`, not around it. A span sits inside a line of text, so it belongs in the paragraph.

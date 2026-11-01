@@ -1,0 +1,75 @@
+---
+title: "Responsive Design"
+order: 19
+summary: "Make a page work on phones and desktops with a viewport meta tag, a max-width container, and media queries."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+puzzles: ["web-responsive-container"]
+---
+
+People view your page on phones, tablets, and huge monitors. **Responsive design** means the page adapts to whatever width it gets, instead of being built for one size.
+
+## The viewport
+
+Every page for a phone needs this line in the `<head>`:
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1">
+```
+
+Without it, a phone pretends the page is about 980 pixels wide and shrinks it to fit. With it, the page uses the real width of the screen.
+
+## Fluid widths
+
+Give the main content a `max-width` instead of a fixed `width`. On a wide screen it stops growing at the limit. On a phone it shrinks to fit:
+
+```css
+.container {
+  max-width: 600px;
+}
+```
+
+## Media queries
+
+A **media query** applies CSS only when a condition is true. The most common condition is the width of the window:
+
+```css
+.container {
+  background-color: white;
+}
+
+@media (max-width: 600px) {
+  .container {
+    background-color: lightyellow;
+  }
+}
+```
+
+Read it as: "when the window is 600 pixels wide or narrower, make the container light yellow". Rules inside the block replace the earlier rules when the condition is true.
+
+## Mobile first
+
+A common approach is to write the simple version first, for small screens, and then add `min-width` queries for larger ones:
+
+```css
+.container {
+  padding: 12px;
+}
+
+@media (min-width: 700px) {
+  .container {
+    padding: 32px;
+  }
+}
+```
+
+> [!TIP]
+> Set a breakpoint where your layout actually breaks, not at a device size you read about somewhere. Resize your browser window and watch for the moment the page looks wrong.
+
+## Your puzzle
+
+The body has a `div` with the class `container` holding a heading and a paragraph. Keep the container no wider than 600 pixels with `max-width`. Then add a media query, `@media (max-width: 900px)`, that gives the container a background color of `rgb(230, 240, 255)`. The puzzle's page is checked at 800 pixels wide, so the query applies.

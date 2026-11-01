@@ -1,0 +1,83 @@
+---
+title: "Sizing and Display"
+order: 16
+summary: "Set a width, make tags sit inline, and hide an element with display."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <div class="card">A box</div>
+        <span class="tag">one</span>
+        <span class="tag">two</span>
+        <p class="hidden">secret</p>
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: style
+      selector: ".card"
+      property: "width"
+      value: "300px"
+    - type: style
+      selector: ".tag"
+      property: "display"
+      value: "inline-block"
+    - type: style
+      selector: ".hidden"
+      property: "display"
+      value: "none"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <div class="card">A box</div>
+        <span class="tag">one</span>
+        <span class="tag">two</span>
+        <p class="hidden">secret</p>
+      </body>
+      </html>
+    css: |
+      .card {
+        width: 300px;
+      }
+
+      .tag {
+        display: inline-block;
+      }
+
+      .hidden {
+        display: none;
+      }
+    js: ""
+---
+
+Use three rules to control size and display:
+
+1. `.card` gets a `width` of `300px`.
+2. `.tag` gets `display: inline-block`, so the two tags sit on one line and keep a size.
+3. `.hidden` gets `display: none`, which removes the paragraph from the page.
+
+The paragraph still exists in the HTML. The browser just doesn't draw it.
+
+> [!TIP]
+> If the tags appear on separate lines, `inline-block` is the value to check. If the paragraph is still visible, check that the selector matches the class.

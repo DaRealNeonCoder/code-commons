@@ -8,6 +8,8 @@ import { getCourseProgress } from "@/lib/courseProgress";
 import { mdxComponents, mdxOptions } from "@/lib/mdx-components";
 import CodeWorkspace from "@/components/CodeWorkspace";
 import MathQuizWorkspace from "@/components/MathQuizWorkspace";
+import WebPuzzleWorkspace from "@/components/web/WebPuzzleWorkspace";
+import { getClientWebInfo } from "@/lib/web/webPuzzle";
 import NextPuzzleLinks from "@/components/NextPuzzleLinks";
 import NextLessonLink from "@/components/NextLessonLink";
 import CourseShell from "@/components/CourseShell";
@@ -35,6 +37,8 @@ export default async function PuzzlePage({ params, searchParams }) {
   const { checkable, sampleTests, hiddenTestCount } = getClientTestInfo(puzzle);
   const mathQuiz = puzzle.kind === "math-quiz" ? getClientMathQuizInfo(puzzle.quizConfig) : null;
   if (puzzle.kind === "math-quiz" && !mathQuiz) notFound();
+  const webPuzzle = puzzle.kind === "web" ? getClientWebInfo(puzzle.webConfig) : null;
+  if (puzzle.kind === "web" && !webPuzzle) notFound();
 
   const lessonId = typeof query?.lesson === "string" ? query.lesson : null;
   const requestedCourseId = typeof query?.course === "string" ? query.course : null;
@@ -82,6 +86,15 @@ export default async function PuzzlePage({ params, searchParams }) {
       <RatedShell itemType="puzzle" itemId={puzzle.id}>
         {puzzle.kind === "math-quiz" ? (
           <MathQuizWorkspace {...workspaceProps} questions={mathQuiz.questions} />
+        ) : puzzle.kind === "web" ? (
+          <WebPuzzleWorkspace
+            description={description}
+            files={webPuzzle.files}
+            checks={webPuzzle.checks}
+            itemId={puzzle.id}
+            aiContext={puzzle.content}
+            aiContextTitle={puzzle.title}
+          />
         ) : (
           <CodeWorkspace
             accent="teal"

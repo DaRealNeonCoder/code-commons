@@ -1,0 +1,63 @@
+---
+title: "Links and Images"
+order: 6
+summary: "Connect pages with anchor links, and show pictures with img tags that have a source and alt text."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+puzzles: ["web-links-and-images"]
+---
+
+The web is a web because pages link to each other. Links use the `<a>` element, and pictures use the `<img>` element.
+
+## Links
+
+An `<a>` element (anchor) needs an `href` attribute that says where the link goes. The text between the tags is what the visitor clicks:
+
+```html
+<a href="https://developer.mozilla.org">MDN Web Docs</a>
+```
+
+The `href` can be:
+
+- **A full web address**, such as `https://developer.mozilla.org`.
+- **A page on your own site**, such as `about.html`.
+- **A place on the same page**, such as `#contact`, where `contact` is the `id` of an element.
+
+Add `target="_blank"` to open the link in a new tab. Use it sparingly, because visitors expect links to behave in the current tab.
+
+> [!TIP]
+> Write link text that says where the link goes. "Read the MDN guide" is clearer than "click here". Screen reader users often jump from link to link, and "click here" tells them nothing.
+
+## Images
+
+The `<img>` element shows a picture. It has no closing tag, and it needs two attributes:
+
+```html
+<img src="cat.jpg" alt="A tabby cat asleep on a sofa">
+```
+
+- **`src`** is the address of the image file.
+- **`alt`** is a short description of the picture. Browsers show it if the image can't load, and screen readers read it aloud.
+
+Write `alt` as if you were describing the picture to someone on the phone. If the picture is just decoration, leave `alt` empty with `alt=""`.
+
+> [!WARNING]
+> If you forget `alt`, the page still works, but people who use screen readers hear the file name, or nothing at all.
+
+## Links around images
+
+You can put an image inside a link. The whole picture becomes clickable:
+
+```html
+<a href="cat-gallery.html">
+  <img src="cat.jpg" alt="Thumbnail of the cat gallery">
+</a>
+```
+
+## Your puzzle
+
+Add a link whose text is `MDN` and whose `href` is `https://developer.mozilla.org`. Add an image with `src="cat.jpg"` and the `alt` text `A cat`. The checks test each attribute exactly, so match the values as shown.

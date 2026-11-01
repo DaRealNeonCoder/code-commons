@@ -1,0 +1,63 @@
+---
+title: "Sizing and Display"
+order: 16
+summary: "Set element widths and heights, and use the display property to decide whether elements stack, sit side by side, or disappear."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+puzzles: ["web-sizing-and-display"]
+---
+
+Two properties decide how an element takes up space: its **size**, and its **display** type.
+
+## Size
+
+`width` and `height` set how big an element is:
+
+```css
+.card {
+  width: 300px;
+  height: 200px;
+}
+```
+
+Use `max-width` instead of `width` when you want a box that can shrink, but never grow past a limit. It's the usual choice for text and images, because it keeps the content readable on small screens:
+
+```css
+.article {
+  max-width: 640px;
+}
+```
+
+## Display
+
+Every element has a display type that controls how it sits with its neighbors:
+
+- **`block`** starts on a new line and takes the full width. Paragraphs, headings, and `div`s are block by default.
+- **`inline`** sits in the flow of a line of text. `span`, `a`, and `strong` are inline by default. Width and height don't apply to inline elements.
+- **`inline-block`** sits in a line like text, but you can still set its width and height. Good for buttons and tags.
+- **`none`** removes the element from the page completely. It takes no space, and it can't be seen.
+
+```css
+.tag {
+  display: inline-block;
+}
+
+.hidden {
+  display: none;
+}
+```
+
+> [!TIP]
+> `display: none` is not the same as `visibility: hidden`. `none` removes the space; `hidden` keeps the space but makes the element invisible.
+
+## Overflow
+
+When content is bigger than its box, it overflows. `overflow: hidden` clips the extra. `overflow: auto` adds scrollbars when needed. You'll meet this when you build layouts, so it's worth knowing the names now.
+
+## Your puzzle
+
+The body has a `div` with the class `card`, two `span`s with the class `tag`, and a paragraph with the class `hidden`. Give the card a width of 300 pixels, make the tags `inline-block`, and hide the paragraph with `display: none`. The checks read the calculated width and display.

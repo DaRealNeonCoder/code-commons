@@ -1,0 +1,65 @@
+---
+title: "Lists"
+order: 5
+summary: "Group related items with unordered lists, ordered lists, and list items."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+puzzles: ["web-shopping-list"]
+---
+
+Lists are everywhere on the web: menus, ingredients, search results, steps in a recipe. HTML has two list types, and both use the same item element.
+
+## Unordered lists
+
+An unordered list uses `<ul>` (unordered list). Browsers show a bullet point before each item:
+
+```html
+<ul>
+  <li>Apples</li>
+  <li>Bread</li>
+  <li>Milk</li>
+</ul>
+```
+
+Each item is an `<li>` (list item). Every `<li>` must sit directly inside a `<ul>` or an `<ol>`.
+
+## Ordered lists
+
+When the order matters, use `<ol>` (ordered list). Browsers number the items for you:
+
+```html
+<ol>
+  <li>Preheat the oven.</li>
+  <li>Mix the batter.</li>
+  <li>Bake for 20 minutes.</li>
+</ol>
+```
+
+Don't type the numbers yourself. The browser adds them, and if you insert an item in the middle, the numbers update on their own.
+
+## Lists inside lists
+
+A list item can contain another list. This is how menus and outlines are built:
+
+```html
+<ul>
+  <li>Fruit
+    <ul>
+      <li>Apple</li>
+      <li>Pear</li>
+    </ul>
+  </li>
+  <li>Vegetables</li>
+</ul>
+```
+
+> [!TIP]
+> Whenever you find yourself writing a list of things with a line break between each one, it probably wants to be a `<ul>` or `<ol>`. Lists help screen readers say "list, three items", which a row of loose paragraphs can't.
+
+## Your puzzle
+
+Write an unordered list with three items: `HTML`, `CSS`, and `JavaScript`, in that order. The checks count the items and read the first and third one.

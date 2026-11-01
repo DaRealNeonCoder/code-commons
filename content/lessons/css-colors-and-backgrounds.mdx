@@ -1,0 +1,60 @@
+---
+title: "Colors and Backgrounds"
+order: 13
+summary: "Set text and background colors with names, hex codes, and rgb values, and learn how to pick a readable combination."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+puzzles: ["web-colors"]
+---
+
+Color is the fastest way to change how a page feels. CSS has two color properties you will use constantly:
+
+- `color` sets the color of the **text**.
+- `background-color` sets the color **behind** the element.
+
+```css
+.box {
+  color: white;
+  background-color: navy;
+}
+```
+
+## Ways to write a color
+
+CSS accepts several formats, and they all mean the same thing when they describe the same color:
+
+```css
+/* A name */
+color: red;
+
+/* A hex code: red, green, blue, each from 00 to ff */
+color: #ff0000;
+
+/* rgb: red, green, blue, each from 0 to 255 */
+color: rgb(255, 0, 0);
+
+/* rgb with transparency: 0 is invisible, 1 is solid */
+background-color: rgba(255, 0, 0, 0.5);
+```
+
+Hex codes are short for a computer, but hard for a person to read. A quick way to think about them: `#ffffff` is white, `#000000` is black, and `#ffcc00` is a warm yellow with some red in it.
+
+> [!TIP]
+> A tool like your browser's color picker, or a site like coolors.co, can give you the hex code for any color you see.
+
+## Contrast
+
+Text must be easy to read on its background. Light gray text on a white page is hard for many people to see, and that's a real accessibility problem.
+
+A useful rule of thumb: pair dark text with a light background, or light text with a dark background. Keep the two colors far apart in brightness, not just in hue.
+
+> [!WARNING]
+> Don't set `color` without thinking about `background-color`. Set both together, or rely on the browser's defaults for the one you didn't change.
+
+## Your puzzle
+
+The body has a `div` with the class `box` that says `Hello`. Give the box the background color `#ffcc00` and the text color `white`. The checks read the colors the browser calculates, so any format that means the same color passes.

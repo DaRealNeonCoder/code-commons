@@ -1,0 +1,83 @@
+---
+title: "Selectors"
+order: 12
+summary: "Style a heading, a class, and an id with three different selectors."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <h1>Shop</h1>
+        <p class="sale">Two for one!</p>
+        <p id="main">Welcome</p>
+        <p>Regular text</p>
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: style
+      selector: "h1"
+      property: "color"
+      value: "rgb(0, 128, 0)"
+    - type: style
+      selector: "p.sale"
+      property: "color"
+      value: "rgb(0, 0, 255)"
+    - type: style
+      selector: "#main"
+      property: "font-weight"
+      value: "700"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <h1>Shop</h1>
+        <p class="sale">Two for one!</p>
+        <p id="main">Welcome</p>
+        <p>Regular text</p>
+      </body>
+      </html>
+    css: |
+      h1 {
+        color: green;
+      }
+
+      .sale {
+        color: blue;
+      }
+
+      #main {
+        font-weight: bold;
+      }
+    js: ""
+---
+
+The page has four elements. Use three rules, one for each selector type:
+
+1. An element selector, `h1`, to make the heading green.
+2. A class selector, `.sale`, to make the paragraph with the class `sale` blue.
+3. An id selector, `#main`, to make the paragraph with the id `main` bold.
+
+The plain paragraph is left alone. You don't need to style it.
+
+> [!TIP]
+> A selector with `.` matches a class, and one with `#` matches an id. If the paragraph doesn't change, check that the class or id name is spelled the same in the HTML and the CSS.

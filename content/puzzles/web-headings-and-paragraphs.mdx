@@ -1,0 +1,63 @@
+---
+title: "Headings and Paragraphs"
+order: 4
+summary: "Build a page with a main heading, a section heading, and a paragraph."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <!-- Add an h1 that says My Notes, an h2 that says Day 1,
+             and a paragraph that begins Today I learned about tags. -->
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: text
+      selector: "h1"
+      text: "My Notes"
+    - type: text
+      selector: "h2"
+      text: "Day 1"
+    - type: text
+      selector: "p"
+      text: "Today I learned about tags."
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <h1>My Notes</h1>
+        <h2>Day 1</h2>
+        <p>Today I learned about tags.</p>
+      </body>
+      </html>
+    css: ""
+    js: ""
+---
+
+Build the start of a notes page:
+
+- An `<h1>` that says `My Notes`.
+- An `<h2>` that says `Day 1`.
+- A `<p>` paragraph that says `Today I learned about tags.`
+
+Keep the spelling and capitals exactly as written. The checks compare the text of each element.

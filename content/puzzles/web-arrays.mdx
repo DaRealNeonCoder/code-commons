@@ -1,0 +1,75 @@
+---
+title: "Arrays"
+order: 28
+summary: "Add an item to an array, then count items and read one by index."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p>Arrays</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      const fruits = ["apple", "banana"];
+
+      // Add "cherry" to the end of fruits with push
+      // Create a variable named count that holds the number of fruits
+      // Create a variable named second that holds the item at index 1
+  checks:
+    - type: script
+      expression: "fruits.length"
+      expected: 3
+    - type: script
+      expression: "count"
+      expected: 3
+    - type: script
+      expression: "second"
+      expected: "banana"
+    - type: script
+      expression: "fruits[2]"
+      expected: "cherry"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <p>Arrays</p>
+      </body>
+      </html>
+    css: ""
+    js: |
+      const fruits = ["apple", "banana"];
+      fruits.push("cherry");
+      let count = fruits.length;
+      let second = fruits[1];
+---
+
+The starter creates an array named `fruits` with two items. In the JavaScript tab:
+
+1. Add `"cherry"` to the end of `fruits` with `push`.
+2. Create `count`, holding the number of items in `fruits`.
+3. Create `second`, holding the item at index 1.
+
+The checks read the length, `count`, `second`, and the item at index 2, which should now be `"cherry"`.
+
+> [!TIP]
+> Index 1 is the second item, because counting starts at 0. `fruits.length` is the number of items, so the last index is always `length - 1`.

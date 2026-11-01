@@ -1,0 +1,82 @@
+---
+title: "A Score Table"
+order: 9
+summary: "Build a table with a header row and two data rows."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <!-- Build a table with a header row: Name, Score.
+             Then two rows: Ada with 95, and Grace with 98. -->
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: element
+      selector: "table"
+    - type: count
+      selector: "tr"
+      count: 3
+    - type: count
+      selector: "th"
+      count: 2
+    - type: text
+      selector: "td"
+      text: "Ada"
+    - type: text
+      selector: "td:nth-child(2)"
+      text: "95"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <table>
+          <tr>
+            <th>Name</th>
+            <th>Score</th>
+          </tr>
+          <tr>
+            <td>Ada</td>
+            <td>95</td>
+          </tr>
+          <tr>
+            <td>Grace</td>
+            <td>98</td>
+          </tr>
+        </table>
+      </body>
+      </html>
+    css: ""
+    js: ""
+---
+
+Build a table that shows scores:
+
+- A header row with two `<th>` cells: `Name` and `Score`.
+- A row for `Ada` with the score `95`.
+- A row for `Grace` with the score `98`.
+
+The checks count the rows and the header cells, and read the first name and the first score.
+
+> [!TIP]
+> Each row is a `<tr>`. Each cell inside it is a `<th>` for a heading or a `<td>` for a value.

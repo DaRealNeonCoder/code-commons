@@ -1,0 +1,75 @@
+---
+title: "Functions"
+order: 27
+summary: "Package code into named, reusable functions with parameters and return values, and write short arrow functions."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+puzzles: ["web-functions"]
+---
+
+A **function** is a named piece of code you can run as many times as you like. Give it some input, and it can give you a result back. Functions let you write something once and use it everywhere.
+
+## Declaring a function
+
+```javascript
+function double(n) {
+  return n * 2;
+}
+
+double(5);    // 10
+double(21);   // 42
+```
+
+- `function` starts the declaration.
+- `double` is the name you call it by.
+- `n` is a **parameter**: a placeholder for the value you pass in.
+- `return` sends a value back to whoever called the function.
+
+The code in the curly braces runs each time you call the function. Calling it with a different value gives a different result.
+
+## Parameters and arguments
+
+The values you pass in when you call are **arguments**. The names in the declaration are **parameters**. People use the words loosely, so don't worry about the difference in conversation.
+
+```javascript
+function greet(name, punctuation) {
+  return "Hello, " + name + punctuation;
+}
+
+greet("Ada", "!");   // "Hello, Ada!"
+```
+
+## Arrow functions
+
+Modern JavaScript has a shorter form for small functions, called an arrow function:
+
+```javascript
+const double = (n) => n * 2;
+
+const greet = (name) => {
+  return "Hello, " + name + "!";
+};
+```
+
+If the function is a single expression, the braces and `return` can be dropped. Both forms do the same job.
+
+## Functions without return
+
+A function that doesn't `return` anything gives back `undefined`. That's fine for functions whose job is to *do* something, such as changing the page, rather than to calculate a value.
+
+```javascript
+function sayHello() {
+  console.log("Hello!");
+}
+```
+
+> [!TIP]
+> Give a function a verb name that says what it does: `calculateTotal`, `showMessage`, `isValid`. Keep each function to one job. If you need the word "and" to describe it, split it into two functions.
+
+## Your puzzle
+
+In the JavaScript tab, write a function named `double` that takes a number `n` and returns `n * 2`. Then write an arrow function named `greet` that takes a `name` and returns `Hello, ` followed by the name and an exclamation mark. The checks call `double(21)` and `greet("Ada")`.

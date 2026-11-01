@@ -1,0 +1,76 @@
+---
+title: "Conditionals"
+order: 26
+summary: "Run different code depending on a condition with if, else, else if, and the short ternary form."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+puzzles: ["web-conditionals"]
+---
+
+A program is useful because it can choose. A **conditional** runs one block of code when a condition is `true` and another when it is `false`.
+
+## if and else
+
+```javascript
+const isRaining = true;
+let plan;
+
+if (isRaining) {
+  plan = "stay in";
+} else {
+  plan = "go out";
+}
+```
+
+The condition goes in parentheses after `if`. The code to run goes in curly braces. `else` handles everything else. Because `isRaining` is `true`, `plan` becomes `"stay in"`.
+
+## else if
+
+When there are more than two choices, chain them with `else if`. The first condition that is `true` wins, and the rest are skipped:
+
+```javascript
+const temperature = 18;
+let weather;
+
+if (temperature < 10) {
+  weather = "cold";
+} else if (temperature < 20) {
+  weather = "mild";
+} else {
+  weather = "warm";
+}
+```
+
+Order matters. Put the most specific condition first, or an earlier broad check will catch everything.
+
+## The ternary operator
+
+A ternary chooses between two values in a single expression. It has the form `condition ? valueIfTrue : valueIfFalse`:
+
+```javascript
+const umbrella = isRaining ? "take it" : "leave it";
+```
+
+Use it for simple choices that fit on one line. Switch back to `if` when the choice is complicated.
+
+## Truthy and falsy
+
+Conditions don't need to be booleans. JavaScript treats some values as `false` in an `if`: `0`, `""` (empty text), `null`, `undefined`, and `NaN`. Almost everything else is `true`.
+
+```javascript
+const name = "";
+if (name) {
+  // skipped, because an empty string is falsy
+}
+```
+
+> [!TIP]
+> Write conditions that read like a sentence. `if (age >= 18)` is clearer than `if (!(age < 18))`, even though they mean the same thing.
+
+## Your puzzle
+
+The starter defines `isRaining` as `true`. In the JavaScript tab, write an `if` and `else` that sets a variable named `plan` to `"stay in"` when it's raining and `"go out"` otherwise. Then create `umbrella` with a ternary: `"take it"` when it's raining, `"leave it"` otherwise. The checks read both variables.

@@ -1,0 +1,66 @@
+---
+title: "Headings and Paragraphs"
+order: 4
+summary: "Use headings to organize a page and paragraphs for text, and add emphasis with strong and em."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+puzzles: ["web-headings-and-paragraphs"]
+---
+
+Most pages are mostly text. HTML gives you two basic tools for it: **headings** to show what each section is about, and **paragraphs** for the words in between.
+
+## Headings
+
+There are six heading levels, from `<h1>` (the biggest and most important) down to `<h6>`:
+
+```html
+<h1>My Notes</h1>
+<h2>Day 1</h2>
+<h3>Morning</h3>
+```
+
+Use one `<h1>` for the main title of the page. Use `<h2>` for the main sections under it, and `<h3>` for subsections.
+
+> [!TIP]
+> Choose a heading level because of what it means, not because of how big you want the text to look. You can change the size later with CSS, which is the next part of the course.
+
+## Paragraphs
+
+A paragraph is a `<p>` element. The browser puts a little space between paragraphs automatically:
+
+```html
+<p>Today I learned about tags.</p>
+<p>Tomorrow I will learn about attributes.</p>
+```
+
+Line breaks inside a paragraph are ignored. The browser joins the text onto one line and wraps it to fit the window. If you want to force a new line, use `<br>`.
+
+```html
+<p>
+  Roses are red,
+  violets are blue.
+</p>
+```
+
+That paragraph displays as `Roses are red, violets are blue.` on one line.
+
+## Emphasis
+
+Two elements add meaning to words inside a paragraph:
+
+- `<strong>` marks text as important. Browsers show it in bold.
+- `<em>` marks text with emphasis. Browsers show it in italics.
+
+```html
+<p>Water is <strong>important</strong>. Drink it <em>every</em> day.</p>
+```
+
+Use `<strong>` and `<em>` for meaning. Screen readers read them with a change of tone, which is why HTML uses them instead of only styling the text.
+
+## Your puzzle
+
+Build a small page with a main heading `My Notes`, a section heading `Day 1`, and a paragraph that begins `Today I learned about tags.`. The checks look at the text of each, so spelling and capitals must match exactly.

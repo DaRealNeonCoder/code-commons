@@ -1,0 +1,73 @@
+---
+title: "Operators and Comparisons"
+order: 25
+summary: "Combine values with arithmetic, comparison, and logical operators, and understand why === is the one you should use."
+available: true
+areas: ["web-development"]
+topics: ["javascript"]
+tags: []
+languages: ["javascript"]
+difficulty: "beginner"
+puzzles: ["web-operators"]
+---
+
+Operators are the symbols that combine values. You've already seen the arithmetic ones (`+`, `-`, `*`, `/`, `%`). This lesson covers the other two groups.
+
+## Comparison
+
+Comparison operators ask a question, and the answer is a boolean:
+
+| Operator | Meaning | Example | Result |
+| --- | --- | --- | --- |
+| `===` | equal to (same value and type) | `5 === 5` | `true` |
+| `!==` | not equal to | `5 !== 6` | `true` |
+| `>` | greater than | `7 > 3` | `true` |
+| `<` | less than | `7 < 3` | `false` |
+| `>=` | greater than or equal to | `3 >= 3` | `true` |
+| `<=` | less than or equal to | `2 <= 1` | `false` |
+
+> [!WARNING]
+> Always use `===` and `!==`. The older `==` quietly converts types first, so `5 == "5"` is `true` but `5 === "5"` is `false`. The strict version avoids surprises.
+
+## Logical operators
+
+Logical operators combine booleans:
+
+- `&&` (and) is `true` only when both sides are `true`.
+- `||` (or) is `true` when at least one side is `true`.
+- `!` (not) flips a boolean: `!true` is `false`.
+
+```javascript
+const isRaining = true;
+const isCold = false;
+
+const stayInside = isRaining && isCold;   // false
+const bringUmbrella = isRaining || isCold; // true
+const goOutside = !isRaining;             // false
+```
+
+## Combining everything
+
+Arithmetic and comparison can be mixed. Arithmetic runs first:
+
+```javascript
+const a = 7;
+const b = 3;
+
+const remainder = a % b;        // 1
+const isBigger = a > b;         // true
+const check = isBigger && remainder === 1;   // true
+```
+
+When you're unsure about the order, add parentheses. They make the intent clear and the order certain:
+
+```javascript
+const result = (a + b) * 2;     // 20
+```
+
+> [!TIP]
+> Give comparisons a name when they're complicated. `const isEligible = age >= 18 && hasTicket;` is easier to read later than the same condition written inline.
+
+## Your puzzle
+
+The starter defines `a` as `7` and `b` as `3`. In the JavaScript tab, create `remainder` as `a % b` and `isBigger` as `a > b`. The checks read both values, and also the expression `isBigger && remainder === 1`, which should be `true`.

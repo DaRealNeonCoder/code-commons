@@ -1,0 +1,66 @@
+---
+title: "Make the Heading Red"
+order: 11
+summary: "Write your first CSS rule to change the color of a heading."
+available: true
+areas: ["web-development"]
+topics: ["css"]
+tags: []
+languages: ["html", "css"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <h1>Styled Heading</h1>
+      </body>
+      </html>
+    css: |
+      /* Make every h1 on the page red */
+    js: ""
+  checks:
+    - type: style
+      selector: "h1"
+      property: "color"
+      value: "rgb(255, 0, 0)"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <h1>Styled Heading</h1>
+      </body>
+      </html>
+    css: |
+      h1 {
+        color: red;
+      }
+    js: ""
+---
+
+Write a CSS rule in the CSS tab that makes every `h1` on the page red.
+
+A rule is a selector, then the property and its value in curly braces:
+
+```css
+h1 {
+  color: red;
+}
+```
+
+The check reads the color the browser actually calculates, so `red`, `#ff0000`, and `rgb(255, 0, 0)` all pass.
+
+> [!TIP]
+> Keep the existing comment or delete it. CSS ignores anything between `/*` and `*/`.

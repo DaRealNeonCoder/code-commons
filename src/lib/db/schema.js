@@ -104,6 +104,9 @@ export const puzzles = pgTable(
     testCases: jsonb("test_cases").notNull().default(sql`'[]'::jsonb`),
     // Math Quiz questions and answer keys. SERVER ONLY: sanitize before client props.
     quizConfig: jsonb("quiz_config"),
+    // Web puzzle starter files, checks, and solution. SERVER ONLY for the solution:
+    // see getClientWebInfo in lib/web/webPuzzle.js before sending anything to the client.
+    webConfig: jsonb("web_config"),
   },
   (t) => contentIndexes("puzzles", t)
 );

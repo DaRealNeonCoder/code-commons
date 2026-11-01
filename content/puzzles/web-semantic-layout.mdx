@@ -1,0 +1,78 @@
+---
+title: "Semantic Layout"
+order: 7
+summary: "Build a page from header, main, article, and footer landmarks."
+available: true
+areas: ["web-development"]
+topics: ["html"]
+tags: []
+languages: ["html"]
+difficulty: "beginner"
+kind: web
+webConfig:
+  version: 1
+  files:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <!-- Build a header with an h1 "My Blog", a main with an article
+             containing an h2 "First Post", and a footer. -->
+      </body>
+      </html>
+    css: ""
+    js: ""
+  checks:
+    - type: element
+      selector: "header"
+    - type: element
+      selector: "main article"
+    - type: element
+      selector: "footer"
+    - type: text
+      selector: "header h1"
+      text: "My Blog"
+    - type: text
+      selector: "article h2"
+      text: "First Post"
+  solution:
+    html: |
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Practice</title>
+      </head>
+      <body>
+        <header>
+          <h1>My Blog</h1>
+        </header>
+        <main>
+          <article>
+            <h2>First Post</h2>
+            <p>Today I started building a website.</p>
+          </article>
+        </main>
+        <footer>
+          <p>Thanks for reading.</p>
+        </footer>
+      </body>
+      </html>
+    css: ""
+    js: ""
+---
+
+Use semantic elements instead of generic boxes:
+
+- A `<header>` containing an `<h1>` that says `My Blog`.
+- A `<main>` containing an `<article>`. The article holds an `<h2>` that says `First Post`.
+- A `<footer>`. Put anything you like inside it.
+
+The checks look for each landmark, and for the text of the two headings.
+
+> [!TIP]
+> The `<article>` must be inside the `<main>`, and the `<h2>` must be inside the `<article>`.
