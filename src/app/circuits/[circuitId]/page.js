@@ -14,11 +14,23 @@ import NextPuzzleLinks from "@/components/NextPuzzleLinks";
 import NextLessonLink from "@/components/NextLessonLink";
 import CommentSection from "@/components/comments/CommentSection";
 import ContentAuthor from "@/components/ContentAuthor";
+import { absoluteUrl, pageDescription } from "@/lib/seo";
 
 export async function generateMetadata({ params }) {
   const { circuitId } = await params;
   const circuit = await getCircuitById(circuitId);
-  return { title: circuit ? `${circuit.title} — codecommons` : "Circuit — codecommons" };
+  if (!circuit) return { title: "Circuit — codecommons" };
+  const url = absoluteUrl(`/circuits/${circuitId}`);
+  const description = pageDescription(
+    circuit.summary,
+    `Build and test the ${circuit.title} logic circuit in the CodeCommons simulator.`
+  );
+  return {
+    title: `${circuit.title} — codecommons`,
+    description,
+    alternates: { canonical: url },
+    openGraph: { title: circuit.title, description, type: "article", url },
+  };
 }
 
 export default async function CircuitDetailPage({ params, searchParams }) {

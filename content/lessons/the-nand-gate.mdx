@@ -1,7 +1,7 @@
 ---
-title: "The NAND Gate and Why It Is Important"
+title: "NAND Gate: Truth Table and Universal Logic"
 order: 7
-summary: "Combine NOT and AND into NAND, then see why one kind of gate can be used to build every other kind of Boolean logic."
+summary: "NAND gate truth table explained: NAND means NOT AND, and NAND gates alone can build NOT, AND, OR, and XOR."
 available: true
 areas: ["programming-fundamentals"]
 topics: ["bit-manipulation"]
@@ -16,6 +16,8 @@ puzzles: ["circuit:and-from-nand"]
 ```text
 A NAND B = NOT (A AND B)
 ```
+
+## NAND truth table
 
 | A | B | A AND B | A NAND B |
 | ---: | ---: | ---: | ---: |
@@ -40,3 +42,10 @@ NAND is important because it is **functionally complete**: with enough NAND gate
   />
 
 In the [Build AND from NAND gates puzzle](/circuits/and-from-nand?lesson=the-nand-gate&course=intro-to-computer-engineering), the simulator gives you only NAND gates plus fixed input switches and an LED. Build the two-stage circuit that behaves like AND. The checker tests all input combinations privately.
+
+## Build the other gates from NAND
+
+- **NOT:** connect the same signal to both inputs of one NAND gate.
+- **AND:** use one NAND gate, then feed its output into both inputs of a second NAND gate ([AND from NAND](/circuits/and-from-nand)).
+- **OR:** NAND each input with itself, then NAND the two results. That takes three NAND gates.
+- **XOR:** use four NAND gates ([XOR from NAND](/circuits/xor-from-nand)).

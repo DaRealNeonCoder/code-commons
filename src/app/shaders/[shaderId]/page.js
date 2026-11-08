@@ -13,11 +13,23 @@ import NextPuzzleLinks from "@/components/NextPuzzleLinks";
 import NextLessonLink from "@/components/NextLessonLink";
 import CommentSection from "@/components/comments/CommentSection";
 import ContentAuthor from "@/components/ContentAuthor";
+import { absoluteUrl, pageDescription } from "@/lib/seo";
 
 export async function generateMetadata({ params }) {
   const { shaderId } = await params;
-  const shader = await getShaderById(shaderId)
-  return { title: shader ? `${shader.title} — codecommons` : "Shader — codecommons" };
+  const shader = await getShaderById(shaderId);
+  if (!shader) return { title: "Shader — codecommons" };
+  const url = absoluteUrl(`/shaders/${shaderId}`);
+  const description = pageDescription(
+    shader.summary,
+    `Run and edit the ${shader.title} GLSL fragment shader in the CodeCommons playground.`
+  );
+  return {
+    title: `${shader.title} — codecommons`,
+    description,
+    alternates: { canonical: url },
+    openGraph: { title: shader.title, description, type: "article", url },
+  };
 }
 
 export default async function ShaderDetailPage({ params, searchParams }) {

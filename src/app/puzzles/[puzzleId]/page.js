@@ -16,6 +16,24 @@ import CourseShell from "@/components/CourseShell";
 import RatedShell from "@/components/rating/RatedShell";
 import CommentSection from "@/components/comments/CommentSection";
 import ContentAuthor from "@/components/ContentAuthor";
+import { absoluteUrl, pageDescription } from "@/lib/seo";
+
+export async function generateMetadata({ params }) {
+  const { puzzleId } = await params;
+  const puzzle = await getPuzzleById(puzzleId);
+  if (!puzzle) return {};
+  const url = absoluteUrl(`/puzzles/${puzzleId}`);
+  const description = pageDescription(
+    puzzle.summary,
+    `Solve the ${puzzle.title} puzzle with instant test feedback on CodeCommons.`
+  );
+  return {
+    title: `${puzzle.title} | CodeCommons`,
+    description,
+    alternates: { canonical: url },
+    openGraph: { title: puzzle.title, description, type: "article", url },
+  };
+}
 
 export default async function PuzzlePage({ params, searchParams }) {
   const { puzzleId } = await params;
